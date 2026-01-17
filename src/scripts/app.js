@@ -1,4 +1,3 @@
-
 // ----------------------------------------------------
 // 2. SYSTEM (DB & Shop)
 // ----------------------------------------------------
@@ -386,15 +385,35 @@ const ui = {
 };
 
 // 3. STORY Logic
+
+// Resolve story data for the given day. If a specific entry is missing,
+// use the corresponding <option> text as a title so the UI reflects the
+// user's selection instead of always falling back to 'all'.
+function resolveStoryData(day) {
+    if (day === 'rush') return stories['rush'];
+    const s = stories[day];
+    if (s) return s;
+
+    const opt = document.querySelector(`#day-select option[value="${day}"]`);
+    const optText = opt ? opt.textContent : (day === 'all' ? (stories['all'] && stories['all'].title) : `Day ${day}`);
+    return {
+        title: optText,
+        intro: `선택한 지역 — ${optText}`,
+        win: (stories['all'] && stories['all'].win) || '',
+        lose: (stories['all'] && stories['all'].lose) || ''
+    };
+}
+
 const story = {
     day: null, mode: null,
-    startIntro: (mode) => {
-        const daySel = document.getElementById('day-select').value;
+    startIntro: (mode, dayArg) => {
+        const daySel = dayArg || document.getElementById('day-select').value;
+        console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
         db.save();
         story.day = (mode === 'rush') ? 'rush' : daySel;
         story.mode = mode;
-        const data = stories[story.day] || stories['all'];
+        const data = resolveStoryData(story.day);
         
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
@@ -406,7 +425,7 @@ const story = {
         btn.onclick = () => game.init(story.mode, story.day);
     },
     showEnding: (win) => {
-        const data = stories[story.day] || stories['all'];
+        const data = resolveStoryData(story.day);
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
         
@@ -836,17 +855,23 @@ const secret = {
         secret.close();
     }
 };
-secret.init();
-inventory.render();
-
 function initSelections() {
     const daySelect = document.getElementById('day-select');
     if (daySelect && db.lastSelectedDay) {
         daySelect.value = db.lastSelectedDay;
     }
 }
-initSelections();
 
-// Add event listeners for buttons
-document.getElementById('start-battle-btn').addEventListener('click', () => story.startIntro('normal'));
-document.getElementById('boss-rush-btn').addEventListener('click', () => story.startIntro('rush'));
+window.onload = () => {
+    secret.init();
+    inventory.render();
+    initSelections();
+
+    // Add event listeners for buttons
+    document.getElementById('start-battle-btn').addEventListener('click', () => {
+        const selectedDay = document.getElementById('day-select').value;
+        console.log('[start-battle] selectedDay=', selectedDay);
+        story.startIntro('normal', selectedDay);
+    });
+    document.getElementById('boss-rush-btn').addEventListener('click', () => story.startIntro('rush'));
+}
