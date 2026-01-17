@@ -26,8 +26,17 @@ const db = {
         localStorage.setItem('v7_last_day', db.lastSelectedDay);
         ui.updateGold();
     },
-    addGold: (n) => { db.gold += n; db.save(); },
-    subGold: (n) => { db.gold -= n; db.save(); }, // Subtract but don't clamp here
+    addGold: (n) => {
+        // ensure caller may pass negative/positive; enforce integer and clamp to 0
+        const delta = Number(n) || 0;
+        db.gold = Math.max(0, Math.floor(db.gold) + Math.floor(delta));
+        db.save();
+        return db.gold;
+    },
+    subGold: (n) => {
+        // semantic alias for subtracting; keep behavior consistent with addGold
+        return db.addGold(-(Number(n) || 0));
+    },
     has: (id) => db.owned.includes(id),
     equip: (id) => {
         // route equip through the weapon metadata so category/slot rules are consistent
@@ -425,12 +434,13 @@ const shop = {
             return;
         }
 
-        db.gold -= cost;
+        // use API so clamp/persistence/UI are consistent
+        db.subGold(cost);
 
         if (type === 'item') {
             if (db.inventory.length >= db.inventoryCapacity) {
                 alert('인벤토리가 가득 찼습니다.');
-                 db.gold += cost; //- revert transaction
+                 db.addGold(cost); // revert transaction via API
                 return;
             }
             db.inventory.push(id);
@@ -524,6 +534,9 @@ const ui = {
     }
 };
 
+// expose for console/debugging and to avoid other scripts clobbering
+try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
+
 // 3. STORY Logic
 
 // Monster image assets and selection helper
@@ -569,19 +582,21 @@ function pickMonsterSprite(q, isBoss) {
 // use the corresponding <option> text as a title so the UI reflects the
 // user's selection instead of always falling back to 'all'.
 function resolveStoryData(day) {
-    if (day === 'rush') return stories['rush'];
-    const s = stories[day];
+    // prefer canonical catalog
+    if (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].story) return dayCatalog[day].story;
+    if (day === 'rush') return (stories && stories['rush']) || null;
+    const s = (stories && stories[day]) ? stories[day] : null;
     if (s) return s;
 
     const opt = document.querySelector(`#day-select option[value="${day}"]`);
-    const optText = opt ? opt.textContent : (day === 'all' ? (stories['all'] && stories['all'].title) : `Day ${day}`);
+    const optText = opt ? opt.textContent : (day === 'all' ? (stories && stories['all'] && stories['all'].title) : `Day ${day}`);
     return {
         title: optText,
         intro: `선택한 지역 — ${optText}`,
-        win: (stories['all'] && stories['all'].win) || '',
-        lose: (stories['all'] && stories['all'].lose) || ''
+        win: (stories && stories['all'] && stories['all'].win) || '',
+        lose: (stories && stories['all'] && stories['all'].lose) || ''
     };
-}
+} 
 
 const story = {
     day: null, mode: null,
@@ -605,25 +620,28 @@ const story = {
         const titleEl = document.getElementById('story-title');
         console.log('[story.startIntro] current #story-title before=', titleEl && titleEl.innerText);
 
+        // Prefer the Day label from the canonical catalog; fall back to legacy views
+        const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : ((story.day && dayInfo && dayInfo[story.day]) ? dayInfo[story.day] : (story.day === 'all' ? (stories && stories['all'] && stories['all'].title) : (story.day === 'rush' ? 'Boss Rush' : `Day ${story.day}`)));
+        const displayTitle = (data && data.title && String(data.title).trim() && data.title !== dayLabel) ? `${dayLabel} — ${data.title}` : dayLabel; 
+
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
-        // write and verify immediately
-        if (titleEl) {
-            titleEl.innerText = data.title;
-            console.log('[story.startIntro] wrote #story-title ->', titleEl.innerText);
+        // write and verify immediately via centralized setter (protects against duplicate IDs / external overwrites)
+        if (window.ui && typeof window.ui.setStoryTitle === 'function') {
+            window.ui.setStoryTitle(displayTitle);
         } else {
-            console.error('[story.startIntro] #story-title element not found');
+            const te = document.getElementById('story-title'); if (te) te.innerText = displayTitle; console.warn('[story.startIntro] fallback title write used');
         }
         const textEl = document.getElementById('story-text');
-        if (textEl) textEl.innerText = data.intro;
+        if (textEl) textEl.innerText = data.intro;    
         
         const btn = document.getElementById('story-btn');
         btn.innerText = "모험 시작";
+        // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
+        const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : daySel;
         btn.onclick = () => {
-            const selectVal = document.getElementById('day-select') ? document.getElementById('day-select').value : story.day;
-            const resolvedDay = (story.mode === 'rush') ? 'rush' : (selectVal || story.day);
-            console.log('[story-btn] story.day=', story.day, 'selectVal=', selectVal, 'resolvedDay=', resolvedDay);
-            game.init(story.mode, resolvedDay);
+            console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
+            game.init(story.mode, resolvedAtIntro);
         };
     },
     showEnding: (win) => {
@@ -631,14 +649,90 @@ const story = {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
         
-        document.getElementById('story-title').innerText = win ? "VICTORY" : "DEFEAT";
-        document.getElementById('story-text').innerText = win ? data.win : data.lose;
+        if (window.ui && typeof window.ui.setStoryTitle === 'function') {
+            window.ui.setStoryTitle(win ? "VICTORY" : "DEFEAT");
+        } else {
+            const te = document.getElementById('story-title'); if (te) te.innerText = (win ? "VICTORY" : "DEFEAT"); console.warn('[story.showEnding] fallback title write used');
+        }
+        document.getElementById('story-text').innerText = win ? data.win : data.lose; 
         
         const btn = document.getElementById('story-btn');
         btn.innerText = "결과 정산";
         btn.onclick = () => game.end(win);
     }
 };
+
+// safety helpers — cleanup and runtime sanity checks (kept top-level for easy console access)
+function __purgeDuplicateStoryTitle(opts = {}) {
+  try {
+    const hard = opts.hard === undefined ? true : !!opts.hard;
+    const els = Array.from(document.querySelectorAll('#story-title'));
+    if (els.length <= 1) return { removed: 0, kept: els.length };
+    const canonical = els[0];
+    window.__removedStoryTitleBackups = window.__removedStoryTitleBackups || [];
+    let removed = 0;
+    els.slice(1).forEach(e => {
+      try { window.__removedStoryTitleBackups.push({ html: e.outerHTML, time: Date.now() }); } catch (ignore) {}
+      if (hard) e.remove(); else { e.style.display = 'none'; e.dataset._hiddenBy = '__purgeDuplicateStoryTitle'; }
+      removed++;
+    });
+    console.info('[__purgeDuplicateStoryTitle] removed duplicates:', removed, 'kept: 1');
+    setTimeout(() => { window.__removedStoryTitleBackups = (window.__removedStoryTitleBackups || []).filter(b => (Date.now() - b.time) < 30000); }, 31000);
+    return { removed, kept: 1 };
+  } catch (err) {
+    console.error('[__purgeDuplicateStoryTitle] error', err);
+    return { removed: 0, kept: (document.querySelectorAll('#story-title') || []).length };
+  }
+}
+
+function __runGameSanityChecks(opts = {}) {
+  const sample = opts.sampleDays || [1, 40, 55, 60];
+  const out = { summary: {}, failures: [] };
+  try {
+    sample.forEach(d => {
+      const dayKey = String(d);
+      const row = { day: d, ok: true, notes: [] };
+
+      const s = (typeof resolveStoryData === 'function') ? resolveStoryData(dayKey) : null;
+      if (!s || !s.title) { row.ok = false; row.notes.push('missing story/title'); }
+
+      const pool = (typeof rawData !== 'undefined') ? rawData.filter(r => Number(r.day) === Number(d)) : [];
+      if (!pool || pool.length === 0) row.notes.push('rawData pool empty');
+
+      let spriteNormal = null, spriteBoss = null;
+      try { spriteNormal = pickMonsterSprite(d, false); spriteBoss = pickMonsterSprite(d, true); } catch (e) { row.notes.push('sprite fn threw'); row.ok = false; }
+      if (!spriteNormal || typeof spriteNormal !== 'string') row.notes.push('missing normal sprite');
+      if (!spriteBoss || typeof spriteBoss !== 'string') row.notes.push('missing boss sprite');
+
+      const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : (dayInfo && dayInfo[dayKey]) ? dayInfo[dayKey] : `Day ${day}`;
+      const displayTitle = (s && s.title && String(s.title).trim() && s.title !== label) ? `${label} — ${s.title}` : label;
+
+      try {
+        // non-destructive title check: write & read back
+        const orig = (document.getElementById('story-title') || {}).innerText;
+        const el = document.getElementById('story-title');
+        if (el) { el.innerText = displayTitle; const shown = el.innerText || null; if (!shown || String(shown).indexOf(label) === -1) { row.ok = false; row.notes.push('title render mismatch'); } el.innerText = orig; }
+        else { row.ok = false; row.notes.push('no #story-title element'); }
+      } catch (e) { row.ok = false; row.notes.push('title render threw'); }
+
+      out.summary[dayKey] = row;
+      if (!row.ok || row.notes.length) out.failures.push(row);
+    });
+
+    out.passed = out.failures.length === 0;
+    console.group('[__runGameSanityChecks] report');
+    console.log('sampleDays:', sample);
+    Object.entries(out.summary).forEach(([k,v]) => console.log(k, v));
+    if (out.passed) console.log('Sanity checks PASSED ✅'); else console.warn('Sanity checks found issues — inspect failures');
+    console.groupEnd();
+  } catch (err) {
+    console.error('[__runGameSanityChecks] unexpected error', err);
+    out.error = String(err);
+  }
+  // convenience alias from console
+  window.runGameSanityTest = () => __runGameSanityChecks(opts);
+  return out;
+}
 
 // 4. GAME Logic
 const game = {
@@ -652,7 +746,15 @@ const game = {
 
         document.getElementById('story-screen').style.display = 'none';
         
-        let pool = (day === 'all') ? rawData : rawData.filter(i => i.day == day);
+        let pool;
+        // normalize day and strictly match numeric day values to avoid cross-day leakage
+        if (day === 'all' || day === 'rush') {
+            pool = rawData;
+        } else {
+            const dayNum = Number(day);
+            pool = rawData.filter(i => Number(i.day) === dayNum);
+        }
+        console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', (pool && pool.length));
         if (pool.length < 4) { alert("데이터 부족"); location.reload(); return; }
 
         game.maxTime = db.has('hourglass') ? 15 : 10;
@@ -721,6 +823,7 @@ const game = {
     },
 
     renderNormal: (data) => {
+        console.log('[game.renderNormal] day=', data && data.day, 'word=', data && data.word);
         if (!data || !data.word || !data.meaning) {
             game.idx++;
             game.nextLevel();
@@ -747,6 +850,7 @@ const game = {
     },
 
     renderBoss: (data, isRush) => {
+        console.log('[game.renderBoss] day=', data && data.day, 'word=', data && data.word, 'isRush=', !!isRush);
         if (!data || !data.word || !data.meaning) {
             game.idx++;
             game.nextLevel();
@@ -1040,8 +1144,8 @@ const secret = {
             document.getElementById('current-gold-display').innerText = db.gold;
             document.getElementById('adjust-gold-display').innerText = secret.adjustGold;
 
-            document.getElementById('gold-up').onclick = () => secret.updateGold(1000);
-            document.getElementById('gold-down').onclick = () => secret.updateGold(-1000);
+            document.getElementById('gold-up').onclick = () => secret.updateGold(500);
+            document.getElementById('gold-down').onclick = () => secret.updateGold(-500);
 
         } else {
             document.getElementById('password-error').style.display = 'block';
@@ -1068,15 +1172,15 @@ function initSelections() {
     const daysFromData = new Set();
     if (typeof rawData !== 'undefined' && Array.isArray(rawData)) rawData.forEach(r => { if (r && r.day) daysFromData.add(Number(r.day)); });
 
-    const infoDays = (typeof dayInfo !== 'undefined') ? Object.keys(dayInfo).map(Number) : [];
+    const infoDays = (typeof dayCatalog !== 'undefined') ? Object.keys(dayCatalog).filter(k => !isNaN(Number(k))).map(Number) : ((typeof dayInfo !== 'undefined') ? Object.keys(dayInfo).map(Number) : []);
     const allDays = new Set([...infoDays, ...Array.from(daysFromData)]);
 
-    const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a,b) => a - b).filter(d => d <= 50);
+    const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a,b) => a - b).filter(d => d <= 60);
 
     // Build options
     let html = '';
     sortedDays.forEach(d => {
-        const label = (dayInfo && dayInfo[d]) ? dayInfo[d] : `Day ${d}`;
+        const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : ((dayInfo && dayInfo[d]) ? dayInfo[d] : `Day ${d}`);
         html += `<option value="${d}">${label}</option>`;
     });
     html += `<option value="all">전체 (혼돈의 균열)</option>`;

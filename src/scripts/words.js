@@ -48,11 +48,178 @@ const dayInfo = {
     47: "Day 47 (붉은 사막)",
     48: "Day 48 (강철 성)",
     49: "Day 49 (심해 신전)",
-    50: "Day 50 (마왕 탑)"
+    50: "Day 50 (마왕 탑)",
+    51: "Day 51 (잊혀진 사원)",
+    52: "Day 52 (달빛 연못)",
+    53: "Day 53 (은빛 초원)",
+    54: "Day 54 (모래바람 고원)",
+    55: "Day 55 (유령선 항구)",
+    56: "Day 56 (깊은 동굴)",
+    57: "Day 57 (하늘 정원)",
+    58: "Day 58 (빙하 계곡)",
+    59: "Day 59 (불의 심장)",
+    60: "Day 60 (황혼의 탑)"
 };
 
-const rawData = [
+const stories = {
+    1: { title: "시작의 평원", intro: "잔잔한 풀밭과 따뜻한 햇살이 있는 평화로운 시작 지역입니다.\n여기서 모험의 기초를 배우게 됩니다.", win: "첫 시련을 통과했습니다. 앞으로의 여정이 기대됩니다.", lose: "초반의 실수로 물러났습니다. 다시 준비해 도전하세요." },
+    2: { title: "행복의 언덕", intro: "웃음이 넘치는 언덕.\n여기서 사람들은 작은 퀘스트를 통해 보상을 얻습니다.", win: "마을 사람들의 환호를 받았습니다.", lose: "언덕의 경사에 밀려 패배했습니다." },
+    3: { title: "지혜의 도시", intro: "지식의 도시로 가는 길.\n수수께끼를 풀어야 문이 열립니다.", win: "수수께끼를 풀고 보상을 얻었습니다.", lose: "문을 열지 못하고 패배했습니다." },
+    4: { title: "꽃의 정원", intro: "향기로운 정원에서 꽃의 정령들과 조우합니다.", win: "정령들과 화해하여 길을 얻었습니다.", lose: "정령들의 힘에 눌려 후퇴했습니다." },
+    5: { title: "비 내리는 호수", intro: "부슬비가 내리는 고요한 호수.\n수상한 존재가 수면 아래에 숨어있습니다.", win: "수상한 존재를 쫓아내고 평화를 회복했습니다.", lose: "호수의 함정에 걸려 패배했습니다." },
+    6: { title: "조용한 마을", intro: "겉보기엔 평온하지만 비밀이 숨어있는 마을입니다.", win: "진실을 밝혀내고 마을을 구했습니다.", lose: "비밀에 휘말려 참패했습니다." },
+    7: { title: "속삭이는 숲", intro: "나무들이 속삭이는 신비한 숲.\n길을 잃지 않도록 주의하세요.", win: "숲의 수호자와 화해했습니다.", lose: "길을 잃고 탈출에 실패했습니다." },
+    8: { title: "눈 덮인 산", intro: "눈보라가 거센 산.\n추위를 견디며 정상으로 향하세요.", win: "정상에서 영광을 얻었습니다.", lose: "혹한에 쓰러졌습니다." },
+    9: { title: "별빛 극장", intro: "별들이 내려앉은 야외 극장.\n퍼즐과 연관된 적들이 나타납니다.", win: "무대를 지키고 승리했습니다.", lose: "공연은 실패로 끝났습니다." },
+    10: { title: "음악의 계곡", intro: "리듬에 맞춰 싸우는 계곡입니다.", win: "완벽한 리듬으로 적을 제압했습니다.", lose: "리듬을 놓쳐 패배했습니다." },
+    11: { title: "바람의 언덕", intro: "강한 바람이 특징인 지형입니다.", win: "바람을 이용해 승리했습니다.", lose: "바람에 밀려 실패했습니다." },
+    12: { title: "분노의 하늘", intro: "천둥과 번개가 치는 위험한 하늘 길.", win: "폭풍을 이겨냈습니다.", lose: "번개를 맞아 쓰러졌습니다." },
+    13: { title: "시간의 나라", intro: "시간이 왜곡되는 땅.\n과거의 적과 마주칠 수 있습니다.", win: "시간의 수수께끼를 풀고 승리했습니다.", lose: "시간의 함정에 빠졌습니다." },
+    14: { title: "구름의 바다", intro: "구름 위를 걷는 듯한 이국적인 장소입니다.", win: "구름의 수호자를 물리쳤습니다.", lose: "구름 속으로 떨어졌습니다." },
+    15: { title: "잠자는 숲", intro: "잠들어 있는 거대한 생물이 있는 숲.", win: "소환수를 제압하고 통과했습니다.", lose: "잠들어 있던 존재에 의해 패배했습니다." },
+    16: { title: "강철의 도시", intro: "기계들이 지배하는 도시.\n정교한 함정을 조심하세요.", win: "기계의 중앙 제어를 무너뜨렸습니다.", lose: "기계 병기에 의해 패배했습니다." },
+    17: { title: "노래하는 길", intro: "노랫소리가 길을 안내합니다.", win: "노래의 수수께끼를 풀고 전진했습니다.", lose: "노래를 해석하지 못했습니다." },
+    18: { title: "꿈의 다리", intro: "현실과 꿈이 겹치는 다리입니다.", win: "꿈의 시련을 통과했습니다.", lose: "꿈에 갇혀 실패했습니다." },
+    19: { title: "사랑의 해안", intro: "평화로운 해변.\n사소한 퀘스트들이 기다립니다.", win: "사랑을 되찾아 보상을 얻었습니다.", lose: "돌발 사건으로 패배했습니다." },
+    20: { title: "예술의 광장", intro: "예술가들이 모여드는 광장.\n창의적인 적들이 등장합니다.", win: "예술가들을 돕고 명예를 얻었습니다.", lose: "혼란 속에 패배했습니다." },
+    21: { title: "도서관의 미로", intro: "끝없는 서가와 숨겨진 지식의 방.", win: "지식을 얻어 강해졌습니다.", lose: "서가의 함정에 걸렸습니다." },
+    22: { title: "여행자의 공항", intro: "다양한 차원의 여행자가 모이는 곳.", win: "안전하게 터미널을 확보했습니다.", lose: "혼란 속에서 밀려났습니다." },
+    23: { title: "웃음의 시장", intro: "소란스럽지만 활기찬 시장입니다.", win: "상인들을 도와 보상을 얻었습니다.", lose: "사기꾼에게 속아 패배했습니다." },
+    24: { title: "행운의 박물관", intro: "희귀한 유물이 전시된 장소.", win: "유물을 회수하고 명예를 얻었습니다.", lose: "유물의 저주에 당했습니다." },
+    25: { title: "변화의 무대", intro: "모양이 계속 변하는 무대.", win: "무대를 극복하고 승리했습니다.", lose: "무대의 함정에 걸렸습니다." },
+    26: { title: "태양의 역", intro: "빛과 열로 가득한 역.", win: "태양의 시험을 통과했습니다.", lose: "열기에 의해 탈진했습니다." },
+    27: { title: "돌봄의 바다", intro: "치유의 힘이 흐르는 바다.", win: "치유의 축복을 받아 회복했습니다.", lose: "바다의 위협에 굴복했습니다." },
+    28: { title: "진실의 공원", intro: "거짓이 통하지 않는 신비한 공원.", win: "진실을 밝혀 승리했습니다.", lose: "속임수에 당했습니다." },
+    29: { title: "과학의 서점", intro: "실험과 발명이 가득한 서점.", win: "발명을 활용해 승리했습니다.", lose: "실험이 실패했습니다." },
+    30: { title: "마법의 숲", intro: "마법이 춤추는 숲.", win: "마법의 시련을 이겨냈습니다.", lose: "마법에 휩쓸려 패배했습니다." },
+    31: { title: "넓은 사무실", intro: "의외로 위험한 사무실 공간.", win: "업무를 완수하고 보상을 얻었습니다.", lose: "서류더미에 묻혀 패배했습니다." },
+    32: { title: "위험한 캠프", intro: "야영지 주변의 위협을 제거하세요.", win: "캠프를 안전하게 만들었습니다.", lose: "야영지에서 패배했습니다." },
+    33: { title: "역사의 홀", intro: "과거의 전투들이 재현되는 곳.", win: "역사의 시험을 통과했습니다.", lose: "과거에 묶여 패배했습니다." },
+    34: { title: "거울의 체육관", intro: "자신의 그림자와 싸우는 장소.", win: "자신을 극복하고 승리했습니다.", lose: "그림자에게 무너졌습니다." },
+    35: { title: "흥미의 강", intro: "다채로운 생물이 사는 강.", win: "강의 시련을 통과했습니다.", lose: "강의 흐름에 휩쓸렸습니다." },
+    36: { title: "건강의 농장", intro: "회복과 강화의 장소.", win: "상처를 치유하고 강화되었습니다.", lose: "함정에 빠져 탈락했습니다." },
+    37: { title: "비밀의 계곡", intro: "숨겨진 보물이 있는 계곡.", win: "보물을 찾아 승리했습니다.", lose: "함정에 걸려 후퇴했습니다." },
+    38: { title: "축제의 언덕", intro: "항상 축제가 열리는 즐거운 장소.", win: "축제를 지키고 보상을 얻었습니다.", lose: "혼란 속에서 패배했습니다." },
+    39: { title: "신문 가판대", intro: "소문과 정보가 오가는 곳.", win: "중요한 정보를 얻고 승리했습니다.", lose: "오보에 속아 패배했습니다." },
+    40: { title: "정글의 심장", intro: "울창한 정글의 중심.\n야수들이 경계를 삼키고 있습니다.", win: "심장을 정화하고 안전을 되찾았습니다.", lose: "정글의 위협에 의해 쓰러졌습니다." },
+    41: { title: "완벽한 찻집", intro: "평온한 찻집에서 작은 사건이 벌어집니다.", win: "사건을 해결하고 찻집의 평화를 되찾았습니다.", lose: "사건을 해결하지 못하고 물러났습니다." },
+    42: { title: "실수의 들판", intro: "실수가 축적된 이상한 들판.", win: "실수를 극복하고 전진했습니다.", lose: "실수 때문에 패배했습니다." },
+    43: { title: "만화방", intro: "만화 속 적들과 마주치는 공간.", win: "만화의 적들을 물리쳤습니다.", lose: "만화 속에 갇혀 패배했습니다." },
+    44: { title: "조용한 마을", intro: "다시 찾은 평화로운 마을.\n이번에는 더 큰 위협이 숨어있습니다.", win: "마을을 지키고 축복을 받았습니다.", lose: "위협에 밀려 패배했습니다." },
+    45: {
+        title: "숲속 마을의 위기",
+        intro: "평화롭던 숲속 마을이 어둠에 잠겼습니다.\n촌장은 당신의 손을 잡으며 간절히 부탁합니다.\n\"용사여, 마을을 지키는 정령들이 타락했습니다.\n그들을 정화하고 숲의 평화를 되찾아 주십시오!\"",
+        win: "당신의 활약으로 숲은 다시 빛을 되찾았습니다.\n정령들은 감사의 뜻으로 고대 유물을 건넵니다.\n마을 사람들의 환호 속에 당신은 다음 여정을 준비합니다.",
+        lose: "숲의 어둠은 너무나 깊었습니다...\n당신은 부상을 입고 마을 밖으로 후퇴합니다.\n\"아직 힘이 부족해...\" 당신은 복수를 다짐합니다."
+    },
+    46: {
+        title: "비명 지르는 숲",
+        intro: "바람 소리가 마치 비명처럼 들리는 저주받은 숲.\n이곳의 나무들은 살아있는 것들을 휘감으려 합니다.\n깊은 곳에 숨어있는 마녀를 처치해야만\n이 끔찍한 저주를 끝낼 수 있습니다.",
+        win: "마녀가 쓰러지자 숲의 비명소리가 멈췄습니다.\n썩어가던 나무들에 다시 푸른 잎이 돋아납니다.\n당신은 저주를 푼 전설의 용사가 되었습니다.",
+        lose: "나무 뿌리가 당신의 발목을 잡았습니다.\n점점 조여오는 공포 속에 시야가 흐려집니다.\n숲은 또 하나의 희생자를 삼켰습니다."
+    },
+    47: {
+        title: "붉은 사막의 열기",
+        intro: "타오르는 태양과 끝없는 모래 폭풍.\n붉은 사막은 나약한 자에게 죽음만을 선사합니다.\n전설 속 오아시스를 지키는 거대 전갈이\n당신의 앞길을 막아서고 있습니다.",
+        win: "거대 전갈의 껍질을 부수고 승리했습니다!\n신기루 너머 진짜 오아시스가 모습을 드러냅니다.\n시원한 물 한 모금이 그 어떤 보물보다 달콤합니다.",
+        lose: "더위와 갈증에 지쳐 쓰러졌습니다.\n모래 폭풍이 당신의 몸을 서서히 덮어옵니다.\n사막은 자비가 없습니다."
+    },
+    48: {
+        title: "강철의 성채",
+        intro: "차가운 금속음만이 가득한 기계들의 성.\n감정 없는 로봇 경비병들이 침입자를 감지했습니다.\n중앙 통제 시스템을 파괴하지 않으면\n이 성에서 영원히 나갈 수 없습니다.",
+        win: "중앙 코어를 파괴하자 모든 기계가 멈췄습니다.\n강철 문이 열리고 자유의 바람이 불어옵니다.\n당신의 검은 강철보다 강했습니다.",
+        lose: "레이저 포화 속에 갇혔습니다.\n강철 거인들의 압도적인 힘 앞에 무릎 꿇었습니다.\n시스템은 '침입자 제거 완료'를 선언합니다."
+    },
+    49: {
+        title: "심해의 고대 신전",
+        intro: "숨을 쉴 수 없는 깊은 바다 속.\n고대 신전에는 잊혀진 괴수들이 잠들어 있습니다.\n수압을 견디며 신전의 수호자를 물리치고\n심해의 보물을 차지하십시오.",
+        win: "심해의 수호자가 깊은 바다 속으로 사라졌습니다.\n신전의 보물 상자가 빛을 발하며 열립니다.\n당신은 바다의 지배자로 인정받았습니다.",
+        lose: "산소가 부족합니다...\n시야가 점점 좁아지고 의식이 흐려집니다.\n깊고 어두운 바다가 당신을 영원히 품습니다."
+    },
+    50: {
+        title: "마왕의 탑",
+        intro: "모든 악의 근원, 마왕의 탑 최상층.\n세상을 멸망시키려는 마왕이 당신을 기다립니다.\n이것이 마지막 싸움입니다.\n세상의 운명이 당신의 손에 달렸습니다!",
+        win: "치열한 사투 끝에 마왕이 쓰러졌습니다.\n하늘에서 성스러운 빛이 내려와 당신을 감쌉니다.\n당신은 세상을 구한 전설이 되었습니다!",
+        lose: "마왕의 힘은 상상을 초월했습니다.\"고작 그 정도인가?\" 마왕의 비웃음이 들립니다.\n세상은 어둠 속으로 떨어집니다..."
+    },
+    51: { title: "잊혀진 사원", intro: "고대의 의식이 흐르는 사원입니다.", win: "사원의 시련을 통과했습니다.", lose: "함정에 걸려 후퇴했습니다." },
+    52: { title: "달빛 연못", intro: "달빛 아래 신비한 연못이 빛납니다.", win: "연못의 축복을 받았습니다.", lose: "연못의 환영에 속았습니다." },
+    53: { title: "은빛 초원", intro: "은빛 풀밭에서 적들이 숨어있습니다.", win: "초원의 수호자를 물리쳤습니다.", lose: "초원의 안개에 갇혔습니다." },
+    54: { title: "모래바람 고원", intro: "거센 모래바람이 시야를 가립니다.", win: "고원을 안전하게 통과했습니다.", lose: "모래바람에 휩쓸려 패배했습니다." },
+    55: { title: "유령선 항구", intro: "유령선이 닻을 내린 음침한 항구.", win: "유령선을 정화하고 보물을 얻었습니다.", lose: "유령의 저주에 쓰러졌습니다." },
+    56: { title: "깊은 동굴", intro: "어둠 속 숨겨진 생물이 위협합니다.", win: "동굴 깊은 곳의 보물을 얻었습니다.", lose: "미로에서 길을 잃었습니다." },
+    57: { title: "하늘 정원", intro: "공중에 떠있는 정원에서 시련이 펼쳐집니다.", win: "정원의 시련을 이겨냈습니다.", lose: "공중에서 추락했습니다." },
+    58: { title: "빙하 계곡", intro: "얼음으로 뒤덮인 협곡.", win: "빙하를 깨고 길을 열었습니다.", lose: "추위에 굴복했습니다." },
+    59: { title: "불의 심장", intro: "끓어오르는 용암의 중심부.", win: "화염의 수호자를 물리쳤습니다.", lose: "불길에 삼켜졌습니다." },
+    60: { title: "황혼의 탑", intro: "황혼이 내리는 탑에서 최후의 시련이 기다립니다.", win: "탑의 정상을 정복했습니다.", lose: "탑의 수호자에게 패배했습니다." },
+    all: {
+        title: "혼돈의 균열",
+        intro: "시공간이 뒤틀린 혼돈의 땅.\n이곳에서는 과거와 현재, 미래의 적들이 쏟아져 나옵니다.\n예측할 수 없는 적들을 상대로\n당신의 실력을 증명하십시오.",
+        win: "혼돈을 잠재우고 질서를 되찾았습니다.\n당신의 이름은 차원을 넘어 전해질 것입니다.",
+        lose: "혼돈의 소용돌이에 휘말렸습니다.\n어디인지 알 수 없는 곳으로 떨어집니다..."
+    },
+    rush: {
+        title: "무한의 전장 (Boss Rush)",
+        intro: "끝없이 몰려오는 보스들!\n이곳은 오직 강자만이 살아남는 무한의 전장입니다.\n한 번의 실수는 곧 죽음입니다.\n당신의 한계를 시험해 보십시오!",
+        win: "믿을 수 없는 기록입니다!\n당신은 이 전장의 새로운 지배자입니다.",
+        lose: "훌륭한 싸움이었지만, 적들은 끝이 없었습니다.\n당신의 기록은 명예의 전당에 남을 것입니다."
+    }
+};
+
+// build merged dayCatalog (derived from existing `dayInfo` + `stories`)
+const dayCatalog = (function(){
+  const c = {};
+  if (typeof dayInfo !== 'undefined') {
+    Object.keys(dayInfo).forEach(k => {
+      if (!isNaN(Number(k))) {
+        c[k] = { label: dayInfo[k], story: (typeof stories !== 'undefined' && stories[k]) ? stories[k] : null };
+      }
+    });
+  }
+  // ensure 'all' and 'rush' are present in the catalog
+  c.all = { label: (typeof stories !== 'undefined' && stories.all && stories.all.title) ? stories.all.title : '전체 (혼돈의 균열)', story: (typeof stories !== 'undefined' ? stories.all : null) };
+  c.rush = { label: (typeof stories !== 'undefined' && stories.rush && stories.rush.title) ? stories.rush.title : '무한의 전장 (Boss Rush)', story: (typeof stories !== 'undefined' ? stories.rush : null) };
+  return c;
+})();
+
+// derived views (do NOT redeclare existing globals)
+const derivedDayInfo = Object.fromEntries(Object.entries(dayCatalog).filter(([k]) => !isNaN(Number(k))).map(([k,v]) => [k, v.label]));
+const derivedStories = Object.fromEntries(Object.entries(dayCatalog).map(([k,v]) => [k, v.story]));
+// NOTE: `dayInfo` and `stories` remain untouched here for backward compatibility.
+
+// runtime validator: compares rawData days → dayCatalog and (optionally) auto-fills lightweight placeholders
+// - safe to call after scripts load (does not run automatically at define-time)
+// - adds non-destructive placeholders to avoid UI falling back to 'all'
+if (typeof dayCatalog.validateCoverage === 'undefined') {
+  dayCatalog.validateCoverage = function(opts = {}) {
+    try {
+      if (typeof rawData === 'undefined') {
+        console.info('[dayCatalog.validateCoverage] rawData not yet defined — call after load.');
+        return;
+      }
+      const dataDays = Array.from(new Set(rawData.map(r => Number(r.day)).filter(n => !isNaN(n)))).sort((a,b) => a - b);
+      const catalogDays = Object.keys(dayCatalog).filter(k => !isNaN(Number(k))).map(Number).sort((a,b) => a - b);
+      const missing = dataDays.filter(d => catalogDays.indexOf(d) === -1);
+      if (missing.length) {
+        console.warn('[dayCatalog.validate] rawData contains days not present in dayCatalog:', missing);
+        // non-destructive auto-fill so UI shows a sensible label instead of falling back to 'all'
+        missing.forEach(function(d){
+          if (!dayCatalog[d]) {
+            dayCatalog[d] = { label: `Day ${d}`, story: null };
+            console.info('[dayCatalog.validate] added placeholder for Day', d);
+          }
+        });
+      }
+      const orphan = catalogDays.filter(function(d){ return dataDays.indexOf(d) === -1; });
+      if (orphan.length) console.info('[dayCatalog.validate] dayCatalog contains days with no rawData (expected placeholders):', orphan);
+    } catch (err) {
+      console.error('[dayCatalog.validateCoverage] error', err);
+    }
+  };
+}
+
     // DAY 01
+const rawData = [
     { day: 1, word: "tall", meaning: "키가 큰, 높은" },
     { day: 1, word: "cut", meaning: "베다; 자르다" },
     { day: 1, word: "nice", meaning: "멋진, 좋은, 괜찮은" },
@@ -1067,48 +1234,48 @@ const rawData = [
     { day: 46, word: "turn over", meaning: "뒤집다" },
 
     // DAY 47
-    { day: 47, word: "item", meaning: "품목, 아이템" },
-    { day: 47, word: "character", meaning: "성격; 등장인물" },
-    { day: 47, word: "popular", meaning: "인기 있는" },
-    { day: 47, word: "scene", meaning: "장면" },
-    { day: 47, word: "topic", meaning: "주제" },
-    { day: 47, word: "exercise", meaning: "운동" },
-    { day: 47, word: "choice", meaning: "선택" },
-    { day: 47, word: "promise", meaning: "약속" },
-    { day: 47, word: "everywhere", meaning: "어디에나" },
-    { day: 47, word: "follow", meaning: "따르다" },
-    { day: 47, word: "language", meaning: "언어" },
-    { day: 47, word: "hiking", meaning: "하이킹" },
-    { day: 47, word: "recipe", meaning: "요리법" },
-    { day: 47, word: "simple", meaning: "단순한" },
-    { day: 47, word: "traveler", meaning: "여행자" },
-    { day: 47, word: "yet", meaning: "아직" },
-    { day: 47, word: "introduce", meaning: "소개하다" },
-    { day: 47, word: "zone", meaning: "구역" },
-    { day: 47, word: "make it", meaning: "해내다" },
-    { day: 47, word: "over and over", meaning: "반복해서" },
+   { day: 47, word: "such as", meaning: "~와 같은" },
+        { day: 47, word: "inform", meaning: "알리다, 통지하다" },
+        { day: 47, word: "spray", meaning: "뿌리다; 분무기" },
+        { day: 47, word: "waste", meaning: "낭비하다; 쓰레기" },
+        { day: 47, word: "neighborhood", meaning: "동네, 지역; 이웃" },
+        { day: 47, word: "unlike", meaning: "~와 다른; ~답지 않은" },
+        { day: 47, word: "earthquake", meaning: "지진" },
+        { day: 47, word: "delivery", meaning: "배달, 배송" },
+        { day: 47, word: "liberty", meaning: "자유" },
+        { day: 47, word: "original", meaning: "원래의; 독창적인" },
+        { day: 47, word: "state", meaning: "상태; (미국의) 주" },
+        { day: 47, word: "relate", meaning: "관련시키다" },
+        { day: 47, word: "various", meaning: "다양한" },
+        { day: 47, word: "announcer", meaning: "아나운서" },
+        { day: 47, word: "appearance", meaning: "외모; 등장" },
+        { day: 47, word: "canal", meaning: "운하, 수로" },
+        { day: 47, word: "horror", meaning: "공포" },
+        { day: 47, word: "feather", meaning: "깃털" },
+        { day: 47, word: "infection", meaning: "감염, 전염병" },
+        { day: 47, word: "counsel", meaning: "상담하다" },
 
-    // DAY 48
-    { day: 48, word: "poem", meaning: "시" },
-    { day: 48, word: "view", meaning: "경치; 관점" },
-    { day: 48, word: "champion", meaning: "챔피언" },
-    { day: 48, word: "discover", meaning: "발견하다" },
-    { day: 48, word: "focus", meaning: "집중하다" },
-    { day: 48, word: "huge", meaning: "거대한" },
-    { day: 48, word: "marry", meaning: "결혼하다" },
-    { day: 48, word: "reach", meaning: "도달하다" },
-    { day: 48, word: "tradition", meaning: "전통" },
-    { day: 48, word: "script", meaning: "대본" },
-    { day: 48, word: "president", meaning: "대통령" },
-    { day: 48, word: "nobody", meaning: "아무도 ~않다" },
-    { day: 48, word: "hunter", meaning: "사냥꾼" },
-    { day: 48, word: "please", meaning: "제발; 기쁘게 하다" },
-    { day: 48, word: "machine", meaning: "기계" },
-    { day: 48, word: "owner", meaning: "주인" },
-    { day: 48, word: "factory", meaning: "공장" },
-    { day: 48, word: "tower", meaning: "탑" },
-    { day: 48, word: "turn down", meaning: "거절하다" },
-    { day: 48, word: "such as", meaning: "~와 같은" },
+        // Day 48 (No. 21 ~ 40)
+        { day: 48, word: "tragedy", meaning: "비극" },
+        { day: 48, word: "climbing", meaning: "등반, 등산" },
+        { day: 48, word: "friendship", meaning: "우정, 교우 관계" },
+        { day: 48, word: "extra", meaning: "추가의, 여분의" },
+        { day: 48, word: "make it", meaning: "해내다; 제시간에 가다" },
+        { day: 48, word: "justice", meaning: "정의; 사법" },
+        { day: 48, word: "give away", meaning: "거저 주다; 폭로하다" },
+        { day: 48, word: "vet", meaning: "수의사" },
+        { day: 48, word: "strength", meaning: "힘; 강점" },
+        { day: 48, word: "spoil", meaning: "망치다; 버릇없게 키우다" },
+        { day: 48, word: "concern", meaning: "우려, 걱정; 관심사" },
+        { day: 48, word: "purpose", meaning: "목적, 용도" },
+        { day: 48, word: "compass", meaning: "나침반; 컴퍼스" },
+        { day: 48, word: "polar", meaning: "극지방의; 남(북)극의" },
+        { day: 48, word: "heaven", meaning: "천국, 낙원" },
+        { day: 48, word: "sign up for", meaning: "~을 신청하다" },
+        { day: 48, word: "deliver", meaning: "배달하다; (연설을) 하다" },
+        { day: 48, word: "treasure", meaning: "보물" },
+        { day: 48, word: "bless", meaning: "축복하다" },
+        { day: 48, word: "regret", meaning: "후회하다; 후회, 유감" },
 
     // DAY 49
     { day: 49, word: "common", meaning: "흔한; 공통의" },
