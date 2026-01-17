@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>킹왕짱 RPG</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div style="font-size:16px; font-weight:800; color:var(--primary);">킹왕짱 RPG</div>
+        <div style="text-align:right;">
+            <div class="gold-display">💰 <span id="ui-gold">0</span> G</div>
+            <div class="timer-bar-bg"><div id="ui-timer" class="timer-bar-fill"></div></div>
+        </div>
+    </div>
+
+    <div id="game-screen" style="display:none; height:100%; flex-direction:column;">
+        <div class="battle-arena">
+            <div class="info-badge" id="wave-badge">Wave: 1</div>
+            <div class="durability-badge" id="durability-badge">🥊 30/30</div>
+            
+            <div class="char-wrapper" id="hero-wrapper">
+                <div id="hero-head" class="hero-equip-slot"></div>
+                <div id="hero-hand-1" class="hero-equip-slot"></div>
+                <div id="hero-hand-2" class="hero-equip-slot"></div>
+                <div id="hero-feet" class="hero-equip-slot"></div>
+                <img id="hero-img" class="char-img" src="" alt="Hero">
+                <div id="hero-weapon" class="equipped-weapon"></div>
+            </div>
+
+            <div class="effect-layer">
+                <div id="effect-slash"></div>
+                <div id="effect-void-bg" class="slash-void-bg"></div>
+                <div id="effect-void-core" class="slash-void-core"></div>
+            </div>
+
+            <div class="char-wrapper">
+                <img id="monster-img" class="char-img" src="" alt="Monster">
+            </div>
+            <div id="dmg-txt" class="damage-txt"></div>
+        </div>
+
+        <div class="quiz-area">
+            <div class="question-box">
+                <div class="q-label" id="q-label">MEANING</div>
+                <div class="q-text" id="q-text">Loading...</div>
+            </div>
+
+            <div id="skill-display" class="skill-bar"></div>
+
+            <div id="options-box" class="options-grid"></div>
+
+            <div id="boss-box" class="boss-ui">
+                <div style="text-align:center; color:#FF5252; font-weight:bold;" id="boss-title">⚠️ FINAL BOSS</div>
+                <div id="boss-hint" class="boss-hint"></div>
+                <input type="text" id="boss-input" class="boss-input" placeholder="정답 입력" autocomplete="off">
+                <button class="boss-submit" onclick="game.checkBossAnswer()">공격하기</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="start-screen" class="screen-overlay">
+        <div class="card">
+            <h1 style="color:var(--primary); margin:0 0 5px 0;">킹왕짱 RPG</h1>
+            <p style="color:#888; font-size:12px; margin-bottom:20px;">부자가 되어 전설을 만드세요!</p>
+            
+            <div class="stats-box">
+                <div class="stat-item">📝 푼 문제<div class="stat-val" id="stat-solved">0</div></div>
+                <div class="stat-item">✅ 정답<div class="stat-val" id="stat-correct">0</div></div>
+                <div class="stat-item">🎯 정답률<div class="stat-val" id="stat-rate">0%</div></div>
+            </div>
+
+            <div style="text-align:left; margin-top:20px;">
+                <label>모험 지역</label>
+                <select id="day-select">
+                    <option value="1">Day 1 (시작의 평원)</option>
+                    <option value="2">Day 2 (행복의 언덕)</option>
+                    <option value="3">Day 3 (지혜의 도시)</option>
+                    <option value="4">Day 4 (꽃의 정원)</option>
+                    <option value="5">Day 5 (비 내리는 호수)</option>
+                    <option value="6">Day 6 (조용한 마을)</option>
+                    <option value="7">Day 7 (속삭이는 숲)</option>
+                    <option value="8">Day 8 (눈 덮인 산)</option>
+                    <option value="9">Day 9 (별빛 극장)</option>
+                    <option value="10">Day 10 (음악의 계곡)</option>
+                    <option value="11">Day 11 (바람의 언덕)</option>
+                    <option value="12">Day 12 (분노의 하늘)</option>
+                    <option value="13">Day 13 (시간의 나라)</option>
+                    <option value="14">Day 14 (구름의 바다)</option>
+                    <option value="15">Day 15 (잠자는 숲)</option>
+                    <option value="16">Day 16 (강철의 도시)</option>
+                    <option value="17">Day 17 (노래하는 길)</option>
+                    <option value="18">Day 18 (꿈의 다리)</option>
+                    <option value="19">Day 19 (사랑의 해안)</option>
+                    <option value="20">Day 20 (예술의 광장)</option>
+                    <option value="21">Day 21 (도서관의 미로)</option>
+                    <option value="22">Day 22 (여행자의 공항)</option>
+                    <option value="23">Day 23 (웃음의 시장)</option>
+                    <option value="24">Day 24 (행운의 박물관)</option>
+                    <option value="25">Day 25 (변화의 무대)</option>
+                    <option value="26">Day 26 (태양의 역)</option>
+                    <option value="27">Day 27 (돌봄의 바다)</option>
+                    <option value="28">Day 28 (진실의 공원)</option>
+                    <option value="29">Day 29 (과학의 서점)</option>
+                    <option value="30">Day 30 (마법의 숲)</option>
+                    <option value="31">Day 31 (넓은 사무실)</option>
+                    <option value="32">Day 32 (위험한 캠프)</option>
+                    <option value="33">Day 33 (역사의 홀)</option>
+                    <option value="34">Day 34 (거울의 체육관)</option>
+                    <option value="35">Day 35 (흥미의 강)</option>
+                    <option value="36">Day 36 (건강의 농장)</option>
+                    <option value="37">Day 37 (비밀의 계곡)</option>
+                    <option value="38">Day 38 (축제의 언덕)</option>
+                    <option value="39">Day 39 (신문 가판대)</option>
+                    <option value="40">Day 40 (정글의 심장)</option>
+                    <option value="41">Day 41 (완벽한 찻집)</option>
+                    <option value="42">Day 42 (실수의 들판)</option>
+                    <option value="43">Day 43 (만화방)</option>
+                    <option value="44">Day 44 (조용한 마을)</option>
+                    <option value="45">Day 45 (숲속 마을)</option>
+                    <option value="46">Day 46 (비명 숲)</option>
+                    <option value="47">Day 47 (붉은 사막)</option>
+                    <option value="48">Day 48 (강철 성)</option>
+                    <option value="49">Day 49 (심해 신전)</option>
+                    <option value="50">Day 50 (마왕 탑)</option>
+                    <option value="all" selected>전체 (혼돈의 땅)</option>
+                </select>
+
+                <label>난이도 (몬스터 수)</label>
+                <select id="count-select">
+                    <option value="5">5 마리 (쉬움)</option>
+                    <option value="10" selected>10 마리 (보통)</option>
+                    <option value="20">20 마리 (어려움)</option>
+                </select>
+            </div>
+
+            <button class="btn-main" id="start-battle-btn">전투 시작 ⚔️</button>
+            <button class="btn-main btn-boss-rush" id="boss-rush-btn">🔥 보스 러시 (무한)</button>
+            <button class="btn-main btn-shop" onclick="shop.open()">상점 🛒</button>
+            <button class="btn-main btn-inv" onclick="inventory.open()">인벤토리 🎒</button>
+        </div>
+    </div>
+
+    <div id="inventory-screen" class="screen-overlay" style="display:none;">
+        <div class="card">
+            <div id="inv-item-detail" style="display:none;">
+                <div id="detail-header">
+                    <div id="detail-icon"></div>
+                    <div id="detail-name"></div>
+                    <button id="detail-close" onclick="inventory.hideDetails()">X</button>
+                </div>
+                <div id="detail-desc"></div>
+                <div id="detail-actions"></div>
+            </div>
+
+            <div class="inv-header">
+                <h2>인벤토리</h2>
+                <div style="color:var(--gold);">보유 골드: <span id="inv-gold">0</span> G</div>
+            </div>
+            <div class="inv-container">
+                <div class="inv-player">
+                    <div class="inv-slot" id="inv-weapon"></div>
+                    <div class="inv-slot" id="inv-head"></div>
+                    <div class="inv-body">
+                        <div class="inv-slot" id="inv-hand-1"></div>
+                        <div class="inv-torso"></div>
+                        <div class="inv-slot" id="inv-hand-2"></div>
+                    </div>
+                    <div class="inv-legs">
+                        <div class="inv-slot" id="inv-foot-1"></div>
+                        <div class="inv-slot" id="inv-foot-2" onclick="inventory.unequip('foot-1')"></div>
+                    </div>
+                </div>
+                <div class="inv-storage">
+                    <h3>보관함 (장비)</h3>
+                    <div class="inv-items">
+                    </div>
+                    <div class="inv-capacity">용량: <span id="inv-cap">0</span> / <span id="inv-max-cap">3</span></div>
+
+                    <h3 style="margin-top: 20px;">보유 유물</h3>
+                    <div class="inv-relics">
+                    </div>
+                </div>
+            </div>
+            <button class="btn-main btn-blue" onclick="inventory.close()">나가기</button>
+        </div>
+    </div>
+
+
+    <div id="story-screen" class="screen-overlay" style="display:none;">
+        <div class="card">
+            <div class="story-title" id="story-title">Title</div>
+            <div class="story-text" id="story-text"></div>
+            <button class="btn-main" id="story-btn">계속하기</button>
+        </div>
+    </div>
+
+    <div id="shop-screen" class="screen-overlay" style="display:none;">
+        <div class="card">
+            <div class="shop-header">
+                <h2>상점</h2>
+                <div style="color:var(--gold);">보유 골드: <span id="shop-gold">0</span> G</div>
+            </div>
+            <div class="shop-body">
+                <div id="shop-container" style="text-align:left;"></div>
+            </div>
+            <div class="shop-footer">
+                <button class="btn-main btn-blue" onclick="shop.close()">나가기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen-overlay" style="display:none;">
+        <div class="card">
+            <h1 id="res-title">Clear!</h1>
+            <div style="font-size:50px; margin:10px;">🏆</div>
+            <div style="background:#111; padding:15px; border-radius:10px; margin:10px 0;">
+                <div style="color:var(--gold); display:flex; justify-content:space-between;"><span>이번 획득:</span> <span>+<span id="res-gain">0</span> G</span></div>
+                <div style="color:var(--danger); display:flex; justify-content:space-between;"><span>이번 손실:</span> <span>-<span id="res-lost">0</span> G</span></div>
+                <div style="border-top:1px solid #333; margin-top:10px; padding-top:10px; font-weight:bold; font-size:18px; color:var(--primary);">
+                    내 지갑 총액: <span id="res-current-total">0</span> G
+                </div>
+            </div>
+            <button class="btn-main" onclick="location.reload()">마을로 귀환</button>
+        </div>
+    </div>
+
+
+
+    <div id="secret-menu-overlay" class="screen-overlay" style="display:none; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
+
+        <div id="password-modal" class="card">
+
+            <h3>비밀번호 입력</h3>
+
+            <div id="password-input-boxes" style="display: flex; gap: 5px; justify-content: center; margin: 20px 0;">
+
+                
+
+            </div>
+
+            <p id="password-error" style="color:var(--danger); display:none;">비밀번호가 틀렸습니다.</p>
+
+            <div id="password-numpad" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 200px; margin: 0 auto;">
+
+                <button class="num-btn" onclick="secret.enter(1)">1</button>
+
+                <button class="num-btn" onclick="secret.enter(2)">2</button>
+
+                <button class="num-btn" onclick="secret.enter(3)">3</button>
+
+                <button class="num-btn" onclick="secret.enter(4)">4</button>
+
+                <button class="num-btn" onclick="secret.enter(5)">5</button>
+
+                <button class="num-btn" onclick="secret.enter(6)">6</button>
+
+                <button class="num-btn" onclick="secret.enter(7)">7</button>
+
+                <button class="num-btn" onclick="secret.enter(8)">8</button>
+
+                <button class="num-btn" onclick="secret.enter(9)">9</button>
+
+                <button class="num-btn" onclick="secret.del()">⌫</button>
+
+                <button class="num-btn" onclick="secret.enter(0)">0</button>
+
+                <button class="num-btn" onclick="secret.close()">X</button>
+
+            </div>
+
+        </div>
+
+
+
+            <div id="gold-adjuster-modal" class="card" style="display:none;">
+
+
+
+                    <h3>골드 조정</h3>
+
+
+
+                    <div class="gold-adjuster">
+
+
+
+                        <div class="gold-adjust-label">현재 골드</div>
+
+
+
+                        <div id="current-gold-display" class="gold-display-box">0</div>
+
+
+
+                        <div class="gold-adjust-label">조정 골드</div>
+
+
+
+                        <div class="gold-adjust-controls">
+
+
+
+                            <button id="gold-down" class="gold-arrow">▼</button>
+
+
+
+                            <div id="adjust-gold-display" class="gold-display-box">0</div>
+
+
+
+                            <button id="gold-up" class="gold-arrow">▲</button>
+
+
+
+                        </div>
+
+
+
+                    </div>
+
+
+
+                    <button class="btn-main" onclick="secret.applyGold()">적용</button>
+
+
+
+                    <button class="btn-main btn-blue" onclick="secret.close()">닫기</button>
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+                <script src="scripts/words.js"></script>
+
+
+
+                <script src="scripts/config.js"></script>
+
+
+
+                <script src="scripts/items.js"></script>
+
+
+
+                <script src="scripts/app.js"></script>
+
+
+
+        </body>
+
+
+
+        </html>
