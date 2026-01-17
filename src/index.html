@@ -115,9 +115,22 @@
             <div class="inv-container">
                 <div class="inv-player">
 
+                    <!-- Head / hands / torso layout for "사람 모양" 슬롯 -->
+                    <div class="inv-head" style="margin-bottom:8px;">
+                        <div class="inv-slot" id="inv-head" role="button" tabindex="0" aria-label="머리 슬롯" onclick="inventory.unequip('head')"></div>
+                    </div>
+
+                    <div class="inv-body">
+                        <div class="inv-slot" id="inv-hand-2" role="button" tabindex="0" aria-label="왼손 슬롯" onclick="inventory.unequip('hand-2')"></div>
+                        <div class="inv-torso">
+                            <div class="inv-slot" id="inv-weapon" role="button" tabindex="0" aria-label="무기 슬롯" onclick="inventory.unequip('weapon')"></div>
+                        </div>
+                        <div class="inv-slot" id="inv-hand-1" role="button" tabindex="0" aria-label="오른손 슬롯" onclick="inventory.unequip('hand-1')"></div>
+                    </div>
+
                     <div class="inv-legs">
-                        <div class="inv-slot" id="inv-foot-1"></div>
-                        <div class="inv-slot" id="inv-foot-2" onclick="inventory.unequip('foot-1')"></div>
+                        <div class="inv-slot" id="inv-foot-1" role="button" tabindex="0" aria-label="왼발 슬롯" onclick="inventory.unequip('foot-1')"></div>
+                        <div class="inv-slot" id="inv-foot-2" role="button" tabindex="0" aria-label="오른발 슬롯" onclick="inventory.unequip('foot-2')"></div>
                     </div>
                 </div>
                 <div class="inv-storage">
@@ -131,7 +144,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-main btn-blue" onclick="inventory.close()">나가기</button>
+            <button id="inv-close-btn" class="btn-main btn-blue" onclick="inventory.close()" aria-label="인벤토리 닫기">나가기</button>
         </div>
     </div>
 
@@ -275,6 +288,7 @@
 
 
                     <button class="btn-main btn-blue" onclick="secret.close()">닫기</button>
+                    <button class="btn-main" style="background: var(--danger); margin-top: 10px;" onclick="secret.resetStats()">통계 초기화</button>
 
 
 

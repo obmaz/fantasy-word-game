@@ -86,6 +86,13 @@ const inventory = {
         document.getElementById('inventory-screen').style.display = 'flex';
         inventory.hideDetails(); // Hide details on open
         inventory.render();
+
+        // Accessibility / small-viewport fallback: ensure the close button is reachable
+        const closeBtn = document.getElementById('inv-close-btn');
+        if (closeBtn) {
+            try { closeBtn.focus({ preventScroll: true }); } catch (err) { try { closeBtn.focus(); } catch (__) { /* ignore */ } }
+            try { closeBtn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (__) { /* ignore */ }
+        }
     },
     close: () => {
         document.getElementById('inventory-screen').style.display = 'none';
@@ -200,6 +207,16 @@ const inventory = {
                 relicEl.innerHTML = relicInfo;
                 relicsContainer.appendChild(relicEl);
             }
+        });
+
+        // Accessibility: allow Enter / Space to activate focused inventory slots
+        document.querySelectorAll('.inv-slot[tabindex]').forEach(el => {
+            el.onkeydown = (ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                    ev.preventDefault();
+                    el.click();
+                }
+            };
         });
     },
     showDetails: (id, type) => {
@@ -622,7 +639,8 @@ const story = {
 
         // Prefer the Day label from the canonical catalog; fall back to legacy views
         const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'rush' ? 'Boss Rush' : `Day ${story.day}`));
-        const displayTitle = (data && data.title && String(data.title).trim() && data.title !== dayLabel) ? `${dayLabel} — ${data.title}` : dayLabel; 
+        const _t = data && data.title ? String(data.title).trim() : '';
+        const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel; 
 
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
@@ -705,7 +723,8 @@ function __runGameSanityChecks(opts = {}) {
       if (!spriteBoss || typeof spriteBoss !== 'string') row.notes.push('missing boss sprite');
 
       const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : `Day ${day}`;
-      const displayTitle = (s && s.title && String(s.title).trim() && s.title !== label) ? `${label} — ${s.title}` : label;
+      const _st = s && s.title ? String(s.title).trim() : '';
+      const displayTitle = (_st && String(label).indexOf(_st) === -1) ? `${label} — ${_st}` : label;
 
       try {
         // non-destructive title check: write & read back
@@ -1076,7 +1095,7 @@ ui.updateMainStats();
 ui.updateSkills();
 
 const secret = {
-    password: "770477",
+    password: "770458",
     entered: "",
     adjustGold: 0,
 
@@ -1162,6 +1181,17 @@ const secret = {
     applyGold: () => {
         db.addGold(secret.adjustGold);
         secret.close();
+    },
+
+    resetStats: () => {
+        if (confirm("정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+            db.stats.solved = 0;
+            db.stats.correct = 0;
+            db.save();
+            ui.updateMainStats();
+            alert("통계가 초기화되었습니다.");
+            secret.close();
+        }
     }
 };
 function initSelections() {
