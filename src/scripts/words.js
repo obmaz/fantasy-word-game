@@ -1,65 +1,6 @@
-const dayInfo = {
-    1: "Day 1 (시작의 평원)",
-    2: "Day 2 (행복의 언덕)",
-    3: "Day 3 (지혜의 도시)",
-    4: "Day 4 (꽃의 정원)",
-    5: "Day 5 (비 내리는 호수)",
-    6: "Day 6 (조용한 마을)",
-    7: "Day 7 (속삭이는 숲)",
-    8: "Day 8 (눈 덮인 산)",
-    9: "Day 9 (별빛 극장)",
-    10: "Day 10 (음악의 계곡)",
-    11: "Day 11 (바람의 언덕)",
-    12: "Day 12 (분노의 하늘)",
-    13: "Day 13 (시간의 나라)",
-    14: "Day 14 (구름의 바다)",
-    15: "Day 15 (잠자는 숲)",
-    16: "Day 16 (강철의 도시)",
-    17: "Day 17 (노래하는 길)",
-    18: "Day 18 (꿈의 다리)",
-    19: "Day 19 (사랑의 해안)",
-    20: "Day 20 (예술의 광장)",
-    21: "Day 21 (도서관의 미로)",
-    22: "Day 22 (여행자의 공항)",
-    23: "Day 23 (웃음의 시장)",
-    24: "Day 24 (행운의 박물관)",
-    25: "Day 25 (변화의 무대)",
-    26: "Day 26 (태양의 역)",
-    27: "Day 27 (돌봄의 바다)",
-    28: "Day 28 (진실의 공원)",
-    29: "Day 29 (과학의 서점)",
-    30: "Day 30 (마법의 숲)",
-    31: "Day 31 (넓은 사무실)",
-    32: "Day 32 (위험한 캠프)",
-    33: "Day 33 (역사의 홀)",
-    34: "Day 34 (거울의 체육관)",
-    35: "Day 35 (흥미의 강)",
-    36: "Day 36 (건강의 농장)",
-    37: "Day 37 (비밀의 계곡)",
-    38: "Day 38 (축제의 언덕)",
-    39: "Day 39 (신문 가판대)",
-    40: "Day 40 (정글의 심장)",
-    41: "Day 41 (완벽한 찻집)",
-    42: "Day 42 (실수의 들판)",
-    43: "Day 43 (만화방)",
-    44: "Day 44 (조용한 마을)",
-    45: "Day 45 (숲속 마을)",
-    46: "Day 46 (비명 숲)",
-    47: "Day 47 (붉은 사막)",
-    48: "Day 48 (강철 성)",
-    49: "Day 49 (심해 신전)",
-    50: "Day 50 (마왕 탑)",
-    51: "Day 51 (잊혀진 사원)",
-    52: "Day 52 (달빛 연못)",
-    53: "Day 53 (은빛 초원)",
-    54: "Day 54 (모래바람 고원)",
-    55: "Day 55 (유령선 항구)",
-    56: "Day 56 (깊은 동굴)",
-    57: "Day 57 (하늘 정원)",
-    58: "Day 58 (빙하 계곡)",
-    59: "Day 59 (불의 심장)",
-    60: "Day 60 (황혼의 탑)"
-};
+// NOTE: `dayInfo` has been consolidated into `dayCatalog` (single source-of-truth).
+// The original per-day labels were migrated into `dayCatalog` — see the canonical builder below.
+// For backward compatibility a lightweight `dayInfo` view is derived from `dayCatalog` further down.
 
 const stories = {
     1: { title: "시작의 평원", intro: "잔잔한 풀밭과 따뜻한 햇살이 있는 평화로운 시작 지역입니다.\n여기서 모험의 기초를 배우게 됩니다.", win: "첫 시련을 통과했습니다. 앞으로의 여정이 기대됩니다.", lose: "초반의 실수로 물러났습니다. 다시 준비해 도전하세요." },
@@ -166,26 +107,53 @@ const stories = {
     }
 };
 
-// build merged dayCatalog (derived from existing `dayInfo` + `stories`)
+// canonical dayCatalog — single source-of-truth for day labels + story objects
 const dayCatalog = (function(){
   const c = {};
-  if (typeof dayInfo !== 'undefined') {
-    Object.keys(dayInfo).forEach(k => {
+  // Prefer explicit `stories` entries for label + story content
+  if (typeof stories !== 'undefined') {
+    Object.keys(stories).forEach(k => {
       if (!isNaN(Number(k))) {
-        c[k] = { label: dayInfo[k], story: (typeof stories !== 'undefined' && stories[k]) ? stories[k] : null };
+        const s = stories[k];
+        const label = (s && s.title) ? `Day ${k} (${s.title})` : `Day ${k}`;
+        c[k] = { label, story: s || null };
       }
     });
   }
-  // ensure 'all' and 'rush' are present in the catalog
-  c.all = { label: (typeof stories !== 'undefined' && stories.all && stories.all.title) ? stories.all.title : '전체 (혼돈의 균열)', story: (typeof stories !== 'undefined' ? stories.all : null) };
-  c.rush = { label: (typeof stories !== 'undefined' && stories.rush && stories.rush.title) ? stories.rush.title : '무한의 전장 (Boss Rush)', story: (typeof stories !== 'undefined' ? stories.rush : null) };
+
+  // NOTE: coverage from `rawData` is intentionally applied later by
+  // `dayCatalog.validateCoverage()` to avoid referencing `rawData` before
+  // it is initialized (prevents TDZ / runtime ReferenceError).
+
+  // ensure 'all' and 'rush' are present in the canonical catalog
+  c.all = { label: (stories && stories.all && stories.all.title) ? stories.all.title : '혼돈의 균열', story: (stories && stories.all) ? stories.all : null };
+  c.rush = { label: (stories && stories.rush && stories.rush.title) ? stories.rush.title : '무한의 전장 (Boss Rush)', story: (stories && stories.rush) ? stories.rush : null };
   return c;
 })();
 
 // derived views (do NOT redeclare existing globals)
 const derivedDayInfo = Object.fromEntries(Object.entries(dayCatalog).filter(([k]) => !isNaN(Number(k))).map(([k,v]) => [k, v.label]));
 const derivedStories = Object.fromEntries(Object.entries(dayCatalog).map(([k,v]) => [k, v.story]));
-// NOTE: `dayInfo` and `stories` remain untouched here for backward compatibility.
+// NOTE: `dayCatalog` is now the single source-of-truth. Expose legacy globals NON-DESTRUCTIVELY
+// so existing codepaths continue to work (do not overwrite if already present).
+// Legacy accessors (DEPRECATED): expose backward-compatible views but warn once and forward to `dayCatalog`.
+(function(){
+  const WARN = (k) => () => { console.warn(`[deprecated] window.${k} is deprecated — use dayCatalog (single source-of-truth)`); };
+  if (typeof window !== 'undefined') {
+    if (!Object.prototype.hasOwnProperty.call(window, 'dayInfo')) {
+      Object.defineProperty(window, 'dayInfo', {
+        configurable: true,
+        get: function(){ if (!this.___warned_dayInfo) { WARN('dayInfo')(); this.___warned_dayInfo = true; } return Object.assign({}, derivedDayInfo); }
+      });
+    }
+    if (!Object.prototype.hasOwnProperty.call(window, 'stories')) {
+      Object.defineProperty(window, 'stories', {
+        configurable: true,
+        get: function(){ if (!this.___warned_stories) { WARN('stories')(); this.___warned_stories = true; } return Object.assign({}, derivedStories); }
+      });
+    }
+  }
+})();
 
 // runtime validator: compares rawData days → dayCatalog and (optionally) auto-fills lightweight placeholders
 // - safe to call after scripts load (does not run automatically at define-time)

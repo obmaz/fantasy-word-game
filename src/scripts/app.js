@@ -584,18 +584,18 @@ function pickMonsterSprite(q, isBoss) {
 function resolveStoryData(day) {
     // prefer canonical catalog
     if (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].story) return dayCatalog[day].story;
-    if (day === 'rush') return (stories && stories['rush']) || null;
-    const s = (stories && stories[day]) ? stories[day] : null;
+    if (day === 'rush') return (dayCatalog && dayCatalog['rush'] && dayCatalog['rush'].story) || null;
+    const s = (dayCatalog && dayCatalog[day] && dayCatalog[day].story) ? dayCatalog[day].story : null;
     if (s) return s;
 
     const opt = document.querySelector(`#day-select option[value="${day}"]`);
-    const optText = opt ? opt.textContent : (day === 'all' ? (stories && stories['all'] && stories['all'].title) : `Day ${day}`);
+    const optText = opt ? opt.textContent : (day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : `Day ${day}`);
     return {
         title: optText,
         intro: `선택한 지역 — ${optText}`,
-        win: (stories && stories['all'] && stories['all'].win) || '',
-        lose: (stories && stories['all'] && stories['all'].lose) || ''
-    };
+        win: (dayCatalog && dayCatalog['all'] && dayCatalog['all'].story && dayCatalog['all'].story.win) || '',
+        lose: (dayCatalog && dayCatalog['all'] && dayCatalog['all'].story && dayCatalog['all'].story.lose) || ''
+    }; 
 } 
 
 const story = {
@@ -610,7 +610,7 @@ const story = {
         const data = resolveStoryData(story.day);
         
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
-        const hasEntry = Object.prototype.hasOwnProperty.call(stories, story.day);
+        const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
         const optNode = document.querySelector(`#day-select option[value="${story.day}"]`);
         console.log('[story.startIntro] dbg -> day=', story.day, 'hasEntry=', hasEntry, 'optText=', optNode && optNode.textContent);
         console.log('[story.startIntro] dbg -> data.title=', data.title);
@@ -621,7 +621,7 @@ const story = {
         console.log('[story.startIntro] current #story-title before=', titleEl && titleEl.innerText);
 
         // Prefer the Day label from the canonical catalog; fall back to legacy views
-        const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : ((story.day && dayInfo && dayInfo[story.day]) ? dayInfo[story.day] : (story.day === 'all' ? (stories && stories['all'] && stories['all'].title) : (story.day === 'rush' ? 'Boss Rush' : `Day ${story.day}`)));
+        const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'rush' ? 'Boss Rush' : `Day ${story.day}`));
         const displayTitle = (data && data.title && String(data.title).trim() && data.title !== dayLabel) ? `${dayLabel} — ${data.title}` : dayLabel; 
 
         document.getElementById('start-screen').style.display = 'none';
@@ -704,7 +704,7 @@ function __runGameSanityChecks(opts = {}) {
       if (!spriteNormal || typeof spriteNormal !== 'string') row.notes.push('missing normal sprite');
       if (!spriteBoss || typeof spriteBoss !== 'string') row.notes.push('missing boss sprite');
 
-      const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : (dayInfo && dayInfo[dayKey]) ? dayInfo[dayKey] : `Day ${day}`;
+      const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : `Day ${day}`;
       const displayTitle = (s && s.title && String(s.title).trim() && s.title !== label) ? `${label} — ${s.title}` : label;
 
       try {
@@ -1168,11 +1168,11 @@ function initSelections() {
     const daySelect = document.getElementById('day-select');
     if (!daySelect) return;
 
-    // Gather days from dayInfo (preferred) and rawData (in case new days exist)
+    // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
     if (typeof rawData !== 'undefined' && Array.isArray(rawData)) rawData.forEach(r => { if (r && r.day) daysFromData.add(Number(r.day)); });
 
-    const infoDays = (typeof dayCatalog !== 'undefined') ? Object.keys(dayCatalog).filter(k => !isNaN(Number(k))).map(Number) : ((typeof dayInfo !== 'undefined') ? Object.keys(dayInfo).map(Number) : []);
+    const infoDays = (typeof dayCatalog !== 'undefined') ? Object.keys(dayCatalog).filter(k => !isNaN(Number(k))).map(Number) : [];
     const allDays = new Set([...infoDays, ...Array.from(daysFromData)]);
 
     const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a,b) => a - b).filter(d => d <= 60);
@@ -1180,7 +1180,7 @@ function initSelections() {
     // Build options
     let html = '';
     sortedDays.forEach(d => {
-        const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : ((dayInfo && dayInfo[d]) ? dayInfo[d] : `Day ${d}`);
+        const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : `Day ${d}`;
         html += `<option value="${d}">${label}</option>`;
     });
     html += `<option value="all">전체 (혼돈의 균열)</option>`;
