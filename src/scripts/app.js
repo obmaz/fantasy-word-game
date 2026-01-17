@@ -29,7 +29,30 @@ const db = {
     addGold: (n) => { db.gold += n; db.save(); },
     subGold: (n) => { db.gold -= n; db.save(); }, // Subtract but don't clamp here
     has: (id) => db.owned.includes(id),
-    equip: (id) => { db.equippedWeapon = id; db.save(); ui.updateVisuals(); },
+    equip: (id) => {
+        // route equip through the weapon metadata so category/slot rules are consistent
+        const w = weapons.find(w => w.id === id);
+        if (!w) {
+            db.equippedWeapon = id;
+            db.save();
+            ui.updateVisuals();
+            return;
+        }
+
+        // If effect-type, place into hand-2; if weapon-type, place into hand-1
+        if (w.category === 'effect') {
+            // ensure only one effect
+            inventory.unequip('hand-2', true);
+            db.equipped['hand-2'] = id;
+        } else {
+            // weapon or default -> main weapon slot is hand-1
+            inventory.unequip('hand-1', true);
+            db.equipped['hand-1'] = id;
+            db.equippedWeapon = id; // keep backward-compatible multiplier reference
+        }
+        db.save();
+        ui.updateVisuals();
+    },
     addStats: (isCorrect) => {
         db.stats.solved++;
         if(isCorrect) db.stats.correct++;
@@ -63,7 +86,7 @@ const inventory = {
         const invContainer = document.querySelector('.inv-items');
         invContainer.innerHTML = '';
         document.getElementById('inv-gold').innerText = db.gold;
-        document.getElementById('inv-cap').innerText = (db.inventory.length + db.owned.filter(id => id !== 'basic' && id !== db.equippedWeapon).length) ;
+        document.getElementById('inv-cap').innerText = (db.inventory.length + db.owned.filter(id => id !== 'basic' && !Object.values(db.equipped).includes(id) && id !== db.equippedWeapon).length) ;
         document.getElementById('inv-max-cap').innerText = db.inventoryCapacity;
     
         // Clear inventory display slots
@@ -75,17 +98,21 @@ const inventory = {
             }
         });
     
-        // Render equipped weapon
+        // Render equipped weapon into its defined slot (weapon / hand-1 / hand-2 / head / foot-1...)
         const equippedWeaponData = weapons.find(w => w.id === db.equippedWeapon);
         if (equippedWeaponData && db.equippedWeapon !== 'basic') {
-            const weaponSlot = document.getElementById('inv-weapon');
-            weaponSlot.innerHTML = `<div class="inv-item">${equippedWeaponData.icon}</div>`;
-            weaponSlot.onclick = () => inventory.unequipWeapon();
+            const targetSlot = equippedWeaponData.slot || 'weapon';
+            const el = document.getElementById(`inv-${targetSlot}`) || document.getElementById('inv-weapon');
+            if (el) {
+                el.innerHTML = `<div class="inv-item">${equippedWeaponData.icon}</div>`;
+                el.onclick = () => inventory.unequip(targetSlot);
+            }
         }
 
-        // Render equipped items in inventory UI
+        // Render equipped items in inventory UI (including weapons that occupy hand/head/foot slots)
         for (const slot in db.equipped) {
-            const item = items.find(i => i.id === db.equipped[slot]);
+            const itemId = db.equipped[slot];
+            const item = items.find(i => i.id === itemId) || weapons.find(w => w.id === itemId);
             if (item) {
                 const equipSlot = document.getElementById(`inv-${slot}`);
                 if (equipSlot) {
@@ -177,24 +204,99 @@ const inventory = {
         const actionsContainer = document.getElementById('detail-actions');
         actionsContainer.innerHTML = '';
 
-        const equipBtn = document.createElement('button');
-        equipBtn.className = 'btn-main';
-        equipBtn.innerText = '장착하기';
-        equipBtn.onclick = () => {
-            inventory.equip(id, type);
-            inventory.hideDetails();
-        };
-        actionsContainer.appendChild(equipBtn);
+        // For weapons allow equipping to their defined slot(s)
+        if (type === 'weapon') {
+            const slot = itemData.slot || 'weapon';
+            if (slot === 'either-hand') {
+                const btn1 = document.createElement('button');
+                btn1.className = 'btn-main';
+                btn1.innerText = '오른손 장착';
+                btn1.onclick = () => { inventory.equip(id, 'weapon', 'hand-1'); inventory.hideDetails(); };
+                actionsContainer.appendChild(btn1);
+
+                const btn2 = document.createElement('button');
+                btn2.className = 'btn-main';
+                btn2.innerText = '왼손 장착';
+                btn2.onclick = () => { inventory.equip(id, 'weapon', 'hand-2'); inventory.hideDetails(); };
+                actionsContainer.appendChild(btn2);
+            } else {
+                const equipBtn = document.createElement('button');
+                equipBtn.className = 'btn-main';
+                equipBtn.innerText = `장착하기 (${slot})`;
+                equipBtn.onclick = () => { inventory.equip(id, 'weapon', slot); inventory.hideDetails(); };
+                actionsContainer.appendChild(equipBtn);
+            }
+
+            // allow unequip if currently equipped
+            if (db.equippedWeapon === id || Object.values(db.equipped).includes(id)) {
+                const unequipBtn = document.createElement('button');
+                unequipBtn.className = 'btn-main btn-blue';
+                unequipBtn.innerText = '해제';
+                unequipBtn.onclick = () => { inventory.unequipWeapon(); inventory.hideDetails(); };
+                actionsContainer.appendChild(unequipBtn);
+            }
+
+        } else {
+            // item (consumable / equipment)
+            const equipBtn = document.createElement('button');
+            equipBtn.className = 'btn-main';
+            equipBtn.innerText = '장착하기';
+            equipBtn.onclick = () => {
+                inventory.equip(id, type);
+                inventory.hideDetails();
+            };
+            actionsContainer.appendChild(equipBtn);
+
+            // if consumable, add a use button
+            const isConsumable = relics.find(r => r.id === id && r.type === 'consumable');
+            if (isConsumable) {
+                const useBtn = document.createElement('button');
+                useBtn.className = 'btn-main btn-blue';
+                useBtn.innerText = '사용하기';
+                useBtn.onclick = () => { db.useItem(id); inventory.hideDetails(); };
+                actionsContainer.appendChild(useBtn);
+            }
+        }
 
         document.getElementById('inv-item-detail').style.display = 'block';
     },
     hideDetails: () => {
         document.getElementById('inv-item-detail').style.display = 'none';
     },
-    equip: (id, type) => {
+    equip: (id, type, targetSlot) => {
         if (type === 'weapon') {
-            db.equip(id);
-        } else { // It's an item
+            const w = weapons.find(w => w.id === id);
+            if (!w) return;
+
+            // Enforce category -> canonical slot mapping
+            let slot;
+            if (w.category === 'weapon') slot = 'hand-1';
+            else if (w.category === 'effect') slot = 'hand-2';
+            else if (w.category === 'either') slot = targetSlot || 'hand-1';
+            else slot = targetSlot || w.slot || 'hand-1';
+
+            // reject invalid target slots (weapons only to hands)
+            if (!['hand-1', 'hand-2'].includes(slot)) {
+                alert('무기는 손 슬롯에만 장착할 수 있습니다.');
+                return;
+            }
+
+            // If equipping a weapon, ensure only one weapon exists (hand-1)
+            if (w.category === 'weapon' || slot === 'hand-1') {
+                // unequip any existing weapon in hand-1
+                inventory.unequip('hand-1', true);
+                db.equipped['hand-1'] = id;
+                db.equippedWeapon = id; // gameplay reference
+            } else if (w.category === 'effect' || slot === 'hand-2') {
+                // unequip existing effect
+                inventory.unequip('hand-2', true);
+                db.equipped['hand-2'] = id;
+            }
+
+            // ensure the weapon id is present in owned if applicable
+            if (!db.owned.includes(id)) db.owned.push(id);
+
+        } else { // It's an item (armor, boots, relic)
             const item = items.find(i => i.id === id);
             if (!item) return;
 
@@ -214,9 +316,22 @@ const inventory = {
         inventory.render();
         shop.render(); 
     },
-    unequipWeapon: () => {
-        if (db.equippedWeapon === 'basic') return;
-        db.equip('basic');
+    unequipWeapon: (slot) => {
+        // If a slot is provided, clear that slot; otherwise clear the equippedWeapon
+        if (slot) {
+            const id = db.equipped[slot];
+            if (!id) return;
+            delete db.equipped[slot];
+            if (db.equippedWeapon === id) db.equippedWeapon = 'basic';
+        } else {
+            if (db.equippedWeapon === 'basic') return;
+            const id = db.equippedWeapon;
+            // remove from any hero slots that reference this weapon
+            for (const s of Object.keys(db.equipped)) {
+                if (db.equipped[s] === id) delete db.equipped[s];
+            }
+            db.equippedWeapon = 'basic';
+        }
         db.save();
         inventory.render();
     },
@@ -224,7 +339,10 @@ const inventory = {
         const itemId = db.equipped[slot];
         if (!itemId) return;
 
-        if (!silent && db.inventory.length >= db.inventoryCapacity) {
+        // For weapons: do not move them into db.inventory (they remain in db.owned)
+        const isWeapon = !!weapons.find(w => w.id === itemId);
+
+        if (!silent && !isWeapon && db.inventory.length >= db.inventoryCapacity) {
             alert('인벤토리가 가득 찼습니다.');
             return;
         }
@@ -235,11 +353,15 @@ const inventory = {
         } else {
             delete db.equipped[slot];
         }
-        
-        if (!db.inventory.includes(itemId)) {
+
+        // If this was the active equippedWeapon, clear it
+        if (db.equippedWeapon === itemId) db.equippedWeapon = 'basic';
+
+        // Only add to backpack inventory if it's a non-weapon item
+        if (!isWeapon && !db.inventory.includes(itemId)) {
             db.inventory.push(itemId);
         }
-        
+
         if (silent) return;
 
         db.save();
@@ -339,10 +461,28 @@ const shop = {
 const ui = {
     updateGold: () => document.querySelectorAll('#ui-gold').forEach(e => e.innerText = db.gold),
     updateVisuals: () => {
-        document.getElementById('hero-img').src = "legacy_hero_sprite.png";
+        document.getElementById('hero-img').src = "images/legacy_hero_sprite.png";
         
-        const wData = weapons.find(w => w.id === db.equippedWeapon) || weapons[0];
-        document.getElementById('hero-weapon').innerText = wData.icon;
+        // weapon -> hand-1 (gameplay)
+        const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
+        const wData = weapons.find(w => w.id === hand1Id) || weapons.find(w => w.id === db.equippedWeapon) || weapons[0];
+        const heroWeaponEl = document.getElementById('hero-weapon');
+        if (heroWeaponEl) heroWeaponEl.innerText = wData.icon || '';
+
+        // effect -> hand-2 (visual)
+        const hand2Id = db.equipped['hand-2'];
+        const effData = weapons.find(w => w.id === hand2Id);
+        const heroEffEl = document.getElementById('hero-effect');
+        if (heroEffEl) {
+            heroEffEl.innerText = effData ? effData.icon : '';
+            heroEffEl.style.display = effData ? 'block' : 'none';
+        }
+
+        // quick equipped summary (visible without clicking)
+        const summaryEl = document.getElementById('equipped-summary');
+        if (summaryEl) {
+            summaryEl.innerHTML = `\n                <div class="eq" title="무기: ${wData.name}"><span class="icon">${wData.icon}</span><div><div style="font-weight:700">${wData.name}</div><div style="font-size:12px;color:#aaa">x${wData.multiplier || 1}</div></div></div>\n                ${effData ? `<div class="eq" title="이펙트: ${effData.name}"><span class="icon">${effData.icon}</span><div><div style="font-weight:700">${effData.name}</div><div style="font-size:12px;color:#aaa">${effData.desc}</div></div></div>` : ''}\n            `;
+        }
     },
     updateDurability: () => {
         const el = document.getElementById('durability-badge');
@@ -386,6 +526,45 @@ const ui = {
 
 // 3. STORY Logic
 
+// Monster image assets and selection helper
+const monsterAssets = {
+    normal: [
+        'images/legacy_orc_sprite.png' // default normal monster
+    ],
+    boss: [
+        'images/legacy_orc_sprite.png' // default boss (can add more)
+    ],
+    byDay: {
+        // Day-specific mapping — useful for testing and unique bosses
+        '40': ['images/legacy_orc_sprite.png']
+        // add more: '5': ['images/day5_goblin.png', 'images/day5_troll.png']
+    },
+    fallback: 'images/legacy_orc_sprite.png'
+};
+
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function pickMonsterSprite(q, isBoss) {
+    try {
+        // q may be a question object or a day string/number
+        const day = q && q.day ? String(q.day) : (typeof q === 'string' || typeof q === 'number' ? String(q) : null);
+
+        // day-specific sprites take precedence
+        if (day && monsterAssets.byDay[day] && monsterAssets.byDay[day].length) {
+            return pickRandom(monsterAssets.byDay[day]);
+        }
+
+        // boss vs normal
+        if (isBoss) {
+            return pickRandom(monsterAssets.boss.length ? monsterAssets.boss : monsterAssets.normal) || monsterAssets.fallback;
+        }
+        return pickRandom(monsterAssets.normal) || monsterAssets.fallback;
+    } catch (err) {
+        console.error('pickMonsterSprite error', err);
+        return monsterAssets.fallback;
+    }
+}
+
 // Resolve story data for the given day. If a specific entry is missing,
 // use the corresponding <option> text as a title so the UI reflects the
 // user's selection instead of always falling back to 'all'.
@@ -415,14 +594,37 @@ const story = {
         story.mode = mode;
         const data = resolveStoryData(story.day);
         
+        // DEBUG: verify where title is coming from and ensure we're updating the visible element
+        const hasEntry = Object.prototype.hasOwnProperty.call(stories, story.day);
+        const optNode = document.querySelector(`#day-select option[value="${story.day}"]`);
+        console.log('[story.startIntro] dbg -> day=', story.day, 'hasEntry=', hasEntry, 'optText=', optNode && optNode.textContent);
+        console.log('[story.startIntro] dbg -> data.title=', data.title);
+
+        const titleEls = document.querySelectorAll('#story-title');
+        if (titleEls.length > 1) console.warn('[story.startIntro] multiple #story-title elements found:', titleEls.length);
+        const titleEl = document.getElementById('story-title');
+        console.log('[story.startIntro] current #story-title before=', titleEl && titleEl.innerText);
+
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
-        document.getElementById('story-title').innerText = data.title;
-        document.getElementById('story-text').innerText = data.intro;
+        // write and verify immediately
+        if (titleEl) {
+            titleEl.innerText = data.title;
+            console.log('[story.startIntro] wrote #story-title ->', titleEl.innerText);
+        } else {
+            console.error('[story.startIntro] #story-title element not found');
+        }
+        const textEl = document.getElementById('story-text');
+        if (textEl) textEl.innerText = data.intro;
         
         const btn = document.getElementById('story-btn');
         btn.innerText = "모험 시작";
-        btn.onclick = () => game.init(story.mode, story.day);
+        btn.onclick = () => {
+            const selectVal = document.getElementById('day-select') ? document.getElementById('day-select').value : story.day;
+            const resolvedDay = (story.mode === 'rush') ? 'rush' : (selectVal || story.day);
+            console.log('[story-btn] story.day=', story.day, 'selectVal=', selectVal, 'resolvedDay=', resolvedDay);
+            game.init(story.mode, resolvedDay);
+        };
     },
     showEnding: (win) => {
         const data = resolveStoryData(story.day);
@@ -489,8 +691,11 @@ const game = {
             return;
         }
 
-        const seed = Math.random().toString(36).substring(7);
-        document.getElementById('monster-img').src = `https://robohash.org/${seed}.png?set=set2&size=200x200`;
+        // choose an appropriate monster sprite (day-specific > boss/normal > fallback)
+        const upcoming = (game.mode === 'rush') ? null : (game.list && game.list[game.idx]) || null;
+        const isBossPreview = (game.mode === 'rush') ? true : !!(upcoming && upcoming.isBoss);
+        const sprite = pickMonsterSprite(upcoming || story.day, isBossPreview);
+        document.getElementById('monster-img').src = sprite;
         
         if (game.mode === 'rush') {
             if (game.deck.length === 0) { story.showEnding(true); return; }
@@ -857,8 +1062,35 @@ const secret = {
 };
 function initSelections() {
     const daySelect = document.getElementById('day-select');
-    if (daySelect && db.lastSelectedDay) {
-        daySelect.value = db.lastSelectedDay;
+    if (!daySelect) return;
+
+    // Gather days from dayInfo (preferred) and rawData (in case new days exist)
+    const daysFromData = new Set();
+    if (typeof rawData !== 'undefined' && Array.isArray(rawData)) rawData.forEach(r => { if (r && r.day) daysFromData.add(Number(r.day)); });
+
+    const infoDays = (typeof dayInfo !== 'undefined') ? Object.keys(dayInfo).map(Number) : [];
+    const allDays = new Set([...infoDays, ...Array.from(daysFromData)]);
+
+    const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a,b) => a - b).filter(d => d <= 50);
+
+    // Build options
+    let html = '';
+    sortedDays.forEach(d => {
+        const label = (dayInfo && dayInfo[d]) ? dayInfo[d] : `Day ${d}`;
+        html += `<option value="${d}">${label}</option>`;
+    });
+    html += `<option value="all">전체 (혼돈의 균열)</option>`;
+
+    daySelect.innerHTML = html;
+
+    // Restore last selected day if available
+    const last = db.lastSelectedDay || 'all';
+    if (Array.from(daySelect.options).some(o => o.value === String(last))) {
+        daySelect.value = last;
+    } else {
+        daySelect.value = 'all';
+        db.lastSelectedDay = 'all';
+        db.save();
     }
 }
 

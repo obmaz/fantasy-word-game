@@ -335,6 +335,12 @@ select {
     margin-top: 10px;
 }
 
+/* Quick equipped summary (visible without clicking) */
+.equipped-summary { display:flex; gap:12px; margin-top:12px; align-items:center; color:#ddd; font-size:14px; justify-content:center; }
+.equipped-summary .eq { display:flex; gap:8px; align-items:center; background: rgba(0,0,0,0.25); padding:6px 10px; border-radius:10px; border:1px solid #2b2b2b; }
+.equipped-summary .eq .icon { font-size:20px; }
+.hero-effect { position: absolute; right: 40px; bottom: 10px; font-size: 40px; transform-origin: bottom right; filter: drop-shadow(0 0 6px rgba(0,0,0,0.6)); }
+
 .relic-item {
     background: #333;
     border: 1px solid #555;

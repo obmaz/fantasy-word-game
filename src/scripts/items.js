@@ -1,15 +1,15 @@
 const weapons = [
-    // Economy Weapons
-    { id: 'goldDagger', name: '💰 도적의 단검', cost: 500, effect: 'gold', icon: '🗡️', multiplier: 1.2, desc: '골드 획득 x1.2' },
-    { id: 'midasSword', name: '👑 왕가의 검', cost: 2000, effect: 'gold', icon: '⚔️', multiplier: 1.5, desc: '골드 획득 x1.5' },
-    { id: 'tycoonAxe', name: '💎 재벌의 도끼', cost: 5000, effect: 'gold', icon: '🪓', multiplier: 2.0, desc: '골드 획득 x2.0' },
+    // Economy Weapons (equip to main weapon slot)
+    { id: 'goldDagger', name: '💰 도적의 단검', cost: 500, category: 'weapon', effect: 'gold', icon: '🗡️', multiplier: 1.2, desc: '골드 획득 x1.2', slot: 'hand-1' },
+    { id: 'midasSword', name: '👑 왕가의 검', cost: 2000, category: 'weapon', effect: 'gold', icon: '⚔️', multiplier: 1.5, desc: '골드 획득 x1.5', slot: 'hand-1' },
+    { id: 'tycoonAxe', name: '💎 재벌의 도끼', cost: 5000, category: 'weapon', effect: 'gold', icon: '🪓', multiplier: 2.0, desc: '골드 획득 x2.0', slot: 'hand-1' },
 
-    // Visual Weapons
-    { id: 'basic', name: '🗡️ 기본 검', cost: 0, effect: 'basic', icon: '🗡️', multiplier: 1.0, desc: '기본 무기' },
-    { id: 'fire', name: '🔥 화염 검', cost: 300, effect: 'fire', icon: '🔥', multiplier: 1.0, desc: '화염 이펙트' },
-    { id: 'ice', name: '❄️ 서리 낫', cost: 800, effect: 'ice', icon: '❄️', multiplier: 1.0, desc: '얼음 이펙트' },
-    { id: 'lightning', name: '⚡ 뇌전 창', cost: 1500, effect: 'lightning', icon: '🔱', multiplier: 1.0, desc: '번개 이펙트' },
-    { id: 'void', name: '🌌 우주 파괴자', cost: 4000, effect: 'void', icon: '🟣', multiplier: 1.0, desc: '우주 이펙트' },
+    // Visual Effects (visual-only; equip to hand-2)
+    { id: 'basic', name: '🗡️ 기본 검', cost: 0, category: 'weapon', effect: 'basic', icon: '🗡️', multiplier: 1.0, desc: '기본 무기', slot: 'hand-1' },
+    { id: 'fire', name: '🔥 화염 검', cost: 300, category: 'effect', effect: 'fire', icon: '🔥', multiplier: 1.0, desc: '화염 이펙트', slot: 'hand-2' },
+    { id: 'ice', name: '❄️ 서리 낫', cost: 800, category: 'effect', effect: 'ice', icon: '❄️', multiplier: 1.0, desc: '얼음 이펙트', slot: 'hand-2' },
+    { id: 'lightning', name: '⚡ 뇌전 창', cost: 1500, category: 'either', effect: 'lightning', icon: '🔱', multiplier: 1.0, desc: '번개 이펙트', slot: 'either-hand' },
+    { id: 'void', name: '🌌 우주 파괴자', cost: 4000, category: 'effect', effect: 'void', icon: '🟣', multiplier: 1.0, desc: '우주 이펙트', slot: 'hand-2' },
 ];
 
 const relics = [
