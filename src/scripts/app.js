@@ -1055,13 +1055,29 @@ const game = {
     },
 
     getDistractors: (correct, key) => {
-        let potentialDistractors = rawData;
-        if (typeof decoyWords !== 'undefined' && decoyWords.length > 0) {
-            potentialDistractors = potentialDistractors.concat(decoyWords);
+        const source = (typeof decoyWords !== 'undefined' && decoyWords.length > 0) ? rawData.concat(decoyWords) : rawData;
+        const distractors = [];
+        const shuffled = game.shuffle([...source]);
+        for (let i = 0; i < shuffled.length; i++) {
+            if (shuffled[i] && shuffled[i][key] && shuffled[i][key] !== correct) {
+                if (!distractors.includes(shuffled[i][key])) {
+                    distractors.push(shuffled[i][key]);
+                }
+                if (distractors.length >= 3) {
+                    break;
+                }
+            }
         }
-        
-        const others = potentialDistractors.filter(i => i[key] !== correct);
-        return game.shuffle(others).slice(0, 3).map(i => i[key]);
+        // Ensure we have 3 distractors, even if we have to grab randomly
+        while (distractors.length < 3) {
+            const emergencyDistractor = game.shuffle([...rawData])[0];
+            if (emergencyDistractor && emergencyDistractor[key] && emergencyDistractor[key] !== correct) {
+                 if (!distractors.includes(emergencyDistractor[key])) {
+                    distractors.push(emergencyDistractor[key]);
+                 }
+            }
+        }
+        return distractors.slice(0, 3);
     },
     shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
 
