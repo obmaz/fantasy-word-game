@@ -64,7 +64,7 @@ const db = {
     },
     addStats: (isCorrect) => {
         db.stats.solved++;
-        if(isCorrect) db.stats.correct++;
+        if (isCorrect) db.stats.correct++;
         db.save();
     },
     useItem: (id) => {
@@ -102,28 +102,18 @@ const inventory = {
         const invContainer = document.querySelector('.inv-items');
         invContainer.innerHTML = '';
         document.getElementById('inv-gold').innerText = db.gold;
-        document.getElementById('inv-cap').innerText = (db.inventory.length + db.owned.filter(id => id !== 'basic' && !Object.values(db.equipped).includes(id) && id !== db.equippedWeapon).length) ;
+        document.getElementById('inv-cap').innerText = (db.inventory.length + db.owned.filter(id => id !== 'basic' && !Object.values(db.equipped).includes(id) && id !== db.equippedWeapon).length);
         document.getElementById('inv-max-cap').innerText = db.inventoryCapacity;
-    
+
         // Clear inventory display slots
         ['head', 'hand-1', 'hand-2', 'foot-1', 'foot-2', 'weapon'].forEach(slot => {
             const equipSlot = document.getElementById(`inv-${slot}`);
-            if(equipSlot) {
+            if (equipSlot) {
                 equipSlot.innerHTML = '';
                 equipSlot.onclick = null;
             }
         });
-    
-        // Render equipped weapon into its defined slot (weapon / hand-1 / hand-2 / head / foot-1...)
-        const equippedWeaponData = weapons.find(w => w.id === db.equippedWeapon);
-        if (equippedWeaponData && db.equippedWeapon !== 'basic') {
-            const targetSlot = equippedWeaponData.slot || 'weapon';
-            const el = document.getElementById(`inv-${targetSlot}`) || document.getElementById('inv-weapon');
-            if (el) {
-                el.innerHTML = `<div class="inv-item">${equippedWeaponData.icon}</div>`;
-                el.onclick = () => inventory.unequip(targetSlot);
-            }
-        }
+
 
         // Render equipped items in inventory UI (including weapons that occupy hand/head/foot slots)
         for (const slot in db.equipped) {
@@ -137,13 +127,13 @@ const inventory = {
                 }
             }
         }
-    
+
         // Clear hero equipment display
         document.getElementById('hero-head').innerHTML = '';
         document.getElementById('hero-hand-1').innerHTML = '';
         document.getElementById('hero-hand-2').innerHTML = '';
         document.getElementById('hero-feet').innerHTML = '';
-    
+
         // Render equipped items on hero sprite
         const headItem = items.find(i => i.id === db.equipped['head']);
         if (headItem) {
@@ -165,7 +155,7 @@ const inventory = {
             const el = document.getElementById('hero-feet');
             if (el) el.innerHTML = foot1Item.icon;
         }
-    
+
         // Render items in storage
         db.inventory.forEach(itemId => {
             const item = items.find(i => i.id === itemId);
@@ -178,18 +168,17 @@ const inventory = {
             }
         });
 
-        // Render owned weapons in storage
-         db.owned.forEach(weaponId => {
-            const weapon = weapons.find(w => w.id === weaponId);
-            if (weapon && weapon.id !== db.equippedWeapon && weapon.id !== 'basic') {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'inv-item';
-                itemEl.innerHTML = weapon.icon;
-                itemEl.onclick = () => inventory.showDetails(weaponId, 'weapon');
-                invContainer.appendChild(itemEl);
-            }
-        });
-
+                // Render owned weapons in storage
+                 db.owned.forEach(weaponId => {
+                    const weapon = weapons.find(w => w.id === weaponId);
+                    if (weapon && weapon.id !== 'basic' && weapon.id !== db.equippedWeapon && !Object.values(db.equipped).includes(weaponId)) {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'inv-item';
+                        itemEl.innerHTML = weapon.icon;
+                        itemEl.onclick = () => inventory.showDetails(weaponId, 'weapon');
+                        invContainer.appendChild(itemEl);
+                    }
+                });
         // Render owned relics
         const relicsContainer = document.querySelector('.inv-relics');
         relicsContainer.innerHTML = '';
@@ -198,7 +187,7 @@ const inventory = {
             if (relic) {
                 const relicEl = document.createElement('div');
                 relicEl.className = 'relic-item';
-                
+
                 let relicInfo = `<b>${relic.name}</b>: ${relic.desc}`;
                 if (relic.type === 'consumable' && db.durability[relic.id]) {
                     relicInfo += ` (${db.durability[relic.id]}회 남음)`;
@@ -308,12 +297,12 @@ const inventory = {
             }
 
             // If equipping a weapon, ensure only one weapon exists (hand-1)
-            if (w.category === 'weapon' || slot === 'hand-1') {
+            if (slot === 'hand-1') {
                 // unequip any existing weapon in hand-1
                 inventory.unequip('hand-1', true);
                 db.equipped['hand-1'] = id;
                 db.equippedWeapon = id; // gameplay reference
-            } else if (w.category === 'effect' || slot === 'hand-2') {
+            } else if (slot === 'hand-2') {
                 // unequip existing effect
                 inventory.unequip('hand-2', true);
                 db.equipped['hand-2'] = id;
@@ -340,7 +329,7 @@ const inventory = {
 
         db.save();
         inventory.render();
-        shop.render(); 
+        shop.render();
     },
     unequipWeapon: (slot) => {
         // If a slot is provided, clear that slot; otherwise clear the equippedWeapon
@@ -415,15 +404,15 @@ const shop = {
 
         // Economy Weapons
         let html = '<div class="shop-section">💰 경제형 무기 (골드 보너스)</div>';
-        weapons.filter(w=>w.multiplier > 1 && !isPurchased(w)).forEach(w => html += shop.createItemHtml(w, 'weapon'));
+        weapons.filter(w => w.multiplier > 1 && !isPurchased(w)).forEach(w => html += shop.createItemHtml(w, 'weapon'));
 
         // Visual Weapons
         html += '<div class="shop-section">⚔️ 스킨 무기 (이펙트)</div>';
-        weapons.filter(w=>w.multiplier === 1 && !isPurchased(w)).forEach(w => html += shop.createItemHtml(w, 'weapon'));
+        weapons.filter(w => w.multiplier === 1 && !isPurchased(w)).forEach(w => html += shop.createItemHtml(w, 'weapon'));
 
         // Relics
         html += '<div class="shop-section">💍 유물/아이템</div>';
-        relics.filter(r => r.type !== 'skill' && !isPurchased(r)).forEach(r => html += shop.createItemHtml(r, r.type));
+        relics.filter(r => (r.type !== 'skill' && !isPurchased(r)) || r.id === 'backpack').forEach(r => html += shop.createItemHtml(r, r.type));
 
         // Skills (always visible)
         html += '<div class="shop-section">✨ 스킬</div>';
@@ -438,50 +427,52 @@ const shop = {
     },
     createItemHtml: (item, type) => {
         let btn = `<button class="buy-btn" onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">${item.cost} G</button>`;
-        
+
         if (type === 'skill') {
-             return `<div class="shop-item"><div><b>${item.name} (현재 ${db.skills[item.id]}개)</b><br><span style="font-size:11px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
+            return `<div class="shop-item"><div><b>${item.name} (현재 ${db.skills[item.id]}개)</b><br><span style="font-size:11px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
         }
 
         return `<div class="shop-item"><div><b>${item.name}</b><br><span style="font-size:11px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
     },
-    buy: (id, cost, type) => {
-        if (db.gold < cost) {
-            alert("골드가 부족합니다.");
-            return;
-        }
-
-        // use API so clamp/persistence/UI are consistent
-        db.subGold(cost);
-
-        if (type === 'item') {
-            if (db.inventory.length >= db.inventoryCapacity) {
-                alert('인벤토리가 가득 찼습니다.');
-                 db.addGold(cost); // revert transaction via API
+        buy: (id, cost, type) => {
+            if (db.gold < cost) {
+                alert("골드가 부족합니다.");
                 return;
             }
-            db.inventory.push(id);
-        } else if (type === 'backpack') {
-            db.inventoryCapacity++;
-            db.owned.push(id); 
-        } else if (type === 'skill') {
-            const skill = relics.find(r=>r.id===id);
-            db.skills[id] += skill.uses;
-        } else { // weapons and other relics
-            db.owned.push(id);
-            if (type === 'weapon') {
-                db.equip(id);
+    
+            const isStorable = ['item', 'weapon', 'passive', 'consumable', 'effect', 'either'].includes(type);
+    
+            if (isStorable) {
+                 const unequippedOwned = db.owned.filter(oid => oid !== 'basic' && !Object.values(db.equipped).includes(oid) && oid !== db.equippedWeapon);
+                 const currentSize = db.inventory.length + unequippedOwned.length;
+                 if (currentSize >= db.inventoryCapacity) {
+                    alert('인벤토리가 가득 찼습니다.');
+                    return;
+                }
             }
-            if (type === 'consumable') {
-                const relic = relics.find(r=>r.id===id);
-                db.durability[id] = relic.durability;
+    
+            // use API so clamp/persistence/UI are consistent
+            db.subGold(cost);
+    
+            if (type === 'item') {
+                db.inventory.push(id);
+            } else if (type === 'backpack') {
+                db.inventoryCapacity++;
+            } else if (type === 'skill') {
+                const skill = relics.find(r=>r.id===id);
+                db.skills[id] += skill.uses;
+            } else { // weapons and other relics
+                db.owned.push(id);
+                if (type === 'consumable') {
+                    const relic = relics.find(r=>r.id===id);
+                    db.durability[id] = relic.durability;
+                }
             }
-        }
-        
-        db.save();
-        shop.render();
-        inventory.render(); // Update inventory screen as well
-    },
+            
+            db.save();
+            shop.render();
+            inventory.render(); // Update inventory screen as well
+        },
     equip: (id) => { db.equip(id); shop.render(); }
 };
 
@@ -489,7 +480,7 @@ const ui = {
     updateGold: () => document.querySelectorAll('#ui-gold').forEach(e => e.innerText = db.gold),
     updateVisuals: () => {
         document.getElementById('hero-img').src = "images/legacy_hero_sprite.png";
-        
+
         // weapon -> hand-1 (gameplay)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
         const wData = weapons.find(w => w.id === hand1Id) || weapons.find(w => w.id === db.equippedWeapon) || weapons[0];
@@ -513,7 +504,7 @@ const ui = {
     },
     updateDurability: () => {
         const el = document.getElementById('durability-badge');
-        if(db.has('goldGlove')) {
+        if (db.has('goldGlove')) {
             el.style.display = 'block';
             el.innerText = `🥊 ${db.durability['goldGlove']}/30`;
         } else {
@@ -529,7 +520,7 @@ const ui = {
     updateSkills: () => {
         const container = document.getElementById('skill-display');
         container.innerHTML = '';
-        
+
         const hintData = relics.find(r => r.id === 'hint');
         const ultimateData = relics.find(r => r.id === 'ultimate');
 
@@ -540,7 +531,7 @@ const ui = {
             hintBtn.onclick = game.useHint;
             container.appendChild(hintBtn);
         }
-        
+
         if (db.skills.ultimate > 0) {
             const ultimateBtn = document.createElement('button');
             ultimateBtn.className = 'skill-btn';
@@ -612,8 +603,8 @@ function resolveStoryData(day) {
         intro: `선택한 지역 — ${optText}`,
         win: (dayCatalog && dayCatalog['all'] && dayCatalog['all'].story && dayCatalog['all'].story.win) || '',
         lose: (dayCatalog && dayCatalog['all'] && dayCatalog['all'].story && dayCatalog['all'].story.lose) || ''
-    }; 
-} 
+    };
+}
 
 const story = {
     day: null, mode: null,
@@ -625,7 +616,7 @@ const story = {
         story.day = (mode === 'rush') ? 'rush' : daySel;
         story.mode = mode;
         const data = resolveStoryData(story.day);
-        
+
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
         const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
         const optNode = document.querySelector(`#day-select option[value="${story.day}"]`);
@@ -640,7 +631,7 @@ const story = {
         // Prefer the Day label from the canonical catalog; fall back to legacy views
         const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'rush' ? 'Boss Rush' : `Day ${story.day}`));
         const _t = data && data.title ? String(data.title).trim() : '';
-        const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel; 
+        const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
 
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
@@ -651,8 +642,8 @@ const story = {
             const te = document.getElementById('story-title'); if (te) te.innerText = displayTitle; console.warn('[story.startIntro] fallback title write used');
         }
         const textEl = document.getElementById('story-text');
-        if (textEl) textEl.innerText = data.intro;    
-        
+        if (textEl) textEl.innerText = data.intro;
+
         const btn = document.getElementById('story-btn');
         btn.innerText = "모험 시작";
         // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
@@ -666,14 +657,14 @@ const story = {
         const data = resolveStoryData(story.day);
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
-        
+
         if (window.ui && typeof window.ui.setStoryTitle === 'function') {
             window.ui.setStoryTitle(win ? "VICTORY" : "DEFEAT");
         } else {
             const te = document.getElementById('story-title'); if (te) te.innerText = (win ? "VICTORY" : "DEFEAT"); console.warn('[story.showEnding] fallback title write used');
         }
-        document.getElementById('story-text').innerText = win ? data.win : data.lose; 
-        
+        document.getElementById('story-text').innerText = win ? data.win : data.lose;
+
         const btn = document.getElementById('story-btn');
         btn.innerText = "결과 정산";
         btn.onclick = () => game.end(win);
@@ -682,75 +673,75 @@ const story = {
 
 // safety helpers — cleanup and runtime sanity checks (kept top-level for easy console access)
 function __purgeDuplicateStoryTitle(opts = {}) {
-  try {
-    const hard = opts.hard === undefined ? true : !!opts.hard;
-    const els = Array.from(document.querySelectorAll('#story-title'));
-    if (els.length <= 1) return { removed: 0, kept: els.length };
-    const canonical = els[0];
-    window.__removedStoryTitleBackups = window.__removedStoryTitleBackups || [];
-    let removed = 0;
-    els.slice(1).forEach(e => {
-      try { window.__removedStoryTitleBackups.push({ html: e.outerHTML, time: Date.now() }); } catch (ignore) {}
-      if (hard) e.remove(); else { e.style.display = 'none'; e.dataset._hiddenBy = '__purgeDuplicateStoryTitle'; }
-      removed++;
-    });
-    console.info('[__purgeDuplicateStoryTitle] removed duplicates:', removed, 'kept: 1');
-    setTimeout(() => { window.__removedStoryTitleBackups = (window.__removedStoryTitleBackups || []).filter(b => (Date.now() - b.time) < 30000); }, 31000);
-    return { removed, kept: 1 };
-  } catch (err) {
-    console.error('[__purgeDuplicateStoryTitle] error', err);
-    return { removed: 0, kept: (document.querySelectorAll('#story-title') || []).length };
-  }
+    try {
+        const hard = opts.hard === undefined ? true : !!opts.hard;
+        const els = Array.from(document.querySelectorAll('#story-title'));
+        if (els.length <= 1) return { removed: 0, kept: els.length };
+        const canonical = els[0];
+        window.__removedStoryTitleBackups = window.__removedStoryTitleBackups || [];
+        let removed = 0;
+        els.slice(1).forEach(e => {
+            try { window.__removedStoryTitleBackups.push({ html: e.outerHTML, time: Date.now() }); } catch (ignore) { }
+            if (hard) e.remove(); else { e.style.display = 'none'; e.dataset._hiddenBy = '__purgeDuplicateStoryTitle'; }
+            removed++;
+        });
+        console.info('[__purgeDuplicateStoryTitle] removed duplicates:', removed, 'kept: 1');
+        setTimeout(() => { window.__removedStoryTitleBackups = (window.__removedStoryTitleBackups || []).filter(b => (Date.now() - b.time) < 30000); }, 31000);
+        return { removed, kept: 1 };
+    } catch (err) {
+        console.error('[__purgeDuplicateStoryTitle] error', err);
+        return { removed: 0, kept: (document.querySelectorAll('#story-title') || []).length };
+    }
 }
 
 function __runGameSanityChecks(opts = {}) {
-  const sample = opts.sampleDays || [1, 40, 55, 60];
-  const out = { summary: {}, failures: [] };
-  try {
-    sample.forEach(d => {
-      const dayKey = String(d);
-      const row = { day: d, ok: true, notes: [] };
+    const sample = opts.sampleDays || [1, 40, 55, 60];
+    const out = { summary: {}, failures: [] };
+    try {
+        sample.forEach(d => {
+            const dayKey = String(d);
+            const row = { day: d, ok: true, notes: [] };
 
-      const s = (typeof resolveStoryData === 'function') ? resolveStoryData(dayKey) : null;
-      if (!s || !s.title) { row.ok = false; row.notes.push('missing story/title'); }
+            const s = (typeof resolveStoryData === 'function') ? resolveStoryData(dayKey) : null;
+            if (!s || !s.title) { row.ok = false; row.notes.push('missing story/title'); }
 
-      const pool = (typeof rawData !== 'undefined') ? rawData.filter(r => Number(r.day) === Number(d)) : [];
-      if (!pool || pool.length === 0) row.notes.push('rawData pool empty');
+            const pool = (typeof rawData !== 'undefined') ? rawData.filter(r => Number(r.day) === Number(d)) : [];
+            if (!pool || pool.length === 0) row.notes.push('rawData pool empty');
 
-      let spriteNormal = null, spriteBoss = null;
-      try { spriteNormal = pickMonsterSprite(d, false); spriteBoss = pickMonsterSprite(d, true); } catch (e) { row.notes.push('sprite fn threw'); row.ok = false; }
-      if (!spriteNormal || typeof spriteNormal !== 'string') row.notes.push('missing normal sprite');
-      if (!spriteBoss || typeof spriteBoss !== 'string') row.notes.push('missing boss sprite');
+            let spriteNormal = null, spriteBoss = null;
+            try { spriteNormal = pickMonsterSprite(d, false); spriteBoss = pickMonsterSprite(d, true); } catch (e) { row.notes.push('sprite fn threw'); row.ok = false; }
+            if (!spriteNormal || typeof spriteNormal !== 'string') row.notes.push('missing normal sprite');
+            if (!spriteBoss || typeof spriteBoss !== 'string') row.notes.push('missing boss sprite');
 
-      const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : `Day ${day}`;
-      const _st = s && s.title ? String(s.title).trim() : '';
-      const displayTitle = (_st && String(label).indexOf(_st) === -1) ? `${label} — ${_st}` : label;
+            const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : `Day ${day}`;
+            const _st = s && s.title ? String(s.title).trim() : '';
+            const displayTitle = (_st && String(label).indexOf(_st) === -1) ? `${label} — ${_st}` : label;
 
-      try {
-        // non-destructive title check: write & read back
-        const orig = (document.getElementById('story-title') || {}).innerText;
-        const el = document.getElementById('story-title');
-        if (el) { el.innerText = displayTitle; const shown = el.innerText || null; if (!shown || String(shown).indexOf(label) === -1) { row.ok = false; row.notes.push('title render mismatch'); } el.innerText = orig; }
-        else { row.ok = false; row.notes.push('no #story-title element'); }
-      } catch (e) { row.ok = false; row.notes.push('title render threw'); }
+            try {
+                // non-destructive title check: write & read back
+                const orig = (document.getElementById('story-title') || {}).innerText;
+                const el = document.getElementById('story-title');
+                if (el) { el.innerText = displayTitle; const shown = el.innerText || null; if (!shown || String(shown).indexOf(label) === -1) { row.ok = false; row.notes.push('title render mismatch'); } el.innerText = orig; }
+                else { row.ok = false; row.notes.push('no #story-title element'); }
+            } catch (e) { row.ok = false; row.notes.push('title render threw'); }
 
-      out.summary[dayKey] = row;
-      if (!row.ok || row.notes.length) out.failures.push(row);
-    });
+            out.summary[dayKey] = row;
+            if (!row.ok || row.notes.length) out.failures.push(row);
+        });
 
-    out.passed = out.failures.length === 0;
-    console.group('[__runGameSanityChecks] report');
-    console.log('sampleDays:', sample);
-    Object.entries(out.summary).forEach(([k,v]) => console.log(k, v));
-    if (out.passed) console.log('Sanity checks PASSED ✅'); else console.warn('Sanity checks found issues — inspect failures');
-    console.groupEnd();
-  } catch (err) {
-    console.error('[__runGameSanityChecks] unexpected error', err);
-    out.error = String(err);
-  }
-  // convenience alias from console
-  window.runGameSanityTest = () => __runGameSanityChecks(opts);
-  return out;
+        out.passed = out.failures.length === 0;
+        console.group('[__runGameSanityChecks] report');
+        console.log('sampleDays:', sample);
+        Object.entries(out.summary).forEach(([k, v]) => console.log(k, v));
+        if (out.passed) console.log('Sanity checks PASSED ✅'); else console.warn('Sanity checks found issues — inspect failures');
+        console.groupEnd();
+    } catch (err) {
+        console.error('[__runGameSanityChecks] unexpected error', err);
+        out.error = String(err);
+    }
+    // convenience alias from console
+    window.runGameSanityTest = () => __runGameSanityChecks(opts);
+    return out;
 }
 
 // 4. GAME Logic
@@ -764,7 +755,7 @@ const game = {
         game.mode = mode;
 
         document.getElementById('story-screen').style.display = 'none';
-        
+
         let pool;
         // normalize day and strictly match numeric day values to avoid cross-day leakage
         if (day === 'all' || day === 'rush') {
@@ -789,14 +780,14 @@ const game = {
             const bossCount = Math.max(1, Math.floor(count * 0.2));
             const normalCount = count - bossCount;
 
-            const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({...q, isBoss: true}));
-            const normalQuestions = shuffledPool.slice(bossCount, count).map(q => ({...q, isBoss: false}));
-            
+            const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({ ...q, isBoss: true }));
+            const normalQuestions = shuffledPool.slice(bossCount, count).map(q => ({ ...q, isBoss: false }));
+
             game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
         }
 
         document.getElementById('game-screen').style.display = 'flex';
-        
+
         ui.updateGold();
         ui.updateVisuals();
         ui.updateDurability();
@@ -817,7 +808,7 @@ const game = {
         const isBossPreview = (game.mode === 'rush') ? true : !!(upcoming && upcoming.isBoss);
         const sprite = pickMonsterSprite(upcoming || story.day, isBossPreview);
         document.getElementById('monster-img').src = sprite;
-        
+
         if (game.mode === 'rush') {
             if (game.deck.length === 0) { story.showEnding(true); return; }
             game.currentQ = game.deck.pop();
@@ -827,7 +818,7 @@ const game = {
         } else {
             document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
-            
+
             document.getElementById('boss-box').style.display = 'none';
             document.getElementById('options-box').style.display = 'none';
 
@@ -851,7 +842,7 @@ const game = {
         document.getElementById('options-box').style.display = 'grid';
         document.getElementById('options-box').innerHTML = '';
         document.getElementById('skill-display').style.visibility = 'visible';
-        
+
         const isKor = Math.random() < 0.5;
         if (isKor) {
             document.getElementById('q-label').innerText = "TRANSLATE";
@@ -878,17 +869,17 @@ const game = {
         document.getElementById('boss-box').style.display = 'flex';
         document.getElementById('options-box').style.display = 'none';
         document.getElementById('skill-display').style.visibility = 'hidden';
-        
+
         const isFinalBoss = !isRush && game.idx === game.list.length - 1;
         document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isRush ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
 
         document.getElementById('q-label').innerText = "TYPE IN ENGLISH";
         document.getElementById('q-text').innerText = data.meaning;
         document.getElementById('boss-hint').innerText = data.word.charAt(0) + " " + "_ ".repeat(data.word.length - 1);
-        
+
         const input = document.getElementById('boss-input');
         input.value = ""; input.focus(); input.style.borderColor = "var(--primary)";
-        input.onkeypress = (e) => { if(e.key === 'Enter') game.checkBossAnswer(); };
+        input.onkeypress = (e) => { if (e.key === 'Enter') game.checkBossAnswer(); };
     },
 
     createBtn: (text, isCorrect) => {
@@ -916,9 +907,9 @@ const game = {
 
         if (isCorrect) {
             game.animAttack();
-            
+
             // Reward Logic
-            let baseGain = 40; 
+            let baseGain = 40;
             if (game.mode === 'rush') {
                 baseGain = 80;
             } else if (game.currentQ.isBoss) {
@@ -969,7 +960,7 @@ const game = {
                 document.getElementById('hero-img').classList.remove('hero-hit-anim');
                 document.querySelector('.battle-arena').classList.remove('screen-shake');
             }, 400);
-            
+
             let penalty = 100;
             if (db.has('shield')) penalty = 50;
 
@@ -979,7 +970,7 @@ const game = {
 
             if (btnElement) btnElement.style.background = "#D32F2F";
             else document.getElementById('boss-input').style.borderColor = "#D32F2F";
-            
+
             // IMPORTANT: Ensure timeout triggers next level even if animation fails
             setTimeout(() => { game.idx++; game.nextLevel(); }, 1000);
         }
@@ -989,19 +980,19 @@ const game = {
     useHint: () => {
         if (game.isProcessing || game.mode === 'rush' || db.skills.hint <= 0) return;
         if (document.getElementById('options-box').style.display === 'none') return;
-        
+
         db.skills.hint--;
         db.save();
         ui.updateSkills();
 
         const btns = Array.from(document.querySelectorAll('.option-btn:not(.disabled)'));
         const wrongBtns = btns.filter(b => b.innerText !== game.currentAns);
-        game.shuffle(wrongBtns).slice(0, 2).forEach(b => { b.classList.add('disabled'); b.style.opacity="0.2"; });
+        game.shuffle(wrongBtns).slice(0, 2).forEach(b => { b.classList.add('disabled'); b.style.opacity = "0.2"; });
     },
     useUltimate: () => {
         if (game.isProcessing || game.mode === 'rush' || db.skills.ultimate <= 0) return;
         if (document.getElementById('options-box').style.display === 'none') return;
-       
+
         db.skills.ultimate--;
         db.save();
         ui.updateSkills();
@@ -1014,7 +1005,7 @@ const game = {
     animAttack: () => {
         document.getElementById('hero-wrapper').classList.add('hero-active');
         const wId = db.equippedWeapon;
-        const wData = weapons.find(w=>w.id===wId) || weapons[0];
+        const wData = weapons.find(w => w.id === wId) || weapons[0];
         const effType = wData.effect;
         const effEl = document.getElementById('effect-slash');
         effEl.className = '';
@@ -1064,22 +1055,27 @@ const game = {
     },
 
     getDistractors: (correct, key) => {
-        const others = rawData.filter(i => i[key] !== correct);
+        let potentialDistractors = rawData;
+        if (typeof decoyWords !== 'undefined' && decoyWords.length > 0) {
+            potentialDistractors = potentialDistractors.concat(decoyWords);
+        }
+        
+        const others = potentialDistractors.filter(i => i[key] !== correct);
         return game.shuffle(others).slice(0, 3).map(i => i[key]);
     },
     shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
 
     end: (win) => {
         document.getElementById('result-screen').style.display = 'flex';
-        
+
         const gain = game.stats.gain;
         const lost = game.stats.lost;
 
-        document.getElementById('res-title').innerText = (win || game.mode==='rush') ? "FINISHED!" : "FAILED";
-        
+        document.getElementById('res-title').innerText = (win || game.mode === 'rush') ? "FINISHED!" : "FAILED";
+
         document.getElementById('res-gain').innerText = gain;
         document.getElementById('res-lost').innerText = lost;
-        
+
         // Fix: Show Total Wallet explicitly
         // Clamp negative balance to 0 on game end
         if (db.gold < 0) { db.gold = 0; db.save(); }
@@ -1107,7 +1103,7 @@ const secret = {
         }
 
         const passwordBox = document.getElementById('password-input-boxes');
-        for(let i = 0; i < secret.password.length; i++) {
+        for (let i = 0; i < secret.password.length; i++) {
             const box = document.createElement('div');
             box.className = 'password-box';
             box.id = `passbox-${i}`;
@@ -1152,7 +1148,7 @@ const secret = {
                 box.textContent = '';
             }
         }
-         document.getElementById('password-error').style.display = 'none';
+        document.getElementById('password-error').style.display = 'none';
     },
 
     check: () => {
@@ -1184,13 +1180,28 @@ const secret = {
     },
 
     resetStats: () => {
-        if (confirm("정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
-            db.stats.solved = 0;
-            db.stats.correct = 0;
+        if (confirm("정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+            db.gold = 0;
+            db.owned = ['basic'];
+            db.equippedWeapon = 'basic';
+            db.durability = {};
+            db.stats = { solved: 0, correct: 0 };
+            db.inventory = [];
+            db.equipped = {};
+            db.inventoryCapacity = 3;
+            db.skills = { hint: 0, ultimate: 0 };
+
             db.save();
+
+            ui.updateGold();
             ui.updateMainStats();
-            alert("통계가 초기화되었습니다.");
+            ui.updateVisuals();
+            ui.updateDurability();
+            inventory.render();
+
+            alert("모든 데이터가 초기화되었습니다.");
             secret.close();
+            location.reload();
         }
     }
 };
@@ -1205,7 +1216,7 @@ function initSelections() {
     const infoDays = (typeof dayCatalog !== 'undefined') ? Object.keys(dayCatalog).filter(k => !isNaN(Number(k))).map(Number) : [];
     const allDays = new Set([...infoDays, ...Array.from(daysFromData)]);
 
-    const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a,b) => a - b).filter(d => d <= 60);
+    const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a, b) => a - b).filter(d => d <= 60);
 
     // Build options
     let html = '';
