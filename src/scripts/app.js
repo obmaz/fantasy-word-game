@@ -656,6 +656,41 @@ const story = {
 
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
+        
+        // 보스 러쉬 모드일 때는 boss_battle.jpg, 그 외에는 start.png 사용
+        const storyImg = document.getElementById('story-background-img');
+        const storyStartBtn = document.getElementById('story-start-btn');
+        if (storyImg) {
+            if (mode === 'rush') {
+                storyImg.src = 'images/boss_battle.jpg';
+                // 보스 배틀 모드 클래스 추가
+                if (storyStartBtn) {
+                    storyStartBtn.classList.add('boss-battle-btn');
+                    storyStartBtn.classList.remove('story-mode-btn');
+                }
+            } else {
+                storyImg.src = 'images/start.png';
+                // 스토리 모드 클래스 추가
+                if (storyStartBtn) {
+                    storyStartBtn.classList.add('story-mode-btn');
+                    storyStartBtn.classList.remove('boss-battle-btn');
+                }
+            }
+            
+            // 이미지 로드 후 버튼 오버레이 동기화
+            if (storyImg.complete) {
+                setTimeout(() => {
+                    syncStoryButtonOverlay();
+                }, 100);
+            } else {
+                storyImg.addEventListener('load', () => {
+                    setTimeout(() => {
+                        syncStoryButtonOverlay();
+                    }, 100);
+                }, { once: true });
+            }
+        }
+        
         // write and verify immediately via centralized setter (protects against duplicate IDs / external overwrites)
         if (window.ui && typeof window.ui.setStoryTitle === 'function') {
             window.ui.setStoryTitle(displayTitle);
@@ -669,10 +704,16 @@ const story = {
         btn.innerText = "모험 시작";
         // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
         const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : ((story.mode === 'chaos') ? 'all' : daySel);
-        btn.onclick = () => {
+        const startGame = () => {
             console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
             game.init(story.mode, resolvedAtIntro);
         };
+        btn.onclick = startGame;
+        
+        // 이미지의 "모험시작" 버튼에도 동일한 이벤트 연결
+        if (storyStartBtn) {
+            storyStartBtn.onclick = startGame;
+        }
     },
     showEnding: (win) => {
         const data = resolveStoryData(story.day);
@@ -1349,6 +1390,22 @@ function openStoryModePopup() {
     }
     
     popup.style.display = 'flex';
+    
+    // 이미지 로드 후 버튼 오버레이 동기화
+    const popupImg = document.getElementById('popup-background-img');
+    if (popupImg) {
+        if (popupImg.complete) {
+            setTimeout(() => {
+                syncPopupButtonOverlay();
+            }, 100);
+        } else {
+            popupImg.addEventListener('load', () => {
+                setTimeout(() => {
+                    syncPopupButtonOverlay();
+                }, 100);
+            }, { once: true });
+        }
+    }
 }
 
 // Open chaos rift selection popup
@@ -1374,6 +1431,22 @@ function openChaosRiftPopup() {
     }
     
     popup.style.display = 'flex';
+    
+    // 이미지 로드 후 버튼 오버레이 동기화
+    const popupImg = document.getElementById('popup-background-img');
+    if (popupImg) {
+        if (popupImg.complete) {
+            setTimeout(() => {
+                syncPopupButtonOverlay();
+            }, 100);
+        } else {
+            popupImg.addEventListener('load', () => {
+                setTimeout(() => {
+                    syncPopupButtonOverlay();
+                }, 100);
+            }, { once: true });
+        }
+    }
 }
 
 // Close story mode selection popup
@@ -1381,6 +1454,101 @@ function closeStoryModePopup() {
     const popup = document.getElementById('story-mode-popup');
     if (popup) {
         popup.style.display = 'none';
+    }
+}
+
+// Popup 이미지 크기에 맞춰 버튼과 드롭박스 오버레이 동기화
+function syncPopupButtonOverlay() {
+    const popup = document.getElementById('story-mode-popup');
+    // popup이 숨겨져 있으면 동기화하지 않음
+    if (!popup || popup.style.display === 'none' || popup.style.display === '') {
+        return;
+    }
+    
+    const popupImg = document.getElementById('popup-background-img');
+    const overlay = document.querySelector('.popup-buttons-overlay');
+    const container = document.querySelector('.popup-container-wrapper');
+    
+    if (!popupImg || !overlay || !container) return;
+    
+    // 이미지가 로드된 후 크기 확인
+    if (popupImg.complete) {
+        const imgRect = popupImg.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        const left = imgRect.left - containerRect.left;
+        const top = imgRect.top - containerRect.top;
+        
+        overlay.style.width = imgRect.width + 'px';
+        overlay.style.height = imgRect.height + 'px';
+        overlay.style.left = left + 'px';
+        overlay.style.top = top + 'px';
+        
+        // 드롭박스와 버튼 위치 설정 (이미지 크기에 상대적)
+        // 모험 지역 드롭박스 (더 길고 크게)
+        const daySelect = document.getElementById('popup-day-select');
+        if (daySelect) {
+            daySelect.style.width = (imgRect.width * 0.7) + 'px';
+            daySelect.style.height = (imgRect.height * 0.125) + 'px';
+            daySelect.style.left = (imgRect.width * 0.14) + 'px';
+            daySelect.style.top = (imgRect.height * 0.315) + 'px';
+        }
+        
+        // 난이도 드롭박스 (더 길고 크게)
+        const countSelect = document.getElementById('popup-count-select');
+        if (countSelect) {
+            countSelect.style.width = (imgRect.width * 0.7) + 'px';
+            countSelect.style.height = (imgRect.height * 0.125) + 'px';
+            countSelect.style.left = (imgRect.width * 0.14) + 'px';
+            countSelect.style.top = (imgRect.height * 0.58) + 'px';
+        }
+        
+        // 시작하기 버튼 (왼쪽 아래로)
+        const startBtn = document.getElementById('popup-start-btn');
+        if (startBtn) {
+            startBtn.style.width = (imgRect.width * 0.375) + 'px';
+            startBtn.style.height = (imgRect.height * 0.15) + 'px';
+            startBtn.style.left = (imgRect.width * 0.095) + 'px';
+            startBtn.style.top = (imgRect.height * 0.8) + 'px';
+        }
+        
+        // 취소 버튼 (오른쪽 아래로)
+        const cancelBtn = document.getElementById('popup-cancel-btn');
+        if (cancelBtn) {
+            cancelBtn.style.width = (imgRect.width * 0.375) + 'px';
+            cancelBtn.style.height = (imgRect.height * 0.15) + 'px';
+            cancelBtn.style.left = (imgRect.width * 0.525) + 'px';
+            cancelBtn.style.top = (imgRect.height * 0.8) + 'px';
+        }
+    }
+}
+
+// Story screen 이미지 크기에 맞춰 버튼 오버레이 동기화
+function syncStoryButtonOverlay() {
+    const storyScreen = document.getElementById('story-screen');
+    // story-screen이 숨겨져 있으면 동기화하지 않음
+    if (!storyScreen || storyScreen.style.display === 'none' || storyScreen.style.display === '') {
+        return;
+    }
+    
+    const storyImg = document.querySelector('.story-background');
+    const overlay = document.querySelector('.story-buttons-overlay');
+    const container = document.querySelector('.story-container-wrapper');
+    
+    if (!storyImg || !overlay || !container) return;
+    
+    // 이미지가 로드된 후 크기 확인
+    if (storyImg.complete) {
+        const imgRect = storyImg.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        const left = imgRect.left - containerRect.left;
+        const top = imgRect.top - containerRect.top;
+        
+        overlay.style.width = imgRect.width + 'px';
+        overlay.style.height = imgRect.height + 'px';
+        overlay.style.left = left + 'px';
+        overlay.style.top = top + 'px';
     }
 }
 
@@ -1513,6 +1681,21 @@ window.onload = () => {
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(syncTitleButtonOverlay, 100);
+        });
+    }
+    
+    // Popup 이미지 로드 후 버튼 오버레이 동기화
+    const popupImg = document.getElementById('popup-background-img');
+    if (popupImg) {
+        if (popupImg.complete) {
+            syncPopupButtonOverlay();
+        } else {
+            popupImg.addEventListener('load', syncPopupButtonOverlay);
+        }
+        window.addEventListener('resize', () => {
+            let resizeTimeout;
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(syncPopupButtonOverlay, 100);
         });
     }
 }
