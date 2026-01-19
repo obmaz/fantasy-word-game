@@ -20,7 +20,17 @@
         </div>
         <div class="battle-arena">
             <div class="info-badge" id="wave-badge">Wave: 1</div>
+            <div class="info-badge" id="game-info-badge" style="top: 10px; left: 10px; right: auto;">스토리 모드 - Day 1</div>
             <div class="durability-badge" id="durability-badge">🥊 30/30</div>
+            <!-- 배경 위에 골드와 시간 표시 -->
+            <div class="overlay-ui">
+                <div class="overlay-gold">💰 <span id="overlay-gold">0</span> G</div>
+                <div class="overlay-timer">
+                    <div class="timer-bar-bg">
+                        <div id="overlay-timer" class="timer-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
 
             <div class="char-wrapper" id="hero-wrapper">
                 <div id="hero-head" class="hero-equip-slot"></div>
@@ -379,10 +389,66 @@
 
     <script src="scripts/app.js"></script>
 
+    <!-- Background Music -->
+    <audio id="background-music" loop>
+        <source src="data/background_music.mp3" type="audio/mpeg">
+    </audio>
 
+    <script>
+        // Background music 초기화 및 재생
+        window.addEventListener('load', () => {
+            const bgMusic = document.getElementById('background-music');
+            if (bgMusic) {
+                bgMusic.volume = 0.5; // 볼륨 조절
+                bgMusic.play().catch(err => {
+                    console.log('Background music autoplay prevented:', err);
+                    // 사용자 인터랙션 후 재생 시도
+                    document.addEventListener('click', () => {
+                        bgMusic.play().catch(() => {});
+                    }, { once: true });
+                });
+            }
+        });
+
+        // 백버튼 처리 (게임 중, 상점, 인벤토리에서 시작 화면으로)
+        let isGameScreen = false;
+        let isShopScreen = false;
+        let isInventoryScreen = false;
+
+        // 화면 상태 추적
+        const gameScreen = document.getElementById('game-screen');
+        const shopScreen = document.getElementById('shop-screen');
+        const inventoryScreen = document.getElementById('inventory-screen');
+        const startScreen = document.getElementById('start-screen');
+
+        // MutationObserver로 화면 상태 감지
+        const observer = new MutationObserver(() => {
+            isGameScreen = gameScreen.style.display !== 'none';
+            isShopScreen = shopScreen.style.display !== 'none';
+            isInventoryScreen = inventoryScreen.style.display !== 'none';
+        });
+
+        observer.observe(gameScreen, { attributes: true, attributeFilter: ['style'] });
+        observer.observe(shopScreen, { attributes: true, attributeFilter: ['style'] });
+        observer.observe(inventoryScreen, { attributes: true, attributeFilter: ['style'] });
+
+        // 백버튼 이벤트 처리 (모바일 브라우저)
+        window.addEventListener('popstate', (e) => {
+            if (isGameScreen || isShopScreen || isInventoryScreen) {
+                // 모든 화면 숨기고 시작 화면 표시
+                gameScreen.style.display = 'none';
+                shopScreen.style.display = 'none';
+                inventoryScreen.style.display = 'none';
+                startScreen.style.display = 'flex';
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+            }
+        });
+
+        // 초기 히스토리 상태 추가
+        history.pushState(null, '', window.location.href);
+    </script>
 
 </body>
-
-
 
 </html>

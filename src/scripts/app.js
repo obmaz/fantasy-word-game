@@ -84,6 +84,7 @@ const inventory = {
     open: () => {
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('inventory-screen').style.display = 'flex';
+        history.pushState({ screen: 'inventory' }, '', window.location.href);
         inventory.hideDetails(); // Hide details on open
         inventory.render();
 
@@ -97,6 +98,7 @@ const inventory = {
     close: () => {
         document.getElementById('inventory-screen').style.display = 'none';
         document.getElementById('start-screen').style.display = 'flex';
+        history.pushState(null, '', window.location.href);
     },
     render: () => {
         const invContainer = document.querySelector('.inv-items');
@@ -389,11 +391,13 @@ const shop = {
     open: () => {
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('shop-screen').style.display = 'flex';
+        history.pushState({ screen: 'shop' }, '', window.location.href);
         shop.render();
     },
     close: () => {
         document.getElementById('shop-screen').style.display = 'none';
         document.getElementById('start-screen').style.display = 'flex';
+        history.pushState(null, '', window.location.href);
     },
     render: () => {
         const container = document.getElementById('shop-container');
@@ -481,6 +485,16 @@ const ui = {
         document.querySelectorAll('#ui-gold').forEach(e => e.innerText = db.gold);
         const titleGold = document.getElementById('title-ui-gold');
         if (titleGold) titleGold.innerText = db.gold;
+        const overlayGold = document.getElementById('overlay-gold');
+        if (overlayGold) overlayGold.innerText = db.gold;
+    },
+    updateGameInfo: (mode, day) => {
+        const modeText = mode === 'rush' ? '보스 러쉬' : (mode === 'chaos' ? '혼돈의 균열' : '스토리 모드');
+        const dayText = mode === 'rush' ? '무한' : (mode === 'chaos' ? '전체' : (day === 'all' ? '전체' : `Day ${day}`));
+        const gameInfoEl = document.getElementById('game-info-badge');
+        if (gameInfoEl) {
+            gameInfoEl.innerText = `${modeText} - ${dayText}`;
+        }
     },
     updateVisuals: () => {
         document.getElementById('hero-img').src = "images/hero.png";
@@ -755,11 +769,12 @@ function __runGameSanityChecks(opts = {}) {
 const game = {
     list: [], idx: 0, timer: null, timeLeft: 0, maxTime: 10,
     stats: { gain: 0, lost: 0 }, currentQ: null, isProcessing: false, currentAns: "", mode: 'normal',
-    deck: [],
+    deck: [], currentDay: null,
 
     init: (mode, day) => {
         const count = parseInt(document.getElementById('count-select').value);
         game.mode = mode;
+        game.currentDay = day;
 
         document.getElementById('story-screen').style.display = 'none';
 
@@ -798,6 +813,12 @@ const game = {
         }
 
         document.getElementById('game-screen').style.display = 'flex';
+
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'game' }, '', window.location.href);
+
+        // 게임 모드와 Day 표시 업데이트
+        ui.updateGameInfo(mode, day);
 
         ui.updateGold();
         ui.updateVisuals();
@@ -972,6 +993,11 @@ const game = {
             document.getElementById('hero-img').classList.add('hero-hit-anim');
             document.querySelector('.battle-arena').classList.add('screen-shake');
 
+            // 스마트폰 진동 (데미지 받을 때)
+            if (navigator.vibrate) {
+                navigator.vibrate(200); // 200ms 진동
+            }
+
             setTimeout(() => {
                 document.getElementById('monster-img').classList.remove('mob-attack-anim');
                 document.getElementById('hero-img').classList.remove('hero-hit-anim');
@@ -1057,13 +1083,25 @@ const game = {
     startTimer: () => {
         game.timeLeft = game.maxTime;
         const bar = document.getElementById('ui-timer');
-        bar.style.width = "100%";
-        bar.classList.remove('timer-danger');
+        const overlayBar = document.getElementById('overlay-timer');
+        if (bar) {
+            bar.style.width = "100%";
+            bar.classList.remove('timer-danger');
+        }
+        if (overlayBar) {
+            overlayBar.style.width = "100%";
+            overlayBar.classList.remove('timer-danger');
+        }
         clearInterval(game.timer);
         game.timer = setInterval(() => {
             game.timeLeft -= 0.1;
-            bar.style.width = ((game.timeLeft / game.maxTime) * 100) + "%";
-            if (game.timeLeft <= 3) bar.classList.add('timer-danger');
+            const width = ((game.timeLeft / game.maxTime) * 100) + "%";
+            if (bar) bar.style.width = width;
+            if (overlayBar) overlayBar.style.width = width;
+            if (game.timeLeft <= 3) {
+                if (bar) bar.classList.add('timer-danger');
+                if (overlayBar) overlayBar.classList.add('timer-danger');
+            }
             if (game.timeLeft <= 0) {
                 clearInterval(game.timer);
                 game.handleAnswer(false, null);

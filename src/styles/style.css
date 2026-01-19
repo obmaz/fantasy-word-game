@@ -120,8 +120,49 @@ body {
 }
 
 /* Badge */
-.info-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; border: 1px solid #555; font-size: 12px; color: #ddd; }
-.durability-badge { position: absolute; top: 10px; left: 10px; background: rgba(255, 193, 7, 0.2); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--gold); font-size: 11px; color: var(--gold); display: none; }
+.info-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; border: 1px solid #555; font-size: 12px; color: #ddd; z-index: 15; }
+.durability-badge { position: absolute; top: 10px; left: 10px; background: rgba(255, 193, 7, 0.2); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--gold); font-size: 11px; color: var(--gold); display: none; z-index: 15; }
+
+/* 배경 위에 표시되는 골드와 시간 UI */
+.overlay-ui {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.overlay-gold {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 213, 79, 0.4);
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-timer {
+    display: flex;
+    align-items: center;
+}
+
+.overlay-timer .timer-bar-bg {
+    width: 120px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
 
 /* Quiz Area */
 .quiz-area { flex: 1; background: var(--card-bg); padding: 15px; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
