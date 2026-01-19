@@ -291,8 +291,8 @@ body {
     filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 213, 79, 0.5));
 }
 
-/* Button positions - based on title_ori.png layout */
-/* All positions are % relative to title.png image size */
+/* Button positions - based on title.jpg layout */
+/* All positions are % relative to title.jpg image size */
 
 /* STORY MODE = 전투 시작 */
 #title-story-mode-btn {

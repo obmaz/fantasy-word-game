@@ -567,20 +567,20 @@ try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
 // Monster image assets and selection helper
 const monsterAssets = {
     normal: [
-        'images/monster_1.png',
-        'images/monster_2.png',
-        'images/monster_3.png'
+        'images/monster_1.jpg',
+        'images/monster_2.jpg',
+        'images/monster_3.jpg'
     ],
     boss: [
-        'images/monster_1.png',
-        'images/monster_2.png',
-        'images/monster_3.png'
+        'images/monster_1.jpg',
+        'images/monster_2.jpg',
+        'images/monster_3.jpg'
     ],
     byDay: {
         // Day-specific mapping — useful for testing and unique bosses
-        // add more: '5': ['images/monster_1.png', 'images/monster_2.png']
+        // add more: '5': ['images/monster_1.jpg', 'images/monster_2.jpg']
     },
-    fallback: 'images/monster_1.png'
+    fallback: 'images/monster_1.jpg'
 };
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -1634,7 +1634,7 @@ function syncStoryButtonOverlay() {
     }
 }
 
-// Sync button overlay to match title.png image size exactly
+// Sync button overlay to match title.jpg image size exactly
 function syncTitleButtonOverlay() {
     const titleImg = document.querySelector('.title-background');
     const overlay = document.querySelector('.title-buttons-overlay');
