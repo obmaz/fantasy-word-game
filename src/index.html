@@ -11,24 +11,15 @@
 <body>
 
     <div id="game-screen" style="display:none; height:100%; flex-direction:column;">
-        <!-- Gold display for game screen -->
-        <div class="top-bar" style="display: flex; justify-content: flex-end; align-items: center; padding: 10px;">
-            <div class="gold-display">💰 <span id="ui-gold">0</span> G</div>
-            <div class="timer-bar-bg">
-                <div id="ui-timer" class="timer-bar-fill"></div>
-            </div>
-        </div>
         <div class="battle-arena">
             <div class="info-badge" id="wave-badge">Wave: 1</div>
-            <div class="info-badge" id="game-info-badge" style="top: 10px; left: 10px; right: auto;">스토리 모드 - Day 1</div>
+            <div class="info-badge" id="game-info-badge">스토리 모드 - Day 1</div>
             <div class="durability-badge" id="durability-badge">🥊 30/30</div>
             <!-- 배경 위에 골드와 시간 표시 -->
-            <div class="overlay-ui">
-                <div class="overlay-gold">💰 <span id="overlay-gold">0</span> G</div>
-                <div class="overlay-timer">
-                    <div class="timer-bar-bg">
-                        <div id="overlay-timer" class="timer-bar-fill"></div>
-                    </div>
+            <div class="overlay-gold">💰 <span id="overlay-gold">0</span> G</div>
+            <div class="overlay-timer">
+                <div class="timer-bar-bg">
+                    <div id="overlay-timer" class="timer-bar-fill"></div>
                 </div>
             </div>
 
@@ -421,6 +412,7 @@
     <script>
         // Background music 초기화 및 재생
         window.addEventListener('load', () => {
+            enforceAspectRatio();
             const bgMusic = document.getElementById('background-music');
             if (bgMusic) {
                 bgMusic.volume = 0.5; // 볼륨 조절

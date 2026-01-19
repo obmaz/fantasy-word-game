@@ -482,7 +482,6 @@ const shop = {
 
 const ui = {
     updateGold: () => {
-        document.querySelectorAll('#ui-gold').forEach(e => e.innerText = db.gold);
         const titleGold = document.getElementById('title-ui-gold');
         if (titleGold) titleGold.innerText = db.gold;
         const overlayGold = document.getElementById('overlay-gold');
@@ -1123,12 +1122,7 @@ const game = {
 
     startTimer: () => {
         game.timeLeft = game.maxTime;
-        const bar = document.getElementById('ui-timer');
         const overlayBar = document.getElementById('overlay-timer');
-        if (bar) {
-            bar.style.width = "100%";
-            bar.classList.remove('timer-danger');
-        }
         if (overlayBar) {
             overlayBar.style.width = "100%";
             overlayBar.classList.remove('timer-danger');
@@ -1137,10 +1131,8 @@ const game = {
         game.timer = setInterval(() => {
             game.timeLeft -= 0.1;
             const width = ((game.timeLeft / game.maxTime) * 100) + "%";
-            if (bar) bar.style.width = width;
             if (overlayBar) overlayBar.style.width = width;
             if (game.timeLeft <= 3) {
-                if (bar) bar.classList.add('timer-danger');
                 if (overlayBar) overlayBar.classList.add('timer-danger');
             }
             if (game.timeLeft <= 0) {
@@ -1406,6 +1398,9 @@ function openStoryModePopup() {
             }, { once: true });
         }
     }
+    
+    // 드롭박스 값 변경 시 폰트 크기 재조정
+    setupSelectFontSizeAdjustment();
 }
 
 // Open chaos rift selection popup
@@ -1447,6 +1442,9 @@ function openChaosRiftPopup() {
             }, { once: true });
         }
     }
+    
+    // 드롭박스 값 변경 시 폰트 크기 재조정
+    setupSelectFontSizeAdjustment();
 }
 
 // Close story mode selection popup
@@ -1454,6 +1452,80 @@ function closeStoryModePopup() {
     const popup = document.getElementById('story-mode-popup');
     if (popup) {
         popup.style.display = 'none';
+    }
+}
+
+// 드롭박스 폰트 크기를 동적으로 조정 (텍스트가 잘리지 않도록)
+function adjustSelectFontSize(selectElement, width, height) {
+    if (!selectElement) return;
+    
+    // 패딩을 고려한 실제 텍스트 영역
+    const padding = 20; // 좌우 패딩 합계
+    const textWidth = width - padding;
+    const textHeight = height - 10; // 상하 패딩 고려
+    
+    // 최대 폰트 크기 계산 (높이 기준)
+    const maxFontSizeByHeight = textHeight * 0.7;
+    
+    // 현재 선택된 옵션의 텍스트 길이 확인
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const text = selectedOption ? selectedOption.text : '';
+    
+    // 텍스트 길이에 따른 폰트 크기 계산
+    // 한글 기준으로 대략적인 계산 (폰트 크기 * 0.6 정도가 한 글자 너비)
+    let fontSize = maxFontSizeByHeight;
+    if (text.length > 0) {
+        // 텍스트가 너비에 맞는지 확인
+        const estimatedCharWidth = fontSize * 0.6; // 한 글자당 대략적인 너비
+        const requiredWidth = text.length * estimatedCharWidth;
+        
+        if (requiredWidth > textWidth) {
+            // 텍스트가 너비를 초과하면 폰트 크기 조정
+            fontSize = (textWidth / text.length) / 0.6;
+        }
+    }
+    
+    // 최소/최대 폰트 크기 제한
+    fontSize = Math.max(14, Math.min(fontSize, 40));
+    
+    selectElement.style.fontSize = fontSize + 'px';
+    
+    // 옵션들도 같은 폰트 크기 적용
+    Array.from(selectElement.options).forEach(option => {
+        option.style.fontSize = fontSize + 'px';
+    });
+}
+
+// 드롭박스 값 변경 시 폰트 크기 재조정 설정
+function setupSelectFontSizeAdjustment() {
+    const popupDaySelect = document.getElementById('popup-day-select');
+    const popupCountSelect = document.getElementById('popup-count-select');
+    
+    // 드롭박스 값 변경 시 폰트 크기 재조정
+    if (popupDaySelect && !popupDaySelect.dataset.fontAdjustmentSetup) {
+        popupDaySelect.dataset.fontAdjustmentSetup = 'true';
+        popupDaySelect.addEventListener('change', () => {
+            setTimeout(() => {
+                const popupImg = document.getElementById('popup-background-img');
+                if (popupImg && popupImg.complete) {
+                    const imgRect = popupImg.getBoundingClientRect();
+                    adjustSelectFontSize(popupDaySelect, imgRect.width * 0.6, imgRect.height * 0.11);
+                }
+            }, 50);
+        });
+    }
+    
+    if (popupCountSelect && !popupCountSelect.dataset.fontAdjustmentSetup) {
+        popupCountSelect.dataset.fontAdjustmentSetup = 'true';
+        popupCountSelect.addEventListener('change', () => {
+            setTimeout(() => {
+                const popupImg = document.getElementById('popup-background-img');
+                if (popupImg && popupImg.complete) {
+                    const imgRect = popupImg.getBoundingClientRect();
+                    adjustSelectFontSize(popupCountSelect, imgRect.width * 0.6, imgRect.height * 0.11);
+                }
+            }, 50);
+        });
     }
 }
 
@@ -1488,19 +1560,29 @@ function syncPopupButtonOverlay() {
         // 모험 지역 드롭박스 (더 길고 크게)
         const daySelect = document.getElementById('popup-day-select');
         if (daySelect) {
-            daySelect.style.width = (imgRect.width * 0.6) + 'px';
-            daySelect.style.height = (imgRect.height * 0.11) + 'px';
+            const width = imgRect.width * 0.6;
+            const height = imgRect.height * 0.11;
+            daySelect.style.width = width + 'px';
+            daySelect.style.height = height + 'px';
             daySelect.style.left = (imgRect.width * 0.14) + 'px';
             daySelect.style.top = (imgRect.height * 0.325) + 'px';
+            
+            // 폰트 크기 동적 조정 (드롭박스 크기에 맞춰)
+            adjustSelectFontSize(daySelect, width, height);
         }
         
         // 난이도 드롭박스 (더 길고 크게)
         const countSelect = document.getElementById('popup-count-select');
         if (countSelect) {
-            countSelect.style.width = (imgRect.width * 0.6) + 'px';
-            countSelect.style.height = (imgRect.height * 0.11) + 'px';
+            const width = imgRect.width * 0.6;
+            const height = imgRect.height * 0.11;
+            countSelect.style.width = width + 'px';
+            countSelect.style.height = height + 'px';
             countSelect.style.left = (imgRect.width * 0.14) + 'px';
             countSelect.style.top = (imgRect.height * 0.59) + 'px';
+            
+            // 폰트 크기 동적 조정 (드롭박스 크기에 맞춰)
+            adjustSelectFontSize(countSelect, width, height);
         }
         
         // 시작하기 버튼 (왼쪽 아래로)
