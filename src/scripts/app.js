@@ -477,9 +477,13 @@ const shop = {
 };
 
 const ui = {
-    updateGold: () => document.querySelectorAll('#ui-gold').forEach(e => e.innerText = db.gold),
+    updateGold: () => {
+        document.querySelectorAll('#ui-gold').forEach(e => e.innerText = db.gold);
+        const titleGold = document.getElementById('title-ui-gold');
+        if (titleGold) titleGold.innerText = db.gold;
+    },
     updateVisuals: () => {
-        document.getElementById('hero-img').src = "images/legacy_hero_sprite.png";
+        document.getElementById('hero-img').src = "images/hero.png";
 
         // weapon -> hand-1 (gameplay)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
@@ -550,17 +554,20 @@ try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
 // Monster image assets and selection helper
 const monsterAssets = {
     normal: [
-        'images/legacy_orc_sprite.png' // default normal monster
+        'images/monster_1.png',
+        'images/monster_2.png',
+        'images/monster_3.png'
     ],
     boss: [
-        'images/legacy_orc_sprite.png' // default boss (can add more)
+        'images/monster_1.png',
+        'images/monster_2.png',
+        'images/monster_3.png'
     ],
     byDay: {
         // Day-specific mapping — useful for testing and unique bosses
-        '40': ['images/legacy_orc_sprite.png']
-        // add more: '5': ['images/day5_goblin.png', 'images/day5_troll.png']
+        // add more: '5': ['images/monster_1.png', 'images/monster_2.png']
     },
-    fallback: 'images/legacy_orc_sprite.png'
+    fallback: 'images/monster_1.png'
 };
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -613,7 +620,7 @@ const story = {
         console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
         db.save();
-        story.day = (mode === 'rush') ? 'rush' : daySel;
+        story.day = (mode === 'rush') ? 'rush' : ((mode === 'chaos') ? 'all' : daySel);
         story.mode = mode;
         const data = resolveStoryData(story.day);
 
@@ -647,7 +654,7 @@ const story = {
         const btn = document.getElementById('story-btn');
         btn.innerText = "모험 시작";
         // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
-        const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : daySel;
+        const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : ((story.mode === 'chaos') ? 'all' : daySel);
         btn.onclick = () => {
             console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
             game.init(story.mode, resolvedAtIntro);
@@ -775,6 +782,10 @@ const game = {
         if (mode === 'rush') {
             game.deck = game.shuffle([...rawData]);
             game.list = [];
+        } else if (mode === 'chaos') {
+            // Chaos Rift: All questions are boss mode (subjective)
+            let shuffledPool = game.shuffle(pool);
+            game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: true }));
         } else {
             let shuffledPool = game.shuffle(pool);
             const bossCount = Math.max(1, Math.floor(count * 0.2));
@@ -815,6 +826,12 @@ const game = {
             document.getElementById('wave-badge').innerText = "Wave: " + (game.idx + 1);
             game.currentAns = game.currentQ.word;
             game.renderBoss(game.currentQ, true);
+        } else if (game.mode === 'chaos') {
+            // Chaos Rift: All questions are boss mode
+            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
+            game.currentQ = game.list[game.idx];
+            game.currentAns = game.currentQ.word;
+            game.renderBoss(game.currentQ, false);
         } else {
             document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
@@ -1223,8 +1240,8 @@ const secret = {
 };
 function initSelections() {
     const daySelect = document.getElementById('day-select');
-    if (!daySelect) return;
-
+    const popupDaySelect = document.getElementById('popup-day-select');
+    
     // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
     if (typeof rawData !== 'undefined' && Array.isArray(rawData)) rawData.forEach(r => { if (r && r.day) daysFromData.add(Number(r.day)); });
@@ -1242,20 +1259,121 @@ function initSelections() {
     });
     html += `<option value="all">전체 (혼돈의 균열)</option>`;
 
-    daySelect.innerHTML = html;
-
-    // Restore last selected day if available
-    const last = db.lastSelectedDay || 'all';
-    if (Array.from(daySelect.options).some(o => o.value === String(last))) {
-        daySelect.value = last;
-    } else {
-        daySelect.value = 'all';
-        db.lastSelectedDay = 'all';
-        db.save();
+    // Initialize both selects
+    if (daySelect) {
+        daySelect.innerHTML = html;
+        const last = db.lastSelectedDay || 'all';
+        if (Array.from(daySelect.options).some(o => o.value === String(last))) {
+            daySelect.value = last;
+        } else {
+            daySelect.value = 'all';
+            db.lastSelectedDay = 'all';
+            db.save();
+        }
+    }
+    
+    if (popupDaySelect) {
+        popupDaySelect.innerHTML = html;
+        const last = db.lastSelectedDay || 'all';
+        if (Array.from(popupDaySelect.options).some(o => o.value === String(last))) {
+            popupDaySelect.value = last;
+        } else {
+            popupDaySelect.value = 'all';
+        }
     }
 }
 
+// Open story mode selection popup
+function openStoryModePopup() {
+    const popup = document.getElementById('story-mode-popup');
+    const popupDaySelect = document.getElementById('popup-day-select');
+    const popupCountSelect = document.getElementById('popup-count-select');
+    
+    if (!popup) return;
+    
+    // Mark popup as story mode
+    popup.dataset.mode = 'story';
+    
+    // Enable day selection for story mode
+    if (popupDaySelect) {
+        popupDaySelect.disabled = false;
+    }
+    
+    // Restore last selected values
+    const lastDay = db.lastSelectedDay || 'all';
+    if (popupDaySelect && Array.from(popupDaySelect.options).some(o => o.value === String(lastDay))) {
+        popupDaySelect.value = lastDay;
+    }
+    
+    const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
+    if (popupCountSelect) {
+        popupCountSelect.value = String(lastCount);
+    }
+    
+    popup.style.display = 'flex';
+}
+
+// Open chaos rift selection popup
+function openChaosRiftPopup() {
+    const popup = document.getElementById('story-mode-popup');
+    const popupDaySelect = document.getElementById('popup-day-select');
+    const popupCountSelect = document.getElementById('popup-count-select');
+    
+    if (!popup) return;
+    
+    // Mark popup as chaos mode
+    popup.dataset.mode = 'chaos';
+    
+    // For chaos rift, always use 'all' day
+    if (popupDaySelect) {
+        popupDaySelect.value = 'all';
+        popupDaySelect.disabled = true; // Disable day selection for chaos rift
+    }
+    
+    const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
+    if (popupCountSelect) {
+        popupCountSelect.value = String(lastCount);
+    }
+    
+    popup.style.display = 'flex';
+}
+
+// Close story mode selection popup
+function closeStoryModePopup() {
+    const popup = document.getElementById('story-mode-popup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}
+
+// Sync button overlay to match title.png image size exactly
+function syncTitleButtonOverlay() {
+    const titleImg = document.querySelector('.title-background');
+    const overlay = document.querySelector('.title-buttons-overlay');
+    const container = document.querySelector('.title-container-wrapper');
+    
+    if (!titleImg || !overlay || !container) return;
+    
+    // Get actual rendered size of the image
+    const imgRect = titleImg.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    // Calculate position relative to container
+    const left = imgRect.left - containerRect.left;
+    const top = imgRect.top - containerRect.top;
+    
+    // Set overlay to match image exactly
+    overlay.style.width = imgRect.width + 'px';
+    overlay.style.height = imgRect.height + 'px';
+    overlay.style.left = left + 'px';
+    overlay.style.top = top + 'px';
+}
+
 window.onload = () => {
+    // Validate dayCatalog coverage after all data is loaded
+    if (typeof dayCatalog !== 'undefined' && typeof dayCatalog.validateCoverage === 'function') {
+        dayCatalog.validateCoverage();
+    }
     secret.init();
     inventory.render();
     initSelections();
@@ -1267,4 +1385,96 @@ window.onload = () => {
         story.startIntro('normal', selectedDay);
     });
     document.getElementById('boss-rush-btn').addEventListener('click', () => story.startIntro('rush'));
+    
+    // Connect title image button areas to actual buttons
+    const titleStoryModeBtn = document.getElementById('title-story-mode-btn'); // STORY MODE
+    const titleChaosRiftBtn = document.getElementById('title-chaos-rift-btn'); // CHAOS RIFT
+    const titleBossRushBtn = document.getElementById('title-boss-rush-btn');   // BOSS RUSH
+    const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
+    const titleProfileBtn = document.getElementById('title-profile-btn');     // PROFILE
+    const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
+    
+    if (titleStoryModeBtn) {
+        titleStoryModeBtn.addEventListener('click', () => {
+            openStoryModePopup();
+        });
+    }
+    
+    // Popup event listeners
+    const popupStartBtn = document.getElementById('popup-start-btn');
+    const popupCancelBtn = document.getElementById('popup-cancel-btn');
+    const popupDaySelect = document.getElementById('popup-day-select');
+    const popupCountSelect = document.getElementById('popup-count-select');
+    
+    if (popupStartBtn) {
+        popupStartBtn.addEventListener('click', () => {
+            const popup = document.getElementById('story-mode-popup');
+            const selectedDay = popupDaySelect ? popupDaySelect.value : 'all';
+            const selectedCount = popupCountSelect ? parseInt(popupCountSelect.value) : 10;
+            
+            // Check which mode opened the popup
+            const popupMode = popup ? (popup.dataset.mode || 'story') : 'story';
+            
+            // Save selections
+            db.lastSelectedDay = selectedDay;
+            localStorage.setItem('v7_last_count', selectedCount);
+            db.save();
+            
+            // Update hidden selects for compatibility
+            const daySelect = document.getElementById('day-select');
+            const countSelect = document.getElementById('count-select');
+            if (daySelect) daySelect.value = selectedDay;
+            if (countSelect) countSelect.value = String(selectedCount);
+            
+            // Close popup and start game
+            closeStoryModePopup();
+            
+            if (popupMode === 'chaos') {
+                story.startIntro('chaos', 'all');
+            } else {
+                story.startIntro('normal', selectedDay);
+            }
+        });
+    }
+    
+    if (popupCancelBtn) {
+        popupCancelBtn.addEventListener('click', () => {
+            closeStoryModePopup();
+        });
+    }
+    if (titleChaosRiftBtn) {
+        titleChaosRiftBtn.addEventListener('click', () => {
+            openChaosRiftPopup();
+        });
+    }
+    if (titleBossRushBtn) {
+        titleBossRushBtn.addEventListener('click', () => story.startIntro('rush'));
+    }
+    if (titleShopBtn) {
+        titleShopBtn.addEventListener('click', () => shop.open());
+    }
+    if (titleProfileBtn) {
+        titleProfileBtn.addEventListener('click', () => inventory.open());
+    }
+    if (titleSettingBtn) {
+        titleSettingBtn.addEventListener('click', () => secret.open());
+    }
+    
+    // Sync button overlay to image size
+    const titleImg = document.querySelector('.title-background');
+    if (titleImg) {
+        // Sync when image loads
+        if (titleImg.complete) {
+            syncTitleButtonOverlay();
+        } else {
+            titleImg.addEventListener('load', syncTitleButtonOverlay);
+        }
+        
+        // Sync on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(syncTitleButtonOverlay, 100);
+        });
+    }
 }

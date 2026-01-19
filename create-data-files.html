@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Data Files</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        #status { margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Words.js 데이터 파일 생성기</h1>
+    <p>이 파일을 브라우저에서 열고 버튼을 클릭하세요.</p>
+    <button onclick="extractData()">데이터 파일 생성</button>
+    <div id="status"></div>
+
+    <script>
+        async function extractData() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'words.js 파일을 읽는 중...';
+            
+            try {
+                const response = await fetch('scripts/words.js');
+                if (!response.ok) throw new Error('words.js 파일을 찾을 수 없습니다.');
+                
+                const content = await response.text();
+                status.innerHTML = '데이터 추출 중...';
+                
+                // stories 추출
+                const storiesMatch = content.match(/const stories = \{[\s\S]*?\n\};/);
+                if (storiesMatch) {
+                    const storiesCode = storiesMatch[0].replace('const stories = ', '');
+                    // 브라우저에서 실행하여 데이터 추출
+                    const storiesData = eval('(' + storiesCode + ')');
+                    const storiesJson = JSON.stringify(storiesData, null, 2);
+                    downloadFile('scripts/stories-data.js', 'window.storiesData = ' + storiesJson + ';\n');
+                    status.innerHTML += '<br>✓ stories-data.js 생성 완료';
+                }
+                
+                // rawData 추출
+                const rawDataMatch = content.match(/const rawData = \[[\s\S]*?\n\];/);
+                if (rawDataMatch) {
+                    const rawDataCode = rawDataMatch[0].replace('const rawData = ', '');
+                    const rawDataData = eval('(' + rawDataCode + ')');
+                    const rawDataJson = JSON.stringify(rawDataData, null, 2);
+                    downloadFile('scripts/rawData-data.js', 'window.rawDataData = ' + rawDataJson + ';\n');
+                    status.innerHTML += '<br>✓ rawData-data.js 생성 완료';
+                }
+                
+                // decoyWords 추출
+                const decoyWordsMatch = content.match(/const decoyWords = \[[\s\S]*?\n\];/);
+                if (decoyWordsMatch) {
+                    const decoyWordsCode = decoyWordsMatch[0].replace('const decoyWords = ', '');
+                    const decoyWordsData = eval('(' + decoyWordsCode + ')');
+                    const decoyWordsJson = JSON.stringify(decoyWordsData, null, 2);
+                    downloadFile('scripts/decoyWords-data.js', 'window.decoyWordsData = ' + decoyWordsJson + ';\n');
+                    status.innerHTML += '<br>✓ decoyWords-data.js 생성 완료';
+                }
+                
+                status.innerHTML += '<br><br><strong>모든 파일 생성 완료!</strong><br>생성된 파일들을 src/scripts/ 폴더에 저장하세요.';
+            } catch (error) {
+                status.innerHTML = '<span style="color:red;">오류: ' + error.message + '</span><br>이 파일을 웹 서버에서 실행하거나, src/index.html과 같은 디렉토리에 두세요.';
+            }
+        }
+        
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

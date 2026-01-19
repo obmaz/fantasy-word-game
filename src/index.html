@@ -10,17 +10,14 @@
 
 <body>
 
-    <div class="top-bar">
-        <div style="font-size:16px; font-weight:800; color:var(--primary);">킹왕짱 RPG</div>
-        <div style="text-align:right;">
+    <div id="game-screen" style="display:none; height:100%; flex-direction:column;">
+        <!-- Gold display for game screen -->
+        <div class="top-bar" style="display: flex; justify-content: flex-end; align-items: center; padding: 10px;">
             <div class="gold-display">💰 <span id="ui-gold">0</span> G</div>
             <div class="timer-bar-bg">
                 <div id="ui-timer" class="timer-bar-fill"></div>
             </div>
         </div>
-    </div>
-
-    <div id="game-screen" style="display:none; height:100%; flex-direction:column;">
         <div class="battle-arena">
             <div class="info-badge" id="wave-badge">Wave: 1</div>
             <div class="durability-badge" id="durability-badge">🥊 30/30</div>
@@ -68,40 +65,63 @@
     </div>
 
     <div id="start-screen" class="screen-overlay">
-        <div class="card">
-            <h1 style="color:var(--primary); margin:0 0 5px 0;">킹왕짱 RPG</h1>
-            <p style="color:#888; font-size:12px; margin-bottom:20px;">부자가 되어 전설을 만드세요!</p>
-
-            <div class="stats-box">
-                <div class="stat-item">📝 푼 문제<div class="stat-val" id="stat-solved">0</div>
-                </div>
-                <div class="stat-item">✅ 정답<div class="stat-val" id="stat-correct">0</div>
-                </div>
-                <div class="stat-item">🎯 정답률<div class="stat-val" id="stat-rate">0%</div>
-                </div>
+        <!-- Title container - constrains buttons within image bounds -->
+        <div class="title-container-wrapper">
+            <!-- Background image - displayed vertically centered, full height visible -->
+            <img src="images/title.png" alt="Title Screen" class="title-background" />
+            
+            <!-- Button overlay - matches image size exactly -->
+            <div class="title-buttons-overlay">
+                <!-- Gold display on title screen -->
+                <div class="title-gold-display">💰 <span id="title-ui-gold">0</span> G</div>
+                <!-- Interactive button areas (invisible overlays on image buttons) -->
+                <!-- STORY MODE = 전투 시작 -->
+                <button class="title-btn-area content-visible" id="title-story-mode-btn" title="전투 시작 (STORY MODE)">
+                    <img src="images/story_mode.png" alt="Story Mode" class="btn-image">
+                </button>
+                <!-- CHAOS RIFT = 혼돈의 균열 -->
+                <button class="title-btn-area content-visible" id="title-chaos-rift-btn" title="혼돈의 균열 (CHAOS RIFT)">
+                    <img src="images/chaos_rift.png" alt="Chaos Rift" class="btn-image">
+                </button>
+                <!-- BOSS RUSH = 무한의 전장 -->
+                <button class="title-btn-area content-visible" id="title-boss-rush-btn" title="무한의 전장 (BOSS RUSH)">
+                    <img src="images/boss_rush.png" alt="Boss Rush" class="btn-image">
+                </button>
+                
+                <!-- shop = 상점 -->
+                <button class="title-btn-area content-visible" id="title-shop-btn" title="상점 (SHOP)">
+                    <img src="images/shop.png" alt="Shop" class="btn-image">
+                </button>
+                <!-- profile = 인벤토리 -->
+                <button class="title-btn-area content-visible" id="title-profile-btn" title="인벤토리 (PROFILE)">
+                    <img src="images/inventory.png" alt="Inventory" class="btn-image">
+                </button>
+                <!-- setting = secret 메뉴 (킹 글자 클릭 영역) -->
+                <button class="title-btn-area content-visible" id="title-setting-btn" title="시스템 설정 (SETTING)">
+                    <img src="images/settings.png" alt="Settings" class="btn-image">
+                </button>
             </div>
-
-            <div id="equipped-summary" class="equipped-summary" aria-live="polite" style="display:block;">Loading
-                equipment...</div>
-
-            <div style="text-align:left; margin-top:20px;">
-                <label>모험 지역</label>
-                <!-- options are generated from `src/scripts/words.js` (dayInfo + rawData) -->
-                <select id="day-select"></select>
-
-                <label>난이도 (몬스터 수)</label>
-                <select id="count-select">
-                    <option value="5">5 마리 (쉬움)</option>
-                    <option value="10" selected>10 마리 (보통)</option>
-                    <option value="20">20 마리 (어려움)</option>
-                </select>
-            </div>
-
-            <button class="btn-main" id="start-battle-btn">전투 시작 ⚔️</button>
-            <button class="btn-main btn-boss-rush" id="boss-rush-btn">🔥 보스 러시 (무한)</button>
-            <button class="btn-main btn-shop" onclick="shop.open()">상점 🛒</button>
-            <button class="btn-main btn-inv" onclick="inventory.open()">인벤토리 🎒</button>
         </div>
+        
+        <!-- Hidden UI elements (kept for functionality but not displayed) -->
+        <div style="display: none;">
+            <div class="stats-box" id="stat-solved">0</div>
+            <div class="stat-item" id="stat-correct">0</div>
+            <div class="stat-item" id="stat-rate">0%</div>
+            <div id="equipped-summary" class="equipped-summary"></div>
+            <select id="day-select"></select>
+            <select id="count-select">
+                <option value="5">5 마리 (쉬움)</option>
+                <option value="10" selected>10 마리 (보통)</option>
+                <option value="20">20 마리 (어려움)</option>
+            </select>
+        </div>
+        
+        <!-- Hidden buttons for functionality (kept for event listeners) -->
+        <button class="btn-main" id="start-battle-btn" style="display: none;">전투 시작 ⚔️</button>
+        <button class="btn-main btn-boss-rush" id="boss-rush-btn" style="display: none;">🔥 보스 러시 (무한)</button>
+        <button class="btn-main btn-shop" onclick="shop.open()" style="display: none;">상점 🛒</button>
+        <button class="btn-main btn-inv" onclick="inventory.open()" style="display: none;">인벤토리 🎒</button>
     </div>
 
     <div id="inventory-screen" class="screen-overlay" style="display:none;">
@@ -163,6 +183,28 @@
         </div>
     </div>
 
+
+    <!-- Story Mode Selection Popup -->
+    <div id="story-mode-popup" class="screen-overlay" style="display:none;">
+        <div class="card">
+            <h2 style="margin-top: 0; color: var(--primary);">모험 설정</h2>
+            <div class="adventure-settings">
+                <label>모험 지역</label>
+                <select id="popup-day-select"></select>
+
+                <label>난이도 (몬스터 수)</label>
+                <select id="popup-count-select">
+                    <option value="5">5 마리 (쉬움)</option>
+                    <option value="10" selected>10 마리 (보통)</option>
+                    <option value="20">20 마리 (어려움)</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-main" id="popup-start-btn" style="flex: 1;">시작하기</button>
+                <button class="btn-main btn-blue" id="popup-cancel-btn" style="flex: 1;">취소</button>
+            </div>
+        </div>
+    </div>
 
     <div id="story-screen" class="screen-overlay" style="display:none;">
         <div class="card">
@@ -321,6 +363,9 @@
 
 
 
+    <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
+    <script src="data/game-data.js"></script>
+    <script src="data/items-data.js"></script>
     <script src="scripts/words.js"></script>
 
 
