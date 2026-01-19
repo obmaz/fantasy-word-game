@@ -1488,19 +1488,19 @@ function syncPopupButtonOverlay() {
         // 모험 지역 드롭박스 (더 길고 크게)
         const daySelect = document.getElementById('popup-day-select');
         if (daySelect) {
-            daySelect.style.width = (imgRect.width * 0.7) + 'px';
-            daySelect.style.height = (imgRect.height * 0.125) + 'px';
+            daySelect.style.width = (imgRect.width * 0.6) + 'px';
+            daySelect.style.height = (imgRect.height * 0.11) + 'px';
             daySelect.style.left = (imgRect.width * 0.14) + 'px';
-            daySelect.style.top = (imgRect.height * 0.315) + 'px';
+            daySelect.style.top = (imgRect.height * 0.325) + 'px';
         }
         
         // 난이도 드롭박스 (더 길고 크게)
         const countSelect = document.getElementById('popup-count-select');
         if (countSelect) {
-            countSelect.style.width = (imgRect.width * 0.7) + 'px';
-            countSelect.style.height = (imgRect.height * 0.125) + 'px';
+            countSelect.style.width = (imgRect.width * 0.6) + 'px';
+            countSelect.style.height = (imgRect.height * 0.11) + 'px';
             countSelect.style.left = (imgRect.width * 0.14) + 'px';
-            countSelect.style.top = (imgRect.height * 0.58) + 'px';
+            countSelect.style.top = (imgRect.height * 0.59) + 'px';
         }
         
         // 시작하기 버튼 (왼쪽 아래로)

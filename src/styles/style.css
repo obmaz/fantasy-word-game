@@ -468,34 +468,45 @@ body {
 .popup-select {
     position: absolute;
     z-index: 10;
-    background: rgba(30, 30, 40, 0.8);
-    border: 2px solid rgba(255, 213, 79, 0.4);
+    background: transparent !important;
+    border: none !important;
     color: #FFD54F;
     cursor: pointer;
     pointer-events: auto;
     -webkit-appearance: none;
     appearance: none;
-    font-size: 16px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    backdrop-filter: blur(5px);
+    font-size: 32px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 0;
+    backdrop-filter: none;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .popup-select:hover {
-    border-color: rgba(255, 213, 79, 0.6);
-    background: rgba(40, 40, 50, 0.9);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .popup-select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 15px rgba(255, 213, 79, 0.5);
+    outline: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.popup-select:active {
+    border: none !important;
+    outline: none !important;
 }
 
 .popup-select option {
     background: #1E1E1E;
     color: #FFD54F;
     padding: 10px;
+    font-size: 18px;
 }
 
 .popup-btn-area {
