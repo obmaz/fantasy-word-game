@@ -1084,7 +1084,12 @@ const game = {
         if (game.isProcessing) return;
         const input = document.getElementById('boss-input').value.trim().toLowerCase();
         const answer = game.currentQ.word.toLowerCase();
-        game.handleAnswer(input === answer, null);
+        
+        // 첫 글자가 힌트로 보이므로, 사용자가 첫 글자를 생략하고 입력해도 정답 처리
+        const answerWithoutFirst = answer.slice(1); // 첫 글자 제외한 나머지
+        const isCorrect = (input === answer) || (input === answerWithoutFirst);
+        
+        game.handleAnswer(isCorrect, null);
     },
 
     handleAnswer: (isCorrect, btnElement) => {
@@ -1151,11 +1156,14 @@ const game = {
                     bossInput.onkeypress = null; // 키 이벤트 제거
                 }
                 
+                // 오답일 때 정답 표시
+                game.showCorrectAnswer(game.currentAns);
                 game.showFloatText("GAME OVER", 'red');
+                
                 setTimeout(() => {
                     story.showEnding(false);
                     // game.isProcessing은 showEnding에서 true로 유지 (게임이 자동으로 다시 시작되지 않도록)
-                }, 1000);
+                }, 2500);
                 return;
             }
 
@@ -1185,8 +1193,11 @@ const game = {
             if (btnElement) btnElement.style.background = "#D32F2F";
             else document.getElementById('boss-input').style.borderColor = "#D32F2F";
 
+            // 오답일 때 정답 표시
+            game.showCorrectAnswer(game.currentAns);
+
             // IMPORTANT: Ensure timeout triggers next level even if animation fails
-            setTimeout(() => { game.idx++; game.nextLevel(); }, 1000);
+            setTimeout(() => { game.idx++; game.nextLevel(); }, 2500);
         }
     },
 
@@ -1249,6 +1260,25 @@ const game = {
         el.innerText = text;
         el.className = `damage-txt float-up ${type === 'gold' ? 'dmg-gold' : 'dmg-red'}`;
         setTimeout(() => el.classList.remove('float-up'), 1000);
+    },
+
+    showCorrectAnswer: (answer) => {
+        const el = document.getElementById('q-text');
+        const originalText = el.innerText;
+        
+        // 정답을 표시 (빨간색 + 강조)
+        el.style.color = '#FF5252';
+        el.style.fontSize = '26px';
+        el.style.fontWeight = 'bold';
+        el.innerText = `정답: ${answer}`;
+        
+        // 2초 후 원래 상태로 복구
+        setTimeout(() => {
+            el.style.color = '';
+            el.style.fontSize = '';
+            el.style.fontWeight = '';
+            el.innerText = originalText;
+        }, 2000);
     },
 
     startTimer: () => {
