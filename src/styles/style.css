@@ -76,7 +76,7 @@ body {
 /* Arena */
 .battle-arena {
     flex: 0 0 40%; 
-    background: #000 url('../images/background.jpg') center/cover no-repeat;
+    background: #000 url('../images/background.webp') center/cover no-repeat;
     position: relative;
     display: flex; 
     justify-content: space-between; 
@@ -291,8 +291,8 @@ body {
     filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 213, 79, 0.5));
 }
 
-/* Button positions - based on title.jpg layout */
-/* All positions are % relative to title.jpg image size */
+/* Button positions - based on title.webp layout */
+/* All positions are % relative to title.webp image size */
 
 /* STORY MODE = 전투 시작 */
 #title-story-mode-btn {
@@ -416,7 +416,7 @@ body {
     transform: scale(1.05);
 }
 
-/* 스토리 모드 버튼 위치 (start.png의 "모험 시작" 버튼 영역) */
+/* 스토리 모드 버튼 위치 (start.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.story-mode-btn {
     bottom: 14%;
     left: 51%;
@@ -425,7 +425,7 @@ body {
     height: 15%;
 }
 
-/* 보스 배틀 모드 버튼 위치 (boss_battle.jpg의 "모험 시작" 버튼 영역) */
+/* 보스 배틀 모드 버튼 위치 (boss_battle.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.boss-battle-btn {
     /* 보스 배틀 이미지의 버튼 위치에 맞게 조정 필요 */
     bottom: 14%;

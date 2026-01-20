@@ -496,7 +496,7 @@ const ui = {
         }
     },
     updateVisuals: () => {
-        document.getElementById('hero-img').src = "images/hero.png";
+        document.getElementById('hero-img').src = "images/hero.webp";
 
         // weapon -> hand-1 (gameplay)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
@@ -567,20 +567,20 @@ try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
 // Monster image assets and selection helper
 const monsterAssets = {
     normal: [
-        'images/monster_1.jpg',
-        'images/monster_2.jpg',
-        'images/monster_3.jpg'
+        'images/monster_1.webp',
+        'images/monster_2.webp',
+        'images/monster_3.webp'
     ],
     boss: [
-        'images/monster_1.jpg',
-        'images/monster_2.jpg',
-        'images/monster_3.jpg'
+        'images/monster_1.webp',
+        'images/monster_2.webp',
+        'images/monster_3.webp'
     ],
     byDay: {
         // Day-specific mapping — useful for testing and unique bosses
-        // add more: '5': ['images/monster_1.jpg', 'images/monster_2.jpg']
+        // add more: '5': ['images/monster_1.webp', 'images/monster_2.webp']
     },
-    fallback: 'images/monster_1.jpg'
+    fallback: 'images/monster_1.webp'
 };
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -656,19 +656,19 @@ const story = {
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('story-screen').style.display = 'flex';
         
-        // 보스 러쉬 모드일 때는 boss_battle.jpg, 그 외에는 start.png 사용
+        // 보스 러쉬 모드일 때는 boss_battle.webp, 그 외에는 start.webp 사용
         const storyImg = document.getElementById('story-background-img');
         const storyStartBtn = document.getElementById('story-start-btn');
         if (storyImg) {
             if (mode === 'rush') {
-                storyImg.src = 'images/boss_battle.jpg';
+                storyImg.src = 'images/boss_battle.webp';
                 // 보스 배틀 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('boss-battle-btn');
                     storyStartBtn.classList.remove('story-mode-btn');
                 }
             } else {
-                storyImg.src = 'images/start.png';
+                storyImg.src = 'images/start.webp';
                 // 스토리 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('story-mode-btn');
@@ -1634,7 +1634,7 @@ function syncStoryButtonOverlay() {
     }
 }
 
-// Sync button overlay to match title.jpg image size exactly
+// Sync button overlay to match title.webp image size exactly
 function syncTitleButtonOverlay() {
     const titleImg = document.querySelector('.title-background');
     const overlay = document.querySelector('.title-buttons-overlay');
