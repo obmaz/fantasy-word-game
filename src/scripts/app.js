@@ -76,7 +76,7 @@ const db = {
                 alert(`[${id === 'goldGlove' ? '황금 장갑' : '아이템'}]이 파괴되었습니다!`);
             }
             db.save();
-            ui.updateDurability();
+            ui.updateSkills(); // 황금장갑이 skill bar에 표시되므로
         }
     }
 };
@@ -524,11 +524,9 @@ const ui = {
         }
     },
     updateDurability: () => {
+        // 황금장갑은 이제 skill bar에 표시되므로 이 배지는 숨김
         const el = document.getElementById('durability-badge');
-        if (db.has('goldGlove')) {
-            el.style.display = 'block';
-            el.innerText = `🥊 ${db.durability['goldGlove']}/30`;
-        } else {
+        if (el) {
             el.style.display = 'none';
         }
     },
@@ -545,19 +543,34 @@ const ui = {
         const hintData = relics.find(r => r.id === 'hint');
         const ultimateData = relics.find(r => r.id === 'ultimate');
 
+        // 주관식 문제인지 확인 (boss-box가 표시 중이면 주관식)
+        const isBossQuestion = document.getElementById('boss-box') && 
+                              document.getElementById('boss-box').style.display !== 'none';
+
+        // 황금장갑 (패시브 아이템 - 항상 활성)
+        if (db.has('goldGlove')) {
+            const gloveBtn = document.createElement('div');
+            gloveBtn.className = 'skill-btn skill-passive';
+            gloveBtn.innerHTML = `<span>🥊</span> <span class="skill-count">${db.durability['goldGlove']}/30</span>`;
+            gloveBtn.title = '황금장갑 (패시브): 골드 획득 x1.5배';
+            container.appendChild(gloveBtn);
+        }
+
         if (db.skills.hint > 0) {
             const hintBtn = document.createElement('button');
-            hintBtn.className = 'skill-btn';
+            hintBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
             hintBtn.innerHTML = `<span>${hintData.name.split(' ')[0]}</span> <span class="skill-count">${db.skills.hint}</span>`;
             hintBtn.onclick = game.useHint;
+            hintBtn.title = isBossQuestion ? '힌트: 주관식에서는 사용 불가' : '힌트: 클릭하여 사용';
             container.appendChild(hintBtn);
         }
 
         if (db.skills.ultimate > 0) {
             const ultimateBtn = document.createElement('button');
-            ultimateBtn.className = 'skill-btn';
+            ultimateBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
             ultimateBtn.innerHTML = `<span>${ultimateData.name.split(' ')[0]}</span> <span class="skill-count">${db.skills.ultimate}</span>`;
             ultimateBtn.onclick = game.useUltimate;
+            ultimateBtn.title = isBossQuestion ? '필살기: 주관식에서는 사용 불가' : '필살기: 클릭하여 사용';
             container.appendChild(ultimateBtn);
         }
     }
@@ -912,6 +925,7 @@ const game = {
             ui.updateVisuals();
             ui.updateDurability();
             ui.updateSkills();
+            syncGameScreenSizeToTitle();
             game.nextLevel();
         }, 400); // 애니메이션 시간과 일치
     },
@@ -993,6 +1007,9 @@ const game = {
             const opts = game.getDistractors(data.meaning, 'meaning');
             game.shuffle([data.meaning, ...opts]).forEach(opt => game.createBtn(opt, opt === data.meaning));
         }
+        
+        // 객관식에서는 스킬을 활성화 상태로 업데이트
+        ui.updateSkills();
     },
 
     renderBoss: (data, isRush) => {
@@ -1004,7 +1021,7 @@ const game = {
         }
         document.getElementById('boss-box').style.display = 'flex';
         document.getElementById('options-box').style.display = 'none';
-        document.getElementById('skill-display').style.visibility = 'hidden';
+        document.getElementById('skill-display').style.visibility = 'visible'; // 주관식에서도 표시
 
         const isFinalBoss = !isRush && game.idx === game.list.length - 1;
         document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isRush ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
@@ -1037,6 +1054,9 @@ const game = {
             bossSubmitBtn.disabled = false;
             bossSubmitBtn.style.pointerEvents = 'auto';
         }
+        
+        // 주관식에서는 스킬을 비활성화 상태로 업데이트
+        ui.updateSkills();
     },
 
     createBtn: (text, isCorrect) => {
@@ -1854,6 +1874,29 @@ function syncTitleButtonOverlay() {
     overlay.style.height = imgRect.height + 'px';
     overlay.style.left = left + 'px';
     overlay.style.top = top + 'px';
+
+    // Keep game screen size in sync with the title image size
+    syncGameScreenSizeToTitle();
+}
+
+function syncGameScreenSizeToTitle() {
+    const titleImg = document.querySelector('.title-background');
+    const gameScreen = document.getElementById('game-screen');
+    if (!titleImg || !gameScreen) return;
+
+    const naturalW = titleImg.naturalWidth || 0;
+    const naturalH = titleImg.naturalHeight || 0;
+    if (!naturalW || !naturalH) return;
+
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const scale = Math.min(vw / naturalW, vh / naturalH);
+
+    const w = Math.floor(naturalW * scale);
+    const h = Math.floor(naturalH * scale);
+
+    gameScreen.style.width = w + 'px';
+    gameScreen.style.height = h + 'px';
 }
 
 window.onload = () => {
