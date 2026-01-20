@@ -547,8 +547,11 @@ const ui = {
         const isBossQuestion = document.getElementById('boss-box') && 
                               document.getElementById('boss-box').style.display !== 'none';
 
+        let hasSkills = false;
+
         // 황금장갑 (패시브 아이템 - 항상 활성)
         if (db.has('goldGlove')) {
+            hasSkills = true;
             const gloveBtn = document.createElement('div');
             gloveBtn.className = 'skill-btn skill-passive';
             gloveBtn.innerHTML = `<span>🥊</span> <span class="skill-count">${db.durability['goldGlove']}/30</span>`;
@@ -557,6 +560,7 @@ const ui = {
         }
 
         if (db.skills.hint > 0) {
+            hasSkills = true;
             const hintBtn = document.createElement('button');
             hintBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
             hintBtn.innerHTML = `<span>${hintData.name.split(' ')[0]}</span> <span class="skill-count">${db.skills.hint}</span>`;
@@ -566,12 +570,21 @@ const ui = {
         }
 
         if (db.skills.ultimate > 0) {
+            hasSkills = true;
             const ultimateBtn = document.createElement('button');
             ultimateBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
             ultimateBtn.innerHTML = `<span>${ultimateData.name.split(' ')[0]}</span> <span class="skill-count">${db.skills.ultimate}</span>`;
             ultimateBtn.onclick = game.useUltimate;
             ultimateBtn.title = isBossQuestion ? '필살기: 주관식에서는 사용 불가' : '필살기: 클릭하여 사용';
             container.appendChild(ultimateBtn);
+        }
+
+        // 스킬이 하나도 없으면 placeholder 표시
+        if (!hasSkills) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'skill-placeholder';
+            placeholder.innerText = 'Skill Bar';
+            container.appendChild(placeholder);
         }
     }
 };
