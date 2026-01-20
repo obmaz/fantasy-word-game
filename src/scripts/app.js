@@ -658,8 +658,6 @@ const story = {
         const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
 
         closeScreenOverlay('start-screen', false);
-<<<<<<< HEAD
-=======
         
         // story-screen 스타일 초기화
         const storyScreen = document.getElementById('story-screen');
@@ -671,8 +669,10 @@ const story = {
             storyScreen.classList.remove('closing');
         }
         
->>>>>>> 4d99359 (u)
         openScreenOverlay('story-screen', true);
+        
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'story-screen' }, '', window.location.href);
         
         // 보스 러쉬 모드일 때는 boss_battle.webp, 그 외에는 start.webp 사용
         const storyImg = document.getElementById('story-background-img');
@@ -743,37 +743,6 @@ const story = {
         if (game.timer) {
             clearInterval(game.timer);
             game.timer = null;
-<<<<<<< HEAD
-        }
-        
-        // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
-        game.isProcessing = true;
-        
-        const data = resolveStoryData(story.day);
-        document.getElementById('game-screen').style.display = 'none';
-        openScreenOverlay('story-screen', true);
-
-        if (window.ui && typeof window.ui.setStoryTitle === 'function') {
-            window.ui.setStoryTitle(win ? "VICTORY" : "DEFEAT");
-        } else {
-            const te = document.getElementById('story-title'); if (te) te.innerText = (win ? "VICTORY" : "DEFEAT"); console.warn('[story.showEnding] fallback title write used');
-        }
-        document.getElementById('story-text').innerText = win ? data.win : data.lose;
-
-        const btn = document.getElementById('story-btn');
-        btn.innerText = "결과 정산";
-        btn.onclick = () => {
-            game.isProcessing = false; // 결과 화면으로 이동할 때 리셋
-            game.end(win);
-        };
-        
-        // story-start-btn의 이벤트 리스너 제거 (게임 오버 시 자동 시작 방지)
-        const storyStartBtn = document.getElementById('story-start-btn');
-        if (storyStartBtn) {
-            storyStartBtn.onclick = null;
-            storyStartBtn.style.pointerEvents = 'none'; // 클릭 비활성화
-        }
-=======
         }
         
         // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
@@ -805,7 +774,6 @@ const story = {
         
         // 모든 모드에서 story-screen을 건너뛰고 바로 결과 화면으로
         game.end(win);
->>>>>>> 4d99359 (u)
     }
 };
 
@@ -949,17 +917,8 @@ const game = {
     },
 
     nextLevel: () => {
-<<<<<<< HEAD
-        // 게임 오버 처리 중이면 진행하지 않음
-        if (game.isProcessing) {
-            console.log('[game.nextLevel] 게임 오버 처리 중이므로 진행하지 않음');
-            return;
-        }
-        
-=======
         // handleAnswer에서 호출된 경우 isProcessing을 false로 리셋하고 진행
         // (showEnding에서 호출된 경우는 isProcessing이 true로 유지되어야 함)
->>>>>>> 4d99359 (u)
         game.isProcessing = false; // Reset lock
 
         // 게임 종료 조건 체크
@@ -1066,8 +1025,6 @@ const game = {
                 }
             };
         }
-<<<<<<< HEAD
-=======
         
         // 공격하기 버튼 이벤트 리스너 설정
         const bossSubmitBtn = document.querySelector('.boss-submit');
@@ -1080,7 +1037,6 @@ const game = {
             bossSubmitBtn.disabled = false;
             bossSubmitBtn.style.pointerEvents = 'auto';
         }
->>>>>>> 4d99359 (u)
     },
 
     createBtn: (text, isCorrect) => {
@@ -1323,8 +1279,6 @@ const game = {
     shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
 
     end: (win) => {
-<<<<<<< HEAD
-=======
         // story-screen이 확실히 닫혀있는지 확인
         const storyScreen = document.getElementById('story-screen');
         if (storyScreen) {
@@ -1348,7 +1302,6 @@ const game = {
         }
         
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
->>>>>>> 4d99359 (u)
         openScreenOverlay('result-screen', true);
 
         const gain = game.stats.gain;
@@ -1568,6 +1521,9 @@ function openStoryModePopup() {
     
     popup.style.display = 'flex';
     
+    // 히스토리 상태 추가 (백버튼 처리용)
+    history.pushState({ screen: 'story-mode-popup' }, '', window.location.href);
+    
     // 이미지 로드 후 버튼 오버레이 동기화
     const popupImg = document.getElementById('popup-background-img');
     if (popupImg) {
@@ -1618,6 +1574,9 @@ function openChaosRiftPopup() {
     }
     
     popup.style.display = 'flex';
+    
+    // 히스토리 상태 추가 (백버튼 처리용)
+    history.pushState({ screen: 'chaos-rift-popup' }, '', window.location.href);
     
     // 이미지 로드 후 버튼 오버레이 동기화
     const popupImg = document.getElementById('popup-background-img');
@@ -1691,6 +1650,8 @@ function openScreenOverlay(elementId, animated = true) {
 // Close story mode selection popup
 function closeStoryModePopup(animated = true) {
     closeScreenOverlay('story-mode-popup', animated);
+    // 히스토리 상태 업데이트
+    history.pushState(null, '', window.location.href);
 }
 
 // 드롭박스 폰트 크기를 동적으로 조정 (텍스트가 잘리지 않도록)
@@ -1958,11 +1919,7 @@ window.onload = () => {
             // 애니메이션이 완료된 후 게임 시작
             setTimeout(() => {
                 if (popupMode === 'chaos') {
-<<<<<<< HEAD
-                    story.startIntro('chaos', 'all');
-=======
                     story.startIntro('chaos', selectedDay);
->>>>>>> 4d99359 (u)
                 } else {
                     story.startIntro('normal', selectedDay);
                 }
@@ -2065,6 +2022,12 @@ window.onload = () => {
             storyModePopup.style.zIndex = '';
             storyModePopup.style.pointerEvents = '';
             storyModePopup.classList.remove('closing');
+        }
+        
+        // game-screen도 확실히 닫기
+        const gameScreen = document.getElementById('game-screen');
+        if (gameScreen) {
+            gameScreen.style.display = 'none';
         }
         
         setTimeout(() => {

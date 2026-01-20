@@ -449,17 +449,41 @@
 
         // 백버튼 이벤트 처리 (모바일 브라우저)
         window.addEventListener('popstate', (e) => {
-            if (isGameScreen || isShopScreen || isInventoryScreen) {
+            const storyScreen = document.getElementById('story-screen');
+            const storyModePopup = document.getElementById('story-mode-popup');
+            const resultScreen = document.getElementById('result-screen');
+            
+            const isStoryScreen = storyScreen && storyScreen.style.display !== 'none' && storyScreen.style.display !== '';
+            const isStoryModePopup = storyModePopup && storyModePopup.style.display !== 'none' && storyModePopup.style.display !== '';
+            const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
+            
+            if (isGameScreen || isShopScreen || isInventoryScreen || isStoryScreen || isStoryModePopup || isResultScreen) {
                 // 모든 화면 숨기고 시작 화면 표시
                 gameScreen.style.display = 'none';
                 shopScreen.style.display = 'none';
                 inventoryScreen.style.display = 'none';
                 
                 // 팝업과 스토리 화면도 숨기기
-                const storyScreen = document.getElementById('story-screen');
-                const storyModePopup = document.getElementById('story-mode-popup');
-                if (storyScreen) storyScreen.style.display = 'none';
-                if (storyModePopup) storyModePopup.style.display = 'none';
+                if (storyScreen) {
+                    storyScreen.style.display = 'none';
+                    storyScreen.style.visibility = '';
+                    storyScreen.style.opacity = '';
+                    storyScreen.style.zIndex = '';
+                    storyScreen.style.pointerEvents = '';
+                    storyScreen.classList.remove('closing');
+                }
+                if (storyModePopup) {
+                    storyModePopup.style.display = 'none';
+                    storyModePopup.style.visibility = '';
+                    storyModePopup.style.opacity = '';
+                    storyModePopup.style.zIndex = '';
+                    storyModePopup.style.pointerEvents = '';
+                    storyModePopup.classList.remove('closing');
+                }
+                if (resultScreen) {
+                    resultScreen.style.display = 'none';
+                    resultScreen.classList.remove('closing');
+                }
                 
                 startScreen.style.display = 'flex';
                 
