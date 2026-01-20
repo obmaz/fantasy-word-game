@@ -455,7 +455,22 @@
                 gameScreen.style.display = 'none';
                 shopScreen.style.display = 'none';
                 inventoryScreen.style.display = 'none';
+                
+                // 팝업과 스토리 화면도 숨기기
+                const storyScreen = document.getElementById('story-screen');
+                const storyModePopup = document.getElementById('story-mode-popup');
+                if (storyScreen) storyScreen.style.display = 'none';
+                if (storyModePopup) storyModePopup.style.display = 'none';
+                
                 startScreen.style.display = 'flex';
+                
+                // 버튼 오버레이 동기화 (이미지 로드 후)
+                setTimeout(() => {
+                    if (typeof syncTitleButtonOverlay === 'function') {
+                        syncTitleButtonOverlay();
+                    }
+                }, 100);
+                
                 // 히스토리 조작 방지
                 history.pushState(null, '', window.location.href);
             }

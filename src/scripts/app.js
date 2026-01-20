@@ -868,6 +868,9 @@ const game = {
     },
 
     nextLevel: () => {
+        // 게임 오버 처리 중이면 진행하지 않음
+        if (game.isProcessing) return;
+        
         game.isProcessing = false; // Reset lock
 
         if (game.mode === 'normal' && game.idx >= game.list.length) {
@@ -1022,9 +1025,13 @@ const game = {
         } else {
             // Wrong Answer
             if (game.mode === 'rush') {
+                game.isProcessing = true; // 게임 종료 처리 중이므로 더 이상 진행하지 않음
                 document.getElementById('boss-input').style.borderColor = "#FF5252";
                 game.showFloatText("GAME OVER", 'red');
-                setTimeout(() => story.showEnding(false), 1000);
+                setTimeout(() => {
+                    story.showEnding(false);
+                    game.isProcessing = false; // 종료 화면 표시 후 리셋
+                }, 1000);
                 return;
             }
 
@@ -1368,6 +1375,7 @@ function openStoryModePopup() {
     // Enable day selection for story mode
     if (popupDaySelect) {
         popupDaySelect.disabled = false;
+        popupDaySelect.style.display = ''; // Show day selection for story mode
     }
     
     // Restore last selected values
@@ -1414,10 +1422,10 @@ function openChaosRiftPopup() {
     // Mark popup as chaos mode
     popup.dataset.mode = 'chaos';
     
-    // For chaos rift, always use 'all' day
+    // For chaos rift, always use 'all' day and hide day selection
     if (popupDaySelect) {
         popupDaySelect.value = 'all';
-        popupDaySelect.disabled = true; // Disable day selection for chaos rift
+        popupDaySelect.style.display = 'none'; // Hide day selection for chaos rift
     }
     
     const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;

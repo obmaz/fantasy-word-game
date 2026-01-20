@@ -501,6 +501,12 @@ body {
     outline: none !important;
 }
 
+.popup-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #888 !important;
+}
+
 .popup-select option {
     background: #1E1E1E;
     color: #FFD54F;
