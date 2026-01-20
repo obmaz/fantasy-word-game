@@ -223,6 +223,21 @@ body {
     visibility: visible;
 }
 
+<<<<<<< HEAD
+=======
+#result-screen {
+    z-index: 300 !important;
+}
+
+#story-screen {
+    z-index: 200;
+}
+
+#story-screen[style*="z-index"] {
+    z-index: 100 !important;
+}
+
+>>>>>>> 4d99359 (u)
 .screen-overlay.closing {
     opacity: 0;
     visibility: hidden;

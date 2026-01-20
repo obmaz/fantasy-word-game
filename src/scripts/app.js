@@ -637,7 +637,7 @@ const story = {
         console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
         db.save();
-        story.day = (mode === 'rush') ? 'rush' : ((mode === 'chaos') ? 'all' : daySel);
+        story.day = (mode === 'rush') ? 'rush' : daySel;
         story.mode = mode;
         const data = resolveStoryData(story.day);
 
@@ -658,6 +658,20 @@ const story = {
         const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
 
         closeScreenOverlay('start-screen', false);
+<<<<<<< HEAD
+=======
+        
+        // story-screen 스타일 초기화
+        const storyScreen = document.getElementById('story-screen');
+        if (storyScreen) {
+            storyScreen.style.visibility = '';
+            storyScreen.style.opacity = '';
+            storyScreen.style.zIndex = '';
+            storyScreen.style.pointerEvents = '';
+            storyScreen.classList.remove('closing');
+        }
+        
+>>>>>>> 4d99359 (u)
         openScreenOverlay('story-screen', true);
         
         // 보스 러쉬 모드일 때는 boss_battle.webp, 그 외에는 start.webp 사용
@@ -706,7 +720,7 @@ const story = {
         const btn = document.getElementById('story-btn');
         btn.innerText = "모험 시작";
         // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
-        const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : ((story.mode === 'chaos') ? 'all' : daySel);
+        const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : daySel;
         const startGame = () => {
             // 게임 오버 처리 중이면 시작하지 않음
             if (game.isProcessing) {
@@ -729,6 +743,7 @@ const story = {
         if (game.timer) {
             clearInterval(game.timer);
             game.timer = null;
+<<<<<<< HEAD
         }
         
         // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
@@ -758,6 +773,39 @@ const story = {
             storyStartBtn.onclick = null;
             storyStartBtn.style.pointerEvents = 'none'; // 클릭 비활성화
         }
+=======
+        }
+        
+        // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
+        game.isProcessing = true;
+        
+        document.getElementById('game-screen').style.display = 'none';
+        
+        // story-screen을 확실히 닫기
+        const storyScreen = document.getElementById('story-screen');
+        if (storyScreen) {
+            storyScreen.style.display = 'none';
+            storyScreen.style.visibility = 'hidden';
+            storyScreen.style.opacity = '0';
+            storyScreen.style.zIndex = '100';
+            storyScreen.style.pointerEvents = 'none';
+            storyScreen.classList.remove('closing');
+        }
+        
+        // story-mode-popup 닫기
+        const storyModePopup = document.getElementById('story-mode-popup');
+        if (storyModePopup) {
+            storyModePopup.style.display = 'none';
+            storyModePopup.style.visibility = 'hidden';
+            storyModePopup.style.opacity = '0';
+            storyModePopup.style.zIndex = '100';
+            storyModePopup.style.pointerEvents = 'none';
+            storyModePopup.classList.remove('closing');
+        }
+        
+        // 모든 모드에서 story-screen을 건너뛰고 바로 결과 화면으로
+        game.end(win);
+>>>>>>> 4d99359 (u)
     }
 };
 
@@ -901,15 +949,27 @@ const game = {
     },
 
     nextLevel: () => {
+<<<<<<< HEAD
         // 게임 오버 처리 중이면 진행하지 않음
         if (game.isProcessing) {
             console.log('[game.nextLevel] 게임 오버 처리 중이므로 진행하지 않음');
             return;
         }
         
+=======
+        // handleAnswer에서 호출된 경우 isProcessing을 false로 리셋하고 진행
+        // (showEnding에서 호출된 경우는 isProcessing이 true로 유지되어야 함)
+>>>>>>> 4d99359 (u)
         game.isProcessing = false; // Reset lock
 
+        // 게임 종료 조건 체크
         if (game.mode === 'normal' && game.idx >= game.list.length) {
+            story.showEnding(true);
+            return;
+        }
+        
+        // Chaos Rift 모드 종료 조건 체크
+        if (game.mode === 'chaos' && game.idx >= game.list.length) {
             story.showEnding(true);
             return;
         }
@@ -1006,6 +1066,21 @@ const game = {
                 }
             };
         }
+<<<<<<< HEAD
+=======
+        
+        // 공격하기 버튼 이벤트 리스너 설정
+        const bossSubmitBtn = document.querySelector('.boss-submit');
+        if (bossSubmitBtn) {
+            bossSubmitBtn.onclick = () => {
+                if (!game.isProcessing) {
+                    game.checkBossAnswer();
+                }
+            };
+            bossSubmitBtn.disabled = false;
+            bossSubmitBtn.style.pointerEvents = 'auto';
+        }
+>>>>>>> 4d99359 (u)
     },
 
     createBtn: (text, isCorrect) => {
@@ -1248,6 +1323,32 @@ const game = {
     shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
 
     end: (win) => {
+<<<<<<< HEAD
+=======
+        // story-screen이 확실히 닫혀있는지 확인
+        const storyScreen = document.getElementById('story-screen');
+        if (storyScreen) {
+            storyScreen.style.display = 'none';
+            storyScreen.style.visibility = 'hidden';
+            storyScreen.style.opacity = '0';
+            storyScreen.style.zIndex = '100';
+            storyScreen.style.pointerEvents = 'none';
+            storyScreen.classList.remove('closing');
+        }
+        
+        // story-mode-popup도 닫기
+        const storyModePopup = document.getElementById('story-mode-popup');
+        if (storyModePopup) {
+            storyModePopup.style.display = 'none';
+            storyModePopup.style.visibility = 'hidden';
+            storyModePopup.style.opacity = '0';
+            storyModePopup.style.zIndex = '100';
+            storyModePopup.style.pointerEvents = 'none';
+            storyModePopup.classList.remove('closing');
+        }
+        
+        // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
+>>>>>>> 4d99359 (u)
         openScreenOverlay('result-screen', true);
 
         const gain = game.stats.gain;
@@ -1262,6 +1363,11 @@ const game = {
         // Clamp negative balance to 0 on game end
         if (db.gold < 0) { db.gold = 0; db.save(); }
         document.getElementById('res-current-total').innerText = db.gold;
+        
+        // 게임 상태 완전히 리셋
+        game.isProcessing = false;
+        game.mode = 'normal';
+        game.currentDay = null;
     }
 };
 
@@ -1493,10 +1599,17 @@ function openChaosRiftPopup() {
     // Mark popup as chaos mode
     popup.dataset.mode = 'chaos';
     
-    // For chaos rift, always use 'all' day and hide day selection
+    // For chaos rift, allow day selection
     if (popupDaySelect) {
-        popupDaySelect.value = 'all';
-        popupDaySelect.style.display = 'none'; // Hide day selection for chaos rift
+        // 기본값을 'all'로 설정하되 사용자가 변경 가능
+        const lastDay = db.lastSelectedDay || 'all';
+        if (Array.from(popupDaySelect.options).some(o => o.value === String(lastDay))) {
+            popupDaySelect.value = lastDay;
+        } else {
+            popupDaySelect.value = 'all';
+        }
+        popupDaySelect.style.display = ''; // Show day selection
+        popupDaySelect.disabled = false; // Enable day selection for chaos rift
     }
     
     const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
@@ -1845,7 +1958,11 @@ window.onload = () => {
             // 애니메이션이 완료된 후 게임 시작
             setTimeout(() => {
                 if (popupMode === 'chaos') {
+<<<<<<< HEAD
                     story.startIntro('chaos', 'all');
+=======
+                    story.startIntro('chaos', selectedDay);
+>>>>>>> 4d99359 (u)
                 } else {
                     story.startIntro('normal', selectedDay);
                 }
@@ -1908,4 +2025,55 @@ window.onload = () => {
             resizeTimeout = setTimeout(syncPopupButtonOverlay, 100);
         });
     }
+    
+    // 결과 화면 닫기 함수
+    window.closeResultScreen = function() {
+        closeScreenOverlay('result-screen', true);
+        
+        // story-screen 완전히 초기화
+        const storyScreen = document.getElementById('story-screen');
+        if (storyScreen) {
+            storyScreen.style.display = 'none';
+            storyScreen.style.visibility = '';
+            storyScreen.style.opacity = '';
+            storyScreen.style.zIndex = '';
+            storyScreen.style.pointerEvents = '';
+            storyScreen.classList.remove('closing');
+            
+            // 배경 이미지 초기화
+            const storyImg = document.getElementById('story-background-img');
+            if (storyImg) {
+                storyImg.src = 'images/start.webp';
+            }
+            
+            // 버튼 초기화
+            const storyStartBtn = document.getElementById('story-start-btn');
+            if (storyStartBtn) {
+                storyStartBtn.classList.remove('boss-battle-btn');
+                storyStartBtn.classList.add('story-mode-btn');
+                storyStartBtn.style.pointerEvents = '';
+                storyStartBtn.onclick = null;
+            }
+        }
+        
+        // story-mode-popup 초기화
+        const storyModePopup = document.getElementById('story-mode-popup');
+        if (storyModePopup) {
+            storyModePopup.style.display = 'none';
+            storyModePopup.style.visibility = '';
+            storyModePopup.style.opacity = '';
+            storyModePopup.style.zIndex = '';
+            storyModePopup.style.pointerEvents = '';
+            storyModePopup.classList.remove('closing');
+        }
+        
+        setTimeout(() => {
+            openScreenOverlay('start-screen', false);
+            // 버튼 오버레이 동기화
+            if (typeof syncTitleButtonOverlay === 'function') {
+                syncTitleButtonOverlay();
+            }
+        }, 400);
+        history.pushState(null, '', window.location.href);
+    };
 }
