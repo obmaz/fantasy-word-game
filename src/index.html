@@ -463,6 +463,13 @@
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             
             if (isGameScreen || isShopScreen || isInventoryScreen || isStoryScreen || isStoryModePopup || isResultScreen) {
+                // 게임 화면을 닫을 때 타이머 정지
+                if (isGameScreen && typeof game !== 'undefined' && game.timer) {
+                    clearInterval(game.timer);
+                    game.timer = null;
+                    game.isProcessing = true; // 게임 진행 중지
+                }
+                
                 // 모든 화면 숨기고 시작 화면 표시
                 gameScreen.style.display = 'none';
                 shopScreen.style.display = 'none';

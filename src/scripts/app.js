@@ -1665,6 +1665,13 @@ function openChaosRiftPopup() {
 function closeScreenOverlay(elementId, animated = true) {
     const element = document.getElementById(elementId);
     if (element) {
+        // 게임 화면을 닫을 때 타이머 정지
+        if (elementId === 'game-screen' && game && game.timer) {
+            clearInterval(game.timer);
+            game.timer = null;
+            game.isProcessing = true; // 게임 진행 중지
+        }
+        
         if (animated && element.classList.contains('screen-overlay')) {
             // closing 클래스가 이미 있으면 제거 (재시도 방지)
             if (element.classList.contains('closing')) {
