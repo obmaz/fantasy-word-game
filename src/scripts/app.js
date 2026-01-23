@@ -2021,20 +2021,32 @@ function syncPopupButtonOverlay() {
         return;
     }
     
-    // 타이틀 이미지 크기 가져오기
-    const titleImg = document.querySelector('.title-background');
-    if (!titleImg) return;
-    
-    const titleRect = titleImg.getBoundingClientRect();
-    const titleWidth = titleRect.width;
-    
-    // 팝업 이미지는 타이틀 크기의 92%로 설정 (CSS에서 이미 설정됨)
-    // 여기서는 타이틀 크기를 CSS 변수로 설정하여 팝업이 참조할 수 있도록 함
     const popupImg = document.getElementById('popup-background-img');
     const overlay = document.querySelector('.popup-buttons-overlay');
     const container = document.querySelector('.popup-container-wrapper');
     
     if (!popupImg || !overlay || !container) return;
+    
+    // 타이틀 이미지 크기 가져오기 (숨겨져 있어도 naturalWidth/naturalHeight 사용)
+    const titleImg = document.querySelector('.title-background');
+    let titleWidth = 100vw; // 기본값
+    
+    if (titleImg) {
+        // 이미지가 로드되어 있으면 naturalWidth 사용 (숨겨져 있어도 작동)
+        if (titleImg.complete && titleImg.naturalWidth > 0) {
+            // 화면 크기에 맞춰 스케일 계산
+            const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            const scale = Math.min(vw / titleImg.naturalWidth, vh / titleImg.naturalHeight);
+            titleWidth = titleImg.naturalWidth * scale;
+        } else {
+            // getBoundingClientRect 시도 (표시되어 있을 때만 작동)
+            const titleRect = titleImg.getBoundingClientRect();
+            if (titleRect.width > 0) {
+                titleWidth = titleRect.width;
+            }
+        }
+    }
     
     // 타이틀 이미지 크기를 CSS 변수로 설정 (팝업 이미지가 참조)
     popupImg.style.setProperty('--title-img-width', titleWidth + 'px');
@@ -2082,18 +2094,32 @@ function syncStoryButtonOverlay() {
         return;
     }
     
-    // 타이틀 이미지 크기 가져오기
-    const titleImg = document.querySelector('.title-background');
-    if (!titleImg) return;
-    
-    const titleRect = titleImg.getBoundingClientRect();
-    const titleWidth = titleRect.width;
-    
     const storyImg = document.querySelector('.story-background');
     const overlay = document.querySelector('.story-buttons-overlay');
     const container = document.querySelector('.story-container-wrapper');
     
     if (!storyImg || !overlay || !container) return;
+    
+    // 타이틀 이미지 크기 가져오기 (숨겨져 있어도 naturalWidth/naturalHeight 사용)
+    const titleImg = document.querySelector('.title-background');
+    let titleWidth = 100vw; // 기본값
+    
+    if (titleImg) {
+        // 이미지가 로드되어 있으면 naturalWidth 사용 (숨겨져 있어도 작동)
+        if (titleImg.complete && titleImg.naturalWidth > 0) {
+            // 화면 크기에 맞춰 스케일 계산
+            const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            const scale = Math.min(vw / titleImg.naturalWidth, vh / titleImg.naturalHeight);
+            titleWidth = titleImg.naturalWidth * scale;
+        } else {
+            // getBoundingClientRect 시도 (표시되어 있을 때만 작동)
+            const titleRect = titleImg.getBoundingClientRect();
+            if (titleRect.width > 0) {
+                titleWidth = titleRect.width;
+            }
+        }
+    }
     
     // 타이틀 이미지 크기를 CSS 변수로 설정 (스토리 이미지가 참조)
     storyImg.style.setProperty('--title-img-width', titleWidth + 'px');
