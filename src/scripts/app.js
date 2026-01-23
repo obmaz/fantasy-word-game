@@ -700,19 +700,19 @@ const story = {
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'story-screen' }, '', window.location.href);
         
-        // 보스 러쉬 모드일 때는 boss_battle.webp, 그 외에는 start.webp 사용
+        // 보스 러쉬 모드일 때는 boss_battle_popup.webp, 그 외에는 start_popup.webp 사용
         const storyImg = document.getElementById('story-background-img');
         const storyStartBtn = document.getElementById('story-start-btn');
         if (storyImg) {
             if (mode === 'rush') {
-                storyImg.src = 'images/boss_battle.webp';
+                storyImg.src = 'images/boss_battle_popup.webp';
                 // 보스 배틀 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('boss-battle-btn');
                     storyStartBtn.classList.remove('story-mode-btn');
                 }
             } else {
-                storyImg.src = 'images/start.webp';
+                storyImg.src = 'images/start_popup.webp';
                 // 스토리 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('story-mode-btn');
@@ -1876,10 +1876,10 @@ function setupSelectFontSizeAdjustment() {
     }
 }
 
-// Popup 이미지 크기에 맞춰 버튼과 드롭박스 오버레이 동기화
+// Popup 이미지 크기에 맞춰 CSS 변수 설정 (크기와 위치는 CSS에서 제어)
 function syncPopupButtonOverlay() {
     const popup = document.getElementById('story-mode-popup');
-    // popup이 숨겨져 있으면 동기화하지 않음
+    // popup이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!popup || popup.style.display === 'none' || popup.style.display === '') {
         return;
     }
@@ -1898,83 +1898,37 @@ function syncPopupButtonOverlay() {
         const left = imgRect.left - containerRect.left;
         const top = imgRect.top - containerRect.top;
         
-        overlay.style.width = imgRect.width + 'px';
-        overlay.style.height = imgRect.height + 'px';
-        overlay.style.left = left + 'px';
-        overlay.style.top = top + 'px';
+        // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
+        overlay.style.setProperty('--popup-img-width', imgRect.width + 'px');
+        overlay.style.setProperty('--popup-img-height', imgRect.height + 'px');
+        overlay.style.setProperty('--popup-img-left', left + 'px');
+        overlay.style.setProperty('--popup-img-top', top + 'px');
         
-        // 드롭박스와 버튼 위치 설정 (이미지 크기에 상대적)
-        // 모험 지역 드롭박스
+        // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
         const daySelect = document.getElementById('popup-day-select');
         if (daySelect) {
             const width = imgRect.width * 0.65;
             const height = imgRect.height * 0.095;
-            daySelect.style.width = width + 'px';
-            daySelect.style.height = height + 'px';
-            daySelect.style.left = (imgRect.width * 0.125) + 'px';
-            daySelect.style.top = (imgRect.height * 0.3) + 'px';
-            
-            // 폰트 크기 동적 조정 (드롭박스 크기에 맞춰)
             adjustSelectFontSize(daySelect, width, height);
         }
         
-        // 난이도 드롭박스
         const countSelect = document.getElementById('popup-count-select');
         if (countSelect) {
             const width = imgRect.width * 0.65;
             const height = imgRect.height * 0.095;
-            countSelect.style.width = width + 'px';
-            countSelect.style.height = height + 'px';
-            countSelect.style.left = (imgRect.width * 0.125) + 'px';
-            countSelect.style.top = (imgRect.height * 0.54) + 'px';
-            
-            // 폰트 크기 동적 조정 (드롭박스 크기에 맞춰)
             adjustSelectFontSize(countSelect, width, height);
         }
         
-        // 시작하기 버튼 (왼쪽 아래)
-        const startBtn = document.getElementById('popup-start-btn');
-        if (startBtn) {
-            startBtn.style.width = (imgRect.width * 0.37) + 'px';
-            startBtn.style.height = (imgRect.height * 0.115) + 'px';
-            startBtn.style.left = (imgRect.width * 0.0955) + 'px';
-            startBtn.style.top = (imgRect.height * 0.82) + 'px';
-        }
+        // 버튼 위치와 크기는 CSS에서 제어 (CSS 변수는 이미 설정됨)
         
-        // 취소 버튼 (오른쪽 아래)
-        const cancelBtn = document.getElementById('popup-cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.style.width = (imgRect.width * 0.37) + 'px';
-            cancelBtn.style.height = (imgRect.height * 0.115) + 'px';
-            cancelBtn.style.left = (imgRect.width * 0.53) + 'px';
-            cancelBtn.style.top = (imgRect.height * 0.82) + 'px';
-        }
-        
-        // 문제 타입 라디오 버튼 그룹 위치 설정 (Chaos Rift 전용, 시작하기 버튼 위쪽)
-        const questionTypeGroup = document.getElementById('popup-question-type-group');
-        if (questionTypeGroup && questionTypeGroup.style.display !== 'none') {
-            // 버튼 영역 쪽으로 더 내리고, 좌우에 딱 맞게 크기 설정
-            const groupWidth = imgRect.width * 0.8;
-            const chipWidth = (groupWidth - 20) / 3; // 3개 칩, gap 10px씩 2개 = 20px
-            questionTypeGroup.style.width = groupWidth + 'px';
-            questionTypeGroup.style.left = (imgRect.width * 0.1) + 'px';
-            questionTypeGroup.style.top = (imgRect.height * 0.72) + 'px';
-            questionTypeGroup.style.justifyContent = 'space-between';
-            
-            // 모든 칩의 크기를 동일하게 설정
-            const chipLabels = questionTypeGroup.querySelectorAll('.popup-radio-label');
-            chipLabels.forEach(label => {
-                label.style.width = chipWidth + 'px';
-                label.style.flex = '0 0 ' + chipWidth + 'px';
-            });
-        }
+        // 라디오 버튼 그룹 크기와 위치는 CSS에서 제어 (CSS 변수는 이미 설정됨)
     }
 }
 
-// Story screen 이미지 크기에 맞춰 버튼 오버레이 동기화
+// Story screen 이미지 크기에 맞춰 CSS 변수 설정 (크기와 위치는 CSS에서 제어)
 function syncStoryButtonOverlay() {
     const storyScreen = document.getElementById('story-screen');
-    // story-screen이 숨겨져 있으면 동기화하지 않음
+    // story-screen이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!storyScreen || storyScreen.style.display === 'none' || storyScreen.style.display === '') {
         return;
     }
@@ -1993,10 +1947,18 @@ function syncStoryButtonOverlay() {
         const left = imgRect.left - containerRect.left;
         const top = imgRect.top - containerRect.top;
         
-        overlay.style.width = imgRect.width + 'px';
-        overlay.style.height = imgRect.height + 'px';
-        overlay.style.left = left + 'px';
-        overlay.style.top = top + 'px';
+        // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
+        overlay.style.setProperty('--story-img-width', imgRect.width + 'px');
+        overlay.style.setProperty('--story-img-height', imgRect.height + 'px');
+        overlay.style.setProperty('--story-img-left', left + 'px');
+        overlay.style.setProperty('--story-img-top', top + 'px');
+        
+        // 모험 시작 버튼 위치와 크기 설정 (CSS 변수 사용)
+        const storyStartBtn = document.getElementById('story-start-btn');
+        if (storyStartBtn) {
+            storyStartBtn.style.setProperty('--story-img-width', imgRect.width + 'px');
+            storyStartBtn.style.setProperty('--story-img-height', imgRect.height + 'px');
+        }
     }
 }
 
@@ -2016,11 +1978,11 @@ function syncTitleButtonOverlay() {
     const left = imgRect.left - containerRect.left;
     const top = imgRect.top - containerRect.top;
     
-    // Set overlay to match image exactly
-    overlay.style.width = imgRect.width + 'px';
-    overlay.style.height = imgRect.height + 'px';
-    overlay.style.left = left + 'px';
-    overlay.style.top = top + 'px';
+    // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
+    overlay.style.setProperty('--title-img-width', imgRect.width + 'px');
+    overlay.style.setProperty('--title-img-height', imgRect.height + 'px');
+    overlay.style.setProperty('--title-img-left', left + 'px');
+    overlay.style.setProperty('--title-img-top', top + 'px');
 
     // Keep game screen size in sync with the title image size
     syncGameScreenSizeToTitle();
@@ -2215,7 +2177,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('story-background-img');
             if (storyImg) {
-                storyImg.src = 'images/start.webp';
+                storyImg.src = 'images/start_popup.webp';
             }
             
             // 버튼 초기화

@@ -609,9 +609,13 @@ body {
 }
 
 .title-buttons-overlay {
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--title-img-width, 0);
+    height: var(--title-img-height, 0);
+    left: var(--title-img-left, 0);
+    top: var(--title-img-top, 0);
     position: absolute;
     pointer-events: none; /* Allow clicks to pass through to buttons */
-    /* Size and position will be set by JavaScript to match image exactly */
 }
 
 .title-btn-area {
@@ -758,13 +762,13 @@ body {
 }
 
 .story-buttons-overlay {
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--story-img-width, 0);
+    height: var(--story-img-height, 0);
+    left: var(--story-img-left, 0);
+    top: var(--story-img-top, 0);
     position: absolute;
     pointer-events: none;
-    /* 크기와 위치는 JavaScript로 이미지에 맞춰 설정됨 */
-    width: 0;
-    height: 0;
-    top: 0;
-    left: 0;
 }
 
 .story-btn-area {
@@ -775,6 +779,11 @@ body {
     cursor: pointer;
     pointer-events: auto;
     transition: all 0.2s ease;
+    /* 기본 위치와 크기 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+    width: calc(var(--story-img-width, 100%) * 0.7);      /* 너비 (이미지 너비의 70%) */
+    height: calc(var(--story-img-height, 100%) * 0.15);   /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--story-img-width, 100%) * 0.15);      /* 왼쪽 위치 (이미지 너비의 15%) */
+    top: calc(var(--story-img-height, 100%) * 0.71);      /* 위쪽 위치 (이미지 높이의 71%) */
 }
 
 .story-btn-area:hover {
@@ -782,23 +791,24 @@ body {
     transform: scale(1.05);
 }
 
-/* 스토리 모드 버튼 위치 (start.webp의 "모험 시작" 버튼 영역) */
+/* 스토리 모드 버튼 위치 (start_popup.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.story-mode-btn {
-    bottom: 14%;
-    left: 51%;
-    transform: translateX(-50%);
-    width: 70%;
-    height: 15%;
+    /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--story-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--story-img-height, 100%) * 0.11);    /* 높이 (이미지 높이의 11%) */
+    left: calc(var(--story-img-width, 100%) * 0.175);     /* 왼쪽 위치 (이미지 너비의 17.5%, 중앙 정렬) */
+    top: calc(var(--story-img-height, 100%) * 0.78);       /* 위쪽 위치 (이미지 높이의 78%) */
+    transform: none; /* 기본 transform 제거 */
 }
 
-/* 보스 배틀 모드 버튼 위치 (boss_battle.webp의 "모험 시작" 버튼 영역) */
+/* 보스 배틀 모드 버튼 위치 (boss_battle_popup.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.boss-battle-btn {
-    /* 보스 배틀 이미지의 버튼 위치에 맞게 조정 필요 */
-    bottom: 14%;
-    left: 51%;
-    transform: translateX(-50%);
-    width: 70%;
-    height: 15%;
+    /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--story-img-width, 100%) * 0.7);       /* 너비 (이미지 너비의 70%) */
+    height: calc(var(--story-img-height, 100%) * 0.15);    /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--story-img-width, 100%) * 0.15);       /* 왼쪽 위치 (이미지 너비의 15%, 중앙 정렬) */
+    top: calc(var(--story-img-height, 100%) * 0.71);       /* 위쪽 위치 (이미지 높이의 71%) */
+    transform: none; /* 기본 transform 제거 */
 }
 
 /* 모험 설정 팝업 스타일 */
@@ -823,11 +833,11 @@ body {
 .popup-buttons-overlay {
     position: absolute;
     pointer-events: none;
-    /* 크기와 위치는 JavaScript로 이미지에 맞춰 설정됨 */
-    width: 0;
-    height: 0;
-    top: 0;
-    left: 0;
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--popup-img-width, 0);
+    height: var(--popup-img-height, 0);
+    left: var(--popup-img-left, 0);
+    top: var(--popup-img-top, 0);
 }
 
 .popup-select {
@@ -895,28 +905,44 @@ body {
     transform: scale(1.05);
 }
 
-/* 모험 지역 드롭박스 위치 (이미지의 드롭박스 위치에 맞게 조정 필요) */
+/* 모험 지역 드롭박스 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
 .popup-day-select {
-    /* 위치는 JavaScript로 동기화 */
     position: absolute;
+    /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.125);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.3);        /* 위쪽 위치 (이미지 높이의 30%) */
 }
 
-/* 난이도 드롭박스 위치 (이미지의 드롭박스 위치에 맞게 조정 필요) */
+/* 난이도 드롭박스 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
 .popup-count-select {
-    /* 위치는 JavaScript로 동기화 */
     position: absolute;
+    /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.125);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.54);       /* 위쪽 위치 (이미지 높이의 54%) */
 }
 
-/* 시작하기 버튼 위치 (이미지의 버튼 위치에 맞게 조정 필요) */
+/* 시작하기 버튼 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
 #popup-start-btn {
-    /* 위치는 JavaScript로 동기화 */
     position: absolute;
+    /* 아래 값들을 조정하여 버튼 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.0955);      /* 왼쪽 위치 (이미지 너비의 9.55%) */
+    top: calc(var(--popup-img-height, 100%) * 0.82);        /* 위쪽 위치 (이미지 높이의 82%) */
 }
 
-/* 취소 버튼 위치 (이미지의 버튼 위치에 맞게 조정 필요) */
+/* 취소 버튼 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
 #popup-cancel-btn {
-    /* 위치는 JavaScript로 동기화 */
     position: absolute;
+    /* 아래 값들을 조정하여 버튼 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.53);       /* 왼쪽 위치 (이미지 너비의 53%) */
+    top: calc(var(--popup-img-height, 100%) * 0.82);        /* 위쪽 위치 (이미지 높이의 82%) */
 }
 
 /* 문제 타입 라디오 버튼 그룹 (Choice Chip 스타일) */
@@ -932,6 +958,11 @@ body {
     border: none;
     box-shadow: none;
     backdrop-filter: none;
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--popup-img-width, 100%) * 0.8);      /* 너비 (이미지 너비의 80%) */
+    left: calc(var(--popup-img-width, 100%) * 0.1);       /* 왼쪽 위치 (이미지 너비의 10%) */
+    top: calc(var(--popup-img-height, 100%) * 0.72);      /* 위쪽 위치 (이미지 높이의 72%) */
+    justify-content: space-between;
 }
 
 .popup-radio-label {
@@ -951,6 +982,9 @@ body {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     white-space: nowrap;
     box-sizing: border-box;
+    /* 크기는 CSS 변수를 사용하여 그룹 크기에 상대적으로 설정 (3개 칩, gap 10px씩 2개 = 20px) */
+    width: calc((var(--popup-img-width, 100%) * 0.8 - 20px) / 3);
+    flex: 0 0 calc((var(--popup-img-width, 100%) * 0.8 - 20px) / 3);
 }
 
 .popup-radio-label:hover {
