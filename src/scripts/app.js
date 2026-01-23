@@ -822,6 +822,11 @@ const story = {
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'story-screen' }, '', window.location.href);
         
+        // 타이틀 크기 먼저 동기화 (스토리 화면 크기가 타이틀 기준이므로)
+        if (typeof syncTitleButtonOverlay === 'function') {
+            syncTitleButtonOverlay();
+        }
+        
         // 보스 러쉬 모드일 때는 boss_battle_popup.webp, 그 외에는 start_popup.webp 사용
         const storyImg = document.getElementById('story-background-img');
         const storyStartBtn = document.getElementById('story-start-btn');
@@ -1750,6 +1755,11 @@ function openStoryModePopup() {
     // 히스토리 상태 추가 (백버튼 처리용)
     history.pushState({ screen: 'story-mode-popup' }, '', window.location.href);
     
+    // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
+    if (typeof syncTitleButtonOverlay === 'function') {
+        syncTitleButtonOverlay();
+    }
+    
     // 이미지 로드 후 버튼 오버레이 동기화
     const popupImg = document.getElementById('popup-background-img');
     if (popupImg) {
@@ -1840,6 +1850,11 @@ function openChaosRiftPopup() {
     
     // 히스토리 상태 추가 (백버튼 처리용)
     history.pushState({ screen: 'chaos-rift-popup' }, '', window.location.href);
+    
+    // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
+    if (typeof syncTitleButtonOverlay === 'function') {
+        syncTitleButtonOverlay();
+    }
     
     // 이미지 로드 후 버튼 오버레이 동기화
     const popupImg = document.getElementById('popup-background-img');
@@ -1998,7 +2013,7 @@ function setupSelectFontSizeAdjustment() {
     }
 }
 
-// Popup 이미지 크기에 맞춰 CSS 변수 설정 (크기와 위치는 CSS에서 제어)
+// Popup 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기 기준)
 function syncPopupButtonOverlay() {
     const popup = document.getElementById('story-mode-popup');
     // popup이 숨겨져 있으면 CSS 변수 설정하지 않음
@@ -2006,11 +2021,23 @@ function syncPopupButtonOverlay() {
         return;
     }
     
+    // 타이틀 이미지 크기 가져오기
+    const titleImg = document.querySelector('.title-background');
+    if (!titleImg) return;
+    
+    const titleRect = titleImg.getBoundingClientRect();
+    const titleWidth = titleRect.width;
+    
+    // 팝업 이미지는 타이틀 크기의 92%로 설정 (CSS에서 이미 설정됨)
+    // 여기서는 타이틀 크기를 CSS 변수로 설정하여 팝업이 참조할 수 있도록 함
     const popupImg = document.getElementById('popup-background-img');
     const overlay = document.querySelector('.popup-buttons-overlay');
     const container = document.querySelector('.popup-container-wrapper');
     
     if (!popupImg || !overlay || !container) return;
+    
+    // 타이틀 이미지 크기를 CSS 변수로 설정 (팝업 이미지가 참조)
+    popupImg.style.setProperty('--title-img-width', titleWidth + 'px');
     
     // 이미지가 로드된 후 크기 확인
     if (popupImg.complete) {
@@ -2047,7 +2074,7 @@ function syncPopupButtonOverlay() {
     }
 }
 
-// Story screen 이미지 크기에 맞춰 CSS 변수 설정 (크기와 위치는 CSS에서 제어)
+// Story screen 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기 기준)
 function syncStoryButtonOverlay() {
     const storyScreen = document.getElementById('story-screen');
     // story-screen이 숨겨져 있으면 CSS 변수 설정하지 않음
@@ -2055,11 +2082,21 @@ function syncStoryButtonOverlay() {
         return;
     }
     
+    // 타이틀 이미지 크기 가져오기
+    const titleImg = document.querySelector('.title-background');
+    if (!titleImg) return;
+    
+    const titleRect = titleImg.getBoundingClientRect();
+    const titleWidth = titleRect.width;
+    
     const storyImg = document.querySelector('.story-background');
     const overlay = document.querySelector('.story-buttons-overlay');
     const container = document.querySelector('.story-container-wrapper');
     
     if (!storyImg || !overlay || !container) return;
+    
+    // 타이틀 이미지 크기를 CSS 변수로 설정 (스토리 이미지가 참조)
+    storyImg.style.setProperty('--title-img-width', titleWidth + 'px');
     
     // 이미지가 로드된 후 크기 확인
     if (storyImg.complete) {
