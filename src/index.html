@@ -78,9 +78,9 @@
                 <!-- Gold display on title screen -->
                 <div class="title-gold-display">💰 <span id="title-ui-gold">0</span> G</div>
                 <!-- Interactive button areas (invisible overlays on image buttons) -->
-                <!-- STORY MODE = 전투 시작 -->
-                <button class="title-btn-area content-visible" id="title-story-mode-btn" title="전투 시작 (STORY MODE)">
-                    <img src="images/title/story_mode_btn.webp" alt="Story Mode" class="btn-image">
+                <!-- PRACTICE MODE = 연습 모드 -->
+                <button class="title-btn-area content-visible" id="title-practice-btn" title="연습 모드 (PRACTICE MODE)">
+                    <img src="images/title/practice_btn.webp" alt="Practice Mode" class="btn-image">
                 </button>
                 <!-- CHAOS RIFT = 혼돈의 균열 -->
                 <button class="title-btn-area content-visible" id="title-chaos-rift-btn" title="혼돈의 균열 (CHAOS RIFT)">
@@ -185,14 +185,14 @@
                     </div>
                 </div>
             </div>
-            <button id="inv-close-btn" class="btn-main btn-blue" onclick="inventory.close()"
-                aria-label="인벤토리 닫기">나가기</button>
+            <img id="inv-close-btn" src="images/title/exit_btn.webp" alt="나가기" onclick="inventory.close()"
+                aria-label="인벤토리 닫기" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
         </div>
     </div>
 
 
-    <!-- Story Mode Selection Popup -->
-    <div id="story-mode-popup" class="screen-overlay" style="display:none;">
+    <!-- Practice Mode Selection Popup -->
+    <div id="practice-popup" class="screen-overlay" style="display:none;">
         <div class="popup-container-wrapper">
             <img src="images/main/day_select_popup.webp" alt="Adventure Settings" class="popup-background" id="popup-background-img" />
             <div class="popup-buttons-overlay">
@@ -276,7 +276,7 @@
                 <div id="shop-container" style="text-align:left;"></div>
             </div>
             <div class="shop-footer">
-                <button class="btn-main btn-blue" onclick="shop.close()">나가기</button>
+                <img src="images/title/exit_btn.webp" alt="나가기" onclick="shop.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
         </div>
     </div>
@@ -291,7 +291,7 @@
                 <div id="statistics-container" style="text-align:left;"></div>
             </div>
             <div class="shop-footer">
-                <button class="btn-main btn-blue" onclick="statistics.close()">나가기</button>
+                <img src="images/title/exit_btn.webp" alt="나가기" onclick="statistics.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
         </div>
     </div>
@@ -362,7 +362,7 @@
 
                 <button class="num-btn" onclick="secret.enter(0)">0</button>
 
-                <button class="num-btn" onclick="secret.close()">X</button>
+                <img class="num-btn" src="images/title/exit_btn.webp" alt="닫기" onclick="secret.close()" style="width: 100%; height: 100%; object-fit: contain; cursor: pointer;">
 
             </div>
 
@@ -418,12 +418,16 @@
 
 
 
-            <button class="btn-main" onclick="secret.applyGold()">적용</button>
+            <div style="text-align: center; width: 100%;">
+                <img src="images/title/apply_btn.webp" alt="적용" onclick="secret.applyGold()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            </div>
 
-
-
-            <button class="btn-main btn-blue" onclick="secret.close()">나가기</button>
-            <button class="btn-main btn-danger" onclick="secret.resetStats()">전체 초기화</button>
+            <div style="text-align: center; width: 100%;">
+                <img src="images/title/factory_reset_btn.webp" alt="전체 초기화" onclick="secret.resetStats()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            </div>
+            <div style="text-align: center; width: 100%;">
+                <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            </div>
 
 
 
@@ -497,14 +501,14 @@
         // 백버튼 이벤트 처리 (모바일 브라우저)
         window.addEventListener('popstate', (e) => {
             const storyScreen = document.getElementById('story-screen');
-            const storyModePopup = document.getElementById('story-mode-popup');
+            const practicePopup = document.getElementById('practice-popup');
             const resultScreen = document.getElementById('result-screen');
             
             const isStoryScreen = storyScreen && storyScreen.style.display !== 'none' && storyScreen.style.display !== '';
-            const isStoryModePopup = storyModePopup && storyModePopup.style.display !== 'none' && storyModePopup.style.display !== '';
+            const isPracticePopup = practicePopup && practicePopup.style.display !== 'none' && practicePopup.style.display !== '';
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             
-            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isStoryScreen || isStoryModePopup || isResultScreen) {
+            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isStoryScreen || isPracticePopup || isResultScreen) {
                 // 게임 화면을 닫을 때 타이머 정지
                 if (isGameScreen && typeof game !== 'undefined' && game.timer) {
                     clearInterval(game.timer);
@@ -529,13 +533,13 @@
                     storyScreen.style.pointerEvents = '';
                     storyScreen.classList.remove('closing');
                 }
-                if (storyModePopup) {
-                    storyModePopup.style.display = 'none';
-                    storyModePopup.style.visibility = '';
-                    storyModePopup.style.opacity = '';
-                    storyModePopup.style.zIndex = '';
-                    storyModePopup.style.pointerEvents = '';
-                    storyModePopup.classList.remove('closing');
+                if (practicePopup) {
+                    practicePopup.style.display = 'none';
+                    practicePopup.style.visibility = '';
+                    practicePopup.style.opacity = '';
+                    practicePopup.style.zIndex = '';
+                    practicePopup.style.pointerEvents = '';
+                    practicePopup.classList.remove('closing');
                 }
                 if (resultScreen) {
                     resultScreen.style.display = 'none';

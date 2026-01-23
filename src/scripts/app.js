@@ -613,10 +613,10 @@ const statistics = {
         </div>`;
         html += '</div>';
         
-        // 주관식 통계
-        html += '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px; flex-direction:column; align-items:flex-start; width:100%;">';
-        html += '<div style="width:100%;"><b>✍️ 주관식</b></div>';
-        html += `<div style="margin-top:8px; width:100%;">
+        // 주관식 통계 (객관식과 동일한 형식)
+        html += '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
+        html += '<div><b>✍️ 주관식</b></div>';
+        html += `<div style="margin-top:8px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span>해결: ${subjectiveSolved}개</span>
                 <span style="color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
@@ -920,13 +920,13 @@ const story = {
                 // 보스 배틀 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('boss-battle-btn');
-                    storyStartBtn.classList.remove('story-mode-btn');
+                    storyStartBtn.classList.remove('practice-btn');
                 }
             } else {
                 storyImg.src = 'images/main/start_popup.webp';
-                // 스토리 모드 클래스 추가
+                // 연습 모드 클래스 추가
                 if (storyStartBtn) {
-                    storyStartBtn.classList.add('story-mode-btn');
+                    storyStartBtn.classList.add('practice-btn');
                     storyStartBtn.classList.remove('boss-battle-btn');
                 }
             }
@@ -1027,15 +1027,15 @@ const story = {
             storyScreen.classList.remove('closing');
         }
         
-        // story-mode-popup 닫기
-        const storyModePopup = document.getElementById('story-mode-popup');
-        if (storyModePopup) {
-            storyModePopup.style.display = 'none';
-            storyModePopup.style.visibility = 'hidden';
-            storyModePopup.style.opacity = '0';
-            storyModePopup.style.zIndex = '100';
-            storyModePopup.style.pointerEvents = 'none';
-            storyModePopup.classList.remove('closing');
+        // practice-popup 닫기
+        const practicePopup = document.getElementById('practice-popup');
+        if (practicePopup) {
+            practicePopup.style.display = 'none';
+            practicePopup.style.visibility = 'hidden';
+            practicePopup.style.opacity = '0';
+            practicePopup.style.zIndex = '100';
+            practicePopup.style.pointerEvents = 'none';
+            practicePopup.classList.remove('closing');
         }
         
         // 모든 모드에서 story-screen을 건너뛰고 바로 결과 화면으로
@@ -1693,15 +1693,15 @@ const game = {
             storyScreen.classList.remove('closing');
         }
         
-        // story-mode-popup도 닫기
-        const storyModePopup = document.getElementById('story-mode-popup');
-        if (storyModePopup) {
-            storyModePopup.style.display = 'none';
-            storyModePopup.style.visibility = 'hidden';
-            storyModePopup.style.opacity = '0';
-            storyModePopup.style.zIndex = '100';
-            storyModePopup.style.pointerEvents = 'none';
-            storyModePopup.classList.remove('closing');
+        // practice-popup도 닫기
+        const practicePopup = document.getElementById('practice-popup');
+        if (practicePopup) {
+            practicePopup.style.display = 'none';
+            practicePopup.style.visibility = 'hidden';
+            practicePopup.style.opacity = '0';
+            practicePopup.style.zIndex = '100';
+            practicePopup.style.pointerEvents = 'none';
+            practicePopup.classList.remove('closing');
         }
         
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
@@ -1796,14 +1796,28 @@ const secret = {
 
     open: () => {
         openScreenOverlay('secret-menu-overlay', true);
-        document.getElementById('password-modal').style.display = 'block';
-        document.getElementById('gold-adjuster-modal').style.display = 'none';
-        secret.entered = "";
-        secret.updatePasswordDisplay();
+        document.getElementById('password-modal').style.display = 'none';
+        document.getElementById('gold-adjuster-modal').style.display = 'block';
+        secret.adjustGold = 0;
+        document.getElementById('current-gold-display').innerText = db.gold;
+        document.getElementById('adjust-gold-display').innerText = secret.adjustGold;
+
+        document.getElementById('gold-up').onclick = () => secret.updateGold(500);
+        document.getElementById('gold-down').onclick = () => secret.updateGold(-500);
     },
 
     close: () => {
+        // 비밀번호 모달이 열려있으면 골드 조정 화면으로 돌아가기
+        const passwordModal = document.getElementById('password-modal');
+        if (passwordModal && passwordModal.style.display !== 'none') {
+            passwordModal.style.display = 'none';
+            document.getElementById('gold-adjuster-modal').style.display = 'block';
+            secret.entered = "";
+            secret.pendingAction = null;
+            return;
+        }
         closeScreenOverlay('secret-menu-overlay', true);
+        secret.pendingAction = null;
     },
 
     enter: (num) => {
@@ -1837,13 +1851,21 @@ const secret = {
     check: () => {
         if (secret.entered === secret.password) {
             document.getElementById('password-modal').style.display = 'none';
-            document.getElementById('gold-adjuster-modal').style.display = 'block';
-            secret.adjustGold = 0;
-            document.getElementById('current-gold-display').innerText = db.gold;
-            document.getElementById('adjust-gold-display').innerText = secret.adjustGold;
+            
+            // pendingAction이 있으면 실행 (applyGold 또는 resetStats)
+            if (secret.pendingAction) {
+                secret.pendingAction();
+                secret.pendingAction = null;
+            } else {
+                // 기존 로직 (처음 열 때)
+                document.getElementById('gold-adjuster-modal').style.display = 'block';
+                secret.adjustGold = 0;
+                document.getElementById('current-gold-display').innerText = db.gold;
+                document.getElementById('adjust-gold-display').innerText = secret.adjustGold;
 
-            document.getElementById('gold-up').onclick = () => secret.updateGold(500);
-            document.getElementById('gold-down').onclick = () => secret.updateGold(-500);
+                document.getElementById('gold-up').onclick = () => secret.updateGold(500);
+                document.getElementById('gold-down').onclick = () => secret.updateGold(-500);
+            }
 
         } else {
             document.getElementById('password-error').style.display = 'block';
@@ -1858,35 +1880,59 @@ const secret = {
     },
 
     applyGold: () => {
-        db.addGold(secret.adjustGold);
-        secret.close();
+        // 비밀번호 확인
+        secret.entered = "";
+        secret.updatePasswordDisplay();
+        document.getElementById('password-modal').style.display = 'block';
+        document.getElementById('gold-adjuster-modal').style.display = 'none';
+        
+        // 비밀번호 확인 후 실행할 함수
+        secret.pendingAction = () => {
+            db.addGold(secret.adjustGold);
+            secret.close();
+        };
     },
 
     resetStats: () => {
-        if (confirm("정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
-            db.gold = 0;
-            db.owned = ['basic'];
-            db.equippedWeapon = 'basic';
-            db.durability = {};
-            db.stats = { solved: 0, correct: 0 };
-            db.inventory = [];
-            db.equipped = {};
-            db.inventoryCapacity = 3;
-            db.skills = { hint: 0, ultimate: 0 };
+        // 비밀번호 확인
+        secret.entered = "";
+        secret.updatePasswordDisplay();
+        document.getElementById('password-modal').style.display = 'block';
+        document.getElementById('gold-adjuster-modal').style.display = 'none';
+        
+        // 비밀번호 확인 후 실행할 함수
+        secret.pendingAction = () => {
+            if (confirm("정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+                db.gold = 0;
+                db.owned = ['basic'];
+                db.equippedWeapon = 'basic';
+                db.durability = {};
+                db.stats = { solved: 0, correct: 0 };
+                db.inventory = [];
+                db.equipped = {};
+                db.inventoryCapacity = 3;
+                db.skills = { hint: 0, ultimate: 0 };
 
-            db.save();
+                db.save();
 
-            ui.updateGold();
-            ui.updateMainStats();
-            ui.updateVisuals();
-            ui.updateDurability();
-            inventory.render();
+                ui.updateGold();
+                ui.updateMainStats();
+                ui.updateVisuals();
+                ui.updateDurability();
+                inventory.render();
 
-            alert("모든 데이터가 초기화되었습니다.");
-            secret.close();
-            location.reload();
-        }
-    }
+                alert("모든 데이터가 초기화되었습니다.");
+                secret.close();
+                location.reload();
+            } else {
+                // 취소하면 다시 골드 조정 화면으로
+                document.getElementById('password-modal').style.display = 'none';
+                document.getElementById('gold-adjuster-modal').style.display = 'block';
+            }
+        };
+    },
+    
+    pendingAction: null, // 비밀번호 확인 후 실행할 함수
 };
 function initSelections() {
     const daySelect = document.getElementById('day-select');
@@ -1933,9 +1979,9 @@ function initSelections() {
     }
 }
 
-// Open story mode selection popup
-function openStoryModePopup() {
-    const popup = document.getElementById('story-mode-popup');
+// Open practice mode selection popup
+function openPracticePopup() {
+    const popup = document.getElementById('practice-popup');
     const popupDaySelect = document.getElementById('popup-day-select');
     const popupCountSelect = document.getElementById('popup-count-select');
     
@@ -1970,7 +2016,7 @@ function openStoryModePopup() {
     popup.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'story-mode-popup' }, '', window.location.href);
+    history.pushState({ screen: 'practice-popup' }, '', window.location.href);
     
     // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
@@ -1999,7 +2045,7 @@ function openStoryModePopup() {
 
 // Open chaos rift selection popup
 function openChaosRiftPopup() {
-    const popup = document.getElementById('story-mode-popup');
+    const popup = document.getElementById('practice-popup');
     const popupDaySelect = document.getElementById('popup-day-select');
     const popupCountSelect = document.getElementById('popup-count-select');
     
@@ -2149,9 +2195,9 @@ function openScreenOverlay(elementId, animated = true) {
     }
 }
 
-// Close story mode selection popup
-function closeStoryModePopup(animated = true) {
-    closeScreenOverlay('story-mode-popup', animated);
+// Close practice mode selection popup
+function closePracticePopup(animated = true) {
+    closeScreenOverlay('practice-popup', animated);
     // 히스토리 상태 업데이트
     history.pushState(null, '', window.location.href);
 }
@@ -2230,9 +2276,9 @@ function setupSelectFontSizeAdjustment() {
     }
 }
 
-// Popup 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기 기준)
+// Popup 이미지 크기에 맞춰 CSS 변수 설정 (브라우저 크기에 반응)
 function syncPopupButtonOverlay() {
-    const popup = document.getElementById('story-mode-popup');
+    const popup = document.getElementById('practice-popup');
     // popup이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!popup || popup.style.display === 'none' || popup.style.display === '') {
         return;
@@ -2244,62 +2290,47 @@ function syncPopupButtonOverlay() {
     
     if (!popupImg || !overlay || !container) return;
     
-    // 타이틀 이미지 크기 가져오기 (숨겨져 있어도 naturalWidth/naturalHeight 사용)
-    const titleImg = document.querySelector('.title-background');
-    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    let titleWidth = vw; // 기본값 (화면 너비)
-    
-    if (titleImg) {
-        // 이미지가 로드되어 있으면 naturalWidth 사용 (숨겨져 있어도 작동)
-        if (titleImg.complete && titleImg.naturalWidth > 0) {
-            // 화면 크기에 맞춰 스케일 계산
-            const scale = Math.min(vw / titleImg.naturalWidth, vh / titleImg.naturalHeight);
-            titleWidth = titleImg.naturalWidth * scale;
-        } else {
-            // getBoundingClientRect 시도 (표시되어 있을 때만 작동)
-            const titleRect = titleImg.getBoundingClientRect();
-            if (titleRect.width > 0) {
-                titleWidth = titleRect.width;
-            }
-        }
+    // 팝업 이미지의 자연 비율 계산 및 설정
+    if (popupImg.complete && popupImg.naturalWidth > 0 && popupImg.naturalHeight > 0) {
+        const aspectRatio = popupImg.naturalWidth / popupImg.naturalHeight;
+        popupImg.style.setProperty('--popup-aspect-ratio', aspectRatio);
     }
     
-    // 타이틀 이미지 크기를 CSS 변수로 설정 (팝업 이미지가 참조)
-    popupImg.style.setProperty('--title-img-width', titleWidth + 'px');
-    
-    // 이미지가 로드된 후 크기 확인
+    // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
     if (popupImg.complete) {
-        const imgRect = popupImg.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        
-        const left = imgRect.left - containerRect.left;
-        const top = imgRect.top - containerRect.top;
-        
-        // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
-        overlay.style.setProperty('--popup-img-width', imgRect.width + 'px');
-        overlay.style.setProperty('--popup-img-height', imgRect.height + 'px');
-        overlay.style.setProperty('--popup-img-left', left + 'px');
-        overlay.style.setProperty('--popup-img-top', top + 'px');
-        
-        // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
-        const daySelect = document.getElementById('popup-day-select');
-        if (daySelect) {
-            const width = imgRect.width * 0.65;
-            const height = imgRect.height * 0.095;
-            adjustSelectFontSize(daySelect, width, height);
-        }
-        
-        const countSelect = document.getElementById('popup-count-select');
-        if (countSelect) {
-            const width = imgRect.width * 0.65;
-            const height = imgRect.height * 0.095;
-            adjustSelectFontSize(countSelect, width, height);
-        }
-        
-        // 버튼 위치와 크기는 CSS에서 제어 (CSS 변수는 이미 설정됨)
-        
-        // 라디오 버튼 그룹 크기와 위치는 CSS에서 제어 (CSS 변수는 이미 설정됨)
+        // 잠시 후 다시 계산하여 브라우저 크기 변경 반영
+        setTimeout(() => {
+            const imgRect = popupImg.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            const left = imgRect.left - containerRect.left;
+            const top = imgRect.top - containerRect.top;
+            
+            // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
+            overlay.style.setProperty('--popup-img-width', imgRect.width + 'px');
+            overlay.style.setProperty('--popup-img-height', imgRect.height + 'px');
+            overlay.style.setProperty('--popup-img-left', left + 'px');
+            overlay.style.setProperty('--popup-img-top', top + 'px');
+            
+            // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
+            const daySelect = document.getElementById('popup-day-select');
+            if (daySelect) {
+                const width = imgRect.width * 0.65;
+                const height = imgRect.height * 0.095;
+                adjustSelectFontSize(daySelect, width, height);
+            }
+            
+            const countSelect = document.getElementById('popup-count-select');
+            if (countSelect) {
+                const width = imgRect.width * 0.65;
+                const height = imgRect.height * 0.095;
+                adjustSelectFontSize(countSelect, width, height);
+            }
+            
+            // 버튼 위치와 크기는 CSS에서 제어 (CSS 변수는 이미 설정됨)
+            
+            // 라디오 버튼 그룹 크기와 위치는 CSS에서 제어 (CSS 변수는 이미 설정됨)
+        }, 0);
     }
 }
 
@@ -2504,7 +2535,7 @@ window.onload = () => {
     document.getElementById('boss-rush-btn').addEventListener('click', () => story.startIntro('rush'));
     
     // Connect title image button areas to actual buttons
-    const titleStoryModeBtn = document.getElementById('title-story-mode-btn'); // STORY MODE
+    const titlePracticeBtn = document.getElementById('title-practice-btn'); // PRACTICE MODE
     const titleChaosRiftBtn = document.getElementById('title-chaos-rift-btn'); // CHAOS RIFT
     const titleBossRushBtn = document.getElementById('title-boss-rush-btn');   // BOSS RUSH
     const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
@@ -2512,21 +2543,21 @@ window.onload = () => {
     const titleStatisticsBtn = document.getElementById('title-statistics-btn'); // STATISTICS
     const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
     
-    if (titleStoryModeBtn) {
+    if (titlePracticeBtn) {
         // 기존 이벤트 리스너 제거 후 재등록
-        titleStoryModeBtn.onclick = null;
-        titleStoryModeBtn.addEventListener('click', (e) => {
+        titlePracticeBtn.onclick = null;
+        titlePracticeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Story Mode button clicked');
-            if (typeof openStoryModePopup === 'function') {
-                openStoryModePopup();
+            console.log('Practice Mode button clicked');
+            if (typeof openPracticePopup === 'function') {
+                openPracticePopup();
             } else {
-                console.error('openStoryModePopup function not found');
+                console.error('openPracticePopup function not found');
             }
         }, { capture: true });
     } else {
-        console.warn('title-story-mode-btn not found');
+        console.warn('title-practice-btn not found');
     }
     
     // Popup event listeners
@@ -2537,7 +2568,7 @@ window.onload = () => {
     
     if (popupStartBtn) {
         popupStartBtn.addEventListener('click', () => {
-            const popup = document.getElementById('story-mode-popup');
+            const popup = document.getElementById('practice-popup');
             const selectedDay = popupDaySelect ? popupDaySelect.value : 'all';
             const selectedCount = popupCountSelect ? parseInt(popupCountSelect.value) : 10;
             
@@ -2581,7 +2612,7 @@ window.onload = () => {
             }
             
             // Close popup with animation and start game
-            closeStoryModePopup(true);
+            closePracticePopup(true);
             
             // 애니메이션이 완료된 후 게임 시작
             setTimeout(() => {
@@ -2596,7 +2627,7 @@ window.onload = () => {
     
     if (popupCancelBtn) {
         popupCancelBtn.addEventListener('click', () => {
-            closeStoryModePopup();
+            closePracticePopup();
         });
     }
     if (titleChaosRiftBtn) {
@@ -2698,11 +2729,18 @@ window.onload = () => {
         } else {
             popupImg.addEventListener('load', syncPopupButtonOverlay);
         }
-        window.addEventListener('resize', () => {
-            let resizeTimeout;
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(syncPopupButtonOverlay, 100);
-        });
+        // 팝업이 열려있을 때만 resize 이벤트 처리
+        let popupResizeTimeout;
+        const popupResizeHandler = () => {
+            const popup = document.getElementById('practice-popup');
+            if (popup && popup.style.display !== 'none' && popup.style.display !== '') {
+                clearTimeout(popupResizeTimeout);
+                popupResizeTimeout = setTimeout(() => {
+                    syncPopupButtonOverlay();
+                }, 100);
+            }
+        };
+        window.addEventListener('resize', popupResizeHandler);
     }
     
     // 결과 화면 닫기 함수
@@ -2735,15 +2773,15 @@ window.onload = () => {
             }
         }
         
-        // story-mode-popup 초기화
-        const storyModePopup = document.getElementById('story-mode-popup');
-        if (storyModePopup) {
-            storyModePopup.style.display = 'none';
-            storyModePopup.style.visibility = '';
-            storyModePopup.style.opacity = '';
-            storyModePopup.style.zIndex = '';
-            storyModePopup.style.pointerEvents = '';
-            storyModePopup.classList.remove('closing');
+        // practice-popup 초기화
+        const practicePopup = document.getElementById('practice-popup');
+        if (practicePopup) {
+            practicePopup.style.display = 'none';
+            practicePopup.style.visibility = '';
+            practicePopup.style.opacity = '';
+            practicePopup.style.zIndex = '';
+            practicePopup.style.pointerEvents = '';
+            practicePopup.classList.remove('closing');
         }
         
         // game-screen도 확실히 닫기
@@ -2763,4 +2801,4 @@ window.onload = () => {
         }, 400);
         history.pushState(null, '', window.location.href);
     };
-}
+};
