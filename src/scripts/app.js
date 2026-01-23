@@ -676,26 +676,28 @@ const ui = {
             hasSkills = true;
             const gloveBtn = document.createElement('div');
             gloveBtn.className = 'skill-btn skill-passive';
-            gloveBtn.innerHTML = `<span>🥊</span> <span class="skill-count">${db.durability['goldGlove']}/30</span>`;
+            gloveBtn.innerHTML = `<span>🥊</span> <span class="skill-count">${db.durability['goldGlove'] || 0}/30</span>`;
             gloveBtn.title = '황금장갑 (패시브): 골드 획득 x1.5배';
             container.appendChild(gloveBtn);
         }
 
-        if (db.skills.hint > 0) {
+        if (hintData && db.skills.hint > 0) {
             hasSkills = true;
             const hintBtn = document.createElement('button');
             hintBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
-            hintBtn.innerHTML = `<span>${hintData.name.split(' ')[0]}</span> <span class="skill-count">${db.skills.hint}</span>`;
+            const hintIcon = hintData.name.split(' ')[0] || '🧪';
+            hintBtn.innerHTML = `<span>${hintIcon}</span> <span class="skill-count">${db.skills.hint}</span>`;
             hintBtn.onclick = game.useHint;
             hintBtn.title = isBossQuestion ? '힌트: 주관식에서는 사용 불가' : '힌트: 클릭하여 사용';
             container.appendChild(hintBtn);
         }
 
-        if (db.skills.ultimate > 0) {
+        if (ultimateData && db.skills.ultimate > 0) {
             hasSkills = true;
             const ultimateBtn = document.createElement('button');
             ultimateBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
-            ultimateBtn.innerHTML = `<span>${ultimateData.name.split(' ')[0]}</span> <span class="skill-count">${db.skills.ultimate}</span>`;
+            const ultimateIcon = ultimateData.name.split(' ')[0] || '⚡';
+            ultimateBtn.innerHTML = `<span>${ultimateIcon}</span> <span class="skill-count">${db.skills.ultimate}</span>`;
             ultimateBtn.onclick = game.useUltimate;
             ultimateBtn.title = isBossQuestion ? '필살기: 주관식에서는 사용 불가' : '필살기: 클릭하여 사용';
             container.appendChild(ultimateBtn);
@@ -887,8 +889,21 @@ const story = {
         
         // 이미지의 "모험시작" 버튼에도 동일한 이벤트 연결
         if (storyStartBtn) {
-            storyStartBtn.onclick = startGame;
+            // 기존 이벤트 리스너 제거
+            storyStartBtn.onclick = null;
+            storyStartBtn.removeEventListener('click', startGame);
+            // 새 이벤트 리스너 추가
+            storyStartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Story start button clicked');
+                startGame();
+            }, { capture: true });
             storyStartBtn.style.pointerEvents = 'auto'; // 클릭 활성화
+            storyStartBtn.style.cursor = 'pointer';
+            storyStartBtn.style.zIndex = '25';
+        } else {
+            console.warn('story-start-btn not found');
         }
     },
     showEnding: (win) => {
@@ -2029,14 +2044,14 @@ function syncPopupButtonOverlay() {
     
     // 타이틀 이미지 크기 가져오기 (숨겨져 있어도 naturalWidth/naturalHeight 사용)
     const titleImg = document.querySelector('.title-background');
-    let titleWidth = 100vw; // 기본값
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    let titleWidth = vw; // 기본값 (화면 너비)
     
     if (titleImg) {
         // 이미지가 로드되어 있으면 naturalWidth 사용 (숨겨져 있어도 작동)
         if (titleImg.complete && titleImg.naturalWidth > 0) {
             // 화면 크기에 맞춰 스케일 계산
-            const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-            const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
             const scale = Math.min(vw / titleImg.naturalWidth, vh / titleImg.naturalHeight);
             titleWidth = titleImg.naturalWidth * scale;
         } else {
@@ -2102,14 +2117,14 @@ function syncStoryButtonOverlay() {
     
     // 타이틀 이미지 크기 가져오기 (숨겨져 있어도 naturalWidth/naturalHeight 사용)
     const titleImg = document.querySelector('.title-background');
-    let titleWidth = 100vw; // 기본값
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    let titleWidth = vw; // 기본값 (화면 너비)
     
     if (titleImg) {
         // 이미지가 로드되어 있으면 naturalWidth 사용 (숨겨져 있어도 작동)
         if (titleImg.complete && titleImg.naturalWidth > 0) {
             // 화면 크기에 맞춰 스케일 계산
-            const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-            const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
             const scale = Math.min(vw / titleImg.naturalWidth, vh / titleImg.naturalHeight);
             titleWidth = titleImg.naturalWidth * scale;
         } else {
@@ -2150,11 +2165,24 @@ function syncStoryButtonOverlay() {
 // 랜덤 타이틀 헤더 로딩
 function loadRandomTitleHeader() {
     const titleHeaderImg = document.getElementById('title-header-img');
-    if (!titleHeaderImg) return;
+    if (!titleHeaderImg) {
+        console.warn('title-header-img element not found');
+        return;
+    }
     
     // 1~6 사이의 랜덤 숫자 생성
     const randomNum = Math.floor(Math.random() * 6) + 1;
-    titleHeaderImg.src = `images/title/title_header_${randomNum}.webp`;
+    const imagePath = `images/title/title_header_${randomNum}.webp`;
+    
+    console.log('Loading random title header:', imagePath);
+    
+    // 이미지 소스 설정
+    titleHeaderImg.src = imagePath;
+    
+    // 이미지가 보이도록 명시적으로 설정
+    titleHeaderImg.style.display = 'block';
+    titleHeaderImg.style.visibility = 'visible';
+    titleHeaderImg.style.opacity = '1';
 }
 
 // Sync button overlay to match title.webp image size exactly
@@ -2166,24 +2194,38 @@ function syncTitleButtonOverlay() {
     
     if (!titleImg || !overlay || !container) return;
     
-    // Get actual rendered size of the image
-    const imgRect = titleImg.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-    
-    // Calculate position relative to container
-    const left = imgRect.left - containerRect.left;
-    const top = imgRect.top - containerRect.top;
-    
-    // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
-    overlay.style.setProperty('--title-img-width', imgRect.width + 'px');
-    overlay.style.setProperty('--title-img-height', imgRect.height + 'px');
-    overlay.style.setProperty('--title-img-left', left + 'px');
-    overlay.style.setProperty('--title-img-top', top + 'px');
-    
-    // 타이틀 헤더 크기도 동기화
-    if (titleHeader) {
-        titleHeader.style.setProperty('--title-img-width', imgRect.width + 'px');
+    // 이미지 자연 크기 기준으로 화면에 보이는 렌더링 크기 계산
+    let imgWidth = 0;
+    let imgHeight = 0;
+    const naturalW = titleImg.naturalWidth || 0;
+    const naturalH = titleImg.naturalHeight || 0;
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+    if (naturalW > 0 && naturalH > 0) {
+        // 이미지 비율을 유지하면서 화면에 맞는 크기 계산
+        const scale = Math.min(vw / naturalW, vh / naturalH);
+        imgWidth = Math.floor(naturalW * scale);
+        imgHeight = Math.floor(naturalH * scale);
+    } else {
+        // 자연 크기를 모를 때는 현재 렌더링 크기 사용
+        const imgRect = titleImg.getBoundingClientRect();
+        imgWidth = Math.floor(imgRect.width || vw);
+        imgHeight = Math.floor(imgRect.height || vh);
     }
+
+    // 컨테이너 크기를 타이틀 이미지 렌더링 크기에 맞춰 고정
+    container.style.setProperty('--title-container-width', imgWidth + 'px');
+    container.style.setProperty('--title-container-height', imgHeight + 'px');
+    container.style.width = imgWidth + 'px';
+    container.style.height = imgHeight + 'px';
+
+    // 타이틀 이미지는 contain으로 비율 유지하며 표시 (CSS에서 처리)
+    // 오버레이는 컨테이너 전체를 사용 (0,0 ~ 100%)
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.left = '0';
+    overlay.style.top = '0';
 
     // Keep game screen size in sync with the title image size
     syncGameScreenSizeToTitle();
@@ -2218,8 +2260,32 @@ window.onload = () => {
     inventory.render();
     initSelections();
     
-    // 랜덤 타이틀 헤더 로딩
-    loadRandomTitleHeader();
+    // Sync button overlay to image size (먼저 CSS 변수 설정)
+    const titleImg = document.querySelector('.title-background');
+    if (titleImg) {
+        // 이미지가 로드되어 있으면 즉시 동기화
+        if (titleImg.complete) {
+            syncTitleButtonOverlay();
+        } else {
+            titleImg.addEventListener('load', () => {
+                syncTitleButtonOverlay();
+            }, { once: true });
+        }
+    }
+    
+    // 랜덤 타이틀 헤더 로딩 (CSS 변수 설정 후)
+    setTimeout(() => {
+        loadRandomTitleHeader();
+    }, 100);
+    
+    // Sync on window resize (컨테이너 크기를 화면에 맞춰 동적으로 조정)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            syncTitleButtonOverlay();
+        }, 100);
+    });
 
     // Add event listeners for buttons
     document.getElementById('start-battle-btn').addEventListener('click', () => {
@@ -2239,9 +2305,20 @@ window.onload = () => {
     const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
     
     if (titleStoryModeBtn) {
-        titleStoryModeBtn.addEventListener('click', () => {
-            openStoryModePopup();
-        });
+        // 기존 이벤트 리스너 제거 후 재등록
+        titleStoryModeBtn.onclick = null;
+        titleStoryModeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Story Mode button clicked');
+            if (typeof openStoryModePopup === 'function') {
+                openStoryModePopup();
+            } else {
+                console.error('openStoryModePopup function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-story-mode-btn not found');
     }
     
     // Popup event listeners
@@ -2315,42 +2392,94 @@ window.onload = () => {
         });
     }
     if (titleChaosRiftBtn) {
-        titleChaosRiftBtn.addEventListener('click', () => {
-            openChaosRiftPopup();
-        });
+        titleChaosRiftBtn.onclick = null;
+        titleChaosRiftBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Chaos Rift button clicked');
+            if (typeof openChaosRiftPopup === 'function') {
+                openChaosRiftPopup();
+            } else {
+                console.error('openChaosRiftPopup function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-chaos-rift-btn not found');
     }
     if (titleBossRushBtn) {
-        titleBossRushBtn.addEventListener('click', () => story.startIntro('rush'));
+        titleBossRushBtn.onclick = null;
+        titleBossRushBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Boss Rush button clicked');
+            if (typeof story !== 'undefined' && typeof story.startIntro === 'function') {
+                story.startIntro('rush');
+            } else {
+                console.error('story.startIntro function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-boss-rush-btn not found');
     }
     if (titleShopBtn) {
-        titleShopBtn.addEventListener('click', () => shop.open());
+        titleShopBtn.onclick = null;
+        titleShopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Shop button clicked');
+            if (typeof shop !== 'undefined' && typeof shop.open === 'function') {
+                shop.open();
+            } else {
+                console.error('shop.open function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-shop-btn not found');
     }
     if (titleProfileBtn) {
-        titleProfileBtn.addEventListener('click', () => inventory.open());
+        titleProfileBtn.onclick = null;
+        titleProfileBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Profile button clicked');
+            if (typeof inventory !== 'undefined' && typeof inventory.open === 'function') {
+                inventory.open();
+            } else {
+                console.error('inventory.open function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-profile-btn not found');
     }
     if (titleStatisticsBtn) {
-        titleStatisticsBtn.addEventListener('click', () => statistics.open());
+        titleStatisticsBtn.onclick = null;
+        titleStatisticsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Statistics button clicked');
+            if (typeof statistics !== 'undefined' && typeof statistics.open === 'function') {
+                statistics.open();
+            } else {
+                console.error('statistics.open function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-statistics-btn not found');
     }
     if (titleSettingBtn) {
-        titleSettingBtn.addEventListener('click', () => secret.open());
-    }
-    
-    // Sync button overlay to image size
-    const titleImg = document.querySelector('.title-background');
-    if (titleImg) {
-        // Sync when image loads
-        if (titleImg.complete) {
-            syncTitleButtonOverlay();
-        } else {
-            titleImg.addEventListener('load', syncTitleButtonOverlay);
-        }
-        
-        // Sync on window resize
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(syncTitleButtonOverlay, 100);
-        });
+        titleSettingBtn.onclick = null;
+        titleSettingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Setting button clicked');
+            if (typeof secret !== 'undefined' && typeof secret.open === 'function') {
+                secret.open();
+            } else {
+                console.error('secret.open function not found');
+            }
+        }, { capture: true });
+    } else {
+        console.warn('title-setting-btn not found');
     }
     
     // Popup 이미지 로드 후 버튼 오버레이 동기화

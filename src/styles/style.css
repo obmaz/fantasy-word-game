@@ -60,7 +60,7 @@ body {
 /* Gold display on title screen */
 .title-gold-display {
     position: absolute;
-    top: 5%;
+    top: 3%;
     left: 3%;
     z-index: 20;
     color: var(--gold);
@@ -601,6 +601,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100vw;
     height: 100vh;
     max-height: 100vh;
     min-height: 100vh;
@@ -608,14 +609,14 @@ body {
 
 .title-container-wrapper {
     position: relative;
-    width: 100vw;
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+    /* 크기는 타이틀 이미지 렌더링 크기에 맞춰 동적으로 설정됨 */
+    width: var(--title-container-width, 100vw);
+    height: var(--title-container-height, 100vh);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    margin: 0 auto;
 }
 
 .title-header {
@@ -623,49 +624,65 @@ body {
     top: 13%;
     left: 50%;
     transform: translateX(-50%);
-    width: calc(var(--title-img-width, 100vw) * 0.67);
-    max-width: 67vw;
+    width: 66.67%;
+    max-width: 66.67%;
     height: auto;
     object-fit: contain;
-    display: block;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     z-index: 15;
     pointer-events: none;
 }
 
+/* 타이틀 헤더 이미지가 항상 표시되도록 */
+#title-header-img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 100%;
+    height: auto;
+}
+
 .title-background {
-    max-width: 100vw;
-    max-height: 100vh;
     width: auto;
     height: auto;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
     display: block;
     flex-shrink: 0;
 }
 
 .title-buttons-overlay {
-    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
-    width: var(--title-img-width, 0);
-    height: var(--title-img-height, 0);
-    left: var(--title-img-left, 0);
-    top: var(--title-img-top, 0);
+    /* 오버레이는 컨테이너 전체를 사용 */
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
     position: absolute;
     pointer-events: none; /* Allow clicks to pass through to buttons */
+    display: block;
+    visibility: visible;
+    overflow: hidden; /* 버튼들이 이미지 범위를 넘지 않도록 */
+    box-sizing: border-box;
+    z-index: 20; /* 버튼들이 다른 요소 위에 표시되도록 */
 }
 
 .title-btn-area {
     position: absolute;
-    z-index: 10;
-    background: rgba(255, 0, 0, 0.2); /* Temporary: semi-transparent red */
-    border: 2px dashed red;           /* Temporary: dashed red border */
+    z-index: 25; /* 타이틀 헤더(z-index: 15)보다 높게 설정 */
+    background: transparent;
+    border: none;
     cursor: pointer;
-    opacity: 0.5;                     /* Temporary: visible opacity */
+    opacity: 1;
     transition: all 0.2s ease;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    pointer-events: auto; /* Re-enable clicks on buttons */
+    pointer-events: auto !important; /* Re-enable clicks on buttons */
 }
 
 .title-btn-area.content-visible {
@@ -696,7 +713,7 @@ body {
 
 /* STORY MODE = 전투 시작 */
 #title-story-mode-btn {
-    top: 52%;
+    top: 47%;
     left: 50%;
     transform: translateX(-50%);
     width: 67%;
@@ -705,7 +722,7 @@ body {
 
 /* CHAOS RIFT = 혼돈의 균열 */
 #title-chaos-rift-btn {
-    top: 63.5%;
+    top: 59%;
     left: 50%;
     transform: translateX(-50%);
     width: 67%;
@@ -714,7 +731,7 @@ body {
 
 /* BOSS RUSH = 무한의 전장 */
 #title-boss-rush-btn {
-    top: 75%;
+    top: 71%;
     left: 50%;
     transform: translateX(-50%);
     width: 67%;
@@ -723,38 +740,38 @@ body {
 
 /* SETTINGS = 설정 (왼쪽) */
 #title-setting-btn {
-    top: 86%;
+    top: 83%;
     left: 20%;
     transform: translateX(-50%);
     width: 18%;
-    height: 7%;
+    height: 6.5%;
 }
 
 /* SHOP = 상점 */
 #title-shop-btn {
-    top: 86%;
+    top: 83%;
     left: 40%;
     transform: translateX(-50%);
     width: 18%;
-    height: 7%;
+    height: 6.5%;
 }
 
 /* PROFILE = 인벤토리 */
 #title-profile-btn {
-    top: 86%;
+    top: 83%;
     left: 60%;
     transform: translateX(-50%);
     width: 18%;
-    height: 7%;
+    height: 6.5%;
 }
 
 /* STATISTICS = 통계 (오른쪽) */
 #title-statistics-btn {
-    top: 86%;
+    top: 83%;
     left: 80%;
     transform: translateX(-50%);
     width: 18%;
-    height: 7%;
+    height: 6.5%;
 }
 
 /* Title overlay content removed - only image is visible */
@@ -816,10 +833,11 @@ body {
 
 .story-btn-area {
     position: absolute;
-    z-index: 10;
+    z-index: 25;
     background: transparent;
     border: none;
     cursor: pointer;
+    pointer-events: auto !important;
     pointer-events: auto;
     transition: all 0.2s ease;
     /* 기본 위치와 크기 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
@@ -1014,7 +1032,7 @@ body {
     justify-content: center;
     cursor: pointer;
     user-select: none;
-    padding: clamp(10px, 1.5vh, 14px) clamp(12px, 1.5vw, 18px);
+    padding: clamp(6px, 0.8vh, 10px) clamp(12px, 1.5vw, 18px);
     border-radius: 20px;
     transition: all 0.3s ease;
     background: rgba(30, 30, 30, 0.7);
