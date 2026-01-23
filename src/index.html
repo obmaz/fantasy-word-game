@@ -68,8 +68,10 @@
     <div id="start-screen" class="screen-overlay">
         <!-- Title container - constrains buttons within image bounds -->
         <div class="title-container-wrapper">
+            <!-- Game title header image (randomly loaded) -->
+            <img id="title-header-img" src="" alt="Game Title" class="title-header" />
             <!-- Background image - displayed vertically centered, full height visible -->
-            <img src="images/title.webp" alt="Title Screen" class="title-background" />
+            <img src="images/title/title.webp" alt="Title Screen" class="title-background" />
             
             <!-- Button overlay - matches image size exactly -->
             <div class="title-buttons-overlay">
@@ -78,28 +80,32 @@
                 <!-- Interactive button areas (invisible overlays on image buttons) -->
                 <!-- STORY MODE = 전투 시작 -->
                 <button class="title-btn-area content-visible" id="title-story-mode-btn" title="전투 시작 (STORY MODE)">
-                    <img src="images/story_mode_btn.webp" alt="Story Mode" class="btn-image">
+                    <img src="images/title/story_mode_btn.webp" alt="Story Mode" class="btn-image">
                 </button>
                 <!-- CHAOS RIFT = 혼돈의 균열 -->
                 <button class="title-btn-area content-visible" id="title-chaos-rift-btn" title="혼돈의 균열 (CHAOS RIFT)">
-                    <img src="images/chaos_rift_btn.webp" alt="Chaos Rift" class="btn-image">
+                    <img src="images/title/chaos_rift_btn.webp" alt="Chaos Rift" class="btn-image">
                 </button>
                 <!-- BOSS RUSH = 무한의 전장 -->
                 <button class="title-btn-area content-visible" id="title-boss-rush-btn" title="무한의 전장 (BOSS RUSH)">
-                    <img src="images/boss_rush_btn.webp" alt="Boss Rush" class="btn-image">
+                    <img src="images/title/boss_rush_btn.webp" alt="Boss Rush" class="btn-image">
                 </button>
                 
                 <!-- shop = 상점 -->
                 <button class="title-btn-area content-visible" id="title-shop-btn" title="상점 (SHOP)">
-                    <img src="images/shop_btn.webp" alt="Shop" class="btn-image">
+                    <img src="images/title/shop_btn.webp" alt="Shop" class="btn-image">
                 </button>
                 <!-- profile = 인벤토리 -->
                 <button class="title-btn-area content-visible" id="title-profile-btn" title="인벤토리 (PROFILE)">
-                    <img src="images/inventory_btn.webp" alt="Inventory" class="btn-image">
+                    <img src="images/title/inventory_btn.webp" alt="Inventory" class="btn-image">
+                </button>
+                <!-- statistics = 통계 -->
+                <button class="title-btn-area content-visible" id="title-statistics-btn" title="통계 (STATISTICS)">
+                    <img src="images/title/statistics_btn.webp" alt="Statistics" class="btn-image">
                 </button>
                 <!-- setting = secret 메뉴 (킹 글자 클릭 영역) -->
                 <button class="title-btn-area content-visible" id="title-setting-btn" title="시스템 설정 (SETTING)">
-                    <img src="images/settings_btn.webp" alt="Settings" class="btn-image">
+                    <img src="images/title/settings_btn.webp" alt="Settings" class="btn-image">
                 </button>
             </div>
         </div>
@@ -266,6 +272,21 @@
             </div>
             <div class="shop-footer">
                 <button class="btn-main btn-blue" onclick="shop.close()">나가기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statistics-screen" class="screen-overlay" style="display:none;">
+        <div class="card rpg-panel">
+            <div class="shop-header">
+                <h2>통계</h2>
+                <div style="color:var(--gold);">보유 골드: <span id="statistics-gold">0</span> G</div>
+            </div>
+            <div class="shop-body">
+                <div id="statistics-container" style="text-align:left;"></div>
+            </div>
+            <div class="shop-footer">
+                <button class="btn-main btn-blue" onclick="statistics.close()">나가기</button>
             </div>
         </div>
     </div>
@@ -450,11 +471,13 @@
         let isGameScreen = false;
         let isShopScreen = false;
         let isInventoryScreen = false;
+        let isStatisticsScreen = false;
 
         // 화면 상태 추적
         const gameScreen = document.getElementById('game-screen');
         const shopScreen = document.getElementById('shop-screen');
         const inventoryScreen = document.getElementById('inventory-screen');
+        const statisticsScreen = document.getElementById('statistics-screen');
         const startScreen = document.getElementById('start-screen');
 
         // MutationObserver로 화면 상태 감지
@@ -462,11 +485,15 @@
             isGameScreen = gameScreen.style.display !== 'none';
             isShopScreen = shopScreen.style.display !== 'none';
             isInventoryScreen = inventoryScreen.style.display !== 'none';
+            isStatisticsScreen = statisticsScreen && statisticsScreen.style.display !== 'none';
         });
 
         observer.observe(gameScreen, { attributes: true, attributeFilter: ['style'] });
         observer.observe(shopScreen, { attributes: true, attributeFilter: ['style'] });
         observer.observe(inventoryScreen, { attributes: true, attributeFilter: ['style'] });
+        if (statisticsScreen) {
+            observer.observe(statisticsScreen, { attributes: true, attributeFilter: ['style'] });
+        }
 
         // 백버튼 이벤트 처리 (모바일 브라우저)
         window.addEventListener('popstate', (e) => {
@@ -478,7 +505,7 @@
             const isStoryModePopup = storyModePopup && storyModePopup.style.display !== 'none' && storyModePopup.style.display !== '';
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             
-            if (isGameScreen || isShopScreen || isInventoryScreen || isStoryScreen || isStoryModePopup || isResultScreen) {
+            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isStoryScreen || isStoryModePopup || isResultScreen) {
                 // 게임 화면을 닫을 때 타이머 정지
                 if (isGameScreen && typeof game !== 'undefined' && game.timer) {
                     clearInterval(game.timer);
@@ -490,6 +517,9 @@
                 gameScreen.style.display = 'none';
                 shopScreen.style.display = 'none';
                 inventoryScreen.style.display = 'none';
+                if (statisticsScreen) {
+                    statisticsScreen.style.display = 'none';
+                }
                 
                 // 팝업과 스토리 화면도 숨기기
                 if (storyScreen) {

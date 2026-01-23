@@ -484,6 +484,128 @@ const shop = {
     equip: (id) => { db.equip(id); shop.render(); }
 };
 
+const statistics = {
+    open: () => {
+        closeScreenOverlay('start-screen', false);
+        openScreenOverlay('statistics-screen', true);
+        history.pushState({ screen: 'statistics' }, '', window.location.href);
+        statistics.render();
+    },
+    close: () => {
+        closeScreenOverlay('statistics-screen', true);
+        setTimeout(() => {
+            openScreenOverlay('start-screen', false);
+        }, 400);
+        history.pushState(null, '', window.location.href);
+    },
+    render: () => {
+        const container = document.getElementById('statistics-container');
+        container.innerHTML = '';
+        document.getElementById('statistics-gold').innerText = db.gold;
+
+        // 통계 데이터 계산
+        const solved = db.stats.solved || 0;
+        const correct = db.stats.correct || 0;
+        const rate = solved > 0 ? Math.round((correct / solved) * 100) : 0;
+        const wrong = solved - correct;
+
+        // 보유 아이템 수
+        const ownedItems = db.owned.length;
+        const inventoryItems = db.inventory.length;
+        const totalItems = ownedItems + inventoryItems;
+
+        // 장착한 장비 목록
+        const equippedItems = [];
+        if (db.equipped['head']) {
+            const item = items.find(i => i.id === db.equipped['head']);
+            if (item) equippedItems.push({ slot: '머리', name: item.name, icon: item.icon });
+        }
+        if (db.equipped['hand-1']) {
+            const item = weapons.find(w => w.id === db.equipped['hand-1']) || items.find(i => i.id === db.equipped['hand-1']);
+            if (item) equippedItems.push({ slot: '오른손', name: item.name, icon: item.icon });
+        }
+        if (db.equipped['hand-2']) {
+            const item = weapons.find(w => w.id === db.equipped['hand-2']) || items.find(i => i.id === db.equipped['hand-2']);
+            if (item) equippedItems.push({ slot: '왼손', name: item.name, icon: item.icon });
+        }
+        if (db.equipped['foot-1'] || db.equipped['foot-2']) {
+            const item = items.find(i => i.id === db.equipped['foot-1'] || i.id === db.equipped['foot-2']);
+            if (item) equippedItems.push({ slot: '발', name: item.name, icon: item.icon });
+        }
+
+        // 보유 스킬
+        const skills = [];
+        if (db.skills.hint > 0) {
+            const skill = relics.find(r => r.id === 'hint');
+            if (skill) skills.push({ name: skill.name, count: db.skills.hint });
+        }
+        if (db.skills.ultimate > 0) {
+            const skill = relics.find(r => r.id === 'ultimate');
+            if (skill) skills.push({ name: skill.name, count: db.skills.ultimate });
+        }
+
+        let html = '';
+
+        // 게임 통계
+        html += '<div class="shop-section">📊 게임 통계</div>';
+        html += `<div class="shop-item">
+            <div><b>총 해결한 문제</b></div>
+            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${solved}개</div>
+        </div>`;
+        html += `<div class="shop-item">
+            <div><b>정답 수</b></div>
+            <div style="font-size:20px; color:#4CAF50; font-weight:bold;">${correct}개</div>
+        </div>`;
+        html += `<div class="shop-item">
+            <div><b>오답 수</b></div>
+            <div style="font-size:20px; color:#FF5252; font-weight:bold;">${wrong}개</div>
+        </div>`;
+        html += `<div class="shop-item">
+            <div><b>정답률</b></div>
+            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${rate}%</div>
+        </div>`;
+
+        // 재화 및 아이템
+        html += '<div class="shop-section" style="margin-top:20px;">💰 재화 및 아이템</div>';
+        html += `<div class="shop-item">
+            <div><b>보유 골드</b></div>
+            <div style="font-size:20px; color:var(--gold); font-weight:bold;">${db.gold} G</div>
+        </div>`;
+        html += `<div class="shop-item">
+            <div><b>보유 아이템 수</b></div>
+            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${totalItems}개</div>
+        </div>`;
+        html += `<div class="shop-item">
+            <div><b>인벤토리 용량</b></div>
+            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${db.inventoryCapacity}개</div>
+        </div>`;
+
+        // 장착한 장비
+        if (equippedItems.length > 0) {
+            html += '<div class="shop-section" style="margin-top:20px;">⚔️ 장착한 장비</div>';
+            equippedItems.forEach(eq => {
+                html += `<div class="shop-item">
+                    <div><b>${eq.slot}</b></div>
+                    <div style="font-size:18px;">${eq.icon} ${eq.name}</div>
+                </div>`;
+            });
+        }
+
+        // 보유 스킬
+        if (skills.length > 0) {
+            html += '<div class="shop-section" style="margin-top:20px;">✨ 보유 스킬</div>';
+            skills.forEach(skill => {
+                html += `<div class="shop-item">
+                    <div><b>${skill.name}</b></div>
+                    <div style="font-size:20px; color:var(--primary); font-weight:bold;">${skill.count}개</div>
+                </div>`;
+            });
+        }
+
+        container.innerHTML = html;
+    }
+};
+
 const ui = {
     updateGold: () => {
         const titleGold = document.getElementById('title-ui-gold');
@@ -1962,11 +2084,22 @@ function syncStoryButtonOverlay() {
     }
 }
 
+// 랜덤 타이틀 헤더 로딩
+function loadRandomTitleHeader() {
+    const titleHeaderImg = document.getElementById('title-header-img');
+    if (!titleHeaderImg) return;
+    
+    // 1~6 사이의 랜덤 숫자 생성
+    const randomNum = Math.floor(Math.random() * 6) + 1;
+    titleHeaderImg.src = `images/title/title_header_${randomNum}.webp`;
+}
+
 // Sync button overlay to match title.webp image size exactly
 function syncTitleButtonOverlay() {
     const titleImg = document.querySelector('.title-background');
     const overlay = document.querySelector('.title-buttons-overlay');
     const container = document.querySelector('.title-container-wrapper');
+    const titleHeader = document.querySelector('.title-header');
     
     if (!titleImg || !overlay || !container) return;
     
@@ -1983,6 +2116,11 @@ function syncTitleButtonOverlay() {
     overlay.style.setProperty('--title-img-height', imgRect.height + 'px');
     overlay.style.setProperty('--title-img-left', left + 'px');
     overlay.style.setProperty('--title-img-top', top + 'px');
+    
+    // 타이틀 헤더 크기도 동기화
+    if (titleHeader) {
+        titleHeader.style.setProperty('--title-img-width', imgRect.width + 'px');
+    }
 
     // Keep game screen size in sync with the title image size
     syncGameScreenSizeToTitle();
@@ -2016,6 +2154,9 @@ window.onload = () => {
     secret.init();
     inventory.render();
     initSelections();
+    
+    // 랜덤 타이틀 헤더 로딩
+    loadRandomTitleHeader();
 
     // Add event listeners for buttons
     document.getElementById('start-battle-btn').addEventListener('click', () => {
@@ -2031,6 +2172,7 @@ window.onload = () => {
     const titleBossRushBtn = document.getElementById('title-boss-rush-btn');   // BOSS RUSH
     const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
     const titleProfileBtn = document.getElementById('title-profile-btn');     // PROFILE
+    const titleStatisticsBtn = document.getElementById('title-statistics-btn'); // STATISTICS
     const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
     
     if (titleStoryModeBtn) {
@@ -2123,6 +2265,9 @@ window.onload = () => {
     if (titleProfileBtn) {
         titleProfileBtn.addEventListener('click', () => inventory.open());
     }
+    if (titleStatisticsBtn) {
+        titleStatisticsBtn.addEventListener('click', () => statistics.open());
+    }
     if (titleSettingBtn) {
         titleSettingBtn.addEventListener('click', () => secret.open());
     }
@@ -2209,6 +2354,8 @@ window.onload = () => {
         
         setTimeout(() => {
             openScreenOverlay('start-screen', false);
+            // 랜덤 타이틀 헤더 다시 로딩
+            loadRandomTitleHeader();
             // 버튼 오버레이 동기화
             if (typeof syncTitleButtonOverlay === 'function') {
                 syncTitleButtonOverlay();

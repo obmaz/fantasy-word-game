@@ -506,6 +506,10 @@ body {
         0 10px 28px rgba(0,0,0,0.55),
         inset 0 1px 0 rgba(255,255,255,0.35);
     animation: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .card.rpg-panel .btn-main:not(.btn-blue):not(.btn-boss-rush):not(.btn-shop):not(.btn-inv):not(.btn-danger){
@@ -599,6 +603,20 @@ body {
     justify-content: center;
 }
 
+.title-header {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--title-img-width, 100vw) * 0.67);
+    max-width: 67vw;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    z-index: 15;
+    pointer-events: none;
+}
+
 .title-background {
     max-width: 100vw;
     max-height: 100vh;
@@ -662,56 +680,65 @@ body {
 
 /* STORY MODE = 전투 시작 */
 #title-story-mode-btn {
-    top: 34%;
+    top: 56%;
     left: 50%;
     transform: translateX(-50%);
     width: 67%;
-    height: 15%;
+    height: 11%;
 }
 
 /* CHAOS RIFT = 혼돈의 균열 */
 #title-chaos-rift-btn {
-    top: 49%;
+    top: 67.5%;
     left: 50%;
     transform: translateX(-50%);
     width: 67%;
-    height: 15%;
+    height: 11%;
 }
 
 /* BOSS RUSH = 무한의 전장 */
 #title-boss-rush-btn {
-    top: 65%;
+    top: 79%;
     left: 50%;
     transform: translateX(-50%);
     width: 67%;
-    height: 15%;
+    height: 11%;
 }
 
 /* SETTINGS = 설정 (왼쪽) */
 #title-setting-btn {
-    top: 83%;
-    left: 15%;
-    transform: translateX(-10%);
-    width: 25%;
-    height: 10%;
-}
-
-/* SHOP = 상점 (중앙) */
-#title-shop-btn {
-    top: 83%;
-    left: 50%;
+    top: 90%;
+    left: 20%;
     transform: translateX(-50%);
-    width: 25%;
-    height: 10%;
+    width: 18%;
+    height: 7%;
 }
 
-/* PROFILE = 인벤토리 (오른쪽) */
+/* SHOP = 상점 */
+#title-shop-btn {
+    top: 90%;
+    left: 40%;
+    transform: translateX(-50%);
+    width: 18%;
+    height: 7%;
+}
+
+/* PROFILE = 인벤토리 */
 #title-profile-btn {
-    top: 83%;
-    left: 88%;
-    transform: translateX(-100%);
-    width: 25%;
-    height: 10%;
+    top: 90%;
+    left: 60%;
+    transform: translateX(-50%);
+    width: 18%;
+    height: 7%;
+}
+
+/* STATISTICS = 통계 (오른쪽) */
+#title-statistics-btn {
+    top: 90%;
+    left: 80%;
+    transform: translateX(-50%);
+    width: 18%;
+    height: 7%;
 }
 
 /* Title overlay content removed - only image is visible */
@@ -1163,6 +1190,10 @@ img, video, iframe {
     overflow: hidden;
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     animation: buttonShine 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 @keyframes buttonShine {
@@ -1371,6 +1402,13 @@ select:focus {
     flex-shrink: 0;
     padding-top: 15px;
     border-top: 1px solid #333;
+}
+
+/* Statistics Styles (same as shop) */
+#statistics-screen .card {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
 }
 
 /* Inventory close button: always visible while scrolling */
