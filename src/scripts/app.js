@@ -622,7 +622,7 @@ const ui = {
         }
     },
     updateVisuals: () => {
-        document.getElementById('hero-img').src = "images/hero.webp";
+        document.getElementById('hero-img').src = "images/main/hero.webp";
 
         // weapon -> hand-1 (gameplay)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
@@ -719,20 +719,20 @@ try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
 // Monster image assets and selection helper
 const monsterAssets = {
     normal: [
-        'images/monster_1.webp',
-        'images/monster_2.webp',
-        'images/monster_3.webp'
+        'images/main/monster_1.webp',
+        'images/main/monster_2.webp',
+        'images/main/monster_3.webp'
     ],
     boss: [
-        'images/monster_1.webp',
-        'images/monster_2.webp',
-        'images/monster_3.webp'
+        'images/main/monster_1.webp',
+        'images/main/monster_2.webp',
+        'images/main/monster_3.webp'
     ],
     byDay: {
         // Day-specific mapping — useful for testing and unique bosses
-        // add more: '5': ['images/monster_1.webp', 'images/monster_2.webp']
+        // add more: '5': ['images/main/monster_1.webp', 'images/main/monster_2.webp']
     },
-    fallback: 'images/monster_1.webp'
+    fallback: 'images/main/monster_1.webp'
 };
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -827,14 +827,14 @@ const story = {
         const storyStartBtn = document.getElementById('story-start-btn');
         if (storyImg) {
             if (mode === 'rush') {
-                storyImg.src = 'images/boss_battle_popup.webp';
+                storyImg.src = 'images/main/boss_battle_popup.webp';
                 // 보스 배틀 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('boss-battle-btn');
                     storyStartBtn.classList.remove('story-mode-btn');
                 }
             } else {
-                storyImg.src = 'images/start_popup.webp';
+                storyImg.src = 'images/main/start_popup.webp';
                 // 스토리 모드 클래스 추가
                 if (storyStartBtn) {
                     storyStartBtn.classList.add('story-mode-btn');
@@ -2322,7 +2322,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('story-background-img');
             if (storyImg) {
-                storyImg.src = 'images/start_popup.webp';
+                storyImg.src = 'images/main/start_popup.webp';
             }
             
             // 버튼 초기화
