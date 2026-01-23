@@ -78,28 +78,28 @@
                 <!-- Interactive button areas (invisible overlays on image buttons) -->
                 <!-- STORY MODE = 전투 시작 -->
                 <button class="title-btn-area content-visible" id="title-story-mode-btn" title="전투 시작 (STORY MODE)">
-                    <img src="images/story_mode.webp" alt="Story Mode" class="btn-image">
+                    <img src="images/story_mode_btn.webp" alt="Story Mode" class="btn-image">
                 </button>
                 <!-- CHAOS RIFT = 혼돈의 균열 -->
                 <button class="title-btn-area content-visible" id="title-chaos-rift-btn" title="혼돈의 균열 (CHAOS RIFT)">
-                    <img src="images/chaos_rift.webp" alt="Chaos Rift" class="btn-image">
+                    <img src="images/chaos_rift_btn.webp" alt="Chaos Rift" class="btn-image">
                 </button>
                 <!-- BOSS RUSH = 무한의 전장 -->
                 <button class="title-btn-area content-visible" id="title-boss-rush-btn" title="무한의 전장 (BOSS RUSH)">
-                    <img src="images/boss_rush.webp" alt="Boss Rush" class="btn-image">
+                    <img src="images/boss_rush_btn.webp" alt="Boss Rush" class="btn-image">
                 </button>
                 
                 <!-- shop = 상점 -->
                 <button class="title-btn-area content-visible" id="title-shop-btn" title="상점 (SHOP)">
-                    <img src="images/shop.webp" alt="Shop" class="btn-image">
+                    <img src="images/shop_btn.webp" alt="Shop" class="btn-image">
                 </button>
                 <!-- profile = 인벤토리 -->
                 <button class="title-btn-area content-visible" id="title-profile-btn" title="인벤토리 (PROFILE)">
-                    <img src="images/inventory.webp" alt="Inventory" class="btn-image">
+                    <img src="images/inventory_btn.webp" alt="Inventory" class="btn-image">
                 </button>
                 <!-- setting = secret 메뉴 (킹 글자 클릭 영역) -->
                 <button class="title-btn-area content-visible" id="title-setting-btn" title="시스템 설정 (SETTING)">
-                    <img src="images/settings.webp" alt="Settings" class="btn-image">
+                    <img src="images/settings_btn.webp" alt="Settings" class="btn-image">
                 </button>
             </div>
         </div>
@@ -199,6 +199,22 @@
                     <option value="10" selected>10 마리 (보통)</option>
                     <option value="20">20 마리 (어려움)</option>
                 </select>
+                
+                <!-- 문제 타입 라디오 버튼 (Chaos Rift 전용) -->
+                <div id="popup-question-type-group" class="popup-radio-group" style="display: none;">
+                    <label class="popup-radio-label">
+                        <input type="radio" name="question-type" value="objective" class="popup-radio">
+                        <span class="popup-radio-text">객관식</span>
+                    </label>
+                    <label class="popup-radio-label">
+                        <input type="radio" name="question-type" value="mixed" checked class="popup-radio">
+                        <span class="popup-radio-text">객관식+주관식</span>
+                    </label>
+                    <label class="popup-radio-label">
+                        <input type="radio" name="question-type" value="subjective" class="popup-radio">
+                        <span class="popup-radio-text">주관식</span>
+                    </label>
+                </div>
                 
                 <!-- 시작하기 버튼 영역 -->
                 <button class="popup-btn-area" id="popup-start-btn" title="시작하기"></button>

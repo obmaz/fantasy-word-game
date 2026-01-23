@@ -880,7 +880,7 @@ function __runGameSanityChecks(opts = {}) {
 const game = {
     list: [], idx: 0, timer: null, timeLeft: 0, maxTime: 10,
     stats: { gain: 0, lost: 0 }, currentQ: null, isProcessing: false, currentAns: "", mode: 'normal',
-    deck: [], currentDay: null,
+    deck: [], currentDay: null, chaosQuestionType: 'mixed',
 
     init: (mode, day) => {
         const count = parseInt(document.getElementById('count-select').value);
@@ -910,9 +910,38 @@ const game = {
             game.deck = game.shuffle([...rawData]);
             game.list = [];
         } else if (mode === 'chaos') {
-            // Chaos Rift: All questions are boss mode (subjective)
+            // Chaos Rift: Question type depends on user selection
             let shuffledPool = game.shuffle(pool);
-            game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: true }));
+            const questionType = game.chaosQuestionType || 'mixed'; // default to 'mixed'
+            console.log('[game.init] chaos mode - questionType:', questionType, 'chaosQuestionType:', game.chaosQuestionType);
+            
+            if (questionType === 'objective') {
+                // 객관식만: 모든 문제를 객관식으로
+                console.log('[game.init] 객관식만 모드 - 모든 문제를 객관식으로 설정');
+                game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: false }));
+            } else if (questionType === 'subjective') {
+                // 주관식만: 모든 문제를 주관식으로
+                console.log('[game.init] 주관식만 모드 - 모든 문제를 주관식으로 설정');
+                game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: true }));
+            } else {
+                // 객관식+주관식: 주관식이 최소 1개 이상, 30% 이상
+                console.log('[game.init] 객관식+주관식 모드 - 주관식 30% 이상');
+                const minBossCount = 1;
+                const bossCountByPercent = Math.ceil(count * 0.3); // 30% 이상
+                const bossCount = Math.max(minBossCount, bossCountByPercent);
+                const normalCount = count - bossCount;
+                
+                // 주관식과 객관식 문제를 섞어서 생성
+                const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({ ...q, isBoss: true }));
+                const normalQuestions = shuffledPool.slice(bossCount, count).map(q => ({ ...q, isBoss: false }));
+                
+                game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
+            }
+            
+            // 디버깅: 생성된 문제 타입 확인
+            const bossCount = game.list.filter(q => q.isBoss).length;
+            const normalCount = game.list.filter(q => !q.isBoss).length;
+            console.log('[game.init] 생성된 문제 - 주관식:', bossCount, '객관식:', normalCount, '총:', game.list.length);
         } else {
             let shuffledPool = game.shuffle(pool);
             const bossCount = Math.max(1, Math.floor(count * 0.2));
@@ -973,11 +1002,17 @@ const game = {
             game.currentAns = game.currentQ.word;
             game.renderBoss(game.currentQ, true);
         } else if (game.mode === 'chaos') {
-            // Chaos Rift: All questions are boss mode
+            // Chaos Rift: Question type depends on user selection
             document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
-            game.renderBoss(game.currentQ, false);
+            
+            // isBoss 속성에 따라 주관식/객관식 표시
+            if (game.currentQ.isBoss) {
+                game.renderBoss(game.currentQ, false);
+            } else {
+                game.renderNormal(game.currentQ);
+            }
         } else {
             document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
@@ -1565,6 +1600,12 @@ function openStoryModePopup() {
     // Mark popup as story mode
     popup.dataset.mode = 'story';
     
+    // Hide question type radio buttons for story mode
+    const questionTypeGroup = document.getElementById('popup-question-type-group');
+    if (questionTypeGroup) {
+        questionTypeGroup.style.display = 'none';
+    }
+    
     // Enable day selection for story mode
     if (popupDaySelect) {
         popupDaySelect.disabled = false;
@@ -1634,6 +1675,43 @@ function openChaosRiftPopup() {
     const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
     if (popupCountSelect) {
         popupCountSelect.value = String(lastCount);
+    }
+    
+    // Show question type radio buttons for chaos rift
+    const questionTypeGroup = document.getElementById('popup-question-type-group');
+    if (questionTypeGroup) {
+        questionTypeGroup.style.display = 'flex';
+        // Load last selected question type or default to 'mixed'
+        const lastQuestionType = localStorage.getItem('v7_last_question_type') || 'mixed';
+        const radio = questionTypeGroup.querySelector(`input[value="${lastQuestionType}"]`);
+        if (radio) {
+            radio.checked = true;
+        } else {
+            // Default to 'mixed' if saved value is invalid
+            const mixedRadio = questionTypeGroup.querySelector('input[value="mixed"]');
+            if (mixedRadio) mixedRadio.checked = true;
+        }
+        
+        // Update checked class for all radio labels
+        const allRadios = questionTypeGroup.querySelectorAll('input[name="question-type"]');
+        const allLabels = questionTypeGroup.querySelectorAll('.popup-radio-label');
+        allLabels.forEach(label => label.classList.remove('checked'));
+        allRadios.forEach(radio => {
+            if (radio.checked) {
+                radio.closest('.popup-radio-label')?.classList.add('checked');
+            }
+        });
+        
+        // Add event listeners for radio button changes
+        allRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                allLabels.forEach(label => label.classList.remove('checked'));
+                const checkedRadio = questionTypeGroup.querySelector('input[name="question-type"]:checked');
+                if (checkedRadio) {
+                    checkedRadio.closest('.popup-radio-label')?.classList.add('checked');
+                }
+            });
+        });
     }
     
     popup.style.display = 'flex';
@@ -1826,50 +1904,69 @@ function syncPopupButtonOverlay() {
         overlay.style.top = top + 'px';
         
         // 드롭박스와 버튼 위치 설정 (이미지 크기에 상대적)
-        // 모험 지역 드롭박스 (더 길고 크게)
+        // 모험 지역 드롭박스
         const daySelect = document.getElementById('popup-day-select');
         if (daySelect) {
-            const width = imgRect.width * 0.6;
-            const height = imgRect.height * 0.11;
+            const width = imgRect.width * 0.65;
+            const height = imgRect.height * 0.095;
             daySelect.style.width = width + 'px';
             daySelect.style.height = height + 'px';
-            daySelect.style.left = (imgRect.width * 0.14) + 'px';
-            daySelect.style.top = (imgRect.height * 0.325) + 'px';
+            daySelect.style.left = (imgRect.width * 0.125) + 'px';
+            daySelect.style.top = (imgRect.height * 0.3) + 'px';
             
             // 폰트 크기 동적 조정 (드롭박스 크기에 맞춰)
             adjustSelectFontSize(daySelect, width, height);
         }
         
-        // 난이도 드롭박스 (더 길고 크게)
+        // 난이도 드롭박스
         const countSelect = document.getElementById('popup-count-select');
         if (countSelect) {
-            const width = imgRect.width * 0.6;
-            const height = imgRect.height * 0.11;
+            const width = imgRect.width * 0.65;
+            const height = imgRect.height * 0.095;
             countSelect.style.width = width + 'px';
             countSelect.style.height = height + 'px';
-            countSelect.style.left = (imgRect.width * 0.14) + 'px';
-            countSelect.style.top = (imgRect.height * 0.59) + 'px';
+            countSelect.style.left = (imgRect.width * 0.125) + 'px';
+            countSelect.style.top = (imgRect.height * 0.54) + 'px';
             
             // 폰트 크기 동적 조정 (드롭박스 크기에 맞춰)
             adjustSelectFontSize(countSelect, width, height);
         }
         
-        // 시작하기 버튼 (왼쪽 아래로)
+        // 시작하기 버튼 (왼쪽 아래)
         const startBtn = document.getElementById('popup-start-btn');
         if (startBtn) {
-            startBtn.style.width = (imgRect.width * 0.375) + 'px';
-            startBtn.style.height = (imgRect.height * 0.15) + 'px';
-            startBtn.style.left = (imgRect.width * 0.095) + 'px';
-            startBtn.style.top = (imgRect.height * 0.8) + 'px';
+            startBtn.style.width = (imgRect.width * 0.37) + 'px';
+            startBtn.style.height = (imgRect.height * 0.115) + 'px';
+            startBtn.style.left = (imgRect.width * 0.0955) + 'px';
+            startBtn.style.top = (imgRect.height * 0.82) + 'px';
         }
         
-        // 취소 버튼 (오른쪽 아래로)
+        // 취소 버튼 (오른쪽 아래)
         const cancelBtn = document.getElementById('popup-cancel-btn');
         if (cancelBtn) {
-            cancelBtn.style.width = (imgRect.width * 0.375) + 'px';
-            cancelBtn.style.height = (imgRect.height * 0.15) + 'px';
-            cancelBtn.style.left = (imgRect.width * 0.525) + 'px';
-            cancelBtn.style.top = (imgRect.height * 0.8) + 'px';
+            cancelBtn.style.width = (imgRect.width * 0.37) + 'px';
+            cancelBtn.style.height = (imgRect.height * 0.115) + 'px';
+            cancelBtn.style.left = (imgRect.width * 0.53) + 'px';
+            cancelBtn.style.top = (imgRect.height * 0.82) + 'px';
+        }
+        
+        // 문제 타입 라디오 버튼 그룹 위치 설정 (Chaos Rift 전용, 시작하기 버튼 위쪽)
+        const questionTypeGroup = document.getElementById('popup-question-type-group');
+        if (questionTypeGroup && questionTypeGroup.style.display !== 'none') {
+            // 버튼 영역 쪽으로 더 내리고, 좌우에 딱 맞게 크기 설정
+            const groupWidth = imgRect.width * 0.8;
+            const chipWidth = (groupWidth - 20) / 3; // 3개 칩, gap 10px씩 2개 = 20px
+            questionTypeGroup.style.width = groupWidth + 'px';
+            questionTypeGroup.style.left = (imgRect.width * 0.1) + 'px';
+            questionTypeGroup.style.top = (imgRect.height * 0.72) + 'px';
+            questionTypeGroup.style.justifyContent = 'space-between';
+            
+            // 모든 칩의 크기를 동일하게 설정
+            const chipLabels = questionTypeGroup.querySelectorAll('.popup-radio-label');
+            chipLabels.forEach(label => {
+                label.style.width = chipWidth + 'px';
+                label.style.flex = '0 0 ' + chipWidth + 'px';
+            });
         }
     }
 }
@@ -1995,16 +2092,41 @@ window.onload = () => {
             // Check which mode opened the popup
             const popupMode = popup ? (popup.dataset.mode || 'story') : 'story';
             
+            // Get selected question type for chaos rift
+            let selectedQuestionType = 'mixed'; // default
+            if (popupMode === 'chaos') {
+                const questionTypeGroup = document.getElementById('popup-question-type-group');
+                if (questionTypeGroup) {
+                    const checkedRadio = questionTypeGroup.querySelector('input[name="question-type"]:checked');
+                    if (checkedRadio) {
+                        selectedQuestionType = checkedRadio.value;
+                    }
+                }
+                // Save question type preference
+                localStorage.setItem('v7_last_question_type', selectedQuestionType);
+            }
+            
             // Save selections
             db.lastSelectedDay = selectedDay;
             localStorage.setItem('v7_last_count', selectedCount);
             db.save();
+            
+            // Store question type for game.init to use
+            if (popupMode === 'chaos') {
+                game.chaosQuestionType = selectedQuestionType;
+            }
             
             // Update hidden selects for compatibility
             const daySelect = document.getElementById('day-select');
             const countSelect = document.getElementById('count-select');
             if (daySelect) daySelect.value = selectedDay;
             if (countSelect) countSelect.value = String(selectedCount);
+            
+            // 시작화면 숨기기 (검정 배경만 보이도록)
+            const startScreen = document.getElementById('start-screen');
+            if (startScreen) {
+                startScreen.style.display = 'none';
+            }
             
             // Close popup with animation and start game
             closeStoryModePopup(true);
