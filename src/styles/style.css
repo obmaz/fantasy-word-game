@@ -872,6 +872,100 @@ body {
     transform: none; /* 기본 transform 제거 */
 }
 
+/* Day 정보 표시 영역 (상단) */
+.story-day-info {
+    position: absolute;
+    z-index: 15;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+    text-align: center;
+    color: var(--gold);
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+/* 이야기 텍스트 컨테이너 (중앙 사각형 영역) */
+.scontainertory-text- {
+    position: absolute;
+    z-index: 15;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 47%;
+    height: 20%;
+    max-height: 45%;
+    background: rgba(20, 20, 30, 0.85);
+    border: 2px solid rgba(255, 213, 79, 0.5);
+    border-radius: 12px;
+    padding: clamp(12px, 1.5vw, 20px);
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    pointer-events: none;
+}
+
+/* ============================================
+   Chaos Rift 모드 - Day 타이틀 및 설명 박스 크기/위치 조정
+   ============================================
+   아래 CSS 규칙에서 크기와 위치를 조정하세요.
+   원하는 속성의 주석을 해제하고 값을 변경하면 됩니다.
+   ============================================ */
+
+/* Chaos Rift 모드 - Day 정보 표시 영역 (크기/위치 조정 가능) */
+#story-screen[data-mode="chaos"] .story-day-info {
+    /* 기본값 유지 (상위 스타일 상속) */
+    /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
+    
+    /* top: 12%; */ /* 상단 위치 (기본: 15%) */
+    /* width: 80%; */ /* 너비 (기본: 75%) */
+    /* font-size: clamp(20px, 3vw, 32px); */ /* 폰트 크기 */
+}
+
+/* Chaos Rift 모드 - 이야기 텍스트 컨테이너 (크기/위치 조정 가능) */
+#story-screen[data-mode="chaos"] .story-text-container {
+    /* 기본값 유지 (상위 스타일 상속) */
+    /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
+    
+    /* top: 22%; */ /* 상단 위치 (기본: 25%) */
+    /* width: 75%; */ /* 너비 (기본: 70%) */
+    /* height: 50%; */ /* 높이 (기본: 45%) */
+    /* max-height: 50%; */ /* 최대 높이 (기본: 45%) */
+    /* padding: clamp(15px, 2vw, 25px); */ /* 내부 여백 */
+}
+
+/* 스크롤바 스타일 */
+.story-text-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.story-text-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.story-text-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 213, 79, 0.6);
+    border-radius: 4px;
+}
+
+.story-text-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 213, 79, 0.8);
+}
+
+/* 이야기 텍스트 내용 */
+.story-text-content {
+    color: #ddd;
+    font-size: clamp(14px, 1.8vw, 18px);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+}
+
 /* 모험 설정 팝업 스타일 */
 .popup-container-wrapper {
     position: relative;

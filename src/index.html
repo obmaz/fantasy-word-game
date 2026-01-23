@@ -252,11 +252,16 @@
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="story-start-btn" title="모험 시작"></button>
             </div>
+            <!-- Day 정보 표시 영역 -->
+            <div class="story-day-info" id="story-day-info"></div>
+            <!-- 이야기 텍스트 영역 -->
+            <div class="story-text-container">
+                <div class="story-text-content" id="story-text"></div>
+            </div>
         </div>
         <!-- 기존 텍스트는 숨김 처리 -->
         <div style="display: none;">
             <div class="story-title" id="story-title">Title</div>
-            <div class="story-text" id="story-text"></div>
             <button class="btn-main" id="story-btn">계속하기</button>
         </div>
     </div>
@@ -417,7 +422,7 @@
 
 
 
-            <button class="btn-main btn-blue" onclick="secret.close()">닫기</button>
+            <button class="btn-main btn-blue" onclick="secret.close()">나가기</button>
             <button class="btn-main btn-danger" onclick="secret.resetStats()">전체 초기화</button>
 
 
@@ -452,18 +457,12 @@
     </audio>
 
     <script>
-        // Background music 초기화 및 재생
+        // Background music 초기화 (게임 중에만 재생)
         window.addEventListener('load', () => {
             const bgMusic = document.getElementById('background-music');
             if (bgMusic) {
                 bgMusic.volume = 0.5; // 볼륨 조절
-                bgMusic.play().catch(err => {
-                    console.log('Background music autoplay prevented:', err);
-                    // 사용자 인터랙션 후 재생 시도
-                    document.addEventListener('click', () => {
-                        bgMusic.play().catch(() => {});
-                    }, { once: true });
-                });
+                // 타이틀에서는 재생하지 않음 (게임 시작 시 재생)
             }
         });
 

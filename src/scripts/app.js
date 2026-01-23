@@ -6,7 +6,20 @@ const db = {
     owned: JSON.parse(localStorage.getItem('v7_owned')) || ['basic'],
     equippedWeapon: localStorage.getItem('v7_equip') || 'basic',
     durability: JSON.parse(localStorage.getItem('v7_dura')) || {},
-    stats: JSON.parse(localStorage.getItem('v7_stats')) || { solved: 0, correct: 0 },
+    stats: (() => {
+        const saved = JSON.parse(localStorage.getItem('v7_stats')) || { solved: 0, correct: 0 };
+        // 기존 데이터와의 호환성: objective/subjective 필드가 없으면 추가
+        if (!saved.objective) {
+            saved.objective = { solved: 0, correct: 0 };
+        }
+        if (!saved.subjective) {
+            saved.subjective = { solved: 0, correct: 0, perfectDays: [] };
+        }
+        if (!saved.subjective.perfectDays) {
+            saved.subjective.perfectDays = [];
+        }
+        return saved;
+    })(),
     inventory: JSON.parse(localStorage.getItem('v7_inventory')) || [],
     equipped: JSON.parse(localStorage.getItem('v7_equipped')) || {},
     inventoryCapacity: parseInt(localStorage.getItem('v7_inventory_capacity')) || 3,
@@ -62,9 +75,19 @@ const db = {
         db.save();
         ui.updateVisuals();
     },
-    addStats: (isCorrect) => {
+    addStats: (isCorrect, questionType = 'objective') => {
         db.stats.solved++;
         if (isCorrect) db.stats.correct++;
+        
+        // 문제 타입별 통계 추가
+        if (!db.stats[questionType]) {
+            db.stats[questionType] = { solved: 0, correct: 0 };
+        }
+        db.stats[questionType].solved++;
+        if (isCorrect) {
+            db.stats[questionType].correct++;
+        }
+        
         db.save();
     },
     useItem: (id) => {
@@ -508,6 +531,16 @@ const statistics = {
         const correct = db.stats.correct || 0;
         const rate = solved > 0 ? Math.round((correct / solved) * 100) : 0;
         const wrong = solved - correct;
+        
+        // 객관식/주관식 통계
+        const objectiveStats = db.stats.objective || { solved: 0, correct: 0 };
+        const subjectiveStats = db.stats.subjective || { solved: 0, correct: 0 };
+        const objectiveSolved = objectiveStats.solved || 0;
+        const objectiveCorrect = objectiveStats.correct || 0;
+        const objectiveRate = objectiveSolved > 0 ? Math.round((objectiveCorrect / objectiveSolved) * 100) : 0;
+        const subjectiveSolved = subjectiveStats.solved || 0;
+        const subjectiveCorrect = subjectiveStats.correct || 0;
+        const subjectiveRate = subjectiveSolved > 0 ? Math.round((subjectiveCorrect / subjectiveSolved) * 100) : 0;
 
         // 보유 아이템 수
         const ownedItems = db.owned.length;
@@ -565,8 +598,48 @@ const statistics = {
             <div style="font-size:20px; color:var(--primary); font-weight:bold;">${rate}%</div>
         </div>`;
 
+        // 문제 타입별 통계
+        html += '<div class="shop-section" style="margin-top:20px;">📝 문제 타입별 통계</div>';
+        
+        // 객관식 통계
+        html += '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
+        html += '<div><b>📋 객관식</b></div>';
+        html += `<div style="margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span>해결: ${objectiveSolved}개</span>
+                <span style="color:#4CAF50; margin-left:12px;">정답: ${objectiveCorrect}개</span>
+            </div>
+            <div style="font-size:18px; color:#2196F3; font-weight:bold;">정답률: ${objectiveRate}%</div>
+        </div>`;
+        html += '</div>';
+        
+        // 주관식 통계
+        html += '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px; flex-direction:column; align-items:flex-start; width:100%;">';
+        html += '<div style="width:100%;"><b>✍️ 주관식</b></div>';
+        html += `<div style="margin-top:8px; width:100%;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span>해결: ${subjectiveSolved}개</span>
+                <span style="color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
+            </div>
+            <div style="font-size:18px; color:#9C27B0; font-weight:bold;">정답률: ${subjectiveRate}%</div>`;
+        
+        // 주관식을 전부 맞춘 날 표시
+        const perfectDays = db.stats.subjective?.perfectDays || [];
+        if (perfectDays.length > 0) {
+            // 가장 최근 날짜 (배열의 마지막 요소)
+            const latestPerfect = perfectDays[perfectDays.length - 1];
+            html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156, 39, 176, 0.3);">
+                <div style="font-size:14px; color:#9C27B0; font-weight:bold; margin-bottom:4px;">✨ 주관식 전부 맞춘 날</div>
+                <div style="font-size:16px; color:var(--gold);">${latestPerfect.displayDate || latestPerfect.date}</div>
+                ${perfectDays.length > 1 ? `<div style="font-size:12px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>` : ''}
+            </div>`;
+        }
+        
+        html += '</div>';
+        html += '</div>';
+
         // 재화 및 아이템
-        html += '<div class="shop-section" style="margin-top:20px;">💰 재화 및 아이템</div>';
+        html += '<div class="shop-section" style="margin-top:30px; clear:both; display:block;">💰 재화 및 아이템</div>';
         html += `<div class="shop-item">
             <div><b>보유 골드</b></div>
             <div style="font-size:20px; color:var(--gold); font-weight:bold;">${db.gold} G</div>
@@ -821,6 +894,15 @@ const story = {
         
         openScreenOverlay('story-screen', true);
         
+        // Chaos Rift 모드일 때 data-mode 속성 추가 (CSS 선택자용)
+        if (storyScreen) {
+            if (mode === 'chaos') {
+                storyScreen.setAttribute('data-mode', 'chaos');
+            } else {
+                storyScreen.removeAttribute('data-mode');
+            }
+        }
+        
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'story-screen' }, '', window.location.href);
         
@@ -869,8 +951,18 @@ const story = {
         } else {
             const te = document.getElementById('story-title'); if (te) te.innerText = displayTitle; console.warn('[story.startIntro] fallback title write used');
         }
+        
+        // Day 정보 표시
+        const dayInfoEl = document.getElementById('story-day-info');
+        if (dayInfoEl) {
+            dayInfoEl.innerText = displayTitle;
+        }
+        
+        // 이야기 텍스트 표시
         const textEl = document.getElementById('story-text');
-        if (textEl) textEl.innerText = data.intro;
+        if (textEl) {
+            textEl.innerText = data.intro || '';
+        }
 
         const btn = document.getElementById('story-btn');
         btn.innerText = "모험 시작";
@@ -911,6 +1003,12 @@ const story = {
         if (game.timer) {
             clearInterval(game.timer);
             game.timer = null;
+        }
+        
+        // 배경음악 정지
+        const bgMusic = document.getElementById('background-music');
+        if (bgMusic && !bgMusic.paused) {
+            bgMusic.pause();
         }
         
         // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
@@ -1023,6 +1121,8 @@ const game = {
     list: [], idx: 0, timer: null, timeLeft: 0, maxTime: 10,
     stats: { gain: 0, lost: 0 }, currentQ: null, isProcessing: false, currentAns: "", mode: 'normal',
     deck: [], currentDay: null, chaosQuestionType: 'mixed',
+    subjectiveTotal: 0, // 주관식 문제 총 개수
+    subjectiveCorrect: 0, // 주관식 문제 정답 개수
 
     init: (mode, day) => {
         const count = parseInt(document.getElementById('count-select').value);
@@ -1047,6 +1147,8 @@ const game = {
         game.stats = { gain: 0, lost: 0 };
         game.idx = 0;
         game.isProcessing = false;
+        game.subjectiveTotal = 0;
+        game.subjectiveCorrect = 0;
 
         if (mode === 'rush') {
             game.deck = game.shuffle([...rawData]);
@@ -1094,10 +1196,21 @@ const game = {
 
             game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
         }
+        
+        // 주관식 문제 총 개수 계산
+        game.subjectiveTotal = game.list.filter(q => q.isBoss).length;
 
         // 애니메이션 완료 후 게임 화면 표시
         setTimeout(() => {
             document.getElementById('game-screen').style.display = 'flex';
+            
+            // 배경음악 재생
+            const bgMusic = document.getElementById('background-music');
+            if (bgMusic) {
+                bgMusic.play().catch(err => {
+                    console.log('Background music play failed:', err);
+                });
+            }
 
             // 히스토리 상태 추가 (백버튼 처리용)
             history.pushState({ screen: 'game' }, '', window.location.href);
@@ -1142,6 +1255,12 @@ const game = {
             game.currentQ = game.deck.pop();
             document.getElementById('wave-badge').innerText = "Wave: " + (game.idx + 1);
             game.currentAns = game.currentQ.word;
+            // rush 모드에서는 모든 문제가 주관식이므로, 첫 문제일 때 총 개수 초기화
+            if (game.idx === 0) {
+                game.subjectiveTotal = 0;
+                game.subjectiveCorrect = 0;
+            }
+            game.subjectiveTotal++; // rush 모드에서는 모든 문제가 주관식
             game.renderBoss(game.currentQ, true);
         } else if (game.mode === 'chaos') {
             // Chaos Rift: Question type depends on user selection
@@ -1153,6 +1272,8 @@ const game = {
             if (game.currentQ.isBoss) {
                 game.renderBoss(game.currentQ, false);
             } else {
+                // 객관식 문제는 기본 시간으로 복원
+                game.maxTime = db.has('hourglass') ? 15 : 10;
                 game.renderNormal(game.currentQ);
             }
         } else {
@@ -1166,6 +1287,8 @@ const game = {
                 game.currentAns = game.currentQ.word;
                 game.renderBoss(game.currentQ, false);
             } else {
+                // 객관식 문제는 기본 시간으로 복원
+                game.maxTime = db.has('hourglass') ? 15 : 10;
                 game.renderNormal(game.currentQ);
             }
         }
@@ -1182,6 +1305,12 @@ const game = {
         document.getElementById('options-box').style.display = 'grid';
         document.getElementById('options-box').innerHTML = '';
         document.getElementById('skill-display').style.visibility = 'visible';
+        
+        // 객관식 문제에서는 day 정보 보이기
+        const gameInfoBadge = document.getElementById('game-info-badge');
+        if (gameInfoBadge) {
+            gameInfoBadge.style.display = 'block';
+        }
 
         const isKor = Math.random() < 0.5;
         if (isKor) {
@@ -1212,13 +1341,42 @@ const game = {
         document.getElementById('boss-box').style.display = 'flex';
         document.getElementById('options-box').style.display = 'none';
         document.getElementById('skill-display').style.visibility = 'visible'; // 주관식에서도 표시
+        
+        // 보스전에서는 day 정보 숨기기
+        const gameInfoBadge = document.getElementById('game-info-badge');
+        if (gameInfoBadge) {
+            gameInfoBadge.style.display = 'none';
+        }
 
         const isFinalBoss = !isRush && game.idx === game.list.length - 1;
         document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isRush ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
 
         document.getElementById('q-label').innerText = "TYPE IN ENGLISH";
         document.getElementById('q-text').innerText = data.meaning;
-        document.getElementById('boss-hint').innerText = data.word.charAt(0) + " " + "_ ".repeat(data.word.length - 1);
+        
+        // 띄어쓰기가 있는 단어는 _도 띄어쓰기 처리 (첫 글자는 보여주고 나머지는 _)
+        const word = data.word;
+        let hintText = '';
+        let isFirstChar = true; // 첫 글자 여부 추적
+        
+        for (let i = 0; i < word.length; i++) {
+            if (word.charAt(i) === ' ') {
+                hintText += ' '; // 띄어쓰기는 그대로 유지
+                isFirstChar = true; // 띄어쓰기 후 다음 글자가 첫 글자
+            } else {
+                if (isFirstChar) {
+                    hintText += word.charAt(i); // 첫 글자는 실제 글자로 표시
+                    isFirstChar = false;
+                } else {
+                    hintText += '_'; // 나머지는 _로 표시
+                }
+            }
+        }
+        document.getElementById('boss-hint').innerText = hintText;
+        
+        // 주관식 문제 시간을 2배로 설정
+        const originalMaxTime = db.has('hourglass') ? 15 : 10;
+        game.maxTime = originalMaxTime * 2;
 
         const input = document.getElementById('boss-input');
         if (input) {
@@ -1266,17 +1424,22 @@ const game = {
         const answerWithoutFirst = answer.slice(1); // 첫 글자 제외한 나머지
         const isCorrect = (input === answer) || (input === answerWithoutFirst);
         
-        game.handleAnswer(isCorrect, null);
+        game.handleAnswer(isCorrect, null, 'subjective');
     },
 
-    handleAnswer: (isCorrect, btnElement) => {
+    handleAnswer: (isCorrect, btnElement, questionType = 'objective') => {
         if (game.isProcessing) return;
         game.isProcessing = true;
         clearInterval(game.timer);
 
-        // Record Stats
-        db.addStats(isCorrect);
-
+        // Record Stats (문제 타입 포함)
+        db.addStats(isCorrect, questionType);
+        
+        // 주관식 문제 정답 추적
+        if (questionType === 'subjective' && isCorrect) {
+            game.subjectiveCorrect++;
+        }
+        
         if (isCorrect) {
             game.animAttack();
 
@@ -1556,6 +1719,45 @@ const game = {
         // Clamp negative balance to 0 on game end
         if (db.gold < 0) { db.gold = 0; db.save(); }
         document.getElementById('res-current-total').innerText = db.gold;
+        
+        // 주관식 문제를 모두 맞췄는지 확인
+        if (game.subjectiveTotal > 0 && game.subjectiveCorrect === game.subjectiveTotal) {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('ko-KR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // 기존 데이터와의 호환성
+            if (!db.stats.subjective) {
+                db.stats.subjective = { solved: 0, correct: 0 };
+            }
+            
+            // 최근 날짜 기록 (배열로 저장하여 여러 번 기록 가능)
+            if (!db.stats.subjective.perfectDays) {
+                db.stats.subjective.perfectDays = [];
+            }
+            
+            // 오늘 날짜가 이미 기록되어 있지 않으면 추가
+            const todayISO = today.toISOString().split('T')[0];
+            const existingIndex = db.stats.subjective.perfectDays.findIndex(d => d.date === todayISO);
+            
+            if (existingIndex === -1) {
+                db.stats.subjective.perfectDays.push({
+                    date: todayISO,
+                    displayDate: dateStr
+                });
+            } else {
+                // 이미 있으면 업데이트 (최신 날짜로)
+                db.stats.subjective.perfectDays[existingIndex].displayDate = dateStr;
+            }
+            
+            // 날짜순으로 정렬 (최신이 마지막)
+            db.stats.subjective.perfectDays.sort((a, b) => a.date.localeCompare(b.date));
+            
+            db.save();
+        }
         
         // 게임 상태 완전히 리셋
         game.isProcessing = false;
@@ -2153,13 +2355,19 @@ function syncStoryButtonOverlay() {
         overlay.style.setProperty('--story-img-left', left + 'px');
         overlay.style.setProperty('--story-img-top', top + 'px');
         
-        // 모험 시작 버튼 위치와 크기 설정 (CSS 변수 사용)
-        const storyStartBtn = document.getElementById('story-start-btn');
-        if (storyStartBtn) {
-            storyStartBtn.style.setProperty('--story-img-width', imgRect.width + 'px');
-            storyStartBtn.style.setProperty('--story-img-height', imgRect.height + 'px');
-        }
+    // 모험 시작 버튼 위치와 크기 설정 (CSS 변수 사용)
+    const storyStartBtn = document.getElementById('story-start-btn');
+    if (storyStartBtn) {
+        storyStartBtn.style.setProperty('--story-img-width', imgRect.width + 'px');
+        storyStartBtn.style.setProperty('--story-img-height', imgRect.height + 'px');
     }
+    
+    // 컨테이너에 CSS 변수 설정 (Day 정보와 이야기 텍스트 영역이 사용)
+    if (container) {
+        container.style.setProperty('--story-img-width', imgRect.width + 'px');
+        container.style.setProperty('--story-img-height', imgRect.height + 'px');
+    }
+}
 }
 
 // 랜덤 타이틀 헤더 로딩
