@@ -1379,10 +1379,10 @@ const game = {
         document.getElementById('options-box').style.display = 'none';
         document.getElementById('skill-display').style.visibility = 'visible'; // 주관식에서도 표시
         
-        // 보스전에서는 day 정보 숨기기
+        // 주관식 문제에서도 day 정보 보이기
         const gameInfoBadge = document.getElementById('game-info-badge');
         if (gameInfoBadge) {
-            gameInfoBadge.style.display = 'none';
+            gameInfoBadge.style.display = 'block';
         }
 
         const isFinalBoss = !isRush && game.idx === game.list.length - 1;

@@ -89,6 +89,13 @@
     justify-content: center;
 }
 #wave-badge { left: auto; right: 10px; top: 10px; transform: none; }
+/* game-info-badge는 overlay-gold와 같은 크기로 맞춤 */
+#game-info-badge {
+    padding: clamp(8px, 0.8vw, 12px) clamp(12px, 1.2vw, 16px);
+    line-height: clamp(14px, 1.5vw, 20px);
+    font-size: clamp(14px, 1.5vw, 20px);
+    min-height: auto;
+}
 .durability-badge { 
     /* 황금장갑은 이제 skill bar에 표시되므로 숨김 */
     display: none !important;
