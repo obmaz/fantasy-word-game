@@ -687,7 +687,7 @@ const ui = {
         if (overlayGold) overlayGold.innerText = db.gold;
     },
     updateGameInfo: (mode, day) => {
-        const modeText = mode === 'rush' ? '보스 러쉬' : (mode === 'chaos' ? '혼돈의 균열' : '스토리 모드');
+        const modeText = mode === 'rush' ? '보스 러쉬' : (mode === 'chaos' ? '혼돈의 균열' : '배틀 모드');
         const dayText = mode === 'rush' ? '무한' : (mode === 'chaos' ? '전체' : (day === 'all' ? '전체' : `Day ${day}`));
         const gameInfoEl = document.getElementById('game-info-badge');
         if (gameInfoEl) {
@@ -1327,7 +1327,21 @@ const game = {
                 game.renderNormal(game.currentQ);
             }
         }
-        game.startTimer();
+        // 주관식 문제일 때는 타이머를 시작하지 않음
+        if (!game.currentQ.isBoss) {
+            game.startTimer();
+        } else {
+            // 주관식 문제일 때는 타이머 정지 및 타이머 바 숨김
+            if (game.timer) {
+                clearInterval(game.timer);
+                game.timer = null;
+            }
+            const overlayBar = document.getElementById('overlay-timer');
+            if (overlayBar) {
+                overlayBar.style.width = "100%";
+                overlayBar.classList.remove('timer-danger');
+            }
+        }
     },
 
     renderNormal: (data) => {
@@ -1411,9 +1425,7 @@ const game = {
         }
         document.getElementById('boss-hint').innerText = hintText;
         
-        // 주관식 문제 시간을 2배로 설정
-        const originalMaxTime = db.has('hourglass') ? 15 : 10;
-        game.maxTime = originalMaxTime * 2;
+        // 주관식 문제는 시간 제한 없음 (타이머 시작하지 않음)
 
         const input = document.getElementById('boss-input');
         if (input) {
@@ -2024,19 +2036,19 @@ function openPracticePopup() {
     
     if (!popup) return;
     
-    // Mark popup as story mode
-    popup.dataset.mode = 'story';
+    // Mark popup as practice mode
+    popup.dataset.mode = 'practice';
     
-    // Hide question type radio buttons for story mode
+    // Hide question type radio buttons for practice mode
     const questionTypeGroup = document.getElementById('popup-question-type-group');
     if (questionTypeGroup) {
         questionTypeGroup.style.display = 'none';
     }
     
-    // Enable day selection for story mode
+    // Enable day selection for practice mode
     if (popupDaySelect) {
         popupDaySelect.disabled = false;
-        popupDaySelect.style.display = ''; // Show day selection for story mode
+        popupDaySelect.style.display = ''; // Show day selection for practice mode
     }
     
     // Restore last selected values
@@ -2409,7 +2421,7 @@ function syncStoryButtonOverlay() {
         }
     }
     
-    // 스토리 이미지의 자연 비율 계산 및 설정 (모험 설정 팝업과 동일한 방식)
+    // 스토리 이미지의 자연 비율 계산 및 설정 (배틀 모드 설정 팝업과 동일한 방식)
     if (storyImg.complete && storyImg.naturalWidth > 0 && storyImg.naturalHeight > 0) {
         const aspectRatio = storyImg.naturalWidth / storyImg.naturalHeight;
         storyImg.style.setProperty('--story-aspect-ratio', aspectRatio);
@@ -2621,7 +2633,7 @@ window.onload = () => {
             const selectedCount = popupCountSelect ? parseInt(popupCountSelect.value) : 10;
             
             // Check which mode opened the popup
-            const popupMode = popup ? (popup.dataset.mode || 'story') : 'story';
+            const popupMode = popup ? (popup.dataset.mode || 'battle') : 'battle';
             
             // Get selected question type for chaos rift
             let selectedQuestionType = 'mixed'; // default

@@ -99,8 +99,11 @@
     font-size: clamp(12px, 1.2vw, 18px);
     min-height: auto;
 }
-/* game-info-badge는 overlay-gold와 같은 크기로 맞춤 */
+/* game-info-badge는 골드 자리(상단 왼쪽)로 이동 */
 #game-info-badge {
+    left: 10px;
+    top: 10px;
+    transform: none;
     padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1vw, 14px);
     line-height: clamp(12px, 1.2vw, 18px);
     font-size: clamp(12px, 1.2vw, 18px);
@@ -114,7 +117,8 @@
 /* 배경 위에 표시되는 골드와 시간 UI */
 .overlay-gold {
     position: absolute;
-    top: 10px;
+    /* Day 정보 아래에 위치 (Day 정보 높이 + 간격) */
+    top: calc(clamp(6px, 0.6vw, 10px) * 2 + clamp(12px, 1.2vw, 18px) + 20px);
     left: 10px;
     background: rgba(0, 0, 0, 0.7);
     padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1vw, 14px);

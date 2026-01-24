@@ -1,0 +1,21 @@
+{
+  "name": "fantasy-word-game",
+  "version": "1.0.0",
+  "description": "The Fantasy Word Game is a mobile-friendly, word guessing RPG game that challenges players to match words in a fun and engaging fantasy-themed environment. This project includes a responsive design optimized for mobile devices with a 9:16 aspect ratio.",
+  "main": "update-explanations-advanced.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obmaz/fantasy-word-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/obmaz/fantasy-word-game/issues"
+  },
+  "homepage": "https://github.com/obmaz/fantasy-word-game#readme"
+}

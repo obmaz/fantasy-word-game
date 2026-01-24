@@ -13,7 +13,7 @@
             const storiesKey = `storiesData_${id}`;
             const rawDataKey = `rawDataData_${id}`;
             
-            // gameDataName이 있거나, storiesData와 rawDataData가 모두 있으면 추가
+            // gameDataName이 있거나, storiesData와 rawData가 모두 있으면 추가
             if (typeof window[nameKey] !== 'undefined' || 
                 (typeof window[storiesKey] !== 'undefined' && typeof window[rawDataKey] !== 'undefined')) {
                 const name = window[nameKey] || `game_data_${id}`;
