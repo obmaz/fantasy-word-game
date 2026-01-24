@@ -189,21 +189,21 @@
     left: 3%;
     z-index: 20;
     color: var(--gold);
-    font-size: clamp(14px, 1.5vw, 20px);
+    font-size: clamp(12px, 1.2vw, 18px);
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     background: rgba(0, 0, 0, 0.6);
-    padding: clamp(8px, 0.8vw, 12px) clamp(12px, 1.2vw, 16px);
-    border-radius: 12px;
+    padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1vw, 14px);
+    border-radius: 10px;
     border: 1px solid rgba(255, 213, 79, 0.3);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     pointer-events: auto !important; /* 클릭 가능하도록 */
     box-sizing: border-box;
-    height: calc(clamp(14px, 1.5vw, 20px) + clamp(8px, 0.8vw, 12px) * 2); /* 폰트 크기 + 상하 패딩 */
-    line-height: clamp(14px, 1.5vw, 20px);
+    height: calc(clamp(12px, 1.2vw, 18px) + clamp(6px, 0.6vw, 10px) * 2); /* 폰트 크기 + 상하 패딩 */
+    line-height: clamp(12px, 1.2vw, 18px);
 }
 
 /* Game Data Selector */
