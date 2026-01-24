@@ -1169,9 +1169,8 @@ const game = {
                 console.log('[game.init] 주관식만 모드 - 모든 문제를 주관식으로 설정');
                 game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: true }));
             } else {
-                // 혼합형: 객관식과 주관식이 동시에 나옴 (객관식 밑에 주관식)
-                // 주관식이 먼저 나올 때는 객관식은 안 나오고
-                console.log('[game.init] 혼합형 모드 - 객관식과 주관식 동시 표시');
+                // 혼합형: 객관식과 주관식이 번갈아 나오도록
+                console.log('[game.init] 혼합형 모드 - 객관식과 주관식 번갈아 표시');
                 const bossCount = Math.floor(count / 2); // 50%
                 const normalCount = count - bossCount; // 나머지
                 
@@ -1179,8 +1178,38 @@ const game = {
                 const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({ ...q, isBoss: true }));
                 const normalQuestions = shuffledPool.slice(bossCount, bossCount + normalCount).map(q => ({ ...q, isBoss: false }));
                 
-                // 50%씩 섞어서 생성
-                game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
+                // 각각 섞기
+                const shuffledBoss = game.shuffle([...bossQuestions]);
+                const shuffledNormal = game.shuffle([...normalQuestions]);
+                
+                // 번갈아 배치 (같은 타입이 연속으로 나오지 않도록)
+                game.list = [];
+                const maxLen = Math.max(shuffledBoss.length, shuffledNormal.length);
+                for (let i = 0; i < maxLen; i++) {
+                    // 객관식과 주관식을 번갈아 추가
+                    if (i < shuffledNormal.length) {
+                        game.list.push(shuffledNormal[i]);
+                    }
+                    if (i < shuffledBoss.length) {
+                        game.list.push(shuffledBoss[i]);
+                    }
+                }
+                
+                // 마지막으로 한 번 더 섞되, 같은 타입이 연속되지 않도록 보장
+                let attempts = 0;
+                while (attempts < 10) {
+                    game.list = game.shuffle([...game.list]);
+                    // 같은 타입이 연속으로 나오는지 확인
+                    let hasConsecutive = false;
+                    for (let i = 1; i < game.list.length; i++) {
+                        if (game.list[i].isBoss === game.list[i - 1].isBoss) {
+                            hasConsecutive = true;
+                            break;
+                        }
+                    }
+                    if (!hasConsecutive) break;
+                    attempts++;
+                }
             }
             
             // 디버깅: 생성된 문제 타입 확인

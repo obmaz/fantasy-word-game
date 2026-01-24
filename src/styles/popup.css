@@ -1,0 +1,465 @@
+/* ============================================
+   POPUP & STORY SCREEN STYLES
+   ============================================ */
+
+/* Overlays & Cards */
+.screen-overlay { 
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.5); 
+    z-index: 200; display: flex; flex-direction: column; 
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+    transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 팝업이 열릴 때 타이틀 배경 블러 효과 강화 */
+#practice-popup.screen-overlay,
+#story-screen.screen-overlay {
+    backdrop-filter: blur(12px);
+    background: rgba(0,0,0,0.6);
+}
+
+#result-screen {
+    z-index: 300 !important;
+    background: rgba(0,0,0,0.75);
+}
+
+#story-screen {
+    z-index: 200;
+}
+
+.screen-overlay.closing {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.popup-container-wrapper,
+.story-container-wrapper {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
+    transform: scale(1);
+    opacity: 1;
+}
+
+.screen-overlay.closing .popup-container-wrapper,
+.screen-overlay.closing .story-container-wrapper,
+.screen-overlay.closing .card {
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+}
+
+.card {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
+    background: rgba(20, 20, 30, 0.95); 
+    padding: 25px; border-radius: 20px; 
+    width: 90%; max-width: 400px; 
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    text-align: center; 
+    box-shadow: 
+        0 20px 60px rgba(0,0,0,0.9),
+        0 0 40px rgba(255, 213, 79, 0.2),
+        inset 0 0 30px rgba(255, 213, 79, 0.05);
+    max-height: 85vh; overflow-y: auto; 
+    animation: fadeIn 0.5s ease-out, cardGlow 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 모험 시작 화면(story-screen) 스타일 */
+.story-container-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.story-background {
+    width: min(95vw, calc(100vh * var(--story-aspect-ratio, 1.5)));
+    max-width: 95vw;
+    max-height: 95vh;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.story-buttons-overlay {
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--story-img-width, 0);
+    height: var(--story-img-height, 0);
+    left: var(--story-img-left, 0);
+    top: var(--story-img-top, 0);
+    position: absolute;
+    pointer-events: none;
+}
+
+.story-btn-area {
+    position: absolute;
+    z-index: 25;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto !important;
+    pointer-events: auto;
+    transition: all 0.2s ease;
+    /* 기본 위치와 크기 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+    width: calc(var(--story-img-width, 100%) * 0.7);      /* 너비 (이미지 너비의 70%) */
+    height: calc(var(--story-img-height, 100%) * 0.15);   /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--story-img-width, 100%) * 0.15);      /* 왼쪽 위치 (이미지 너비의 15%) */
+    top: calc(var(--story-img-height, 100%) * 0.71);      /* 위쪽 위치 (이미지 높이의 71%) */
+}
+
+.story-btn-area:hover {
+    opacity: 0.8;
+    transform: scale(1.05) !important;
+}
+
+/* 보스 배틀 모드 버튼 위치 (boss_battle_popup.webp의 "모험 시작" 버튼 영역) */
+#story-start-btn.boss-battle-btn {
+    /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--story-img-width, 100%) * 0.7);       /* 너비 (이미지 너비의 70%) */
+    height: calc(var(--story-img-height, 100%) * 0.15);    /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--story-img-width, 100%) * 0.15);       /* 왼쪽 위치 (이미지 너비의 15%, 중앙 정렬) */
+    top: calc(var(--story-img-height, 100%) * 0.71);       /* 위쪽 위치 (이미지 높이의 71%) */
+}
+
+/* Day 정보 표시 영역 (상단) */
+.story-day-info {
+    position: absolute;
+    z-index: 15;
+    /* 이미지 크기에 상대적으로 위치 설정 */
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.15);
+    left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.5);
+    transform: translateX(-50%);
+    width: calc(var(--story-img-width, 100vw) * 0.75);
+    max-width: calc(var(--story-img-width, 100vw) * 0.75);
+    text-align: center;
+    color: var(--gold);
+    /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
+    font-size: clamp(10px, calc(var(--story-img-width, 100vw) * 0.055), 50px);
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+/* 이야기 텍스트 컨테이너 (중앙 사각형 영역) */
+.story-text-container {
+    position: absolute;
+    z-index: 20;
+    /* 이미지 크기에 상대적으로 위치 설정 */
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.225);
+    left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.513);
+    transform: translateX(-50%);
+    width: calc(var(--story-img-width, 100vw) * 0.737);
+    max-width: calc(var(--story-img-width, 100vw) * 0.737);
+    height: calc(var(--story-img-height, 100vh) * 0.3685);
+    max-height: calc(var(--story-img-height, 100vh) * 0.3685);
+    background: rgba(20, 20, 30, 0.85);
+    border: 2px solid rgba(255, 213, 79, 0.5);
+    border-radius: 12px;
+    /* 이미지 크기에 상대적인 패딩 */
+    padding: clamp(8px, calc(var(--story-img-width, 100vw) * 0.015), 20px);
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    pointer-events: none;
+}
+
+/* ============================================
+   Chaos Rift 모드 - Day 타이틀 및 설명 박스 크기/위치 조정
+   ============================================
+   아래 CSS 규칙에서 크기와 위치를 조정하세요.
+   원하는 속성의 주석을 해제하고 값을 변경하면 됩니다.
+   ============================================ */
+
+/* Chaos Rift 모드 - Day 정보 표시 영역 (크기/위치 조정 가능) */
+#story-screen[data-mode="chaos"] .story-day-info {
+    /* 기본값 유지 (상위 스타일 상속) */
+    /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
+    
+    /* top: 12%; */ /* 상단 위치 (기본: 15%) */
+    /* width: 80%; */ /* 너비 (기본: 75%) */
+    /* font-size: clamp(20px, 3vw, 32px); */ /* 폰트 크기 */
+}
+
+/* Chaos Rift 모드 - 이야기 텍스트 컨테이너 (크기/위치 조정 가능) */
+#story-screen[data-mode="chaos"] .story-text-container {
+    /* 기본값 유지 (상위 스타일 상속) */
+    /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
+    
+    /* top: 22%; */ /* 상단 위치 (기본: 25%) */
+    /* width: 75%; */ /* 너비 (기본: 70%) */
+    /* height: 50%; */ /* 높이 (기본: 45%) */
+    /* max-height: 50%; */ /* 최대 높이 (기본: 45%) */
+    /* padding: clamp(15px, 2vw, 25px); */ /* 내부 여백 */
+}
+
+/* 스크롤바 스타일 */
+.story-text-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.story-text-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.story-text-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 213, 79, 0.6);
+    border-radius: 4px;
+}
+
+.story-text-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 213, 79, 0.8);
+}
+
+/* 이야기 텍스트 내용 */
+.story-text-content {
+    color: #ddd;
+    /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
+    font-size: clamp(8px, calc(var(--story-img-width, 100vw) * 0.040), 32px);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+/* 모험 설정 팝업 스타일 */
+.popup-container-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-background {
+    width: min(95vw, calc(100vh * var(--popup-aspect-ratio, 1.5)));
+    max-width: 95vw;
+    max-height: 95vh;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.popup-buttons-overlay {
+    position: absolute;
+    pointer-events: none;
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--popup-img-width, 0);
+    height: var(--popup-img-height, 0);
+    left: var(--popup-img-left, 0);
+    top: var(--popup-img-top, 0);
+}
+
+.popup-select {
+    position: absolute;
+    z-index: 10;
+    background: transparent !important;
+    border: none !important;
+    color: #FFD54F;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 0;
+    backdrop-filter: none;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.popup-select:hover {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.popup-select:focus {
+    outline: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.popup-select:active {
+    border: none !important;
+    outline: none !important;
+}
+
+.popup-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #888 !important;
+}
+
+.popup-select option {
+    background: #1E1E1E;
+    color: #FFD54F;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.popup-btn-area {
+    position: absolute;
+    z-index: 10;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto !important;
+    transition: all 0.2s ease;
+}
+
+.popup-btn-area:hover {
+    opacity: 0.8 !important;
+    transform: scale(1.05) !important;
+}
+
+/* 모험 지역 드롭박스 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+.popup-day-select {
+    position: absolute;
+    /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.295);        /* 위쪽 위치 (이미지 높이의 30%) */
+}
+
+/* 난이도 드롭박스 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+.popup-count-select {
+    position: absolute;
+    /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.53);       /* 위쪽 위치 (이미지 높이의 54%) */
+}
+
+/* 시작하기 버튼 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+#popup-start-btn {
+    position: absolute;
+    /* 아래 값들을 조정하여 버튼 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.0955);      /* 왼쪽 위치 (이미지 너비의 9.55%) */
+    top: calc(var(--popup-img-height, 100%) * 0.83);        /* 위쪽 위치 (이미지 높이의 82%) */
+}
+
+/* 취소 버튼 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+#popup-cancel-btn {
+    position: absolute;
+    /* 아래 값들을 조정하여 버튼 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.53);       /* 왼쪽 위치 (이미지 너비의 53%) */
+    top: calc(var(--popup-img-height, 100%) * 0.83);        /* 위쪽 위치 (이미지 높이의 82%) */
+}
+
+/* 문제 타입 라디오 버튼 그룹 (Choice Chip 스타일) */
+.popup-radio-group {
+    position: absolute;
+    z-index: 10;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--popup-img-width, 100%) * 0.8);      /* 너비 (이미지 너비의 80%) */
+    left: calc(var(--popup-img-width, 100%) * 0.1);       /* 왼쪽 위치 (이미지 너비의 10%) */
+    top: calc(var(--popup-img-height, 100%) * 0.70);      /* 위쪽 위치 (이미지 높이의 70%) */
+    justify-content: space-between;
+}
+
+.popup-radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    padding: clamp(5px, 0.7vh, 8px) clamp(12px, 1.5vw, 18px);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background: rgba(30, 30, 30, 0.7);
+    border: 2px solid rgba(255, 213, 79, 0.4);
+    color: var(--primary);
+    font-size: clamp(15px, 2vw, 20px);
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 크기는 CSS 변수를 사용하여 그룹 크기에 상대적으로 설정 (3개 칩, gap 10px씩 2개 = 20px) */
+    width: calc((var(--popup-img-width, 100%) * 0.8 - 20px) / 3);
+    flex: 0 0 calc((var(--popup-img-width, 100%) * 0.8 - 20px) / 3);
+}
+
+.popup-radio-label:hover {
+    background: rgba(255, 213, 79, 0.15);
+    border-color: rgba(255, 213, 79, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+}
+
+.popup-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.popup-radio-text {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-shadow: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.popup-radio:checked + .popup-radio-text {
+    color: var(--gold);
+}
+
+/* 선택된 라디오 버튼의 라벨 스타일 */
+.popup-radio-label.checked {
+    background: rgba(255, 193, 7, 0.25) !important;
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5), 0 4px 12px rgba(255, 213, 79, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* :has() 지원 브라우저를 위한 추가 스타일 */
+.popup-radio-label:has(.popup-radio:checked) {
+    background: rgba(255, 193, 7, 0.25);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5), 0 4px 12px rgba(255, 213, 79, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Story Styles */
+.story-text { font-size: 15px; line-height: 1.6; color: #ddd; margin: 20px 0; white-space: pre-line; text-align: left; padding: 15px; background: #111; border-radius: 8px; border: 1px solid #333; }
+.story-title { font-size: 22px; font-weight: bold; color: var(--primary); margin-bottom: 10px; }

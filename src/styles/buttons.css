@@ -1,0 +1,270 @@
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+.btn-main { 
+    background: linear-gradient(135deg, var(--primary) 0%, #FFB74D 50%, var(--primary) 100%);
+    background-size: 200% 200%;
+    color: #000; font-weight: bold; 
+    padding: 16px; border: none; border-radius: 12px; font-size: 17px; 
+    width: 100%; margin-top: 12px; cursor: pointer; 
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 6px 20px rgba(255, 213, 79, 0.3),
+        0 0 15px rgba(255, 213, 79, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    animation: buttonShine 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.btn-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-main:hover::before {
+    left: 100%;
+}
+
+.btn-main:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 10px 30px rgba(255, 213, 79, 0.5),
+        0 0 25px rgba(255, 213, 79, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-main:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.btn-blue { background: var(--btn-blue); color: white; margin-top:10px; }
+
+.btn-danger{
+    margin-top: 10px;
+    color: rgba(255,255,255,0.98) !important;
+    border: 3px solid rgba(255, 210, 210, 0.22) !important;
+    background: linear-gradient(45deg, rgba(255, 82, 82, 0.95), rgba(198, 40, 40, 0.95)) !important;
+    box-shadow:
+        0 10px 28px rgba(0,0,0,0.55),
+        0 0 18px rgba(255, 82, 82, 0.25),
+        inset 0 1px 0 rgba(255,255,255,0.25);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+}
+
+.btn-danger:hover{
+    transform: translateY(-2px);
+    box-shadow:
+        0 14px 34px rgba(0,0,0,0.6),
+        0 0 24px rgba(255, 82, 82, 0.35),
+        inset 0 1px 0 rgba(255,255,255,0.28);
+}
+
+/* 비밀메뉴(Setting) 내 전체 초기화 버튼 강제 붉은색 */
+#secret-menu-overlay .btn-danger{
+    background: linear-gradient(45deg, rgba(255, 82, 82, 0.98), rgba(183, 28, 28, 0.98)) !important;
+    color: #fff !important;
+    border-color: rgba(255, 210, 210, 0.28) !important;
+}
+
+.btn-boss-rush { 
+    background: linear-gradient(45deg, var(--rush-color), #AB47BC);
+    color: #fff; 
+    box-shadow: 0 4px 15px rgba(224,64,251,0.2);
+}
+
+.btn-boss-rush:hover {
+    box-shadow: 0 8px 25px rgba(224,64,251,0.4);
+}
+
+.btn-shop { 
+    background: linear-gradient(45deg, #5C6BC0, #7986CB); 
+    color: white; 
+    box-shadow: 0 4px 15px rgba(92,107,192,0.2);
+}
+
+.btn-shop:hover {
+    box-shadow: 0 8px 25px rgba(92,107,192,0.4);
+}
+
+.btn-inv {
+    background: linear-gradient(45deg, #4CAF50, #81C784);
+    color: white;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+}
+
+.btn-inv:hover {
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* Game Screen Buttons */
+.option-btn { 
+    background: #37474F; 
+    color: #E0E0E0; 
+    border: 1px solid #455A64; 
+    padding: 14px; 
+    font-size: 16px; 
+    border-radius: 8px; 
+    text-align: left; 
+    cursor: pointer; 
+    position: relative; 
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.option-btn:hover {
+    background: #455A64;
+    border-color: var(--primary);
+    border-width: 2px;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 6px 20px rgba(255, 213, 79, 0.4),
+        0 0 15px rgba(255, 213, 79, 0.2);
+    color: #FFFFFF;
+}
+
+.option-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.option-btn.disabled { opacity: 0.3; pointer-events: none; }
+
+/* Boss/Rush UI */
+.boss-ui { width: 100%; display: none; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
+.boss-hint { font-size: 28px; letter-spacing: 4px; text-align: center; font-family: monospace; color: var(--success); }
+.boss-input { padding: 12px; font-size: 20px; text-align: center; background: #222; border: 2px solid var(--primary); color: white; border-radius: 8px; outline: none; }
+
+.boss-submit { 
+    background: var(--danger); 
+    color: white; 
+    border: 2px solid rgba(255, 82, 82, 0.5); 
+    padding: 12px; 
+    font-size: 18px; 
+    font-weight: bold; 
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
+}
+
+.boss-submit:hover {
+    background: linear-gradient(135deg, rgba(255, 82, 82, 0.95), rgba(198, 40, 40, 0.95));
+    border-color: rgba(255, 82, 82, 0.9);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 8px 25px rgba(255, 82, 82, 0.5),
+        0 0 20px rgba(255, 82, 82, 0.3);
+    color: #FFFFFF;
+}
+
+.boss-submit:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.boss-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* exit_btn 이미지 스타일 */
+img[src*="exit_btn"] {
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+img[src*="exit_btn"]:hover {
+    opacity: 0.9;
+}
+
+img[src*="exit_btn"]:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+/* Shop buttons */
+.buy-btn { background: #4CAF50; border: none; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.buy-btn.equipped { background: #FF9800; pointer-events: none; }
+.buy-btn.owned { background: #555; pointer-events: none; }
+
+/* Form elements */
+label {
+    display: block;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+select { 
+    width: 100%; padding: 14px; margin: 0 0 20px 0; 
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.95) 100%);
+    color: #FFD54F; 
+    border: 2px solid rgba(255, 213, 79, 0.4); 
+    border-radius: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFD54F%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65em auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    font-size: 15px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+select option {
+    background: #1E1E1E;
+    color: #FFD54F;
+    padding: 10px;
+    font-weight: 500;
+}
+
+select option:hover,
+select option:checked,
+select option:focus {
+    background: #2A2A2A;
+    color: #FFEB3B;
+}
+
+select:hover {
+    border-color: rgba(255, 213, 79, 0.6);
+    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    background: linear-gradient(135deg, rgba(35, 35, 45, 0.95) 0%, rgba(25, 25, 35, 0.95) 100%);
+    color: #FFEB3B;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(255, 213, 79, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(40, 40, 50, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%);
+    color: #FFEB3B;
+}
+
+.adventure-settings {
+    text-align: left;
+    margin-top: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(30,20,40,0.2) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 213, 79, 0.15);
+}

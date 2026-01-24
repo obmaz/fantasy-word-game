@@ -5,7 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>킹왕짱 RPG</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/title.css">
+    <link rel="stylesheet" href="styles/game.css">
+    <link rel="stylesheet" href="styles/popup.css">
+    <link rel="stylesheet" href="styles/buttons.css">
+    <link rel="stylesheet" href="styles/panels.css">
 </head>
 
 <body>
@@ -77,6 +83,11 @@
             <div class="title-buttons-overlay">
                 <!-- Gold display on title screen -->
                 <div class="title-gold-display">💰 <span id="title-ui-gold">0</span> G</div>
+                <!-- Game Data Selector -->
+                <select id="game-data-selector" class="title-data-selector" title="게임 데이터 선택">
+                    <option value="1">능률 보카 중등 기본</option>
+                    <option value="2">game_data_2</option>
+                </select>
                 <!-- Interactive button areas (invisible overlays on image buttons) -->
                 <!-- PRACTICE MODE = 연습 모드 -->
                 <button class="title-btn-area content-visible" id="title-practice-btn" title="연습 모드 (PRACTICE MODE)">
@@ -440,8 +451,10 @@
 
 
     <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
-    <script src="data/game-data.js"></script>
+    <script src="data/game-data-1.js"></script>
+    <script src="data/game-data-2.js"></script>
     <script src="data/items-data.js"></script>
+    <script src="scripts/data-loader.js"></script>
     <script src="scripts/words.js"></script>
 
 

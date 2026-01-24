@@ -184,14 +184,67 @@ body {
 .q-label { font-size: 11px; color: #888; margin-bottom: 3px; letter-spacing: 2px; }
 .q-text { font-size: 22px; font-weight: bold; color: var(--primary); word-break: keep-all; }
 .options-grid { width: 100%; display: grid; gap: 8px; flex: 1; }
-.option-btn { background: #37474F; color: #E0E0E0; border: 1px solid #455A64; padding: 14px; font-size: 16px; border-radius: 8px; text-align: left; cursor: pointer; position: relative; overflow: hidden; }
+.option-btn { 
+    background: #37474F; 
+    color: #E0E0E0; 
+    border: 1px solid #455A64; 
+    padding: 14px; 
+    font-size: 16px; 
+    border-radius: 8px; 
+    text-align: left; 
+    cursor: pointer; 
+    position: relative; 
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.option-btn:hover {
+    background: #455A64;
+    border-color: var(--primary);
+    border-width: 2px;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 6px 20px rgba(255, 213, 79, 0.4),
+        0 0 15px rgba(255, 213, 79, 0.2);
+    color: #FFFFFF;
+}
+.option-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}
 .option-btn.disabled { opacity: 0.3; pointer-events: none; }
 
 /* Boss/Rush UI */
 .boss-ui { width: 100%; display: none; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
 .boss-hint { font-size: 28px; letter-spacing: 4px; text-align: center; font-family: monospace; color: var(--success); }
 .boss-input { padding: 12px; font-size: 20px; text-align: center; background: #222; border: 2px solid var(--primary); color: white; border-radius: 8px; outline: none; }
-.boss-submit { background: var(--danger); color: white; border: none; padding: 12px; font-size: 18px; font-weight: bold; border-radius: 8px; }
+.boss-submit { 
+    background: var(--danger); 
+    color: white; 
+    border: 2px solid rgba(255, 82, 82, 0.5); 
+    padding: 12px; 
+    font-size: 18px; 
+    font-weight: bold; 
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
+}
+.boss-submit:hover {
+    background: linear-gradient(135deg, rgba(255, 82, 82, 0.95), rgba(198, 40, 40, 0.95));
+    border-color: rgba(255, 82, 82, 0.9);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 8px 25px rgba(255, 82, 82, 0.5),
+        0 0 20px rgba(255, 82, 82, 0.3);
+    color: #FFFFFF;
+}
+.boss-submit:active {
+    transform: translateY(-1px) scale(0.98);
+}
+.boss-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 
 /* Skills */
 .skill-bar { 
@@ -872,7 +925,7 @@ img[src*="exit_btn"]:active {
 
 .story-btn-area:hover {
     opacity: 0.8;
-    transform: scale(1.05);
+    transform: scale(1.05) !important;
 }
 
 /* 보스 배틀 모드 버튼 위치 (boss_battle_popup.webp의 "모험 시작" 버튼 영역) */
@@ -882,7 +935,6 @@ img[src*="exit_btn"]:active {
     height: calc(var(--story-img-height, 100%) * 0.15);    /* 높이 (이미지 높이의 15%) */
     left: calc(var(--story-img-width, 100%) * 0.15);       /* 왼쪽 위치 (이미지 너비의 15%, 중앙 정렬) */
     top: calc(var(--story-img-height, 100%) * 0.71);       /* 위쪽 위치 (이미지 높이의 71%) */
-    transform: none; /* 기본 transform 제거 */
 }
 
 /* Day 정보 표시 영역 (상단) */
@@ -1073,13 +1125,13 @@ img[src*="exit_btn"]:active {
     background: transparent;
     border: none;
     cursor: pointer;
-    pointer-events: auto;
+    pointer-events: auto !important;
     transition: all 0.2s ease;
 }
 
 .popup-btn-area:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
+    opacity: 0.8 !important;
+    transform: scale(1.05) !important;
 }
 
 /* 모험 지역 드롭박스 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */

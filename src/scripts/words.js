@@ -1,9 +1,10 @@
-﻿// NOTE: `dayInfo` has been consolidated into `dayCatalog` (single source-of-truth).
+// NOTE: `dayInfo` has been consolidated into `dayCatalog` (single source-of-truth).
 // The original per-day labels were migrated into `dayCatalog` — see the canonical builder below.
 // For backward compatibility a lightweight `dayInfo` view is derived from `dayCatalog` further down.
 
 // Load data from external JSON files (wrapped as JavaScript variables to avoid CORS issues)
 // If data files are not loaded, use empty fallback
+// data-loader.js가 먼저 로드되어 window.storiesData를 설정해야 함
 const stories = typeof window !== 'undefined' && window.storiesData ? window.storiesData : {};
 console.log('[words.js] stories loaded:', typeof stories, stories ? Object.keys(stories).length : 0, 'keys');
 
@@ -88,6 +89,8 @@ if (typeof dayCatalog.validateCoverage === 'undefined') {
   };
 }
 
+// data-loader.js가 먼저 로드되어 window.rawDataData를 설정해야 함
 const rawData = typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : [];
+console.log('[words.js] rawData loaded:', rawData ? rawData.length : 0, 'items');
 
 const decoyWords = typeof window !== 'undefined' && window.decoyWordsData ? window.decoyWordsData : [];
