@@ -142,16 +142,19 @@ body {
     top: 10px;
     left: 10px;
     background: rgba(0, 0, 0, 0.7);
-    padding: 8px 12px;
+    padding: clamp(8px, 0.8vw, 12px) clamp(12px, 1.2vw, 16px);
     border-radius: 12px;
     border: 1px solid rgba(255, 213, 79, 0.4);
     color: var(--gold);
-    font-size: 14px;
+    font-size: clamp(14px, 1.5vw, 20px);
     font-weight: bold;
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     z-index: 15;
     pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .overlay-timer {
@@ -831,9 +834,9 @@ img[src*="exit_btn"]:active {
 }
 
 .story-background {
-    width: calc(var(--title-img-width, 100vw) * 0.92);
-    max-width: calc(var(--title-img-width, 100vw) * 0.92);
-    max-height: 100vh;
+    width: min(95vw, calc(100vh * var(--story-aspect-ratio, 1.5)));
+    max-width: 95vw;
+    max-height: 95vh;
     height: auto;
     object-fit: contain;
     display: block;
@@ -872,16 +875,6 @@ img[src*="exit_btn"]:active {
     transform: scale(1.05);
 }
 
-/* 연습 모드 버튼 위치 (start_popup.webp의 "모험 시작" 버튼 영역) */
-#story-start-btn.practice-btn {
-    /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
-    width: calc(var(--story-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
-    height: calc(var(--story-img-height, 100%) * 0.11);    /* 높이 (이미지 높이의 11%) */
-    left: calc(var(--story-img-width, 100%) * 0.175);     /* 왼쪽 위치 (이미지 너비의 17.5%, 중앙 정렬) */
-    top: calc(var(--story-img-height, 100%) * 0.78);       /* 위쪽 위치 (이미지 높이의 78%) */
-    transform: none; /* 기본 transform 제거 */
-}
-
 /* 보스 배틀 모드 버튼 위치 (boss_battle_popup.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.boss-battle-btn {
     /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
@@ -896,32 +889,40 @@ img[src*="exit_btn"]:active {
 .story-day-info {
     position: absolute;
     z-index: 15;
-    top: 15%;
-    left: 50%;
+    /* 이미지 크기에 상대적으로 위치 설정 */
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.15);
+    left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.5);
     transform: translateX(-50%);
-    width: 75%;
+    width: calc(var(--story-img-width, 100vw) * 0.75);
+    max-width: calc(var(--story-img-width, 100vw) * 0.75);
     text-align: center;
     color: var(--gold);
-    font-size: clamp(18px, 2.5vw, 28px);
+    /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
+    font-size: clamp(10px, calc(var(--story-img-width, 100vw) * 0.055), 50px);
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     pointer-events: none;
+    box-sizing: border-box;
+    padding: 0 10px;
 }
 
 /* 이야기 텍스트 컨테이너 (중앙 사각형 영역) */
 .story-text-container {
     position: absolute;
     z-index: 20;
-    top: 25%;
-    left: 50%;
+    /* 이미지 크기에 상대적으로 위치 설정 */
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.225);
+    left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.513);
     transform: translateX(-50%);
-    width: 70%;
-    height: 45%;
-    max-height: 45%;
+    width: calc(var(--story-img-width, 100vw) * 0.737);
+    max-width: calc(var(--story-img-width, 100vw) * 0.737);
+    height: calc(var(--story-img-height, 100vh) * 0.3685);
+    max-height: calc(var(--story-img-height, 100vh) * 0.3685);
     background: rgba(20, 20, 30, 0.85);
     border: 2px solid rgba(255, 213, 79, 0.5);
     border-radius: 12px;
-    padding: clamp(12px, 1.5vw, 20px);
+    /* 이미지 크기에 상대적인 패딩 */
+    padding: clamp(8px, calc(var(--story-img-width, 100vw) * 0.015), 20px);
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
@@ -979,7 +980,8 @@ img[src*="exit_btn"]:active {
 /* 이야기 텍스트 내용 */
 .story-text-content {
     color: #ddd;
-    font-size: clamp(14px, 1.8vw, 18px);
+    /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
+    font-size: clamp(8px, calc(var(--story-img-width, 100vw) * 0.040), 32px);
     line-height: 1.6;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -997,8 +999,8 @@ img[src*="exit_btn"]:active {
 }
 
 .popup-background {
-    width: min(92vw, calc(100vh * var(--popup-aspect-ratio, 1.5)));
-    max-width: 92vw;
+    width: min(95vw, calc(100vh * var(--popup-aspect-ratio, 1.5)));
+    max-width: 95vw;
     max-height: 95vh;
     height: auto;
     object-fit: contain;
@@ -1086,8 +1088,8 @@ img[src*="exit_btn"]:active {
     /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
     width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
     height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
-    left: calc(var(--popup-img-width, 100%) * 0.125);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
-    top: calc(var(--popup-img-height, 100%) * 0.3);        /* 위쪽 위치 (이미지 높이의 30%) */
+    left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.295);        /* 위쪽 위치 (이미지 높이의 30%) */
 }
 
 /* 난이도 드롭박스 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
@@ -1096,8 +1098,8 @@ img[src*="exit_btn"]:active {
     /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
     width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
     height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
-    left: calc(var(--popup-img-width, 100%) * 0.125);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
-    top: calc(var(--popup-img-height, 100%) * 0.54);       /* 위쪽 위치 (이미지 높이의 54%) */
+    left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.53);       /* 위쪽 위치 (이미지 높이의 54%) */
 }
 
 /* 시작하기 버튼 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
@@ -1107,7 +1109,7 @@ img[src*="exit_btn"]:active {
     width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
     height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
     left: calc(var(--popup-img-width, 100%) * 0.0955);      /* 왼쪽 위치 (이미지 너비의 9.55%) */
-    top: calc(var(--popup-img-height, 100%) * 0.82);        /* 위쪽 위치 (이미지 높이의 82%) */
+    top: calc(var(--popup-img-height, 100%) * 0.83);        /* 위쪽 위치 (이미지 높이의 82%) */
 }
 
 /* 취소 버튼 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
@@ -1117,7 +1119,7 @@ img[src*="exit_btn"]:active {
     width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
     height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
     left: calc(var(--popup-img-width, 100%) * 0.53);       /* 왼쪽 위치 (이미지 너비의 53%) */
-    top: calc(var(--popup-img-height, 100%) * 0.82);        /* 위쪽 위치 (이미지 높이의 82%) */
+    top: calc(var(--popup-img-height, 100%) * 0.83);        /* 위쪽 위치 (이미지 높이의 82%) */
 }
 
 /* 문제 타입 라디오 버튼 그룹 (Choice Chip 스타일) */

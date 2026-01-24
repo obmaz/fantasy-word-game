@@ -911,24 +911,15 @@ const story = {
             syncTitleButtonOverlay();
         }
         
-        // 보스 러쉬 모드일 때는 boss_battle_popup.webp, 그 외에는 start_popup.webp 사용
+        // 모든 모드에서 boss_battle_popup.webp 사용
         const storyImg = document.getElementById('story-background-img');
         const storyStartBtn = document.getElementById('story-start-btn');
         if (storyImg) {
-            if (mode === 'rush') {
-                storyImg.src = 'images/main/boss_battle_popup.webp';
-                // 보스 배틀 모드 클래스 추가
-                if (storyStartBtn) {
-                    storyStartBtn.classList.add('boss-battle-btn');
-                    storyStartBtn.classList.remove('practice-btn');
-                }
-            } else {
-                storyImg.src = 'images/main/start_popup.webp';
-                // 연습 모드 클래스 추가
-                if (storyStartBtn) {
-                    storyStartBtn.classList.add('practice-btn');
-                    storyStartBtn.classList.remove('boss-battle-btn');
-                }
+            storyImg.src = 'images/main/boss_battle_popup.webp';
+            // 보스 배틀 모드 클래스 추가
+            if (storyStartBtn) {
+                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.remove('practice-btn');
             }
             
             // 이미지 로드 후 버튼 오버레이 동기화
@@ -981,19 +972,29 @@ const story = {
         
         // 이미지의 "모험시작" 버튼에도 동일한 이벤트 연결
         if (storyStartBtn) {
-            // 기존 이벤트 리스너 제거
+            // 기존 이벤트 리스너 완전히 제거
             storyStartBtn.onclick = null;
-            storyStartBtn.removeEventListener('click', startGame);
+            // 모든 이벤트 리스너 제거를 위해 클론 후 교체
+            const newBtn = storyStartBtn.cloneNode(true);
+            storyStartBtn.parentNode.replaceChild(newBtn, storyStartBtn);
+            const freshBtn = document.getElementById('story-start-btn');
+            
             // 새 이벤트 리스너 추가
-            storyStartBtn.addEventListener('click', (e) => {
+            freshBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Story start button clicked');
-                startGame();
+                // 게임 오버 처리 중이면 시작하지 않음
+                if (game.isProcessing) {
+                    console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
+                    return;
+                }
+                console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
+                game.init(story.mode, resolvedAtIntro);
             }, { capture: true });
-            storyStartBtn.style.pointerEvents = 'auto'; // 클릭 활성화
-            storyStartBtn.style.cursor = 'pointer';
-            storyStartBtn.style.zIndex = '25';
+            freshBtn.style.pointerEvents = 'auto'; // 클릭 활성화
+            freshBtn.style.cursor = 'pointer';
+            freshBtn.style.zIndex = '25';
         } else {
             console.warn('story-start-btn not found');
         }
@@ -1168,17 +1169,17 @@ const game = {
                 console.log('[game.init] 주관식만 모드 - 모든 문제를 주관식으로 설정');
                 game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: true }));
             } else {
-                // 객관식+주관식: 주관식이 최소 1개 이상, 30% 이상
-                console.log('[game.init] 객관식+주관식 모드 - 주관식 30% 이상');
-                const minBossCount = 1;
-                const bossCountByPercent = Math.ceil(count * 0.3); // 30% 이상
-                const bossCount = Math.max(minBossCount, bossCountByPercent);
-                const normalCount = count - bossCount;
+                // 혼합형: 객관식과 주관식이 동시에 나옴 (객관식 밑에 주관식)
+                // 주관식이 먼저 나올 때는 객관식은 안 나오고
+                console.log('[game.init] 혼합형 모드 - 객관식과 주관식 동시 표시');
+                const bossCount = Math.floor(count / 2); // 50%
+                const normalCount = count - bossCount; // 나머지
                 
-                // 주관식과 객관식 문제를 섞어서 생성
+                // 주관식과 객관식 문제를 각각 준비
                 const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({ ...q, isBoss: true }));
-                const normalQuestions = shuffledPool.slice(bossCount, count).map(q => ({ ...q, isBoss: false }));
+                const normalQuestions = shuffledPool.slice(bossCount, bossCount + normalCount).map(q => ({ ...q, isBoss: false }));
                 
+                // 50%씩 섞어서 생성
                 game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
             }
             
@@ -1268,7 +1269,7 @@ const game = {
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
             
-            // isBoss 속성에 따라 주관식/객관식 표시
+            // isBoss 속성에 따라 주관식/객관식 표시 (혼합형도 각 문제당 하나만 표시)
             if (game.currentQ.isBoss) {
                 game.renderBoss(game.currentQ, false);
             } else {
@@ -2202,7 +2203,7 @@ function closePracticePopup(animated = true) {
     history.pushState(null, '', window.location.href);
 }
 
-// 드롭박스 폰트 크기를 동적으로 조정 (텍스트가 잘리지 않도록)
+// 드롭박스 폰트 크기를 동적으로 조정 (텍스트가 박스보다 크지 않도록)
 function adjustSelectFontSize(selectElement, width, height) {
     if (!selectElement) return;
     
@@ -2211,8 +2212,8 @@ function adjustSelectFontSize(selectElement, width, height) {
     const textWidth = width - padding;
     const textHeight = height - 10; // 상하 패딩 고려
     
-    // 최대 폰트 크기 계산 (높이 기준)
-    const maxFontSizeByHeight = textHeight * 0.7;
+    // 높이 기준 최대 폰트 크기 (박스 높이보다 작게)
+    const maxFontSizeByHeight = textHeight * 0.6; // 0.7에서 0.6으로 줄여서 여유 공간 확보
     
     // 현재 선택된 옵션의 텍스트 길이 확인
     const selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -2232,8 +2233,11 @@ function adjustSelectFontSize(selectElement, width, height) {
         }
     }
     
+    // 높이 제한도 다시 확인 (박스보다 작게)
+    fontSize = Math.min(fontSize, maxFontSizeByHeight);
+    
     // 최소/최대 폰트 크기 제한
-    fontSize = Math.max(14, Math.min(fontSize, 40));
+    fontSize = Math.max(12, Math.min(fontSize, 35)); // 최대값도 40에서 35로 줄임
     
     selectElement.style.fontSize = fontSize + 'px';
     
@@ -2369,36 +2373,44 @@ function syncStoryButtonOverlay() {
         }
     }
     
-    // 타이틀 이미지 크기를 CSS 변수로 설정 (스토리 이미지가 참조)
-    storyImg.style.setProperty('--title-img-width', titleWidth + 'px');
+    // 스토리 이미지의 자연 비율 계산 및 설정 (모험 설정 팝업과 동일한 방식)
+    if (storyImg.complete && storyImg.naturalWidth > 0 && storyImg.naturalHeight > 0) {
+        const aspectRatio = storyImg.naturalWidth / storyImg.naturalHeight;
+        storyImg.style.setProperty('--story-aspect-ratio', aspectRatio);
+    }
     
-    // 이미지가 로드된 후 크기 확인
+    // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
     if (storyImg.complete) {
-        const imgRect = storyImg.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        
-        const left = imgRect.left - containerRect.left;
-        const top = imgRect.top - containerRect.top;
-        
-        // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
-        overlay.style.setProperty('--story-img-width', imgRect.width + 'px');
-        overlay.style.setProperty('--story-img-height', imgRect.height + 'px');
-        overlay.style.setProperty('--story-img-left', left + 'px');
-        overlay.style.setProperty('--story-img-top', top + 'px');
-        
-    // 모험 시작 버튼 위치와 크기 설정 (CSS 변수 사용)
-    const storyStartBtn = document.getElementById('story-start-btn');
-    if (storyStartBtn) {
-        storyStartBtn.style.setProperty('--story-img-width', imgRect.width + 'px');
-        storyStartBtn.style.setProperty('--story-img-height', imgRect.height + 'px');
+        // 잠시 후 다시 계산하여 브라우저 크기 변경 반영
+        setTimeout(() => {
+            const imgRect = storyImg.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            const left = imgRect.left - containerRect.left;
+            const top = imgRect.top - containerRect.top;
+            
+            // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
+            overlay.style.setProperty('--story-img-width', imgRect.width + 'px');
+            overlay.style.setProperty('--story-img-height', imgRect.height + 'px');
+            overlay.style.setProperty('--story-img-left', left + 'px');
+            overlay.style.setProperty('--story-img-top', top + 'px');
+            
+            // 모험 시작 버튼 위치와 크기 설정 (CSS 변수 사용)
+            const storyStartBtn = document.getElementById('story-start-btn');
+            if (storyStartBtn) {
+                storyStartBtn.style.setProperty('--story-img-width', imgRect.width + 'px');
+                storyStartBtn.style.setProperty('--story-img-height', imgRect.height + 'px');
+            }
+            
+            // 컨테이너에 CSS 변수 설정 (Day 정보와 이야기 텍스트 영역이 사용)
+            if (container) {
+                container.style.setProperty('--story-img-width', imgRect.width + 'px');
+                container.style.setProperty('--story-img-height', imgRect.height + 'px');
+                container.style.setProperty('--story-img-left', left + 'px');
+                container.style.setProperty('--story-img-top', top + 'px');
+            }
+        }, 0);
     }
-    
-    // 컨테이너에 CSS 변수 설정 (Day 정보와 이야기 텍스트 영역이 사용)
-    if (container) {
-        container.style.setProperty('--story-img-width', imgRect.width + 'px');
-        container.style.setProperty('--story-img-height', imgRect.height + 'px');
-    }
-}
 }
 
 // 랜덤 타이틀 헤더 로딩
@@ -2741,6 +2753,19 @@ window.onload = () => {
             }
         };
         window.addEventListener('resize', popupResizeHandler);
+        
+        // Story screen resize handler
+        let storyResizeTimeout;
+        const storyResizeHandler = () => {
+            const storyScreen = document.getElementById('story-screen');
+            if (storyScreen && storyScreen.style.display !== 'none' && storyScreen.style.display !== '') {
+                clearTimeout(storyResizeTimeout);
+                storyResizeTimeout = setTimeout(() => {
+                    syncStoryButtonOverlay();
+                }, 100);
+            }
+        };
+        window.addEventListener('resize', storyResizeHandler);
     }
     
     // 결과 화면 닫기 함수
@@ -2760,14 +2785,14 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('story-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/start_popup.webp';
+                storyImg.src = 'images/main/boss_battle_popup.webp';
             }
             
             // 버튼 초기화
             const storyStartBtn = document.getElementById('story-start-btn');
             if (storyStartBtn) {
-                storyStartBtn.classList.remove('boss-battle-btn');
-                storyStartBtn.classList.add('story-mode-btn');
+                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.remove('practice-btn');
                 storyStartBtn.style.pointerEvents = '';
                 storyStartBtn.onclick = null;
             }
