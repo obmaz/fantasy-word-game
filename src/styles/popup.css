@@ -135,7 +135,7 @@
     position: absolute;
     z-index: 15;
     /* 이미지 크기에 상대적으로 위치 설정 */
-    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.15);
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.1);
     left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.5);
     transform: translateX(-50%);
     width: calc(var(--story-img-width, 100vw) * 0.75);
@@ -226,7 +226,7 @@
 .story-text-content {
     color: #ddd;
     /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
-    font-size: clamp(8px, calc(var(--story-img-width, 100vw) * 0.040), 32px);
+    font-size: clamp(8px, calc(var(--story-img-width, 100vw) * 0.03), 32px);
     line-height: 1.6;
     white-space: pre-wrap;
     word-wrap: break-word;

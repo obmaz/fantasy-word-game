@@ -953,16 +953,6 @@ const story = {
         const textEl = document.getElementById('story-text');
         if (textEl) {
             let introText = data.intro || '';
-            // game-data-1과 game-data-2 모두: 따옴표로 묶인 문장("...") 앞뒤에서 줄바꿈
-            // 모든 기존 줄바꿈을 제거
-            introText = introText.replace(/\n/g, '');
-            // 따옴표로 묶인 문장("...") 앞뒤에 줄바꿈 추가
-            // 패턴: "내용" -> \n"내용"\n
-            introText = introText.replace(/"([^"]*)"/g, '\n"$1"\n');
-            // 연속된 줄바꿈을 하나로 통합
-            introText = introText.replace(/\n\n+/g, '\n');
-            // 문장 시작과 끝의 줄바꿈 제거
-            introText = introText.replace(/^\n+|\n+$/g, '');
             textEl.innerText = introText;
         }
 

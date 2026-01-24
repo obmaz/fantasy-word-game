@@ -77,7 +77,7 @@ body {
     backdrop-filter: blur(5px);
 }
 
-.gold-display { color: var(--gold); font-size: 15px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+.gold-display { color: var(--gold); font-size: clamp(14px, 1.5vw, 20px); font-weight: bold; display: flex; align-items: center; gap: 5px; }
 .timer-bar-bg { width: 80px; height: 6px; background: #333; border-radius: 3px; margin-top: 4px; overflow: hidden; }
 .timer-bar-fill { height: 100%; background: var(--success); width: 100%; transition: width 0.1s linear; }
 .timer-danger { background: var(--danger); }
@@ -129,7 +129,25 @@ body {
 }
 
 /* Badge */
-.info-badge { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; border: 1px solid #555; font-size: 12px; color: #ddd; z-index: 15; }
+.info-badge { 
+    position: absolute; 
+    top: 10px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    background: rgba(0,0,0,0.6); 
+    padding: 4px 10px; 
+    border-radius: 12px; 
+    border: 1px solid #555; 
+    font-size: 12px; 
+    color: #ddd; 
+    z-index: 15; 
+    line-height: 1.2;
+    min-height: 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 #wave-badge { left: auto; right: 10px; top: 10px; transform: none; }
 .durability-badge { 
     /* 황금장갑은 이제 skill bar에 표시되므로 숨김 */
@@ -148,6 +166,7 @@ body {
     color: var(--gold);
     font-size: clamp(14px, 1.5vw, 20px);
     font-weight: bold;
+    line-height: clamp(14px, 1.5vw, 20px);
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     z-index: 15;
