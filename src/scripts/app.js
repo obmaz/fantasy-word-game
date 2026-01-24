@@ -952,7 +952,18 @@ const story = {
         // 이야기 텍스트 표시
         const textEl = document.getElementById('story-text');
         if (textEl) {
-            textEl.innerText = data.intro || '';
+            let introText = data.intro || '';
+            // game-data-1과 game-data-2 모두: 따옴표로 묶인 문장("...") 앞뒤에서 줄바꿈
+            // 모든 기존 줄바꿈을 제거
+            introText = introText.replace(/\n/g, '');
+            // 따옴표로 묶인 문장("...") 앞뒤에 줄바꿈 추가
+            // 패턴: "내용" -> \n"내용"\n
+            introText = introText.replace(/"([^"]*)"/g, '\n"$1"\n');
+            // 연속된 줄바꿈을 하나로 통합
+            introText = introText.replace(/\n\n+/g, '\n');
+            // 문장 시작과 끝의 줄바꿈 제거
+            introText = introText.replace(/^\n+|\n+$/g, '');
+            textEl.innerText = introText;
         }
 
         const btn = document.getElementById('story-btn');
@@ -1298,6 +1309,10 @@ const game = {
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
             
+            // 먼저 모든 문제 박스를 숨김
+            document.getElementById('boss-box').style.display = 'none';
+            document.getElementById('options-box').style.display = 'none';
+            
             // isBoss 속성에 따라 주관식/객관식 표시 (혼합형도 각 문제당 하나만 표시)
             if (game.currentQ.isBoss) {
                 game.renderBoss(game.currentQ, false);
@@ -1332,6 +1347,8 @@ const game = {
             game.nextLevel();
             return;
         }
+        // 주관식 박스 명시적으로 숨김
+        document.getElementById('boss-box').style.display = 'none';
         document.getElementById('options-box').style.display = 'grid';
         document.getElementById('options-box').innerHTML = '';
         document.getElementById('skill-display').style.visibility = 'visible';
@@ -2450,8 +2467,8 @@ function loadRandomTitleHeader() {
         return;
     }
     
-    // 1~6 사이의 랜덤 숫자 생성
-    const randomNum = Math.floor(Math.random() * 6) + 1;
+    // 1~4 사이의 랜덤 숫자 생성 (title_header_5, 6 제거됨)
+    const randomNum = Math.floor(Math.random() * 4) + 1;
     const imagePath = `images/title/title_header_${randomNum}.webp`;
     
     console.log('Loading random title header:', imagePath);

@@ -171,7 +171,7 @@
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
-    pointer-events: none;
+    pointer-events: auto; /* 스크롤을 위해 auto로 변경 */
 }
 
 /* ============================================
