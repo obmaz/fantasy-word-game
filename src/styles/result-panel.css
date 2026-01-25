@@ -1,0 +1,145 @@
+/* ============================================
+   RESULT PANEL STYLES
+   ============================================ */
+
+/* Result Screen — 이미지 없이 day_select.webp 느낌을 CSS로 재현 */
+.result-panel {
+    position: relative;
+    width: min(92vw, 520px);
+    padding: 22px 22px 18px;
+    border-radius: 18px;
+    background:
+        radial-gradient(120% 120% at 50% 0%, rgba(255, 215, 130, 0.06) 0%, rgba(0,0,0,0) 55%),
+        radial-gradient(140% 120% at 50% 110%, rgba(255, 120, 50, 0.08) 0%, rgba(0,0,0,0) 55%),
+        linear-gradient(180deg, rgba(22, 24, 33, 0.98) 0%, rgba(12, 13, 18, 0.98) 100%);
+    box-shadow:
+        0 18px 55px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    overflow: hidden;
+}
+
+/* 금색 외곽 프레임 */
+.result-panel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 14px;
+    border: 3px solid rgba(231, 189, 105, 0.95);
+    box-shadow:
+        0 0 0 2px rgba(70, 48, 16, 0.85),
+        inset 0 0 18px rgba(255, 208, 120, 0.10);
+    pointer-events: none;
+}
+
+/* 내부 얇은 라인 */
+.result-panel::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 228, 165, 0.22);
+    pointer-events: none;
+}
+
+.result-panel-title {
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: 1px;
+    font-size: clamp(22px, 6vw, 34px);
+    color: rgba(255, 214, 120, 0.98);
+    text-shadow:
+        0 2px 0 rgba(60, 40, 10, 0.9),
+        0 10px 24px rgba(0,0,0,0.6);
+    margin: 10px 0 18px;
+}
+
+.result-panel-body {
+    position: relative;
+    z-index: 1;
+    padding: 16px 16px 14px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255, 215, 130, 0.18);
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.35);
+}
+
+.result-panel-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 4px;
+    font-size: clamp(14px, 3.8vw, 18px);
+    color: rgba(235, 235, 245, 0.95);
+}
+
+.result-label {
+    opacity: 0.92;
+}
+
+.result-value {
+    font-weight: 800;
+}
+
+.result-value.gold {
+    color: var(--gold);
+}
+
+.result-value.danger {
+    color: var(--danger);
+}
+
+.result-panel-total {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    font-weight: 900;
+    font-size: clamp(15px, 4vw, 19px);
+    color: rgba(170, 225, 255, 0.95);
+}
+
+.result-panel-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    padding-bottom: 8px;
+}
+
+.result-btn {
+    min-width: min(78%, 360px);
+    height: 58px;
+    border-radius: 14px;
+    border: 3px solid rgba(231, 189, 105, 0.9);
+    font-weight: 900;
+    font-size: clamp(16px, 4.5vw, 22px);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow:
+        0 10px 28px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.result-btn:active {
+    transform: translateY(1px);
+}
+
+.result-btn-gold {
+    color: rgba(20, 15, 10, 0.92);
+    background:
+        linear-gradient(180deg, rgba(255, 244, 205, 0.95) 0%,
+                               rgba(255, 205, 95, 0.95) 45%,
+                               rgba(214, 140, 45, 0.95) 100%);
+    position: relative;
+}
+
+.result-btn-gold::before {
+    content: "";
+    position: absolute;
+    inset: 6px 10px auto 10px;
+    height: 14px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.55), rgba(255,255,255,0));
+    pointer-events: none;
+}

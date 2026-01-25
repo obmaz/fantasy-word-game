@@ -661,23 +661,37 @@ const ui = {
         if (overlayGold) overlayGold.innerText = db.gold;
     },
     updateGameInfo: (mode, day) => {
-        const modeText = mode === 'boss' ? '보스 모드' : (mode === 'battle' ? '배틀 모드' : '배틀 모드');
+        const modeText = mode === 'boss' ? '보스 모드' : (mode === 'battle' ? '배틀 모드' : '연습모드');
         let dayText;
         if (mode === 'boss') {
             dayText = '무한';
         } else {
-            // battle 모드와 practice 모드 모두 day에 따라 표시
+            // battle 모드와 practice 모드 모두 day에 따라 표시 (제목 포함)
             if (day === 'all') {
-                dayText = '전체';
+                // dayCatalog에서 'all'의 label 사용
+                const allLabel = (typeof dayCatalog !== 'undefined' && dayCatalog['all'] && dayCatalog['all'].label) 
+                    ? dayCatalog['all'].label 
+                    : '전체';
+                dayText = allLabel;
             } else if (day && !isNaN(Number(day))) {
-                dayText = `Day ${day}`;
+                // dayCatalog에서 해당 day의 label 사용 (제목 포함)
+                const dayLabel = (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].label) 
+                    ? dayCatalog[day].label 
+                    : `Day ${day}`;
+                dayText = dayLabel;
             } else {
                 // game.currentDay를 확인
                 const currentDay = game.currentDay;
                 if (currentDay === 'all') {
-                    dayText = '전체';
+                    const allLabel = (typeof dayCatalog !== 'undefined' && dayCatalog['all'] && dayCatalog['all'].label) 
+                        ? dayCatalog['all'].label 
+                        : '전체';
+                    dayText = allLabel;
                 } else if (currentDay && !isNaN(Number(currentDay))) {
-                    dayText = `Day ${currentDay}`;
+                    const dayLabel = (typeof dayCatalog !== 'undefined' && dayCatalog[currentDay] && dayCatalog[currentDay].label) 
+                        ? dayCatalog[currentDay].label 
+                        : `Day ${currentDay}`;
+                    dayText = dayLabel;
                 } else {
                     dayText = '전체';
                 }
@@ -2170,12 +2184,23 @@ const practiceMemorization = {
         practiceMemorization.currentIndex = index;
         const word = practiceMemorization.words[index];
         
-        // Day 정보 표시
+        // Day 정보 표시 (연습모드 - Day 제목 형식)
         const dayInfoEl = document.getElementById('practice-memorization-day-info');
         if (dayInfoEl) {
-            const dayLabel = practiceMemorization.currentDay === 'all' 
-                ? '배틀 모드' 
-                : `Day ${practiceMemorization.currentDay}`;
+            let dayLabel;
+            if (practiceMemorization.currentDay === 'all') {
+                // dayCatalog에서 'all'의 label 사용
+                const allLabel = (typeof dayCatalog !== 'undefined' && dayCatalog['all'] && dayCatalog['all'].label) 
+                    ? dayCatalog['all'].label 
+                    : '전체';
+                dayLabel = `연습모드 - ${allLabel}`;
+            } else {
+                // dayCatalog에서 해당 day의 label 사용 (제목 포함)
+                const dayCatalogLabel = (typeof dayCatalog !== 'undefined' && dayCatalog[practiceMemorization.currentDay] && dayCatalog[practiceMemorization.currentDay].label) 
+                    ? dayCatalog[practiceMemorization.currentDay].label 
+                    : `Day ${practiceMemorization.currentDay}`;
+                dayLabel = `연습모드 - ${dayCatalogLabel}`;
+            }
             dayInfoEl.textContent = dayLabel;
         }
         

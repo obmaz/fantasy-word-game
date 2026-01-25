@@ -12,6 +12,7 @@
     transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
     opacity: 1;
     visibility: visible;
+    overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
 }
 
 /* 팝업이 열릴 때 타이틀 배경 블러 효과 강화 */
@@ -215,6 +216,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible !important; /* 드롭다운이 잘리지 않도록 */
 }
 
 .popup-background {
@@ -224,6 +226,8 @@
     height: auto;
     object-fit: contain;
     display: block;
+    position: relative;
+    z-index: 1; /* 배경 이미지는 뒤에 */
 }
 
 .popup-buttons-overlay {
@@ -234,6 +238,8 @@
     height: var(--popup-img-height, 0);
     left: var(--popup-img-left, 0);
     top: var(--popup-img-top, 0);
+    z-index: 2; /* 버튼과 드롭다운은 이미지 위에 */
+    overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
 }
 
 .popup-select {
@@ -253,6 +259,20 @@
     backdrop-filter: none;
     box-shadow: none !important;
     outline: none !important;
+    /* 텍스트가 잘리지 않도록 설정 */
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+}
+
+/* 드롭다운 옵션들이 잘 보이도록 설정 */
+.popup-select option {
+    background: rgba(20, 20, 30, 0.95) !important;
+    color: #FFD54F !important;
+    padding: 10px 15px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
 }
 
 .popup-select:hover {
@@ -284,6 +304,9 @@
     color: #FFD54F;
     padding: 10px;
     font-size: 18px;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
 }
 
 .popup-btn-area {

@@ -1,5 +1,5 @@
 /* ============================================
-   Practice Memorization Screen 스타일
+   Practice Mode Game 스타일
    ============================================ */
 
 #practice-memorization-screen {
@@ -132,7 +132,7 @@
     text-align: left;
     word-break: break-word;
     line-height: 1.6;
-    font-style: italic;
+    font-style: normal;
 }
 
 /* 네비게이션 버튼 (배틀 모드의 option-btn 스타일) */

@@ -12,9 +12,14 @@ fantasy-word-game/
 │   │   ├── variables.css             # CSS variables and global styles
 │   │   ├── animations.css             # Animation definitions
 │   │   ├── title.css                  # Title screen styles
-│   │   ├── game.css                   # Game screen styles
+│   │   ├── battle-mode-game.css       # Battle mode game screen styles
+│   │   ├── practice-mode-game.css     # Practice mode game screen styles
 │   │   ├── buttons.css                # Button styles
-│   │   ├── panels.css                 # Panel styles (shop, inventory, statistics)
+│   │   ├── shop-panel.css             # Shop panel styles
+│   │   ├── inventory-panel.css        # Inventory panel styles
+│   │   ├── statistics-panel.css       # Statistics panel styles
+│   │   ├── secret-menu-panel.css      # Secret menu panel styles
+│   │   ├── result-panel.css           # Result screen panel styles
 │   │   ├── popup-common.css           # Common popup styles
 │   │   ├── practice-mode-popup.css    # Practice mode popup styles
 │   │   ├── battle-mode-popup.css      # Battle mode popup styles
@@ -225,9 +230,14 @@ fantasy-word-game/
 - `variables.css`: CSS variables and global styles
 - `animations.css`: Animation keyframes and transitions
 - `title.css`: Title screen layout and styling
-- `game.css`: Game screen layout and battle arena
+- `battle-mode-game.css`: Battle mode game screen layout and battle arena
+- `practice-mode-game.css`: Practice mode game screen (memorization) layout
 - `buttons.css`: Button styles for all game modes
-- `panels.css`: Shop, inventory, and statistics panel styles
+- `shop-panel.css`: Shop panel styles
+- `inventory-panel.css`: Inventory panel styles
+- `statistics-panel.css`: Statistics panel styles
+- `secret-menu-panel.css`: Secret menu panel styles
+- `result-panel.css`: Result screen panel styles
 - `popup-common.css`: Common popup overlay and container styles
 - Mode-specific popup/screen CSS files for each game mode
 
