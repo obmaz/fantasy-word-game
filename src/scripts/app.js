@@ -861,8 +861,8 @@ const story = {
         const data = resolveStoryData(story.day);
 
         // 모드에 따라 적절한 story-screen ID 결정
-        const storyScreenId = (mode === 'boss') ? 'boss-story-screen' : (mode === 'practice') ? 'practice-mode-screen' : 'battle-mode-screen';
-        const storyScreenPrefix = (mode === 'boss') ? 'boss-story' : (mode === 'practice') ? 'practice-mode' : 'battle-mode';
+        const storyScreenId = (mode === 'boss') ? 'boss-mode-screen' : (mode === 'practice') ? 'practice-mode-screen' : 'battle-mode-screen';
+        const storyScreenPrefix = (mode === 'boss') ? 'boss-mode' : (mode === 'practice') ? 'practice-mode' : 'battle-mode';
 
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
         const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
@@ -886,14 +886,14 @@ const story = {
         // 다른 story-screen 닫기
         const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-story-screen');
+        const bossStoryScreen = document.getElementById('boss-mode-screen');
         if (practiceModeStoryScreen && storyScreenId !== 'practice-mode-screen') {
             practiceModeStoryScreen.style.display = 'none';
         }
         if (battleModeStoryScreen && storyScreenId !== 'battle-mode-screen') {
             battleModeStoryScreen.style.display = 'none';
         }
-        if (bossStoryScreen && storyScreenId !== 'boss-story-screen') {
+        if (bossStoryScreen && storyScreenId !== 'boss-mode-screen') {
             bossStoryScreen.style.display = 'none';
         }
         
@@ -1018,7 +1018,7 @@ const story = {
         // story-screen을 확실히 닫기
         const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-story-screen');
+        const bossStoryScreen = document.getElementById('boss-mode-screen');
         if (practiceModeStoryScreen) {
             practiceModeStoryScreen.style.display = 'none';
             practiceModeStoryScreen.style.visibility = 'hidden';
@@ -1044,9 +1044,9 @@ const story = {
             bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-mode-popup과 battle-setting-popup 닫기
+        // practice-mode-popup과 battle-mode-setting-popup 닫기
         const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-setting-popup');
+        const battleModePopup = document.getElementById('battle-mode-setting-popup');
         if (practiceModePopup) {
             practiceModePopup.style.display = 'none';
             practiceModePopup.style.visibility = 'hidden';
@@ -1170,7 +1170,7 @@ const game = {
         // story-screen을 애니메이션과 함께 닫기
         closeScreenOverlay('practice-mode-screen', true);
         closeScreenOverlay('battle-mode-screen', true);
-        closeScreenOverlay('boss-story-screen', true);
+        closeScreenOverlay('boss-mode-screen', true);
 
         let pool;
         // normalize day and strictly match numeric day values to avoid cross-day leakage
@@ -1775,7 +1775,7 @@ const game = {
         // story-screen이 확실히 닫혀있는지 확인
         const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-story-screen');
+        const bossStoryScreen = document.getElementById('boss-mode-screen');
         if (practiceModeStoryScreen) {
             practiceModeStoryScreen.style.display = 'none';
             practiceModeStoryScreen.style.visibility = 'hidden';
@@ -1801,9 +1801,9 @@ const game = {
             bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-mode-popup과 battle-setting-popup도 닫기
+        // practice-mode-popup과 battle-mode-setting-popup도 닫기
         const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-setting-popup');
+        const battleModePopup = document.getElementById('battle-mode-setting-popup');
         if (practiceModePopup) {
             practiceModePopup.style.display = 'none';
             practiceModePopup.style.visibility = 'hidden';
@@ -2062,7 +2062,7 @@ const secret = {
 function initSelections() {
     const daySelect = document.getElementById('day-select');
     const practiceDaySelect = document.getElementById('practice-mode-popup-day-select');
-    const battleDaySelect = document.getElementById('battle-setting-popup-day-select');
+    const battleDaySelect = document.getElementById('battle-mode-setting-popup-day-select');
     
     // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
@@ -2172,11 +2172,11 @@ function openPracticePopup() {
 
 // Open battle mode selection popup
 function openBattleModePopup() {
-    const popup = document.getElementById('battle-setting-popup');
-    const popupDaySelect = document.getElementById('battle-setting-popup-day-select');
-    const popupCountSelect = document.getElementById('battle-setting-popup-count-select');
-    const popupImg = document.getElementById('battle-setting-popup-background-img');
-    const questionTypeGroup = document.getElementById('battle-setting-popup-question-type-group');
+    const popup = document.getElementById('battle-mode-setting-popup');
+    const popupDaySelect = document.getElementById('battle-mode-setting-popup-day-select');
+    const popupCountSelect = document.getElementById('battle-mode-setting-popup-count-select');
+    const popupImg = document.getElementById('battle-mode-setting-popup-background-img');
+    const questionTypeGroup = document.getElementById('battle-mode-setting-popup-question-type-group');
     
     if (!popup) return;
     
@@ -2237,7 +2237,7 @@ function openBattleModePopup() {
     popup.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'battle-setting-popup' }, '', window.location.href);
+    history.pushState({ screen: 'battle-mode-setting-popup' }, '', window.location.href);
     
     // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
@@ -2248,19 +2248,19 @@ function openBattleModePopup() {
     if (popupImg) {
         if (popupImg.complete) {
             setTimeout(() => {
-                syncPopupButtonOverlay('battle-setting-popup');
+                syncPopupButtonOverlay('battle-mode-setting-popup');
             }, 100);
         } else {
             popupImg.addEventListener('load', () => {
                 setTimeout(() => {
-                    syncPopupButtonOverlay('battle-setting-popup');
+                    syncPopupButtonOverlay('battle-mode-setting-popup');
                 }, 100);
             }, { once: true });
         }
     }
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment('battle-setting-popup');
+    setupSelectFontSizeAdjustment('battle-mode-setting-popup');
 }
 
 // 공통 팝업 애니메이션 함수
@@ -2322,7 +2322,7 @@ function openScreenOverlay(elementId, animated = true) {
 // Close practice or battle mode selection popup
 function closePracticePopup(animated = true) {
     closeScreenOverlay('practice-mode-popup', animated);
-    closeScreenOverlay('battle-setting-popup', animated);
+    closeScreenOverlay('battle-mode-setting-popup', animated);
     // 히스토리 상태 업데이트
     history.pushState(null, '', window.location.href);
 }
@@ -2361,7 +2361,7 @@ function adjustSelectFontSize(selectElement, width, height) {
     fontSize = Math.min(fontSize, maxFontSizeByHeight);
     
     // 최소/최대 폰트 크기 제한
-    fontSize = Math.max(12, Math.min(fontSize, 35)); // 최대값도 40에서 35로 줄임
+    fontSize = Math.max(12, Math.min(fontSize, 32)); // 최대값 32px
     
     selectElement.style.fontSize = fontSize + 'px';
     
@@ -2474,13 +2474,13 @@ function syncStoryButtonOverlay(storyScreenId) {
         // 모두 확인
         const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-story-screen');
+        const bossStoryScreen = document.getElementById('boss-mode-screen');
         if (practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '') {
             syncStoryButtonOverlay('practice-mode-screen');
         } else if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
             syncStoryButtonOverlay('battle-mode-screen');
         } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
-            syncStoryButtonOverlay('boss-story-screen');
+            syncStoryButtonOverlay('boss-mode-screen');
         }
         return;
     }
@@ -2816,10 +2816,10 @@ window.onload = () => {
     }
     
     // Battle Setting Popup event listeners
-    const battleStartBtn = document.getElementById('battle-setting-popup-start-btn');
-    const battleCancelBtn = document.getElementById('battle-setting-popup-cancel-btn');
-    const battleDaySelect = document.getElementById('battle-setting-popup-day-select');
-    const battleCountSelect = document.getElementById('battle-setting-popup-count-select');
+    const battleStartBtn = document.getElementById('battle-mode-setting-popup-start-btn');
+    const battleCancelBtn = document.getElementById('battle-mode-setting-popup-cancel-btn');
+    const battleDaySelect = document.getElementById('battle-mode-setting-popup-day-select');
+    const battleCountSelect = document.getElementById('battle-mode-setting-popup-count-select');
     
     if (battleStartBtn) {
         battleStartBtn.addEventListener('click', () => {
@@ -2828,7 +2828,7 @@ window.onload = () => {
             
             // Get selected question type for battle mode
             let selectedQuestionType = 'mixed'; // default
-            const questionTypeGroup = document.getElementById('battle-setting-popup-question-type-group');
+            const questionTypeGroup = document.getElementById('battle-mode-setting-popup-question-type-group');
             if (questionTypeGroup) {
                 const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
                 if (checkedRadio) {
@@ -3025,7 +3025,7 @@ window.onload = () => {
     
     // Popup 이미지 로드 후 버튼 오버레이 동기화
     const practiceModePopupImg = document.getElementById('practice-mode-popup-background-img');
-    const battleModePopupImg = document.getElementById('battle-setting-popup-background-img');
+    const battleModePopupImg = document.getElementById('battle-mode-setting-popup-background-img');
     
     if (practiceModePopupImg) {
         if (practiceModePopupImg.complete) {
@@ -3037,9 +3037,9 @@ window.onload = () => {
     
     if (battleModePopupImg) {
         if (battleModePopupImg.complete) {
-            syncPopupButtonOverlay('battle-setting-popup');
+            syncPopupButtonOverlay('battle-mode-setting-popup');
         } else {
-            battleModePopupImg.addEventListener('load', () => syncPopupButtonOverlay('battle-setting-popup'));
+            battleModePopupImg.addEventListener('load', () => syncPopupButtonOverlay('battle-mode-setting-popup'));
         }
     }
     
@@ -3047,7 +3047,7 @@ window.onload = () => {
     let popupResizeTimeout;
     const popupResizeHandler = () => {
         const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-setting-popup');
+        const battleModePopup = document.getElementById('battle-mode-setting-popup');
         if (practiceModePopup && practiceModePopup.style.display !== 'none' && practiceModePopup.style.display !== '') {
             clearTimeout(popupResizeTimeout);
             popupResizeTimeout = setTimeout(() => {
@@ -3056,7 +3056,7 @@ window.onload = () => {
         } else if (battleModePopup && battleModePopup.style.display !== 'none' && battleModePopup.style.display !== '') {
             clearTimeout(popupResizeTimeout);
             popupResizeTimeout = setTimeout(() => {
-                syncPopupButtonOverlay('battle-setting-popup');
+                syncPopupButtonOverlay('battle-mode-setting-popup');
             }, 100);
         }
     };
@@ -3067,7 +3067,7 @@ window.onload = () => {
     const storyResizeHandler = () => {
         const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-story-screen');
+        const bossStoryScreen = document.getElementById('boss-mode-screen');
         if (practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '') {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
@@ -3081,7 +3081,7 @@ window.onload = () => {
         } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
-                syncStoryButtonOverlay('boss-story-screen');
+                syncStoryButtonOverlay('boss-mode-screen');
             }, 100);
         }
     };
@@ -3094,7 +3094,7 @@ window.onload = () => {
         // story-screen 완전히 초기화
         const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-story-screen');
+        const bossStoryScreen = document.getElementById('boss-mode-screen');
         if (practiceModeStoryScreen) {
             practiceModeStoryScreen.style.display = 'none';
             practiceModeStoryScreen.style.visibility = '';
@@ -3150,13 +3150,13 @@ window.onload = () => {
             bossStoryScreen.classList.remove('closing');
             
             // 배경 이미지 초기화
-            const storyImg = document.getElementById('boss-story-background-img');
+            const storyImg = document.getElementById('boss-mode-background-img');
             if (storyImg) {
                 storyImg.src = 'images/main/boss_battle_popup.webp';
             }
             
             // 버튼 초기화
-            const storyStartBtn = document.getElementById('boss-story-start-btn');
+            const storyStartBtn = document.getElementById('boss-mode-start-btn');
             if (storyStartBtn) {
                 storyStartBtn.classList.add('boss-battle-btn');
                 storyStartBtn.classList.remove('practice-btn');
@@ -3165,9 +3165,9 @@ window.onload = () => {
             }
         }
         
-        // practice-mode-popup과 battle-setting-popup 초기화
+        // practice-mode-popup과 battle-mode-setting-popup 초기화
         const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-setting-popup');
+        const battleModePopup = document.getElementById('battle-mode-setting-popup');
         if (practiceModePopup) {
             practiceModePopup.style.display = 'none';
             practiceModePopup.style.visibility = '';

@@ -3,33 +3,37 @@
    ============================================ */
 
 /* Battle 설정 팝업 - 모험 지역 드롭박스 위치 */
-#battle-setting-popup .popup-day-select {
+#battle-mode-setting-popup .popup-day-select {
     /* battle_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
     width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
     height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
     left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 14.5%) */
-    top: calc(var(--popup-img-height, 100%) * 0.30);       /* 위쪽 위치 (이미지 높이의 30%) */
+    top: calc(var(--popup-img-height, 100%) * 0.3);       /* 위쪽 위치 (이미지 높이의 30%) */
+    /* 폰트 크기 조정 - 브라우저 크기에 따라 동적으로 변함 (최대 32px) */
+    /* JavaScript의 adjustSelectFontSize 함수가 동적으로 조정합니다 */
+    /* CSS에서 고정값을 설정하려면 아래 주석을 해제하세요 */
+    /* font-size: clamp(16px, 3vw, 32px); */  /* 반응형 폰트 크기 (최소 16px, 최대 32px) */
 }
 
 /* Battle 설정 팝업 - 난이도 드롭박스 위치 */
-#battle-setting-popup .popup-count-select {
+#battle-mode-setting-popup .popup-count-select {
     /* battle_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
     width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
     height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
     left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 14.5%) */
-    top: calc(var(--popup-img-height, 100%) * 0.50);       /* 위쪽 위치 (이미지 높이의 50%) */
+    top: calc(var(--popup-img-height, 100%) * 0.5275);       /* 위쪽 위치 (이미지 높이의 50%) */
 }
 
 /* Battle 설정 팝업 - 문제 타입 라디오 버튼 그룹 위치 */
-#battle-setting-popup .popup-radio-group {
+#battle-mode-setting-popup .popup-radio-group {
     /* battle_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
     width: calc(var(--popup-img-width, 100%) * 0.8);       /* 너비 (이미지 너비의 80%) */
     left: calc(var(--popup-img-width, 100%) * 0.1);        /* 왼쪽 위치 (이미지 너비의 10%) */
-    top: calc(var(--popup-img-height, 100%) * 0.65);       /* 위쪽 위치 (이미지 높이의 65%) */
+    top: calc(var(--popup-img-height, 100%) * 0.7);       /* 위쪽 위치 (이미지 높이의 65%) */
 }
 
 /* Battle 설정 팝업 - 시작하기 버튼 위치 */
-#battle-setting-popup #battle-setting-popup-start-btn {
+#battle-mode-setting-popup #battle-mode-setting-popup-start-btn {
     /* battle_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
     width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
     height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */
@@ -38,7 +42,7 @@
 }
 
 /* Battle 설정 팝업 - 취소 버튼 위치 */
-#battle-setting-popup #battle-setting-popup-cancel-btn {
+#battle-mode-setting-popup #battle-mode-setting-popup-cancel-btn {
     /* battle_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
     width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
     height: calc(var(--popup-img-height, 100%) * 0.115);   /* 높이 (이미지 높이의 11.5%) */

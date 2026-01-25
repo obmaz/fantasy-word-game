@@ -6,7 +6,7 @@
    ============================================ */
 
 /* Boss Mode Screen - Day 정보 표시 영역 (크기/위치 조정 가능) */
-#boss-story-screen .story-day-info {
+#boss-mode-screen .story-day-info {
     /* 기본값 유지 (상위 스타일 상속) */
     /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
     
@@ -16,7 +16,7 @@
 }
 
 /* Boss Mode Screen - 이야기 텍스트 컨테이너 (크기/위치 조정 가능) */
-#boss-story-screen .story-text-container {
+#boss-mode-screen .story-text-container {
     /* 기본값 유지 (상위 스타일 상속) */
     /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
     
