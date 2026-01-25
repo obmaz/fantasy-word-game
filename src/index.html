@@ -211,7 +211,7 @@
     <!-- Practice Mode Selection Popup -->
     <div id="practice-mode-popup" class="screen-overlay" style="display:none;">
         <div class="popup-container-wrapper">
-            <img src="images/main/practice_mode_select_popup .webp" alt="Practice Mode Settings" class="popup-background" id="practice-mode-popup-background-img" />
+            <img src="images/practice_mode/practice_mode_select_popup .webp" alt="Practice Mode Settings" class="popup-background" id="practice-mode-popup-background-img" />
             <div class="popup-buttons-overlay">
                 <!-- 모험 지역 드롭박스 영역 -->
                 <select id="practice-mode-popup-day-select" class="popup-select popup-day-select"></select>
@@ -235,7 +235,7 @@
     <!-- Battle Mode Selection Popup -->
     <div id="battle-mode-setting-popup" class="screen-overlay" style="display:none;">
         <div class="popup-container-wrapper">
-            <img src="images/main/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="popup-background" id="battle-mode-setting-popup-background-img" />
+            <img src="images/battle_mode/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="popup-background" id="battle-mode-setting-popup-background-img" />
             <div class="popup-buttons-overlay">
                 <!-- 모험 지역 드롭박스 영역 -->
                 <select id="battle-mode-setting-popup-day-select" class="popup-select popup-day-select"></select>
@@ -275,7 +275,7 @@
     <!-- Practice Mode Screen (practice 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="practice-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/main/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="practice-mode-background-img" />
+            <img src="images/battle_mode/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="practice-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="practice-mode-start-btn" title="모험 시작"></button>
@@ -290,15 +290,18 @@
     </div>
 
     <!-- Practice Mode Memorization Screen (단어 암기 화면) -->
-    <div id="practice-memorization-screen" class="screen-overlay" style="display:none;">
+    <div id="practice-memorization-screen" class="screen-overlay" style="display:none; height:100%; flex-direction:column;">
         <div class="practice-memorization-container">
-            <!-- 상단: Day 정보 및 단어 번호 -->
-            <div class="practice-memorization-header">
-                <div class="practice-day-info" id="practice-memorization-day-info"></div>
-                <div class="practice-word-counter" id="practice-word-counter">1 / 1</div>
+            <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
+            <div class="practice-memorization-arena">
+                <!-- 상단: Day 정보 및 단어 번호 -->
+                <div class="practice-memorization-header">
+                    <div class="practice-day-info" id="practice-memorization-day-info"></div>
+                    <div class="practice-word-counter" id="practice-word-counter">1 / 1</div>
+                </div>
             </div>
             
-            <!-- 중앙: 단어 표시 영역 -->
+            <!-- 중앙: 단어 표시 영역 (배틀 모드의 quiz-area와 유사) -->
             <div class="practice-memorization-content">
                 <!-- 영어 단어 -->
                 <div class="practice-word-section">
@@ -331,7 +334,7 @@
     <!-- Battle Mode Screen (battle 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="battle-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/main/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
+            <img src="images/battle_mode/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="battle-mode-start-btn" title="모험 시작"></button>
@@ -348,7 +351,7 @@
     <!-- Boss Mode Screen (boss 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="boss-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/main/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
+            <img src="images/battle_mode/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="boss-mode-start-btn" title="모험 시작"></button>

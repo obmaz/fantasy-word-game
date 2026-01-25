@@ -32,7 +32,7 @@ fantasy-word-game/
 │   │   ├── items-data.js              # Item definitions and properties
 │   │   └── background_music.mp3       # Background music file
 │   └── images/
-│       ├── main/                      # Main game images
+│       ├── battle_mode/               # Battle mode game images
 │       │   ├── background.webp        # Game battle background
 │       │   ├── hero.webp              # Hero character image
 │       │   ├── monster_1.webp         # Monster sprite 1

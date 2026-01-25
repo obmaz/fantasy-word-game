@@ -689,7 +689,7 @@ const ui = {
         }
     },
     updateVisuals: () => {
-        document.getElementById('hero-img').src = "images/main/hero.webp";
+        document.getElementById('hero-img').src = "images/battle_mode/hero.webp";
 
         // weapon -> hand-1 (gameplay)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
@@ -788,20 +788,20 @@ try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
 // Monster image assets and selection helper
 const monsterAssets = {
     normal: [
-        'images/main/monster_1.webp',
-        'images/main/monster_2.webp',
-        'images/main/monster_3.webp'
+        'images/battle_mode/monster_1.webp',
+        'images/battle_mode/monster_2.webp',
+        'images/battle_mode/monster_3.webp'
     ],
     boss: [
-        'images/main/monster_1.webp',
-        'images/main/monster_2.webp',
-        'images/main/monster_3.webp'
+        'images/battle_mode/monster_1.webp',
+        'images/battle_mode/monster_2.webp',
+        'images/battle_mode/monster_3.webp'
     ],
     byDay: {
         // Day-specific mapping — useful for testing and unique bosses
-        // add more: '5': ['images/main/monster_1.webp', 'images/main/monster_2.webp']
+        // add more: '5': ['images/battle_mode/monster_1.webp', 'images/battle_mode/monster_2.webp']
     },
-    fallback: 'images/main/monster_1.webp'
+    fallback: 'images/battle_mode/monster_1.webp'
 };
 
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -919,7 +919,7 @@ const story = {
         const storyImg = document.getElementById(`${storyScreenPrefix}-background-img`);
         const storyStartBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
         if (storyImg) {
-            storyImg.src = 'images/main/boss_mode_popup.webp';
+            storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
             // 보스 모드 클래스 추가
             if (storyStartBtn) {
                 storyStartBtn.classList.add('boss-mode-btn');
@@ -2947,12 +2947,12 @@ window.onload = () => {
                 startScreen.style.display = 'none';
             }
             
-            // Close popup with animation and start game
+            // Close popup with animation and start memorization mode directly
             closePracticePopup(true);
             
-            // 애니메이션이 완료된 후 게임 시작 (practice 모드)
+            // 애니메이션이 완료된 후 암기 모드로 바로 시작 (practice-mode-screen 건너뛰기)
             setTimeout(() => {
-                story.startIntro('practice', selectedDay);
+                practiceMemorization.start(selectedDay);
             }, 400); // 애니메이션 시간과 일치
         });
     }
@@ -3277,7 +3277,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('practice-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/boss_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
             }
             
             // 버튼 초기화
@@ -3300,7 +3300,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('battle-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/boss_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
             }
             
             // 버튼 초기화
@@ -3323,7 +3323,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('boss-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/boss_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
             }
             
             // 버튼 초기화
