@@ -665,10 +665,8 @@ const ui = {
         let dayText;
         if (mode === 'boss') {
             dayText = '무한';
-        } else if (mode === 'battle') {
-            dayText = '전체';
         } else {
-            // day가 숫자 문자열이면 그대로 사용, 'all'이면 '전체', 그 외는 숫자로 변환 시도
+            // battle 모드와 practice 모드 모두 day에 따라 표시
             if (day === 'all') {
                 dayText = '전체';
             } else if (day && !isNaN(Number(day))) {
@@ -917,14 +915,14 @@ const story = {
             syncTitleButtonOverlay();
         }
         
-        // 모든 모드에서 boss_battle_popup.webp 사용
+        // 모든 모드에서 boss_mode_popup.webp 사용
         const storyImg = document.getElementById(`${storyScreenPrefix}-background-img`);
         const storyStartBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
         if (storyImg) {
-            storyImg.src = 'images/main/boss_battle_popup.webp';
-            // 보스 배틀 모드 클래스 추가
+            storyImg.src = 'images/main/boss_mode_popup.webp';
+            // 보스 모드 클래스 추가
             if (storyStartBtn) {
-                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.add('boss-mode-btn');
                 storyStartBtn.classList.remove('practice-btn');
             }
             
@@ -987,7 +985,13 @@ const story = {
                     }
                     const resolvedAtIntro = (story.mode === 'boss') ? 'boss' : daySel;
                     console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
-                    game.init(story.mode, resolvedAtIntro);
+                    
+                    // Practice 모드는 암기 모드로 시작, 다른 모드는 기존대로 게임 시작
+                    if (story.mode === 'practice') {
+                        practiceMemorization.start(resolvedAtIntro);
+                    } else {
+                        game.init(story.mode, resolvedAtIntro);
+                    }
                 }, { capture: true });
                 freshBtn.style.pointerEvents = 'auto'; // 클릭 활성화
                 freshBtn.style.cursor = 'pointer';
@@ -1173,12 +1177,14 @@ const game = {
         closeScreenOverlay('boss-mode-screen', true);
 
         let pool;
+        // 현재 데이터셋의 rawData 사용 (게임 데이터 변경 시 최신 데이터 반영)
+        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
         // normalize day and strictly match numeric day values to avoid cross-day leakage
         if (day === 'all' || day === 'boss') {
-            pool = rawData;
+            pool = currentRawData;
         } else {
             const dayNum = Number(day);
-            pool = rawData.filter(i => Number(i.day) === dayNum);
+            pool = currentRawData.filter(i => Number(i.day) === dayNum);
         }
         console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', (pool && pool.length));
         if (pool.length < 4) { alert("데이터 부족"); location.reload(); return; }
@@ -1191,7 +1197,9 @@ const game = {
         game.subjectiveCorrect = 0;
 
         if (mode === 'boss') {
-            game.deck = game.shuffle([...rawData]);
+            // 현재 데이터셋의 rawData 사용
+            const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+            game.deck = game.shuffle([...currentRawData]);
             game.list = [];
         } else if (mode === 'battle') {
             // Battle Mode: Question type depends on user selection
@@ -1587,7 +1595,7 @@ const game = {
                 }
                 
                 // 오답일 때 정답 표시
-                game.showCorrectAnswer(game.currentAns);
+                game.showCorrectAnswer(game.currentAns, 'subjective');
                 game.showFloatText("GAME OVER", 'red');
                 
                 setTimeout(() => {
@@ -1620,11 +1628,15 @@ const game = {
             db.subGold(penalty);
             game.showFloatText(`-${penalty} G`, 'red');
 
-            if (btnElement) btnElement.style.background = "#D32F2F";
-            else document.getElementById('boss-input').style.borderColor = "#D32F2F";
+            if (btnElement) {
+                btnElement.style.background = "#D32F2F";
+            } else {
+                document.getElementById('boss-input').style.borderColor = "#D32F2F";
+            }
 
-            // 오답일 때 정답 표시
-            game.showCorrectAnswer(game.currentAns);
+            // 오답일 때 정답 표시 (문제 타입에 따라 다르게 처리)
+            const questionType = document.getElementById('boss-box').style.display === 'flex' ? 'subjective' : 'objective';
+            game.showCorrectAnswer(game.currentAns, questionType);
 
             // IMPORTANT: Ensure timeout triggers next level even if animation fails
             setTimeout(() => { game.idx++; game.nextLevel(); }, 2500);
@@ -1692,23 +1704,32 @@ const game = {
         setTimeout(() => el.classList.remove('float-up'), 1000);
     },
 
-    showCorrectAnswer: (answer) => {
-        const el = document.getElementById('q-text');
-        const originalText = el.innerText;
-        
-        // 정답을 표시 (빨간색 + 강조)
-        el.style.color = '#FF5252';
-        el.style.fontSize = '26px';
-        el.style.fontWeight = 'bold';
-        el.innerText = `정답: ${answer}`;
-        
-        // 2초 후 원래 상태로 복구
-        setTimeout(() => {
-            el.style.color = '';
-            el.style.fontSize = '';
-            el.style.fontWeight = '';
-            el.innerText = originalText;
-        }, 2000);
+    showCorrectAnswer: (answer, questionType = 'objective') => {
+        if (questionType === 'subjective') {
+            // 주관식: 힌트 영역의 _를 정답으로 채우기
+            const bossHint = document.getElementById('boss-hint');
+            if (bossHint) {
+                // 현재 힌트 텍스트를 정답으로 교체
+                bossHint.innerText = answer;
+                bossHint.style.color = '#4CAF50'; // 초록색으로 강조
+                bossHint.style.fontWeight = 'bold';
+                bossHint.style.fontSize = '24px';
+            }
+        } else {
+            // 객관식: 보기 버튼 중 정답 버튼 강조
+            const optionBtns = document.querySelectorAll('.option-btn');
+            optionBtns.forEach(btn => {
+                if (btn.innerText.trim() === answer.trim()) {
+                    // 정답 버튼 강조
+                    btn.style.background = '#4CAF50'; // 초록색 배경
+                    btn.style.color = '#FFFFFF';
+                    btn.style.border = '3px solid #2E7D32'; // 진한 초록색 테두리
+                    btn.style.fontWeight = 'bold';
+                    btn.style.transform = 'scale(1.05)';
+                    btn.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.5)';
+                }
+            });
+        }
     },
 
     startTimer: () => {
@@ -1745,7 +1766,9 @@ const game = {
     },
 
     getDistractors: (correct, key) => {
-        const source = (typeof decoyWords !== 'undefined' && decoyWords.length > 0) ? rawData.concat(decoyWords) : rawData;
+        // 현재 데이터셋의 rawData 사용
+        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+        const source = (typeof decoyWords !== 'undefined' && decoyWords.length > 0) ? currentRawData.concat(decoyWords) : currentRawData;
         const distractors = [];
         const shuffled = game.shuffle([...source]);
         for (let i = 0; i < shuffled.length; i++) {
@@ -1760,7 +1783,9 @@ const game = {
         }
         // Ensure we have 3 distractors, even if we have to grab randomly
         while (distractors.length < 3) {
-            const emergencyDistractor = game.shuffle([...rawData])[0];
+            // 현재 데이터셋의 rawData 사용
+            const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+            const emergencyDistractor = game.shuffle([...currentRawData])[0];
             if (emergencyDistractor && emergencyDistractor[key] && emergencyDistractor[key] !== correct) {
                  if (!distractors.includes(emergencyDistractor[key])) {
                     distractors.push(emergencyDistractor[key]);
@@ -2115,6 +2140,129 @@ function initSelections() {
     }
 }
 
+// Practice Memorization Mode - 단어 암기 모드
+const practiceMemorization = {
+    words: [],
+    currentIndex: 0,
+    currentDay: null,
+    
+    start: (day) => {
+        console.log('[practiceMemorization.start] day=', day);
+        practiceMemorization.currentDay = day;
+        practiceMemorization.currentIndex = 0;
+        
+        // story-screen 닫기
+        closeScreenOverlay('practice-mode-screen', true);
+        
+        // 단어 목록 로드
+        let pool;
+        // 현재 데이터셋의 rawData 사용
+        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+        if (day === 'all') {
+            pool = currentRawData;
+        } else {
+            const dayNum = Number(day);
+            pool = currentRawData.filter(i => Number(i.day) === dayNum);
+        }
+        
+        if (pool.length === 0) {
+            alert("데이터가 없습니다.");
+            return;
+        }
+        
+        // 단어 목록 저장
+        practiceMemorization.words = [...pool];
+        
+        // 암기 화면 표시
+        setTimeout(() => {
+            const memorizationScreen = document.getElementById('practice-memorization-screen');
+            if (memorizationScreen) {
+                memorizationScreen.style.display = 'flex';
+                history.pushState({ screen: 'practice-memorization' }, '', window.location.href);
+                
+                // 첫 번째 단어 표시
+                practiceMemorization.showWord(0);
+            }
+        }, 400);
+    },
+    
+    showWord: (index) => {
+        if (index < 0 || index >= practiceMemorization.words.length) {
+            return;
+        }
+        
+        practiceMemorization.currentIndex = index;
+        const word = practiceMemorization.words[index];
+        
+        // Day 정보 표시
+        const dayInfoEl = document.getElementById('practice-memorization-day-info');
+        if (dayInfoEl) {
+            const dayLabel = practiceMemorization.currentDay === 'all' 
+                ? '배틀 모드' 
+                : `Day ${practiceMemorization.currentDay}`;
+            dayInfoEl.textContent = dayLabel;
+        }
+        
+        // 단어 번호 표시
+        const counterEl = document.getElementById('practice-word-counter');
+        if (counterEl) {
+            counterEl.textContent = `${index + 1} / ${practiceMemorization.words.length}`;
+        }
+        
+        // 영어 단어 표시
+        const wordTextEl = document.getElementById('practice-word-text');
+        if (wordTextEl) {
+            wordTextEl.textContent = word.word || 'N/A';
+        }
+        
+        // 한글 뜻 표시
+        const meaningTextEl = document.getElementById('practice-meaning-text');
+        if (meaningTextEl) {
+            meaningTextEl.textContent = word.meaning || 'N/A';
+        }
+        
+        // 영문 설명 표시
+        const explanationTextEl = document.getElementById('practice-explanation-text');
+        if (explanationTextEl) {
+            explanationTextEl.textContent = word.englishExplanation || 'N/A';
+        }
+        
+        // 버튼 상태 업데이트
+        const prevBtn = document.getElementById('practice-prev-btn');
+        const nextBtn = document.getElementById('practice-next-btn');
+        
+        if (prevBtn) {
+            prevBtn.disabled = index === 0;
+        }
+        if (nextBtn) {
+            nextBtn.disabled = index === practiceMemorization.words.length - 1;
+        }
+    },
+    
+    prevWord: () => {
+        if (practiceMemorization.currentIndex > 0) {
+            practiceMemorization.showWord(practiceMemorization.currentIndex - 1);
+        }
+    },
+    
+    nextWord: () => {
+        if (practiceMemorization.currentIndex < practiceMemorization.words.length - 1) {
+            practiceMemorization.showWord(practiceMemorization.currentIndex + 1);
+        }
+    },
+    
+    exit: () => {
+        const memorizationScreen = document.getElementById('practice-memorization-screen');
+        if (memorizationScreen) {
+            closeScreenOverlay('practice-memorization-screen', true);
+            setTimeout(() => {
+                openScreenOverlay('start-screen', false);
+                history.pushState(null, '', window.location.href);
+            }, 400);
+        }
+    }
+};
+
 // Open practice mode selection popup
 function openPracticePopup() {
     const popup = document.getElementById('practice-mode-popup');
@@ -2130,15 +2278,15 @@ function openPracticePopup() {
         popupDaySelect.style.display = ''; // Show day selection for practice mode
     }
     
+    // Practice 모드는 암기 모드이므로 난이도 선택 숨기기
+    if (popupCountSelect) {
+        popupCountSelect.style.display = 'none';
+    }
+    
     // Restore last selected values
     const lastDay = db.lastSelectedDay || 'all';
     if (popupDaySelect && Array.from(popupDaySelect.options).some(o => o.value === String(lastDay))) {
         popupDaySelect.value = lastDay;
-    }
-    
-    const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
-    if (popupCountSelect) {
-        popupCountSelect.value = String(lastCount);
     }
     
     popup.style.display = 'flex';
@@ -2815,6 +2963,29 @@ window.onload = () => {
         });
     }
     
+    // Practice Memorization Mode button event listeners
+    const practicePrevBtn = document.getElementById('practice-prev-btn');
+    const practiceNextBtn = document.getElementById('practice-next-btn');
+    const practiceExitBtn = document.getElementById('practice-exit-btn');
+    
+    if (practicePrevBtn) {
+        practicePrevBtn.addEventListener('click', () => {
+            practiceMemorization.prevWord();
+        });
+    }
+    
+    if (practiceNextBtn) {
+        practiceNextBtn.addEventListener('click', () => {
+            practiceMemorization.nextWord();
+        });
+    }
+    
+    if (practiceExitBtn) {
+        practiceExitBtn.addEventListener('click', () => {
+            practiceMemorization.exit();
+        });
+    }
+    
     // Battle Setting Popup event listeners
     const battleStartBtn = document.getElementById('battle-mode-setting-popup-start-btn');
     const battleCancelBtn = document.getElementById('battle-mode-setting-popup-cancel-btn');
@@ -3106,13 +3277,13 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('practice-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/boss_battle_popup.webp';
+                storyImg.src = 'images/main/boss_mode_popup.webp';
             }
             
             // 버튼 초기화
             const storyStartBtn = document.getElementById('practice-mode-start-btn');
             if (storyStartBtn) {
-                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.add('boss-mode-btn');
                 storyStartBtn.classList.remove('practice-btn');
                 storyStartBtn.style.pointerEvents = '';
                 storyStartBtn.onclick = null;
@@ -3129,13 +3300,13 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('battle-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/boss_battle_popup.webp';
+                storyImg.src = 'images/main/boss_mode_popup.webp';
             }
             
             // 버튼 초기화
             const storyStartBtn = document.getElementById('battle-mode-start-btn');
             if (storyStartBtn) {
-                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.add('boss-mode-btn');
                 storyStartBtn.classList.remove('practice-btn');
                 storyStartBtn.style.pointerEvents = '';
                 storyStartBtn.onclick = null;
@@ -3152,13 +3323,13 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('boss-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/main/boss_battle_popup.webp';
+                storyImg.src = 'images/main/boss_mode_popup.webp';
             }
             
             // 버튼 초기화
             const storyStartBtn = document.getElementById('boss-mode-start-btn');
             if (storyStartBtn) {
-                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.add('boss-mode-btn');
                 storyStartBtn.classList.remove('practice-btn');
                 storyStartBtn.style.pointerEvents = '';
                 storyStartBtn.onclick = null;

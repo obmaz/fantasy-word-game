@@ -38,7 +38,7 @@ fantasy-word-game/
 │       │   ├── monster_1.webp         # Monster sprite 1
 │       │   ├── monster_2.webp         # Monster sprite 2
 │       │   ├── monster_3.webp          # Monster sprite 3
-│       │   ├── boss_battle_popup.webp # Boss battle story screen
+│       │   ├── boss_mode_popup.webp # Story screen background (used for all modes: practice, battle, boss)
 │       │   ├── battle_mode_select_popup.webp    # Battle mode settings popup
 │       │   └── practice_mode_select_popup .webp # Practice mode settings popup
 │       ├── title/                     # Title screen images
@@ -47,9 +47,9 @@ fantasy-word-game/
 │       │   ├── title_header_2.webp    # Title header image 2
 │       │   ├── title_header_3.webp    # Title header image 3
 │       │   ├── title_header_4.webp    # Title header image 4
-│       │   ├── practice_btn.webp      # Practice mode button
+│       │   ├── practice_mode_btn.webp      # Practice mode button
 │       │   ├── battle_mode_btn.webp   # Battle mode button
-│       │   ├── boss_rush_btn.webp     # Boss mode button
+│       │   ├── boss_mode_btn.webp     # Boss mode button
 │       │   ├── shop_btn.webp          # Shop button
 │       │   ├── inventory_btn.webp     # Inventory button
 │       │   ├── statistics_btn.webp    # Statistics button
@@ -168,7 +168,7 @@ fantasy-word-game/
 - Test your knowledge across all learned words
 - Configurable question types:
   - **Objective (객관식)**: Only multiple choice questions
-  - **Mixed (혼합형)**: Combination of multiple choice and typing
+  - **Mixed (혼합형)**: Combination of multiple choice and typing (50% each, alternating)
   - **Subjective (주관식)**: Only typing questions (boss battles)
 - More challenging as you don't know what's coming next
 
@@ -179,7 +179,11 @@ fantasy-word-game/
 - No limit on how many bosses you can defeat
 
 ## Boss Battles
-- At least 20% of questions in each game are boss battles, with a minimum of one boss battle per game
+- **Practice Mode**: At least 20% of questions are boss battles, with a minimum of one boss battle per game
+- **Battle Mode**: Boss battle frequency depends on question type:
+  - Objective mode: No boss battles (all multiple choice)
+  - Mixed mode: 50% boss battles (alternating with multiple choice)
+  - Subjective mode: All questions are boss battles
 - Boss battles require typing the answer instead of choosing from multiple options
 - Defeating a boss gives higher gold rewards than normal monsters
 - In Boss Mode, all questions are boss battles

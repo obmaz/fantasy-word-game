@@ -11,7 +11,7 @@
         while (id <= 10) {
             const nameKey = `gameDataName_${id}`;
             const storiesKey = `storiesData_${id}`;
-            const rawDataKey = `rawDataData_${id}`;
+            const rawDataKey = `rawData_${id}`;
             
             // gameDataName이 있거나, storiesData와 rawData가 모두 있으면 추가
             if (typeof window[nameKey] !== 'undefined' || 
@@ -38,7 +38,7 @@
     // 데이터셋 로드 함수
     function loadDataSet(dataSetId) {
         const storiesKey = `storiesData_${dataSetId}`;
-        const rawDataKey = `rawDataData_${dataSetId}`;
+        const rawDataKey = `rawData_${dataSetId}`;
         const nameKey = `gameDataName_${dataSetId}`;
 
         if (typeof window[storiesKey] === 'undefined' || typeof window[rawDataKey] === 'undefined') {

@@ -89,7 +89,7 @@ if (typeof dayCatalog.validateCoverage === 'undefined') {
   };
 }
 
-// data-loader.js가 먼저 로드되어 window.rawDataData를 설정해야 함
+// data-loader.js가 먼저 로드되어 window.rawDataData를 설정해야 함 (rawData_1 또는 rawData_2에서 로드됨)
 const rawData = typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : [];
 console.log('[words.js] rawData loaded:', rawData ? rawData.length : 0, 'items');
 

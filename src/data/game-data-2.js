@@ -210,7 +210,7 @@ window.storiesData_2 = {
   }
 };
 
-window.rawDataData_2 = [
+window.rawData_2 = [
   // Day 01: 가족 및 관계
   // 출처: 국립국어원 표준국어대사전 (https://stdict.korean.go.kr/), Oxford Learner's Dictionary (https://www.oxfordlearnersdictionaries.com/)
   { day: 1, word: "generation", meaning: "세대, 1대; 같은 시대의 사람들", koreanExplanation: "부모와 자식 사이의 한 세대, 또는 같은 시대에 태어난 사람들", englishExplanation: "all the people who were born at about the same time; a single stage in a family history" },
@@ -1199,355 +1199,363 @@ window.rawDataData_2 = [
 ];
 
 window.decoyWordsData_2 = [
-  // Day 1: 비슷한 글자지만 다른 뜻
-  { day: 1, word: "complimentary", meaning: "무료의, 칭찬하는" },
-  { day: 1, word: "accept", meaning: "받아들이다" },
-  { day: 1, word: "effect", meaning: "효과" },
-  { day: 1, word: "dessert", meaning: "디저트" },
-  { day: 1, word: "principle", meaning: "원칙" },
-  { day: 1, word: "stationery", meaning: "문구류" },
-  { day: 1, word: "lose", meaning: "잃다" },
-  { day: 1, word: "advice", meaning: "조언" },
-  { day: 1, word: "breath", meaning: "숨" },
-  { day: 1, word: "nature", meaning: "자연" },
+  // Day 1: 비슷한 글자지만 다른 뜻 (가족 및 관계)
+  { day: 1, word: "general", meaning: "일반적인" }, // generation과 비슷
+  { day: 1, word: "support", meaning: "지지하다" }, // supporter와 비슷
+  { day: 1, word: "piece", meaning: "조각" }, // niece와 비슷
+  { day: 1, word: "engaged", meaning: "약혼한" }, // engage와 비슷
+  { day: 1, word: "celebration", meaning: "축하" }, // celebrate와 비슷
+  { day: 1, word: "annual", meaning: "연간의" }, // anniversary와 비슷
+  { day: 1, word: "fatal", meaning: "치명적인" }, // fate와 비슷
+  { day: 1, word: "advice", meaning: "조언" }, // advise와 비슷
+  { day: 1, word: "lifelike", meaning: "생생한" }, // lifetime과 비슷
+  { day: 1, word: "elderly", meaning: "노인" }, // elder와 비슷
   
-  // Day 2: 비슷한 글자지만 다른 뜻
-  { day: 2, word: "disappear", meaning: "사라지다" },
-  { day: 2, word: "personal", meaning: "개인의" },
-  { day: 2, word: "general", meaning: "일반적인" },
-  { day: 2, word: "expression", meaning: "표현" },
-  { day: 2, word: "patient", meaning: "환자, 인내심 있는" },
-  { day: 2, word: "stationary", meaning: "고정된" },
-  { day: 2, word: "except", meaning: "제외하고" },
-  { day: 2, word: "affect", meaning: "영향을 주다" },
-  { day: 2, word: "desert", meaning: "사막" },
-  { day: 2, word: "principal", meaning: "교장, 주요한" },
+  // Day 2: 비슷한 글자지만 다른 뜻 (성격 및 외모)
+  { day: 2, word: "shaped", meaning: "모양을 한" }, // shape와 비슷
+  { day: 2, word: "appear", meaning: "나타나다" }, // appearance와 비슷
+  { day: 2, word: "person", meaning: "사람" }, // personality와 비슷
+  { day: 2, word: "genderless", meaning: "성별 없는" }, // gender와 비슷
+  { day: 2, word: "impress", meaning: "인상을 주다" }, // impression과 비슷
+  { day: 2, word: "type", meaning: "유형" }, // typical과 비슷
+  { day: 2, word: "capability", meaning: "능력" }, // capable과 비슷
+  { day: 2, word: "attract", meaning: "끌다" }, // attractive와 비슷
+  { day: 2, word: "activity", meaning: "활동" }, // active와 비슷
+  { day: 2, word: "passivity", meaning: "수동성" }, // passive와 비슷
   
-  // Day 3: 비슷한 글자지만 다른 뜻
-  { day: 3, word: "emotion", meaning: "감정" },
-  { day: 3, word: "motion", meaning: "움직임" },
-  { day: 3, word: "notion", meaning: "개념" },
-  { day: 3, word: "devotion", meaning: "헌신" },
-  { day: 3, word: "promotion", meaning: "승진" },
-  { day: 3, word: "depression", meaning: "우울" },
-  { day: 3, word: "impression", meaning: "인상" },
-  { day: 3, word: "expression", meaning: "표현" },
-  { day: 3, word: "compression", meaning: "압축" },
-  { day: 3, word: "oppression", meaning: "억압" },
+  // Day 3: 비슷한 글자지만 다른 뜻 (감정)
+  { day: 3, word: "moody", meaning: "기분이 변덕스러운" }, // mood와 비슷
+  { day: 3, word: "sorrowful", meaning: "슬픈" }, // sorrow와 비슷
+  { day: 3, word: "emotional", meaning: "감정적인" }, // emotion과 비슷
+  { day: 3, word: "anxiety", meaning: "불안" }, // anxious와 비슷
+  { day: 3, word: "shame", meaning: "수치" }, // ashamed와 비슷
+  { day: 3, word: "depress", meaning: "우울하게 하다" }, // depression과 비슷
+  { day: 3, word: "weepy", meaning: "눈물이 많은" }, // weep와 비슷
+  { day: 3, word: "annoyance", meaning: "짜증" }, // annoy와 비슷
+  { day: 3, word: "relief", meaning: "안도" }, // relieve와 비슷
+  { day: 3, word: "amazement", meaning: "놀라움" }, // amaze와 비슷
   
-  // Day 4: 비슷한 글자지만 다른 뜻
-  { day: 4, word: "flavor", meaning: "풍미" },
-  { day: 4, word: "favor", meaning: "호의" },
-  { day: 4, word: "savor", meaning: "맛보다" },
-  { day: 4, word: "behavior", meaning: "행동" },
-  { day: 4, word: "labor", meaning: "노동" },
-  { day: 4, word: "neighbor", meaning: "이웃" },
-  { day: 4, word: "harbor", meaning: "항구" },
-  { day: 4, word: "honor", meaning: "명예" },
-  { day: 4, word: "humor", meaning: "유머" },
-  { day: 4, word: "rumor", meaning: "소문" },
+  // Day 4: 비슷한 글자지만 다른 뜻 (음식 및 요리)
+  { day: 4, word: "fiberless", meaning: "섬유질 없는" }, // fiber와 비슷
+  { day: 4, word: "container", meaning: "용기" }, // contain과 비슷
+  { day: 4, word: "instance", meaning: "예" }, // instant와 비슷
+  { day: 4, word: "peelable", meaning: "껍질 벗길 수 있는" }, // peel과 비슷
+  { day: 4, word: "nourishment", meaning: "영양" }, // nourish와 비슷
+  { day: 4, word: "chopped", meaning: "썬" }, // chop과 비슷
+  { day: 4, word: "grinder", meaning: "분쇄기" }, // grind와 비슷
+  { day: 4, word: "roasted", meaning: "구운" }, // roast와 비슷
+  { day: 4, word: "rot", meaning: "썩다" }, // rotten과 비슷
+  { day: 4, word: "cuisines", meaning: "요리법들" }, // cuisine과 비슷
   
-  // Day 5: 비슷한 글자지만 다른 뜻
-  { day: 5, word: "costume", meaning: "의상" },
-  { day: 5, word: "custom", meaning: "관습" },
-  { day: 5, word: "customer", meaning: "고객" },
-  { day: 5, word: "accustom", meaning: "익숙하게 하다" },
-  { day: 5, word: "accustomed", meaning: "익숙한" },
-  { day: 5, word: "fabric", meaning: "천" },
-  { day: 5, word: "fabricate", meaning: "조작하다" },
-  { day: 5, word: "fable", meaning: "우화" },
-  { day: 5, word: "table", meaning: "테이블" },
-  { day: 5, word: "stable", meaning: "안정적인" },
+  // Day 5: 비슷한 글자지만 다른 뜻 (의복 및 패션)
+  { day: 5, word: "uniformed", meaning: "제복을 입은" }, // uniform과 비슷
+  { day: 5, word: "costumes", meaning: "의상들" }, // costume과 비슷
+  { day: 5, word: "collared", meaning: "깃이 있는" }, // collar와 비슷
+  { day: 5, word: "threaded", meaning: "실로 꿰인" }, // thread와 비슷
+  { day: 5, word: "lengthy", meaning: "긴" }, // length와 비슷
+  { day: 5, word: "casually", meaning: "캐주얼하게" }, // casual과 비슷
+  { day: 5, word: "fashionable", meaning: "유행하는" }, // fashion과 비슷
+  { day: 5, word: "loosen", meaning: "느슨하게 하다" }, // loose와 비슷
+  { day: 5, word: "striped", meaning: "줄무늬가 있는" }, // stripe와 비슷
+  { day: 5, word: "comfortable", meaning: "편안한" }, // comfort와 비슷
   
-  // Day 6: 비슷한 글자지만 다른 뜻
-  { day: 6, word: "appliance", meaning: "가전제품" },
-  { day: 6, word: "compliance", meaning: "준수" },
-  { day: 6, word: "alliance", meaning: "동맹" },
-  { day: 6, word: "reliance", meaning: "의존" },
-  { day: 6, word: "defiance", meaning: "도전" },
-  { day: 6, word: "spacious", meaning: "넓은" },
-  { day: 6, word: "specious", meaning: "그럴듯한" },
-  { day: 6, word: "precious", meaning: "소중한" },
-  { day: 6, word: "conscious", meaning: "의식하는" },
-  { day: 6, word: "conscience", meaning: "양심" },
+  // Day 6: 비슷한 글자지만 다른 뜻 (주거 및 생활)
+  { day: 6, word: "cottages", meaning: "작은 집들" }, // cottage와 비슷
+  { day: 6, word: "pricelessly", meaning: "값없이" }, // priceless와 비슷
+  { day: 6, word: "tapped", meaning: "탭한" }, // tap과 비슷
+  { day: 6, word: "alarmed", meaning: "경보가 울린" }, // alarm과 비슷
+  { day: 6, word: "messy", meaning: "엉망인" }, // mess와 비슷
+  { day: 6, word: "usually", meaning: "보통" }, // usual과 비슷
+  { day: 6, word: "routinely", meaning: "일상적으로" }, // routine과 비슷
+  { day: 6, word: "reliable", meaning: "신뢰할 수 있는" }, // rely와 비슷
+  { day: 6, word: "dusty", meaning: "먼지투성이인" }, // dust와 비슷
+  { day: 6, word: "spreadable", meaning: "펼칠 수 있는" }, // spread와 비슷
   
-  // Day 7: 비슷한 글자지만 다른 뜻
-  { day: 7, word: "academic", meaning: "학업의" },
-  { day: 7, word: "academy", meaning: "학원" },
-  { day: 7, word: "epidemic", meaning: "전염병" },
-  { day: 7, word: "pandemic", meaning: "대유행" },
-  { day: 7, word: "demonic", meaning: "악마의" },
-  { day: 7, word: "principle", meaning: "원칙" },
-  { day: 7, word: "principal", meaning: "교장" },
-  { day: 7, word: "discipline", meaning: "규율" },
-  { day: 7, word: "disciple", meaning: "제자" },
-  { day: 7, word: "multiple", meaning: "다수의" },
+  // Day 7: 비슷한 글자지만 다른 뜻 (학문 및 연구)
+  { day: 7, word: "insights", meaning: "통찰력들" }, // insight와 비슷
+  { day: 7, word: "academically", meaning: "학문적으로" }, // academic과 비슷
+  { day: 7, word: "essential", meaning: "필수적인" }, // essence와 비슷
+  { day: 7, word: "intelligent", meaning: "지능적인" }, // intelligence와 비슷
+  { day: 7, word: "solution", meaning: "해결책" }, // solve와 비슷
+  { day: 7, word: "inspiration", meaning: "영감" }, // inspire와 비슷
+  { day: 7, word: "reference", meaning: "참고" }, // refer와 비슷
+  { day: 7, word: "reviewer", meaning: "비평가" }, // review와 비슷
+  { day: 7, word: "linguistic", meaning: "언어학의" }, // linguistics와 비슷
+  { day: 7, word: "improvement", meaning: "개선" }, // improve와 비슷
   
-  // Day 8: 비슷한 글자지만 다른 뜻
-  { day: 8, word: "principal", meaning: "교장" },
-  { day: 8, word: "principle", meaning: "원칙" },
-  { day: 8, word: "aisle", meaning: "통로" },
-  { day: 8, word: "isle", meaning: "섬" },
-  { day: 8, word: "island", meaning: "섬" },
-  { day: 8, word: "absent", meaning: "결석한" },
-  { day: 8, word: "present", meaning: "현재의, 선물" },
-  { day: 8, word: "presence", meaning: "존재" },
-  { day: 8, word: "essence", meaning: "본질" },
-  { day: 8, word: "absence", meaning: "부재" },
+  // Day 8: 비슷한 글자지만 다른 뜻 (학교 생활)
+  { day: 8, word: "education", meaning: "교육" }, // educate와 비슷
+  { day: 8, word: "instruction", meaning: "지시" }, // instruct와 비슷
+  { day: 8, word: "lecturer", meaning: "강사" }, // lecture와 비슷
+  { day: 8, word: "due date", meaning: "기한" }, // due와 비슷
+  { day: 8, word: "termly", meaning: "학기별로" }, // term과 비슷
+  { day: 8, word: "examination", meaning: "시험" }, // examine와 비슷
+  { day: 8, word: "awarded", meaning: "수상한" }, // award와 비슷
+  { day: 8, word: "multiplication", meaning: "곱셈" }, // multiply와 비슷
+  { day: 8, word: "calculation", meaning: "계산" }, // calculate와 비슷
+  { day: 8, word: "memorization", meaning: "암기" }, // memorize와 비슷
   
-  // Day 9: 비슷한 글자지만 다른 뜻
-  { day: 9, word: "personnel", meaning: "전 직원" },
-  { day: 9, word: "personal", meaning: "개인의" },
-  { day: 9, word: "personality", meaning: "성격" },
-  { day: 9, word: "personify", meaning: "의인화하다" },
-  { day: 9, word: "person", meaning: "사람" },
-  { day: 9, word: "counselor", meaning: "상담역" },
-  { day: 9, word: "council", meaning: "의회" },
-  { day: 9, word: "counsel", meaning: "조언" },
-  { day: 9, word: "cancel", meaning: "취소하다" },
-  { day: 9, word: "cancer", meaning: "암" },
+  // Day 9: 비슷한 글자지만 다른 뜻 (직업 및 업무)
+  { day: 9, word: "manufacturing", meaning: "제조" }, // manufacture와 비슷
+  { day: 9, word: "management", meaning: "경영" }, // manage와 비슷
+  { day: 9, word: "operation", meaning: "운영" }, // operate와 비슷
+  { day: 9, word: "expertise", meaning: "전문성" }, // expert와 비슷
+  { day: 9, word: "seniority", meaning: "선임" }, // senior와 비슷
+  { day: 9, word: "psychology", meaning: "심리학" }, // psychologist와 비슷
+  { day: 9, word: "personally", meaning: "개인적으로" }, // personnel과 비슷
+  { day: 9, word: "barbershop", meaning: "이발소" }, // barber와 비슷
+  { day: 9, word: "counseling", meaning: "상담" }, // counselor와 비슷
+  { day: 9, word: "rewarding", meaning: "보람 있는" }, // reward와 비슷
   
-  // Day 10: 비슷한 글자지만 다른 뜻
-  { day: 10, word: "commerce", meaning: "상업" },
-  { day: 10, word: "commence", meaning: "시작하다" },
-  { day: 10, word: "comment", meaning: "논평" },
-  { day: 10, word: "commend", meaning: "칭찬하다" },
-  { day: 10, word: "command", meaning: "명령" },
-  { day: 10, word: "receipt", meaning: "영수증" },
-  { day: 10, word: "receive", meaning: "받다" },
-  { day: 10, word: "receiver", meaning: "수신자" },
-  { day: 10, word: "deceit", meaning: "기만" },
-  { day: 10, word: "deceive", meaning: "속이다" },
+  // Day 10: 비슷한 글자지만 다른 뜻 (경제 및 비즈니스)
+  { day: 10, word: "economic", meaning: "경제의" }, // economy와 비슷
+  { day: 10, word: "commercial", meaning: "상업의" }, // commerce와 비슷
+  { day: 10, word: "industrial", meaning: "산업의" }, // industry와 비슷
+  { day: 10, word: "advertisement", meaning: "광고" }, // advertise와 비슷
+  { day: 10, word: "custom", meaning: "관습" }, // customer와 비슷
+  { day: 10, word: "affordable", meaning: "감당할 수 있는" }, // afford와 비슷
+  { day: 10, word: "purchaser", meaning: "구매자" }, // purchase와 비슷
+  { day: 10, word: "luxurious", meaning: "사치스러운" }, // luxury와 비슷
+  { day: 10, word: "installation", meaning: "설치" }, // install과 비슷
+  { day: 10, word: "guaranteed", meaning: "보장된" }, // guarantee와 비슷
   
-  // Day 11: 비슷한 글자지만 다른 뜻
-  { day: 11, word: "official", meaning: "공식적인" },
-  { day: 11, word: "officer", meaning: "장교" },
-  { day: 11, word: "office", meaning: "사무실" },
-  { day: 11, word: "officiate", meaning: "집행하다" },
-  { day: 11, word: "officious", meaning: "참견하는" },
-  { day: 11, word: "election", meaning: "선거" },
-  { day: 11, word: "selection", meaning: "선택" },
-  { day: 11, word: "collection", meaning: "수집" },
-  { day: 11, word: "reflection", meaning: "반사" },
-  { day: 11, word: "connection", meaning: "연결" },
+  // Day 11: 비슷한 글자지만 다른 뜻 (사회 및 정치)
+  { day: 11, word: "communities", meaning: "공동체들" }, // community와 비슷
+  { day: 11, word: "citizenship", meaning: "시민권" }, // citizen과 비슷
+  { day: 11, word: "officially", meaning: "공식적으로" }, // official과 비슷
+  { day: 11, word: "elect", meaning: "선출하다" }, // election과 비슷
+  { day: 11, word: "voter", meaning: "유권자" }, // vote와 비슷
+  { day: 11, word: "candidacy", meaning: "후보자격" }, // candidate와 비슷
+  { day: 11, word: "govern", meaning: "통치하다" }, // government와 비슷
+  { day: 11, word: "democratic", meaning: "민주주의의" }, // democracy와 비슷
+  { day: 11, word: "policies", meaning: "정책들" }, // policy와 비슷
+  { day: 11, word: "liberate", meaning: "해방하다" }, // liberty와 비슷
   
-  // Day 12: 비슷한 글자지만 다른 뜻
-  { day: 12, word: "legal", meaning: "법률적인" },
-  { day: 12, word: "illegal", meaning: "불법의" },
-  { day: 12, word: "legible", meaning: "읽을 수 있는" },
-  { day: 12, word: "eligible", meaning: "자격이 있는" },
-  { day: 12, word: "intelligible", meaning: "이해할 수 있는" },
-  { day: 12, word: "innocent", meaning: "무죄의" },
-  { day: 12, word: "ignorant", meaning: "무지한" },
-  { day: 12, word: "arrogant", meaning: "오만한" },
-  { day: 12, word: "elegant", meaning: "우아한" },
-  { day: 12, word: "extravagant", meaning: "사치스러운" },
+  // Day 12: 비슷한 글자지만 다른 뜻 (법 및 질서)
+  { day: 12, word: "legally", meaning: "법적으로" }, // legal과 비슷
+  { day: 12, word: "forbidden", meaning: "금지된" }, // forbid와 비슷
+  { day: 12, word: "obedience", meaning: "복종" }, // obey와 비슷
+  { day: 12, word: "violation", meaning: "위반" }, // violate와 비슷
+  { day: 12, word: "criminal", meaning: "범죄자" }, // crime과 비슷
+  { day: 12, word: "guilt", meaning: "죄" }, // guilty와 비슷
+  { day: 12, word: "innocence", meaning: "무죄" }, // innocent와 비슷
+  { day: 12, word: "witnessed", meaning: "목격한" }, // witness와 비슷
+  { day: 12, word: "suspicion", meaning: "의심" }, // suspect와 비슷
+  { day: 12, word: "arrested", meaning: "체포된" }, // arrest와 비슷
   
-  // Day 13: 비슷한 글자지만 다른 뜻
-  { day: 13, word: "broadcast", meaning: "방송하다" },
-  { day: 13, word: "cast", meaning: "던지다" },
-  { day: 13, word: "forecast", meaning: "예보" },
-  { day: 13, word: "telecast", meaning: "텔레비전 방송" },
-  { day: 13, word: "podcast", meaning: "팟캐스트" },
-  { day: 13, word: "access", meaning: "접속" },
-  { day: 13, word: "excess", meaning: "과다" },
-  { day: 13, word: "success", meaning: "성공" },
-  { day: 13, word: "process", meaning: "과정" },
-  { day: 13, word: "recess", meaning: "휴식" },
+  // Day 13: 비슷한 글자지만 다른 뜻 (미디어 및 커뮤니케이션)
+  { day: 13, word: "broadcasting", meaning: "방송" }, // broadcast와 비슷
+  { day: 13, word: "journalist", meaning: "기자" }, // journalism과 비슷
+  { day: 13, word: "pressed", meaning: "누른" }, // press와 비슷
+  { day: 13, word: "articles", meaning: "기사들" }, // article과 비슷
+  { day: 13, word: "publisher", meaning: "출판사" }, // publish와 비슷
+  { day: 13, word: "editor", meaning: "편집자" }, // edit와 비슷
+  { day: 13, word: "critic", meaning: "비평가" }, // criticize와 비슷
+  { day: 13, word: "commentary", meaning: "논평" }, // comment와 비슷
+  { day: 13, word: "interviewer", meaning: "면접관" }, // interview와 비슷
+  { day: 13, word: "channeled", meaning: "채널을 통한" }, // channel과 비슷
   
-  // Day 14: 비슷한 글자지만 다른 뜻
-  { day: 14, word: "exhibition", meaning: "전시회" },
-  { day: 14, word: "inhibition", meaning: "억제" },
-  { day: 14, word: "prohibition", meaning: "금지" },
-  { day: 14, word: "addition", meaning: "추가" },
-  { day: 14, word: "edition", meaning: "판" },
-  { day: 14, word: "sculpture", meaning: "조각" },
-  { day: 14, word: "sculptor", meaning: "조각가" },
-  { day: 14, word: "sculpt", meaning: "조각하다" },
-  { day: 14, word: "sculpted", meaning: "조각된" },
-  { day: 14, word: "sculpting", meaning: "조각하기" },
+  // Day 14: 비슷한 글자지만 다른 뜻 (예술 및 여가)
+  { day: 14, word: "exhibited", meaning: "전시한" }, // exhibition과 비슷
+  { day: 14, word: "masterpieces", meaning: "걸작들" }, // masterpiece와 비슷
+  { day: 14, word: "sculptures", meaning: "조각품들" }, // sculpture와 비슷
+  { day: 14, word: "instrumental", meaning: "악기의" }, // instrument와 비슷
+  { day: 14, word: "performed", meaning: "공연한" }, // performance와 비슷
+  { day: 14, word: "audiences", meaning: "관객들" }, // audience와 비슷
+  { day: 14, word: "rehearsal", meaning: "리허설" }, // rehearse와 비슷
+  { day: 14, word: "composed", meaning: "작곡한" }, // composition과 비슷
+  { day: 14, word: "literary", meaning: "문학의" }, // literature와 비슷
+  { day: 14, word: "leisurely", meaning: "여유롭게" }, // leisure와 비슷
   
-  // Day 15: 비슷한 글자지만 다른 뜻
-  { day: 15, word: "destination", meaning: "목적지" },
-  { day: 15, word: "destiny", meaning: "운명" },
-  { day: 15, word: "destine", meaning: "운명지우다" },
-  { day: 15, word: "determine", meaning: "결정하다" },
-  { day: 15, word: "terminal", meaning: "터미널" },
-  { day: 15, word: "departure", meaning: "출발" },
-  { day: 15, word: "department", meaning: "부서" },
-  { day: 15, word: "apartment", meaning: "아파트" },
-  { day: 15, word: "compartment", meaning: "구획" },
-  { day: 15, word: "impart", meaning: "전하다" },
+  // Day 15: 비슷한 글자지만 다른 뜻 (여행 및 교통)
+  { day: 15, word: "destinations", meaning: "목적지들" }, // destination과 비슷
+  { day: 15, word: "departed", meaning: "출발한" }, // departure와 비슷
+  { day: 15, word: "arrived", meaning: "도착한" }, // arrival과 비슷
+  { day: 15, word: "passengers", meaning: "승객들" }, // passenger와 비슷
+  { day: 15, word: "transportation", meaning: "수송" }, // transport와 비슷
+  { day: 15, word: "vehicles", meaning: "차량들" }, // vehicle과 비슷
+  { day: 15, word: "boarded", meaning: "탑승한" }, // boarding과 비슷
+  { day: 15, word: "reserved", meaning: "예약한" }, // reservation과 비슷
+  { day: 15, word: "itineraries", meaning: "여행 일정들" }, // itinerary와 비슷
+  { day: 15, word: "accommodated", meaning: "숙박시킨" }, // accommodate와 비슷
   
-  // Day 16: 비슷한 글자지만 다른 뜻
-  { day: 16, word: "environment", meaning: "환경" },
-  { day: 16, word: "enviable", meaning: "부러운" },
-  { day: 16, word: "envious", meaning: "시기하는" },
-  { day: 16, word: "envy", meaning: "부러워하다" },
-  { day: 16, word: "envelope", meaning: "봉투" },
-  { day: 16, word: "ecology", meaning: "생태학" },
-  { day: 16, word: "economy", meaning: "경제" },
-  { day: 16, word: "economic", meaning: "경제의" },
-  { day: 16, word: "economical", meaning: "절약하는" },
-  { day: 16, word: "ecosystem", meaning: "생태계" },
+  // Day 16: 비슷한 글자지만 다른 뜻 (자연 및 환경)
+  { day: 16, word: "environmental", meaning: "환경의" }, // environment와 비슷
+  { day: 16, word: "ecological", meaning: "생태학의" }, // ecology와 비슷
+  { day: 16, word: "wild", meaning: "야생의" }, // wildlife와 비슷
+  { day: 16, word: "resources", meaning: "자원들" }, // resource와 비슷
+  { day: 16, word: "polluted", meaning: "오염된" }, // pollute와 비슷
+  { day: 16, word: "preserved", meaning: "보존된" }, // preserve와 비슷
+  { day: 16, word: "recycled", meaning: "재활용된" }, // recycle와 비슷
+  { day: 16, word: "renew", meaning: "갱신하다" }, // renewable과 비슷
+  { day: 16, word: "disasters", meaning: "재앙들" }, // disaster와 비슷
+  { day: 16, word: "earthquakes", meaning: "지진들" }, // earthquake와 비슷
   
-  // Day 17: 비슷한 글자지만 다른 뜻
-  { day: 17, word: "science", meaning: "과학" },
-  { day: 17, word: "conscience", meaning: "양심" },
-  { day: 17, word: "conscious", meaning: "의식하는" },
-  { day: 17, word: "unconscious", meaning: "무의식의" },
-  { day: 17, word: "subconscious", meaning: "잠재의식의" },
-  { day: 17, word: "technology", meaning: "기술" },
-  { day: 17, word: "technique", meaning: "기법" },
-  { day: 17, word: "technical", meaning: "기술적인" },
-  { day: 17, word: "technician", meaning: "기술자" },
-  { day: 17, word: "technological", meaning: "기술의" },
+  // Day 17: 비슷한 글자지만 다른 뜻 (과학 및 기술)
+  { day: 17, word: "scientific", meaning: "과학의" }, // science와 비슷
+  { day: 17, word: "technological", meaning: "기술의" }, // technology와 비슷
+  { day: 17, word: "invented", meaning: "발명한" }, // invent와 비슷
+  { day: 17, word: "discovered", meaning: "발견한" }, // discover와 비슷
+  { day: 17, word: "experimental", meaning: "실험의" }, // experiment와 비슷
+  { day: 17, word: "analyzed", meaning: "분석한" }, // analyze와 비슷
+  { day: 17, word: "evident", meaning: "명백한" }, // evidence와 비슷
+  { day: 17, word: "theoretical", meaning: "이론의" }, // theory와 비슷
+  { day: 17, word: "satellites", meaning: "위성들" }, // satellite와 비슷
+  { day: 17, word: "gravitational", meaning: "중력의" }, // gravity와 비슷
   
-  // Day 18: 비슷한 글자지만 다른 뜻
-  { day: 18, word: "organ", meaning: "장기" },
-  { day: 18, word: "organic", meaning: "유기적인" },
-  { day: 18, word: "organism", meaning: "생물" },
-  { day: 18, word: "organize", meaning: "조직하다" },
-  { day: 18, word: "organization", meaning: "조직" },
-  { day: 18, word: "breathe", meaning: "숨쉬다" },
-  { day: 18, word: "breath", meaning: "숨" },
-  { day: 18, word: "breathtaking", meaning: "숨막히는" },
-  { day: 18, word: "breathless", meaning: "숨가쁜" },
-  { day: 18, word: "breathy", meaning: "숨소리가 섞인" },
+  // Day 18: 비슷한 글자지만 다른 뜻 (신체 및 건강)
+  { day: 18, word: "organs", meaning: "장기들" }, // organ과 비슷
+  { day: 18, word: "muscles", meaning: "근육들" }, // muscle과 비슷
+  { day: 18, word: "digested", meaning: "소화한" }, // digest와 비슷
+  { day: 18, word: "breathing", meaning: "숨쉬기" }, // breathe와 비슷
+  { day: 18, word: "immunity", meaning: "면역" }, // immune와 비슷
+  { day: 18, word: "bacterial", meaning: "박테리아의" }, // bacteria와 비슷
+  { day: 18, word: "diseases", meaning: "질병들" }, // disease와 비슷
+  { day: 18, word: "symptoms", meaning: "증상들" }, // symptom과 비슷
+  { day: 18, word: "patients", meaning: "환자들" }, // patient와 비슷
+  { day: 18, word: "physicians", meaning: "내과의사들" }, // physician과 비슷
   
-  // Day 19: 비슷한 글자지만 다른 뜻
-  { day: 19, word: "conscious", meaning: "의식하는" },
-  { day: 19, word: "conscience", meaning: "양심" },
-  { day: 19, word: "conscientious", meaning: "양심적인" },
-  { day: 19, word: "unconscious", meaning: "무의식의" },
-  { day: 19, word: "subconscious", meaning: "잠재의식의" },
-  { day: 19, word: "perception", meaning: "지각" },
-  { day: 19, word: "conception", meaning: "개념" },
-  { day: 19, word: "deception", meaning: "기만" },
-  { day: 19, word: "reception", meaning: "접수" },
-  { day: 19, word: "exception", meaning: "예외" },
+  // Day 19: 비슷한 글자지만 다른 뜻 (사고 및 인지)
+  { day: 19, word: "consciousness", meaning: "의식" }, // conscious와 비슷
+  { day: 19, word: "intellectual", meaning: "지적인" }, // intellect와 비슷
+  { day: 19, word: "notions", meaning: "개념들" }, // notion과 비슷
+  { day: 19, word: "philosophical", meaning: "철학의" }, // philosophy와 비슷
+  { day: 19, word: "perceived", meaning: "지각한" }, // perception과 비슷
+  { day: 19, word: "recognized", meaning: "인정한" }, // recognize와 비슷
+  { day: 19, word: "comprehension", meaning: "이해" }, // comprehend와 비슷
+  { day: 19, word: "assumption", meaning: "가정" }, // assume와 비슷
+  { day: 19, word: "contemplation", meaning: "명상" }, // contemplate와 비슷
+  { day: 19, word: "reasoned", meaning: "추론한" }, // reasoning과 비슷
   
-  // Day 20: 비슷한 글자지만 다른 뜻
-  { day: 20, word: "dialogue", meaning: "대화" },
-  { day: 20, word: "monologue", meaning: "독백" },
-  { day: 20, word: "prologue", meaning: "서문" },
-  { day: 20, word: "epilogue", meaning: "후기" },
-  { day: 20, word: "catalogue", meaning: "목록" },
-  { day: 20, word: "verbal", meaning: "말의" },
-  { day: 20, word: "verb", meaning: "동사" },
-  { day: 20, word: "adverb", meaning: "부사" },
-  { day: 20, word: "proverb", meaning: "속담" },
-  { day: 20, word: "superb", meaning: "훌륭한" },
+  // Day 20: 비슷한 글자지만 다른 뜻 (의사소통 및 언어)
+  { day: 20, word: "proclaimed", meaning: "선포한" }, // proclaim과 비슷
+  { day: 20, word: "dialogues", meaning: "대화들" }, // dialogue와 비슷
+  { day: 20, word: "disputed", meaning: "논쟁한" }, // dispute와 비슷
+  { day: 20, word: "negotiation", meaning: "협상" }, // negotiate와 비슷
+  { day: 20, word: "persuasion", meaning: "설득" }, // persuade와 비슷
+  { day: 20, word: "advocacy", meaning: "옹호" }, // advocate와 비슷
+  { day: 20, word: "claimed", meaning: "주장한" }, // claim과 비슷
+  { day: 20, word: "mentioned", meaning: "언급한" }, // mention과 비슷
+  { day: 20, word: "emphasis", meaning: "강조" }, // emphasize와 비슷
+  { day: 20, word: "contradiction", meaning: "모순" }, // contradict와 비슷
   
-  // Day 21: 비슷한 글자지만 다른 뜻
-  { day: 21, word: "infinite", meaning: "무한한" },
-  { day: 21, word: "definite", meaning: "명확한" },
-  { day: 21, word: "indefinite", meaning: "불명확한" },
-  { day: 21, word: "finite", meaning: "유한한" },
-  { day: 21, word: "infinitive", meaning: "부정사" },
-  { day: 21, word: "dimension", meaning: "차원" },
-  { day: 21, word: "extension", meaning: "연장" },
-  { day: 21, word: "tension", meaning: "긴장" },
-  { day: 21, word: "intention", meaning: "의도" },
-  { day: 21, word: "attention", meaning: "주의" },
+  // Day 21: 비슷한 글자지만 다른 뜻 (우주 및 추상적 개념)
+  { day: 21, word: "infinitely", meaning: "무한히" }, // infinite와 비슷
+  { day: 21, word: "dimensions", meaning: "차원들" }, // dimension과 비슷
+  { day: 21, word: "vacuumed", meaning: "진공 청소한" }, // vacuum과 비슷
+  { day: 21, word: "galaxies", meaning: "은하계들" }, // galaxy와 비슷
+  { day: 21, word: "astronomer", meaning: "천문학자" }, // astronomy와 비슷
+  { day: 21, word: "telescopes", meaning: "망원경들" }, // telescope와 비슷
+  { day: 21, word: "gravitational", meaning: "중력의" }, // gravity와 비슷
+  { day: 21, word: "orbital", meaning: "궤도의" }, // orbit와 비슷
+  { day: 21, word: "launched", meaning: "발사한" }, // launch와 비슷
+  { day: 21, word: "asteroids", meaning: "소행성들" }, // asteroid와 비슷
   
-  // Day 22-30: 추가 비슷한 단어들
-  { day: 22, word: "complementary", meaning: "보완적인" },
-  { day: 22, word: "complimentary", meaning: "무료의, 칭찬하는" },
-  { day: 22, word: "compliment", meaning: "칭찬" },
-  { day: 22, word: "complement", meaning: "보완" },
-  { day: 22, word: "implement", meaning: "실행하다" },
-  { day: 22, word: "supplement", meaning: "보충" },
-  { day: 22, word: "element", meaning: "요소" },
-  { day: 22, word: "moment", meaning: "순간" },
-  { day: 22, word: "monument", meaning: "기념비" },
-  { day: 22, word: "document", meaning: "문서" },
+  // Day 22: 비슷한 글자지만 다른 뜻 (사회 구조 및 전통)
+  { day: 22, word: "heritages", meaning: "유산들" }, // heritage와 비슷
+  { day: 22, word: "traditional", meaning: "전통의" }, // tradition과 비슷
+  { day: 22, word: "customs", meaning: "관습들" }, // custom과 비슷
+  { day: 22, word: "normal", meaning: "정상의" }, // norm과 비슷
+  { day: 22, word: "statuses", meaning: "지위들" }, // status와 비슷
+  { day: 22, word: "structured", meaning: "구조화된" }, // structure와 비슷
+  { day: 22, word: "hierarchical", meaning: "위계적인" }, // hierarchy와 비슷
+  { day: 22, word: "classes", meaning: "계급들" }, // class와 비슷
+  { day: 22, word: "diverse", meaning: "다양한" }, // diversity와 비슷
+  { day: 22, word: "ethnicity", meaning: "민족성" }, // ethnic과 비슷
   
-  { day: 23, word: "stationary", meaning: "고정된" },
-  { day: 23, word: "stationery", meaning: "문구류" },
-  { day: 23, word: "station", meaning: "역" },
-  { day: 23, word: "situation", meaning: "상황" },
-  { day: 23, word: "statue", meaning: "조각상" },
-  { day: 23, word: "status", meaning: "지위" },
-  { day: 23, word: "statute", meaning: "법령" },
-  { day: 23, word: "stature", meaning: "신장" },
-  { day: 23, word: "estate", meaning: "부동산" },
-  { day: 23, word: "state", meaning: "상태" },
+  // Day 23: 비슷한 글자지만 다른 뜻 (감정 및 태도)
+  { day: 23, word: "hostile", meaning: "적대적인" }, // hostility와 비슷
+  { day: 23, word: "humiliated", meaning: "굴욕을 당한" }, // humiliate와 비슷
+  { day: 23, word: "empathetic", meaning: "공감하는" }, // empathy와 비슷
+  { day: 23, word: "affectionate", meaning: "애정이 있는" }, // affection과 비슷
+  { day: 23, word: "passionate", meaning: "열정적인" }, // passion과 비슷
+  { day: 23, word: "enthusiastic", meaning: "열광적인" }, // enthusiasm과 비슷
+  { day: 23, word: "optimistic", meaning: "낙관적인" }, // optimism과 비슷
+  { day: 23, word: "pessimistic", meaning: "비관적인" }, // pessimism과 비슷
+  { day: 23, word: "indifferent", meaning: "무관심한" }, // indifference와 비슷
+  { day: 23, word: "contemptuous", meaning: "경멸하는" }, // contempt와 비슷
   
-  { day: 24, word: "affect", meaning: "영향을 주다" },
-  { day: 24, word: "effect", meaning: "효과" },
-  { day: 24, word: "affection", meaning: "애정" },
-  { day: 24, word: "affectionate", meaning: "애정이 있는" },
-  { day: 24, word: "effective", meaning: "효과적인" },
-  { day: 24, word: "efficient", meaning: "효율적인" },
-  { day: 24, word: "sufficient", meaning: "충분한" },
-  { day: 24, word: "deficient", meaning: "부족한" },
-  { day: 24, word: "proficient", meaning: "능숙한" },
-  { day: 24, word: "magnificent", meaning: "장대한" },
+  // Day 24: 비슷한 글자지만 다른 뜻 (변화 및 영향)
+  { day: 24, word: "transformed", meaning: "변형된" }, // transform와 비슷
+  { day: 24, word: "modified", meaning: "수정된" }, // modify와 비슷
+  { day: 24, word: "impacted", meaning: "영향받은" }, // impact와 비슷
+  { day: 24, word: "consequences", meaning: "결과들" }, // consequence와 비슷
+  { day: 24, word: "drastically", meaning: "격렬하게" }, // drastic과 비슷
+  { day: 24, word: "gradually", meaning: "점진적으로" }, // gradual과 비슷
+  { day: 24, word: "constantly", meaning: "끊임없이" }, // constant과 비슷
+  { day: 24, word: "temporarily", meaning: "일시적으로" }, // temporary와 비슷
+  { day: 24, word: "permanently", meaning: "영구적으로" }, // permanent과 비슷
+  { day: 24, word: "altered", meaning: "변경된" }, // alter와 비슷
   
-  { day: 25, word: "desert", meaning: "사막" },
-  { day: 25, word: "dessert", meaning: "디저트" },
-  { day: 25, word: "deserve", meaning: "받을 자격이 있다" },
-  { day: 25, word: "deserved", meaning: "당연한" },
-  { day: 25, word: "deserving", meaning: "받을 만한" },
-  { day: 25, word: "insert", meaning: "삽입하다" },
-  { day: 25, word: "assert", meaning: "주장하다" },
-  { day: 25, word: "concert", meaning: "콘서트" },
-  { day: 25, word: "convert", meaning: "변환하다" },
-  { day: 25, word: "invert", meaning: "뒤집다" },
+  // Day 25: 비슷한 글자지만 다른 뜻 (종교 및 윤리)
+  { day: 25, word: "sacredly", meaning: "신성하게" }, // sacred와 비슷
+  { day: 25, word: "virtuous", meaning: "미덕이 있는" }, // virtue와 비슷
+  { day: 25, word: "ethical", meaning: "윤리의" }, // ethics와 비슷
+  { day: 25, word: "worshipped", meaning: "예배한" }, // worship와 비슷
+  { day: 25, word: "conscientious", meaning: "양심적인" }, // conscience와 비슷
+  { day: 25, word: "divinely", meaning: "신성하게" }, // divine과 비슷
+  { day: 25, word: "morally", meaning: "도덕적으로" }, // moral과 비슷
+  { day: 25, word: "immorally", meaning: "비도덕적으로" }, // immoral과 비슷
+  { day: 25, word: "ritualistic", meaning: "의식의" }, // ritual과 비슷
+  { day: 25, word: "shrines", meaning: "성지들" }, // shrine와 비슷
   
-  { day: 26, word: "principal", meaning: "교장, 주요한" },
-  { day: 26, word: "principle", meaning: "원칙" },
-  { day: 26, word: "printable", meaning: "인쇄 가능한" },
-  { day: 26, word: "print", meaning: "인쇄하다" },
-  { day: 26, word: "printer", meaning: "프린터" },
-  { day: 26, word: "prince", meaning: "왕자" },
-  { day: 26, word: "princess", meaning: "공주" },
-  { day: 26, word: "privacy", meaning: "사생활" },
-  { day: 26, word: "private", meaning: "사적인" },
-  { day: 26, word: "privilege", meaning: "특권" },
+  // Day 26: 비슷한 글자지만 다른 뜻 (재난 및 안전)
+  { day: 26, word: "casualties", meaning: "사상자들" }, // casualty와 비슷
+  { day: 26, word: "urgently", meaning: "긴급하게" }, // urgent와 비슷
+  { day: 26, word: "evacuated", meaning: "대피시킨" }, // evacuate와 비슷
+  { day: 26, word: "secure", meaning: "안전한" }, // security와 비슷
+  { day: 26, word: "survived", meaning: "생존한" }, // survive와 비슷
+  { day: 26, word: "rescued", meaning: "구조한" }, // rescue와 비슷
+  { day: 26, word: "hazardous", meaning: "위험한" }, // hazard와 비슷
+  { day: 26, word: "precautions", meaning: "예방 조치들" }, // precaution과 비슷
+  { day: 26, word: "alarmed", meaning: "경보가 울린" }, // alarm과 비슷
+  { day: 26, word: "crises", meaning: "위기들" }, // crisis와 비슷
   
-  { day: 27, word: "lose", meaning: "잃다" },
-  { day: 27, word: "loose", meaning: "느슨한" },
-  { day: 27, word: "loss", meaning: "손실" },
-  { day: 27, word: "lost", meaning: "잃어버린" },
-  { day: 27, word: "loosen", meaning: "느슨하게 하다" },
-  { day: 27, word: "choose", meaning: "선택하다" },
-  { day: 27, word: "chose", meaning: "선택했다" },
-  { day: 27, word: "choice", meaning: "선택" },
-  { day: 27, word: "close", meaning: "닫다" },
-  { day: 27, word: "clothes", meaning: "옷" },
+  // Day 27: 비슷한 글자지만 다른 뜻 (경제 심화)
+  { day: 27, word: "recessions", meaning: "불경기들" }, // recession과 비슷
+  { day: 27, word: "inflated", meaning: "인플레이션된" }, // inflation과 비슷
+  { day: 27, word: "monetarily", meaning: "화폐로" }, // monetary와 비슷
+  { day: 27, word: "financed", meaning: "재정 지원한" }, // finance와 비슷
+  { day: 27, word: "surpluses", meaning: "흑자들" }, // surplus와 비슷
+  { day: 27, word: "deficits", meaning: "적자들" }, // deficit와 비슷
+  { day: 27, word: "revenues", meaning: "수입들" }, // revenue와 비슷
+  { day: 27, word: "expenditures", meaning: "지출들" }, // expenditure와 비슷
+  { day: 27, word: "invested", meaning: "투자한" }, // investment와 비슷
+  { day: 27, word: "assets", meaning: "자산들" }, // asset와 비슷
   
-  { day: 28, word: "advice", meaning: "조언" },
-  { day: 28, word: "advise", meaning: "조언하다" },
-  { day: 28, word: "device", meaning: "장치" },
-  { day: 28, word: "devise", meaning: "고안하다" },
-  { day: 28, word: "revise", meaning: "수정하다" },
-  { day: 28, word: "revise", meaning: "복습하다" },
-  { day: 28, word: "supervise", meaning: "감독하다" },
-  { day: 28, word: "vision", meaning: "시각" },
-  { day: 28, word: "television", meaning: "텔레비전" },
-  { day: 28, word: "provision", meaning: "조항" },
+  // Day 28: 비슷한 글자지만 다른 뜻 (법 및 갈등)
+  { day: 28, word: "litigated", meaning: "소송한" }, // litigation과 비슷
+  { day: 28, word: "defendants", meaning: "피고들" }, // defendant와 비슷
+  { day: 28, word: "testified", meaning: "증언한" }, // testify와 비슷
+  { day: 28, word: "validity", meaning: "유효성" }, // valid와 비슷
+  { day: 28, word: "enforced", meaning: "집행한" }, // enforce와 비슷
+  { day: 28, word: "plaintiffs", meaning: "원고들" }, // plaintiff와 비슷
+  { day: 28, word: "prosecuted", meaning: "기소한" }, // prosecute와 비슷
+  { day: 28, word: "defended", meaning: "방어한" }, // defense와 비슷
+  { day: 28, word: "sentenced", meaning: "선고한" }, // sentence와 비슷
+  { day: 28, word: "fined", meaning: "벌금을 낸" }, // fine와 비슷
   
-  { day: 29, word: "breath", meaning: "숨" },
-  { day: 29, word: "breathe", meaning: "숨쉬다" },
-  { day: 29, word: "breadth", meaning: "너비" },
-  { day: 29, word: "breathless", meaning: "숨가쁜" },
-  { day: 29, word: "breathtaking", meaning: "숨막히는" },
-  { day: 29, word: "death", meaning: "죽음" },
-  { day: 29, word: "dead", meaning: "죽은" },
-  { day: 29, word: "die", meaning: "죽다" },
-  { day: 29, word: "dying", meaning: "죽어가는" },
-  { day: 29, word: "deathly", meaning: "죽음 같은" },
+  // Day 29: 비슷한 글자지만 다른 뜻 (추상 형용사)
+  { day: 29, word: "vaguely", meaning: "모호하게" }, // vague와 비슷
+  { day: 29, word: "obscured", meaning: "모호하게 한" }, // obscure와 비슷
+  { day: 29, word: "subtly", meaning: "미묘하게" }, // subtle과 비슷
+  { day: 29, word: "evidently", meaning: "명백히" }, // evident와 비슷
+  { day: 29, word: "abruptly", meaning: "갑작스럽게" }, // abrupt와 비슷
+  { day: 29, word: "briefly", meaning: "잠시" }, // brief와 비슷
+  { day: 29, word: "intensely", meaning: "강렬하게" }, // intense와 비슷
+  { day: 29, word: "vastly", meaning: "광대하게" }, // vast와 비슷
+  { day: 29, word: "minutely", meaning: "아주 작게" }, // minute와 비슷
+  { day: 29, word: "adequately", meaning: "적절하게" }, // adequate와 비슷
   
-  { day: 30, word: "complementary", meaning: "보완적인" },
-  { day: 30, word: "complimentary", meaning: "무료의, 칭찬하는" },
-  { day: 30, word: "complement", meaning: "보완" },
-  { day: 30, word: "compliment", meaning: "칭찬" },
-  { day: 30, word: "implement", meaning: "실행하다" },
-  { day: 30, word: "supplement", meaning: "보충" },
-  { day: 30, word: "element", meaning: "요소" },
-  { day: 30, word: "moment", meaning: "순간" },
-  { day: 30, word: "monument", meaning: "기념비" },
-  { day: 30, word: "document", meaning: "문서" }
+  // Day 30: 비슷한 글자지만 다른 뜻 (종합 및 필수 숙어)
+  { day: 30, word: "coincided", meaning: "동시에 일어난" }, // coincide와 비슷
+  { day: 30, word: "simultaneously", meaning: "동시에" }, // simultaneous와 비슷
+  { day: 30, word: "essentially", meaning: "필수적으로" }, // essential과 비슷
+  { day: 30, word: "fundamentally", meaning: "기본적으로" }, // fundamental과 비슷
+  { day: 30, word: "ultimately", meaning: "궁극적으로" }, // ultimate와 비슷
+  { day: 30, word: "comprehensively", meaning: "종합적으로" }, // comprehensive와 비슷
+  { day: 30, word: "exclusively", meaning: "독점적으로" }, // exclusive와 비슷
+  { day: 30, word: "preliminarily", meaning: "예비로" }, // preliminary와 비슷
+  { day: 30, word: "dominantly", meaning: "우세하게" }, // dominant와 비슷
+  { day: 30, word: "inherently", meaning: "타고나게" } // inherent와 비슷
 ];

@@ -391,7 +391,7 @@ window.storiesData_1 = {
 };
 
 
-window.rawDataData_1 = [
+window.rawData_1 = [
   // Day 1
   // 출처: 국립국어원 표준국어대사전 (https://stdict.korean.go.kr/), Oxford Learner's Dictionary (https://www.oxfordlearnersdictionaries.com/)
   { day: 1, word: "machine", meaning: "기계", koreanExplanation: "여러 부분이 서로 연관되어 작동하여 일정한 일을 수행하는 장치", englishExplanation: "a piece of equipment with many parts that work together to do a particular task" },
@@ -1724,74 +1724,127 @@ window.rawDataData_1 = [
 
 
 window.decoyWordsData = [
-  { day: 1, word: "machiney", meaning: "기계적인" },
-  { day: 1, word: "top", meaning: "맨 위" },
-  { day: 1, word: "land", meaning: "땅" }, { day: 1, word: "twin-turbo", meaning: "터보 엔진" },
-  { day: 1, word: "though", meaning: "비록 ~일지라도" }, { day: 1, word: "play", meaning: "놀다" },
-  { day: 1, word: "swing", meaning: "흔들다" }, { day: 1, word: "cafe", meaning: "카페" },
-  { day: 1, word: "poor", meaning: "가난한" }, { day: 1, word: "exist", meaning: "존재하다" },
+  // Day 1: machine, tip, lend, twin, through, display, wing, cave, pure, exit, lead, sharp, stamp, at first, cash, put on, roll, search, at last, still
+  { day: 1, word: "machinery", meaning: "기계류" }, // machine과 비슷
+  { day: 1, word: "tap", meaning: "탭하다" }, // tip과 비슷
+  { day: 1, word: "blend", meaning: "섞다" }, // lend와 비슷
+  { day: 1, word: "twine", meaning: "끈" }, // twin과 비슷
+  { day: 1, word: "thorough", meaning: "철저한" }, // through와 비슷
+  { day: 1, word: "replay", meaning: "재생하다" }, // display와 비슷
+  { day: 1, word: "wring", meaning: "비틀다" }, // wing과 비슷
+  { day: 1, word: "save", meaning: "구하다" }, // cave와 비슷
+  { day: 1, word: "cure", meaning: "치료하다" }, // pure와 비슷
+  { day: 1, word: "exact", meaning: "정확한" }, // exit과 비슷
 
-  // ------------------------------------------------
-  // Day 11 (20개)
-  // ------------------------------------------------
-  { day: 11, word: "engine", meaning: "엔진" }, { day: 11, word: "nose", meaning: "코" },
-  { day: 11, word: "course", meaning: "과정" }, { day: 11, word: "laddy", meaning: "소년" },
-  { day: 11, word: "rain", meaning: "비" }, { day: 11, word: "flood", meaning: "홍수" },
-  { day: 11, word: "steel", meaning: "강철" }, { day: 11, word: "strong", meaning: "강한" },
-  { day: 11, word: "guard", meaning: "경비" }, { day: 11, word: "sight", meaning: "시야" },
-  { day: 11, word: "fun", meaning: "재미" }, { day: 11, word: "story", meaning: "이야기" },
-  { day: 11, word: "manor", meaning: "저택" }, { day: 11, word: "storm", meaning: "폭풍" },
-  { day: 11, word: "comb", meaning: "빗" }, { day: 11, word: "excite", meaning: "흥분시키다" },
-  { day: 11, word: "aria", meaning: "아리아" }, { day: 11, word: "diary", meaning: "일기" },
-  { day: 11, word: "pass", meaning: "지나가다" }, { day: 11, word: "look at", meaning: "~을 보다" },
+  // Day 11: engineer, noise, cause, lady, rainy, blood, steal, strange, guide, site, funny, history, manner, stomach, climb, exciting, area, dial, past, look up
+  { day: 11, word: "engineering", meaning: "공학" }, // engineer와 비슷
+  { day: 11, word: "noisy", meaning: "시끄러운" }, // noise와 비슷
+  { day: 11, word: "because", meaning: "왜냐하면" }, // cause와 비슷
+  { day: 11, word: "ladies", meaning: "숙녀들" }, // lady와 비슷
+  { day: 11, word: "rain", meaning: "비" }, // rainy와 비슷
+  { day: 11, word: "bleed", meaning: "피를 흘리다" }, // blood와 비슷
+  { day: 11, word: "steel", meaning: "강철" }, // steal과 비슷
+  { day: 11, word: "stranger", meaning: "낯선 사람" }, // strange와 비슷
+  { day: 11, word: "guidance", meaning: "안내" }, // guide와 비슷
+  { day: 11, word: "sight", meaning: "시야" }, // site와 비슷
+  { day: 11, word: "fun", meaning: "재미" }, // funny와 비슷
+  { day: 11, word: "historic", meaning: "역사적인" }, // history와 비슷
+  { day: 11, word: "manners", meaning: "예의" }, // manner와 비슷
+  { day: 11, word: "stomachache", meaning: "복통" }, // stomach과 비슷
+  { day: 11, word: "climbing", meaning: "등반" }, // climb와 비슷
+  { day: 11, word: "excited", meaning: "흥분한" }, // exciting과 비슷
+  { day: 11, word: "arena", meaning: "경기장" }, // area와 비슷
+  { day: 11, word: "dialogue", meaning: "대화" }, // dial과 비슷
+  { day: 11, word: "passed", meaning: "지나간" }, // past와 비슷
+  { day: 11, word: "look out", meaning: "조심하다" }, // look up과 비슷
 
-  // Day 12 (20개)
-  { day: 12, word: "lay", meaning: "놓다" }, { day: 12, word: "treat", meaning: "대접하다" },
-  { day: 12, word: "way", meaning: "길" }, { day: 12, word: "signal", meaning: "신호" },
-  { day: 12, word: "left", meaning: "왼쪽" }, { day: 12, word: "correct", meaning: "정확한" },
-  { day: 12, word: "danger", meaning: "위험" }, { day: 12, word: "booking", meaning: "예약" },
-  { day: 12, word: "happy", meaning: "행복한" }, { day: 12, word: "decease", meaning: "사망" },
-  { day: 12, word: "downtown", meaning: "시내" }, { day: 12, word: "counter", meaning: "계산대" },
-  { day: 12, word: "actual", meaning: "실제의" }, { day: 12, word: "grammar", meaning: "문법" },
-  { day: 12, word: "mess", meaning: "엉망" }, { day: 12, word: "society", meaning: "사회" },
-  { day: 12, word: "raw", meaning: "날것의" }, { day: 12, word: "product", meaning: "제품" },
-  { day: 12, word: "research", meaning: "연구하다" }, { day: 12, word: "few", meaning: "거의 없는" },
+  // Day 12: lie, theater, subway, single, leaf, collect, dangerous, bookstore, happen, disease, hometown, count, actually, program, miss, social, law, produce, search for, a few
+  { day: 12, word: "lied", meaning: "거짓말했다" }, // lie와 비슷
+  { day: 12, word: "theatrical", meaning: "연극의" }, // theater와 비슷
+  { day: 12, word: "subway", meaning: "지하도" }, // subway와 동일 (이미 비슷)
+  { day: 12, word: "singles", meaning: "싱글들" }, // single과 비슷
+  { day: 12, word: "leaves", meaning: "나뭇잎들" }, // leaf와 비슷
+  { day: 12, word: "collection", meaning: "수집품" }, // collect와 비슷
+  { day: 12, word: "danger", meaning: "위험" }, // dangerous와 비슷
+  { day: 12, word: "book", meaning: "책" }, // bookstore와 비슷
+  { day: 12, word: "happened", meaning: "일어났다" }, // happen과 비슷
+  { day: 12, word: "diseased", meaning: "병든" }, // disease와 비슷
+  { day: 12, word: "home", meaning: "집" }, // hometown과 비슷
+  { day: 12, word: "counting", meaning: "세기" }, // count와 비슷
+  { day: 12, word: "actual", meaning: "실제의" }, // actually와 비슷
+  { day: 12, word: "programming", meaning: "프로그래밍" }, // program과 비슷
+  { day: 12, word: "missing", meaning: "놓친" }, // miss와 비슷
+  { day: 12, word: "society", meaning: "사회" }, // social과 비슷
+  { day: 12, word: "lawyer", meaning: "변호사" }, // law와 비슷
+  { day: 12, word: "product", meaning: "제품" }, // produce와 비슷
+  { day: 12, word: "search", meaning: "찾다" }, // search for와 비슷
+  { day: 12, word: "few", meaning: "거의 없는" }, // a few와 비슷
 
-  // Day 13 (20개)
-  { day: 13, word: "dash", meaning: "질주하다" }, { day: 13, word: "four", meaning: "넷" },
-  { day: 13, word: "flesh", meaning: "살" }, { day: 13, word: "shallow", meaning: "얕은" },
-  { day: 13, word: "relief", meaning: "안도" }, { day: 13, word: "sing", meaning: "노래하다" },
-  { day: 13, word: "access", meaning: "접근" }, { day: 13, word: "west", meaning: "서쪽" },
-  { day: 13, word: "farm", meaning: "농장" }, { day: 13, word: "grand", meaning: "웅장한" },
-  { day: 13, word: "pup", meaning: "강아지" }, { day: 13, word: "close", meaning: "닫다" },
-  { day: 13, word: "march", meaning: "행진하다" }, { day: 13, word: "nose", meaning: "코" },
-  { day: 13, word: "result", meaning: "결과" }, { day: 13, word: "select", meaning: "선택하다" },
-  { day: 13, word: "earn", meaning: "벌다" }, { day: 13, word: "hollow", meaning: "속이 빈" },
-  { day: 13, word: "tall", meaning: "키 큰" }, { day: 13, word: "turn on", meaning: "켜다" },
+  // Day 13: dish, pour, fresh, swallow, believe, sign, succcess, waste, form, grade, pop, closet, match, noise, resort, collect, early, follow, not ~ at all, turn off
+  { day: 13, word: "dishes", meaning: "접시들" }, // dish와 비슷
+  { day: 13, word: "poured", meaning: "부었다" }, // pour와 비슷
+  { day: 13, word: "fresher", meaning: "더 신선한" }, // fresh와 비슷
+  { day: 13, word: "swallowed", meaning: "삼켰다" }, // swallow와 비슷
+  { day: 13, word: "belief", meaning: "믿음" }, // believe와 비슷
+  { day: 13, word: "signal", meaning: "신호" }, // sign과 비슷
+  { day: 13, word: "successful", meaning: "성공적인" }, // succcess와 비슷
+  { day: 13, word: "wasted", meaning: "낭비한" }, // waste와 비슷
+  { day: 13, word: "formal", meaning: "공식적인" }, // form과 비슷
+  { day: 13, word: "grades", meaning: "성적들" }, // grade와 비슷
+  { day: 13, word: "popped", meaning: "터졌다" }, // pop과 비슷
+  { day: 13, word: "close", meaning: "닫다" }, // closet과 비슷
+  { day: 13, word: "matches", meaning: "시합들" }, // match와 비슷
+  { day: 13, word: "noisy", meaning: "시끄러운" }, // noise와 비슷
+  { day: 13, word: "resorted", meaning: "의지했다" }, // resort와 비슷
+  { day: 13, word: "collection", meaning: "수집품" }, // collect와 비슷
+  { day: 13, word: "earlier", meaning: "더 일찍" }, // early와 비슷
+  { day: 13, word: "following", meaning: "다음의" }, // follow와 비슷
+  { day: 13, word: "at all", meaning: "전혀" }, // not ~ at all과 비슷
+  { day: 13, word: "turn on", meaning: "켜다" }, // turn off와 비슷
 
-  // Day 14 (20개)
-  { day: 14, word: "invent", meaning: "발명하다" }, { day: 14, word: "labor", meaning: "노동" },
-  { day: 14, word: "organic", meaning: "유기농의" }, { day: 14, word: "pace", meaning: "속도" },
-  { day: 14, word: "mature", meaning: "성숙한" }, { day: 14, word: "rough", meaning: "거친" },
-  { day: 14, word: "cymbal", meaning: "심벌즈" }, { day: 14, word: "advertise", meaning: "광고하다" },
-  { day: 14, word: "comedy", meaning: "코미디" }, { day: 14, word: "mark", meaning: "표시" },
-  { day: 14, word: "alive", meaning: "살아있는" }, { day: 14, word: "supply", meaning: "공급하다" },
-  { day: 14, word: "creature", meaning: "생물" }, { day: 14, word: "specific", meaning: "구체적인" },
-  { day: 14, word: "cloud", meaning: "구름" }, { day: 14, word: "invent", meaning: "발명하다" },
-  { day: 14, word: "quiet", meaning: "조용한" }, { day: 14, word: "insult", meaning: "모욕하다" },
-  { day: 14, word: "fool", meaning: "바보" }, { day: 14, word: "waiter", meaning: "웨이터" },
+  // Day 14: invite, neighbor, organize, space, nature, enough, symbol, adventure, comic, market, arrive, support, create, special, crowd, event, quite, result, be full of, wait for
+  { day: 14, word: "invitation", meaning: "초대장" }, // invite와 비슷
+  { day: 14, word: "neighborhood", meaning: "동네" }, // neighbor와 비슷
+  { day: 14, word: "organization", meaning: "조직" }, // organize와 비슷
+  { day: 14, word: "spaces", meaning: "공간들" }, // space와 비슷
+  { day: 14, word: "natural", meaning: "자연의" }, // nature와 비슷
+  { day: 14, word: "sufficient", meaning: "충분한" }, // enough와 비슷
+  { day: 14, word: "symbolic", meaning: "상징적인" }, // symbol과 비슷
+  { day: 14, word: "adventurous", meaning: "모험적인" }, // adventure와 비슷
+  { day: 14, word: "comics", meaning: "만화들" }, // comic과 비슷
+  { day: 14, word: "marketing", meaning: "마케팅" }, // market과 비슷
+  { day: 14, word: "arrival", meaning: "도착" }, // arrive와 비슷
+  { day: 14, word: "supportive", meaning: "지지하는" }, // support와 비슷
+  { day: 14, word: "creation", meaning: "창조" }, // create와 비슷
+  { day: 14, word: "especially", meaning: "특히" }, // special과 비슷
+  { day: 14, word: "crowded", meaning: "붐비는" }, // crowd와 비슷
+  { day: 14, word: "eventful", meaning: "사건이 많은" }, // event와 비슷
+  { day: 14, word: "quiet", meaning: "조용한" }, // quite와 비슷
+  { day: 14, word: "resulted", meaning: "결과가 되었다" }, // result와 비슷
+  { day: 14, word: "full", meaning: "가득한" }, // be full of와 비슷
+  { day: 14, word: "waiting", meaning: "기다리는" }, // wait for와 비슷
 
-  // Day 15 (20개)
-  { day: 15, word: "dairy", meaning: "유제품의" }, { day: 15, word: "least", meaning: "적어도" },
-  { day: 15, word: "open", meaning: "열다" }, { day: 15, word: "power", meaning: "힘" },
-  { day: 15, word: "star", meaning: "별" }, { day: 15, word: "press", meaning: "누르다" },
-  { day: 15, word: "guard", meaning: "경비" }, { day: 15, word: "enemy", meaning: "적" },
-  { day: 15, word: "practical", meaning: "실용적인" }, { day: 15, word: "collect", meaning: "수집하다" },
-  { day: 15, word: "produce", meaning: "생산하다" }, { day: 15, word: "example", meaning: "예시" },
-  { day: 15, word: "real", meaning: "진짜의" }, { day: 15, word: "sauce", meaning: "소스" },
-  { day: 15, word: "sight", meaning: "시야" }, { day: 15, word: "change", meaning: "변화" },
-  { day: 15, word: "center", meaning: "중심" }, { day: 15, word: "ship", meaning: "배" },
-  { day: 15, word: "look at", meaning: "~을 보다" }, { day: 15, word: "shook", meaning: "흔들었다" },
+  // Day 15: diary, list, ocean, tower, stair, pressure, guide, energy, practice, correct, introduce, exam, realize, source, site, challenge, enter, shop, take a look, shake hands
+  { day: 15, word: "diaries", meaning: "일기들" }, // diary와 비슷
+  { day: 15, word: "listed", meaning: "나열했다" }, // list와 비슷
+  { day: 15, word: "oceanic", meaning: "대양의" }, // ocean과 비슷
+  { day: 15, word: "towers", meaning: "탑들" }, // tower와 비슷
+  { day: 15, word: "stairs", meaning: "계단들" }, // stair와 비슷
+  { day: 15, word: "press", meaning: "누르다" }, // pressure와 비슷
+  { day: 15, word: "guidance", meaning: "안내" }, // guide와 비슷
+  { day: 15, word: "energetic", meaning: "활기찬" }, // energy와 비슷
+  { day: 15, word: "practiced", meaning: "연습했다" }, // practice와 비슷
+  { day: 15, word: "correctly", meaning: "정확하게" }, // correct와 비슷
+  { day: 15, word: "introduction", meaning: "소개" }, // introduce와 비슷
+  { day: 15, word: "examine", meaning: "검사하다" }, // exam과 비슷
+  { day: 15, word: "realization", meaning: "깨달음" }, // realize와 비슷
+  { day: 15, word: "sources", meaning: "원천들" }, // source와 비슷
+  { day: 15, word: "sites", meaning: "장소들" }, // site와 비슷
+  { day: 15, word: "challenging", meaning: "도전적인" }, // challenge와 비슷
+  { day: 15, word: "entered", meaning: "들어갔다" }, // enter와 비슷
+  { day: 15, word: "shopping", meaning: "쇼핑" }, // shop과 비슷
+  { day: 15, word: "look", meaning: "보다" }, // take a look과 비슷
+  { day: 15, word: "shaking", meaning: "흔드는" }, // shake hands와 비슷
 
   // Day 16 (20개)
   { day: 16, word: "rabbit", meaning: "토끼" }, { day: 16, word: "scarred", meaning: "상처 난" },

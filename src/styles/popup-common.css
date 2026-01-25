@@ -126,8 +126,8 @@
     transform: scale(1.05) !important;
 }
 
-/* 보스 배틀 모드 버튼 위치 (boss_battle_popup.webp의 "모험 시작" 버튼 영역) */
-#story-start-btn.boss-battle-btn {
+/* 보스 모드 버튼 위치 (boss_mode_popup.webp의 "모험 시작" 버튼 영역) */
+#story-start-btn.boss-mode-btn {
     /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
     width: calc(var(--story-img-width, 100%) * 0.7);       /* 너비 (이미지 너비의 70%) */
     height: calc(var(--story-img-height, 100%) * 0.15);    /* 높이 (이미지 높이의 15%) */

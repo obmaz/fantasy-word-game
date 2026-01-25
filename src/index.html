@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="styles/practice-mode-popup.css">
     <link rel="stylesheet" href="styles/battle-mode-popup.css">
     <link rel="stylesheet" href="styles/practice-mode-screen.css">
+    <link rel="stylesheet" href="styles/practice-memorization.css">
     <link rel="stylesheet" href="styles/battle-mode-screen.css">
     <link rel="stylesheet" href="styles/boss-mode-screen.css">
     <link rel="stylesheet" href="styles/buttons.css">
@@ -88,15 +89,15 @@
             <div class="title-buttons-overlay">
                 <!-- Gold display on title screen -->
                 <div class="title-gold-display">💰 <span id="title-ui-gold">0</span> G</div>
-                <!-- Game Data Selector -->
+                <!-- Game Data Selector (options are dynamically populated by data-loader.js) -->
                 <select id="game-data-selector" class="title-data-selector" title="게임 데이터 선택">
                     <option value="1">능률 보카 중등 기본</option>
-                    <option value="2">game_data_2</option>
+                    <option value="2">워드 마스터 중등 고난도</option>
                 </select>
                 <!-- Interactive button areas (invisible overlays on image buttons) -->
                 <!-- PRACTICE MODE = 연습 모드 -->
                 <button class="title-btn-area content-visible" id="title-practice-btn" title="연습 모드 (PRACTICE MODE)">
-                    <img src="images/title/practice_btn.webp" alt="Practice Mode" class="btn-image">
+                    <img src="images/title/practice_mode_btn.webp" alt="Practice Mode" class="btn-image">
                 </button>
                 <!-- BATTLE MODE = 배틀 모드 -->
                 <button class="title-btn-area content-visible" id="title-battle-mode-btn" title="배틀 모드 (BATTLE MODE)">
@@ -104,7 +105,7 @@
                 </button>
                 <!-- BOSS MODE = 무한의 전장 -->
                 <button class="title-btn-area content-visible" id="title-boss-mode-btn" title="무한의 전장 (BOSS MODE)">
-                    <img src="images/title/boss_rush_btn.webp" alt="Boss Mode" class="btn-image">
+                    <img src="images/title/boss_mode_btn.webp" alt="Boss Mode" class="btn-image">
                 </button>
                 
                 <!-- shop = 상점 -->
@@ -271,10 +272,10 @@
         </div>
     </div>
 
-    <!-- Practice Mode Screen (practice 모드용) -->
+    <!-- Practice Mode Screen (practice 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="practice-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/main/boss_battle_popup.webp" alt="Adventure Start" class="story-background" id="practice-mode-background-img" />
+            <img src="images/main/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="practice-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="practice-mode-start-btn" title="모험 시작"></button>
@@ -288,10 +289,49 @@
         </div>
     </div>
 
-    <!-- Battle Mode Screen (battle 모드용) -->
+    <!-- Practice Mode Memorization Screen (단어 암기 화면) -->
+    <div id="practice-memorization-screen" class="screen-overlay" style="display:none;">
+        <div class="practice-memorization-container">
+            <!-- 상단: Day 정보 및 단어 번호 -->
+            <div class="practice-memorization-header">
+                <div class="practice-day-info" id="practice-memorization-day-info"></div>
+                <div class="practice-word-counter" id="practice-word-counter">1 / 1</div>
+            </div>
+            
+            <!-- 중앙: 단어 표시 영역 -->
+            <div class="practice-memorization-content">
+                <!-- 영어 단어 -->
+                <div class="practice-word-section">
+                    <div class="practice-label">영어 단어</div>
+                    <div class="practice-word-text" id="practice-word-text">Loading...</div>
+                </div>
+                
+                <!-- 한글 뜻 -->
+                <div class="practice-meaning-section">
+                    <div class="practice-label">한글 뜻</div>
+                    <div class="practice-meaning-text" id="practice-meaning-text">Loading...</div>
+                </div>
+                
+                <!-- 영문 문장 (English Explanation) -->
+                <div class="practice-explanation-section">
+                    <div class="practice-label">영문 설명</div>
+                    <div class="practice-explanation-text" id="practice-explanation-text">Loading...</div>
+                </div>
+            </div>
+            
+            <!-- 하단: 네비게이션 버튼 -->
+            <div class="practice-memorization-navigation">
+                <button class="practice-nav-btn" id="practice-prev-btn" title="이전 단어">◀ 이전</button>
+                <button class="practice-nav-btn practice-nav-exit" id="practice-exit-btn" title="나가기">나가기</button>
+                <button class="practice-nav-btn" id="practice-next-btn" title="다음 단어">다음 ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Battle Mode Screen (battle 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="battle-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/main/boss_battle_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
+            <img src="images/main/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="battle-mode-start-btn" title="모험 시작"></button>
@@ -305,10 +345,10 @@
         </div>
     </div>
 
-    <!-- Boss Mode Screen (boss 모드용) -->
+    <!-- Boss Mode Screen (boss 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="boss-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/main/boss_battle_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
+            <img src="images/main/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="boss-mode-start-btn" title="모험 시작"></button>
@@ -564,6 +604,7 @@
             const practiceModePopup = document.getElementById('practice-mode-popup');
             const battleModePopup = document.getElementById('battle-mode-setting-popup');
             const resultScreen = document.getElementById('result-screen');
+            const practiceMemorizationScreen = document.getElementById('practice-memorization-screen');
             
             const isPracticeModeStoryScreen = practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '';
             const isBattleModeStoryScreen = battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '';
@@ -571,8 +612,9 @@
             const isPracticeModePopup = practiceModePopup && practiceModePopup.style.display !== 'none' && practiceModePopup.style.display !== '';
             const isBattleModePopup = battleModePopup && battleModePopup.style.display !== 'none' && battleModePopup.style.display !== '';
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
+            const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
             
-            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModePopup || isBattleModePopup || isResultScreen) {
+            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModePopup || isBattleModePopup || isResultScreen || isPracticeMemorizationScreen) {
                 // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
                 if (isGameScreen && typeof game !== 'undefined') {
                     if (game.timer) {
@@ -638,6 +680,10 @@
                 if (resultScreen) {
                     resultScreen.style.display = 'none';
                     resultScreen.classList.remove('closing');
+                }
+                if (practiceMemorizationScreen) {
+                    practiceMemorizationScreen.style.display = 'none';
+                    practiceMemorizationScreen.classList.remove('closing');
                 }
                 
                 startScreen.style.display = 'flex';

@@ -1,0 +1,174 @@
+/* ============================================
+   Practice Memorization Screen 스타일
+   ============================================ */
+
+#practice-memorization-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 200;
+}
+
+.practice-memorization-container {
+    width: 90%;
+    max-width: 600px;
+    height: 85vh;
+    max-height: 800px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* 헤더 영역 */
+.practice-memorization-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.practice-day-info {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.practice-word-counter {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+
+/* 콘텐츠 영역 */
+.practice-memorization-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    overflow-y: auto;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.practice-word-section,
+.practice-meaning-section,
+.practice-explanation-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.practice-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.practice-word-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.practice-meaning-text {
+    font-size: 24px;
+    color: #FFD700;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.practice-explanation-text {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: left;
+    word-break: break-word;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+/* 네비게이션 버튼 */
+.practice-memorization-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.practice-nav-btn {
+    flex: 1;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.practice-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.practice-nav-btn:active {
+    transform: translateY(0);
+}
+
+.practice-nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.practice-nav-exit {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    flex: 0.8;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .practice-memorization-container {
+        width: 95%;
+        padding: 20px;
+        height: 90vh;
+    }
+
+    .practice-word-text {
+        font-size: 28px;
+    }
+
+    .practice-meaning-text {
+        font-size: 20px;
+    }
+
+    .practice-explanation-text {
+        font-size: 16px;
+    }
+
+    .practice-nav-btn {
+        font-size: 16px;
+        padding: 12px 15px;
+    }
+}
