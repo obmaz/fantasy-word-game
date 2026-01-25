@@ -18,7 +18,6 @@ fantasy-word-game/
 │   │   ├── popup-common.css           # Common popup styles
 │   │   ├── practice-mode-popup.css    # Practice mode popup styles
 │   │   ├── battle-mode-popup.css      # Battle mode popup styles
-│   │   ├── practice-mode-screen.css   # Practice mode story screen styles
 │   │   ├── battle-mode-screen.css     # Battle mode story screen styles
 │   │   └── boss-mode-screen.css       # Boss mode story screen styles
 │   ├── scripts/

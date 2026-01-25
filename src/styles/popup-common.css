@@ -17,7 +17,6 @@
 /* 팝업이 열릴 때 타이틀 배경 블러 효과 강화 */
 #practice-mode-popup.screen-overlay,
 #battle-mode-setting-popup.screen-overlay,
-#practice-mode-screen.screen-overlay,
 #battle-mode-screen.screen-overlay,
 #boss-mode-screen.screen-overlay {
     backdrop-filter: blur(12px);
@@ -29,7 +28,6 @@
     background: rgba(0,0,0,0.75);
 }
 
-#practice-mode-screen,
 #battle-mode-screen,
 #boss-mode-screen {
     z-index: 200;

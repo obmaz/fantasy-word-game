@@ -858,9 +858,9 @@ const story = {
         story.mode = mode;
         const data = resolveStoryData(story.day);
 
-        // 모드에 따라 적절한 story-screen ID 결정
-        const storyScreenId = (mode === 'boss') ? 'boss-mode-screen' : (mode === 'practice') ? 'practice-mode-screen' : 'battle-mode-screen';
-        const storyScreenPrefix = (mode === 'boss') ? 'boss-mode' : (mode === 'practice') ? 'practice-mode' : 'battle-mode';
+        // 모드에 따라 적절한 story-screen ID 결정 (practice 모드는 더 이상 story-screen 사용하지 않음)
+        const storyScreenId = (mode === 'boss') ? 'boss-mode-screen' : 'battle-mode-screen';
+        const storyScreenPrefix = (mode === 'boss') ? 'boss-mode' : 'battle-mode';
 
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
         const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
@@ -882,12 +882,8 @@ const story = {
         closeScreenOverlay('start-screen', false);
         
         // 다른 story-screen 닫기
-        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
         const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (practiceModeStoryScreen && storyScreenId !== 'practice-mode-screen') {
-            practiceModeStoryScreen.style.display = 'none';
-        }
         if (battleModeStoryScreen && storyScreenId !== 'battle-mode-screen') {
             battleModeStoryScreen.style.display = 'none';
         }
@@ -1020,17 +1016,8 @@ const story = {
         document.getElementById('game-screen').style.display = 'none';
         
         // story-screen을 확실히 닫기
-        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
         const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (practiceModeStoryScreen) {
-            practiceModeStoryScreen.style.display = 'none';
-            practiceModeStoryScreen.style.visibility = 'hidden';
-            practiceModeStoryScreen.style.opacity = '0';
-            practiceModeStoryScreen.style.zIndex = '100';
-            practiceModeStoryScreen.style.pointerEvents = 'none';
-            practiceModeStoryScreen.classList.remove('closing');
-        }
         if (battleModeStoryScreen) {
             battleModeStoryScreen.style.display = 'none';
             battleModeStoryScreen.style.visibility = 'hidden';
@@ -1172,7 +1159,6 @@ const game = {
         game.currentDay = day;
 
         // story-screen을 애니메이션과 함께 닫기
-        closeScreenOverlay('practice-mode-screen', true);
         closeScreenOverlay('battle-mode-screen', true);
         closeScreenOverlay('boss-mode-screen', true);
 
@@ -1798,17 +1784,8 @@ const game = {
 
     end: (win) => {
         // story-screen이 확실히 닫혀있는지 확인
-        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
         const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (practiceModeStoryScreen) {
-            practiceModeStoryScreen.style.display = 'none';
-            practiceModeStoryScreen.style.visibility = 'hidden';
-            practiceModeStoryScreen.style.opacity = '0';
-            practiceModeStoryScreen.style.zIndex = '100';
-            practiceModeStoryScreen.style.pointerEvents = 'none';
-            practiceModeStoryScreen.classList.remove('closing');
-        }
         if (battleModeStoryScreen) {
             battleModeStoryScreen.style.display = 'none';
             battleModeStoryScreen.style.visibility = 'hidden';
@@ -2151,8 +2128,7 @@ const practiceMemorization = {
         practiceMemorization.currentDay = day;
         practiceMemorization.currentIndex = 0;
         
-        // story-screen 닫기
-        closeScreenOverlay('practice-mode-screen', true);
+        // story-screen 닫기 (practice-mode-screen은 더 이상 사용하지 않음)
         
         // 단어 목록 로드
         let pool;
@@ -2620,12 +2596,9 @@ function syncPopupButtonOverlay(popupId) {
 function syncStoryButtonOverlay(storyScreenId) {
     if (!storyScreenId) {
         // 모두 확인
-        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
         const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '') {
-            syncStoryButtonOverlay('practice-mode-screen');
-        } else if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
+        if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
             syncStoryButtonOverlay('battle-mode-screen');
         } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
             syncStoryButtonOverlay('boss-mode-screen');
@@ -2897,19 +2870,6 @@ window.onload = () => {
                         console.error('openPracticePopup function not found');
                     }
                 }, { capture: true });
-                // mousedown 이벤트도 추가 (모바일 호환성)
-                freshPracticeBtn.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-                freshPracticeBtn.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Practice Mode button touched');
-                    if (typeof openPracticePopup === 'function') {
-                        openPracticePopup();
-                    }
-                }, { capture: true });
                 console.log('[Button Setup] Practice button event listener added');
             }
         } catch (e) {
@@ -3072,14 +3032,6 @@ window.onload = () => {
                         console.error('openBattleModePopup function not found');
                     }
                 }, { capture: true });
-                freshBattleBtn.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Battle Mode button touched');
-                    if (typeof openBattleModePopup === 'function') {
-                        openBattleModePopup();
-                    }
-                }, { capture: true });
                 console.log('[Button Setup] Battle Mode button event listener added');
             }
         } catch (e) {
@@ -3115,14 +3067,6 @@ window.onload = () => {
                         story.startIntro('boss');
                     } else {
                         console.error('story.startIntro function not found');
-                    }
-                }, { capture: true });
-                freshBossBtn.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Boss Mode button touched');
-                    if (typeof story !== 'undefined' && typeof story.startIntro === 'function') {
-                        story.startIntro('boss');
                     }
                 }, { capture: true });
                 console.log('[Button Setup] Boss Mode button event listener added');
@@ -3236,15 +3180,9 @@ window.onload = () => {
     // Story screen resize handler
     let storyResizeTimeout;
     const storyResizeHandler = () => {
-        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
         const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '') {
-            clearTimeout(storyResizeTimeout);
-            storyResizeTimeout = setTimeout(() => {
-                syncStoryButtonOverlay('practice-mode-screen');
-            }, 100);
-        } else if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
+        if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
                 syncStoryButtonOverlay('battle-mode-screen');
@@ -3263,32 +3201,8 @@ window.onload = () => {
         closeScreenOverlay('result-screen', true);
         
         // story-screen 완전히 초기화
-        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
         const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (practiceModeStoryScreen) {
-            practiceModeStoryScreen.style.display = 'none';
-            practiceModeStoryScreen.style.visibility = '';
-            practiceModeStoryScreen.style.opacity = '';
-            practiceModeStoryScreen.style.zIndex = '';
-            practiceModeStoryScreen.style.pointerEvents = '';
-            practiceModeStoryScreen.classList.remove('closing');
-            
-            // 배경 이미지 초기화
-            const storyImg = document.getElementById('practice-mode-background-img');
-            if (storyImg) {
-                storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
-            }
-            
-            // 버튼 초기화
-            const storyStartBtn = document.getElementById('practice-mode-start-btn');
-            if (storyStartBtn) {
-                storyStartBtn.classList.add('boss-mode-btn');
-                storyStartBtn.classList.remove('practice-btn');
-                storyStartBtn.style.pointerEvents = '';
-                storyStartBtn.onclick = null;
-            }
-        }
         if (battleModeStoryScreen) {
             battleModeStoryScreen.style.display = 'none';
             battleModeStoryScreen.style.visibility = '';
