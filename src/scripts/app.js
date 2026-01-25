@@ -661,11 +661,11 @@ const ui = {
         if (overlayGold) overlayGold.innerText = db.gold;
     },
     updateGameInfo: (mode, day) => {
-        const modeText = mode === 'rush' ? '보스 러쉬' : (mode === 'chaos' ? '혼돈의 균열' : '배틀 모드');
+        const modeText = mode === 'boss' ? '보스 모드' : (mode === 'battle' ? '배틀 모드' : '배틀 모드');
         let dayText;
-        if (mode === 'rush') {
+        if (mode === 'boss') {
             dayText = '무한';
-        } else if (mode === 'chaos') {
+        } else if (mode === 'battle') {
             dayText = '전체';
         } else {
             // day가 숫자 문자열이면 그대로 사용, 'all'이면 '전체', 그 외는 숫자로 변환 시도
@@ -835,7 +835,7 @@ function pickMonsterSprite(q, isBoss) {
 function resolveStoryData(day) {
     // prefer canonical catalog
     if (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].story) return dayCatalog[day].story;
-    if (day === 'rush') return (dayCatalog && dayCatalog['rush'] && dayCatalog['rush'].story) || null;
+    if (day === 'boss') return (dayCatalog && dayCatalog['boss'] && dayCatalog['boss'].story) || null;
     const s = (dayCatalog && dayCatalog[day] && dayCatalog[day].story) ? dayCatalog[day].story : null;
     if (s) return s;
 
@@ -856,9 +856,13 @@ const story = {
         console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
         db.save();
-        story.day = (mode === 'rush') ? 'rush' : daySel;
+        story.day = (mode === 'boss') ? 'boss' : daySel;
         story.mode = mode;
         const data = resolveStoryData(story.day);
+
+        // 모드에 따라 적절한 story-screen ID 결정
+        const storyScreenId = (mode === 'boss') ? 'boss-story-screen' : (mode === 'practice') ? 'practice-mode-screen' : 'battle-mode-screen';
+        const storyScreenPrefix = (mode === 'boss') ? 'boss-story' : (mode === 'practice') ? 'practice-mode' : 'battle-mode';
 
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
         const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
@@ -866,20 +870,35 @@ const story = {
         console.log('[story.startIntro] dbg -> day=', story.day, 'hasEntry=', hasEntry, 'optText=', optNode && optNode.textContent);
         console.log('[story.startIntro] dbg -> data.title=', data.title);
 
-        const titleEls = document.querySelectorAll('#story-title');
-        if (titleEls.length > 1) console.warn('[story.startIntro] multiple #story-title elements found:', titleEls.length);
-        const titleEl = document.getElementById('story-title');
-        console.log('[story.startIntro] current #story-title before=', titleEl && titleEl.innerText);
+        const titleElId = `${storyScreenPrefix}-title`;
+        const titleEls = document.querySelectorAll(`#${titleElId}`);
+        if (titleEls.length > 1) console.warn(`[story.startIntro] multiple #${titleElId} elements found:`, titleEls.length);
+        const titleEl = document.getElementById(titleElId);
+        console.log(`[story.startIntro] current #${titleElId} before=`, titleEl && titleEl.innerText);
 
         // Prefer the Day label from the canonical catalog; fall back to legacy views
-        const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'rush' ? 'Boss Rush' : `Day ${story.day}`));
+        const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'boss' ? '보스 모드' : `Day ${story.day}`));
         const _t = data && data.title ? String(data.title).trim() : '';
         const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
 
         closeScreenOverlay('start-screen', false);
         
+        // 다른 story-screen 닫기
+        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
+        const bossStoryScreen = document.getElementById('boss-story-screen');
+        if (practiceModeStoryScreen && storyScreenId !== 'practice-mode-screen') {
+            practiceModeStoryScreen.style.display = 'none';
+        }
+        if (battleModeStoryScreen && storyScreenId !== 'battle-mode-screen') {
+            battleModeStoryScreen.style.display = 'none';
+        }
+        if (bossStoryScreen && storyScreenId !== 'boss-story-screen') {
+            bossStoryScreen.style.display = 'none';
+        }
+        
         // story-screen 스타일 초기화
-        const storyScreen = document.getElementById('story-screen');
+        const storyScreen = document.getElementById(storyScreenId);
         if (storyScreen) {
             storyScreen.style.visibility = '';
             storyScreen.style.opacity = '';
@@ -888,19 +907,10 @@ const story = {
             storyScreen.classList.remove('closing');
         }
         
-        openScreenOverlay('story-screen', true);
-        
-        // Chaos Rift 모드일 때 data-mode 속성 추가 (CSS 선택자용)
-        if (storyScreen) {
-            if (mode === 'chaos') {
-                storyScreen.setAttribute('data-mode', 'chaos');
-            } else {
-                storyScreen.removeAttribute('data-mode');
-            }
-        }
+        openScreenOverlay(storyScreenId, true);
         
         // 히스토리 상태 추가 (백버튼 처리용)
-        history.pushState({ screen: 'story-screen' }, '', window.location.href);
+        history.pushState({ screen: storyScreenId }, '', window.location.href);
         
         // 타이틀 크기 먼저 동기화 (스토리 화면 크기가 타이틀 기준이므로)
         if (typeof syncTitleButtonOverlay === 'function') {
@@ -908,8 +918,8 @@ const story = {
         }
         
         // 모든 모드에서 boss_battle_popup.webp 사용
-        const storyImg = document.getElementById('story-background-img');
-        const storyStartBtn = document.getElementById('story-start-btn');
+        const storyImg = document.getElementById(`${storyScreenPrefix}-background-img`);
+        const storyStartBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
         if (storyImg) {
             storyImg.src = 'images/main/boss_battle_popup.webp';
             // 보스 배틀 모드 클래스 추가
@@ -921,12 +931,12 @@ const story = {
             // 이미지 로드 후 버튼 오버레이 동기화
             if (storyImg.complete) {
                 setTimeout(() => {
-                    syncStoryButtonOverlay();
+                    syncStoryButtonOverlay(storyScreenId);
                 }, 100);
             } else {
                 storyImg.addEventListener('load', () => {
                     setTimeout(() => {
-                        syncStoryButtonOverlay();
+                        syncStoryButtonOverlay(storyScreenId);
                     }, 100);
                 }, { once: true });
             }
@@ -934,66 +944,57 @@ const story = {
         
         // write and verify immediately via centralized setter (protects against duplicate IDs / external overwrites)
         if (window.ui && typeof window.ui.setStoryTitle === 'function') {
-            window.ui.setStoryTitle(displayTitle);
+            window.ui.setStoryTitle(displayTitle, storyScreenPrefix);
         } else {
-            const te = document.getElementById('story-title'); if (te) te.innerText = displayTitle; console.warn('[story.startIntro] fallback title write used');
+            const te = document.getElementById(titleElId); if (te) te.innerText = displayTitle; console.warn(`[story.startIntro] fallback title write used for ${titleElId}`);
         }
         
         // Day 정보 표시
-        const dayInfoEl = document.getElementById('story-day-info');
+        const dayInfoEl = document.getElementById(`${storyScreenPrefix}-day-info`);
         if (dayInfoEl) {
             dayInfoEl.innerText = displayTitle;
         }
         
         // 이야기 텍스트 표시
-        const textEl = document.getElementById('story-text');
+        const textEl = document.getElementById(`${storyScreenPrefix}-text`);
         if (textEl) {
             let introText = data.intro || '';
             textEl.innerText = introText;
         }
 
-        const btn = document.getElementById('story-btn');
-        btn.innerText = "모험 시작";
         // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
-        const resolvedAtIntro = (story.mode === 'rush') ? 'rush' : daySel;
-        const startGame = () => {
-            // 게임 오버 처리 중이면 시작하지 않음
-            if (game.isProcessing) {
-                console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
-                return;
-            }
-            console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
-            game.init(story.mode, resolvedAtIntro);
-        };
-        btn.onclick = startGame;
+        const resolvedAtIntro = (story.mode === 'boss') ? 'boss' : daySel;
         
-        // 이미지의 "모험시작" 버튼에도 동일한 이벤트 연결
+        // 이미지의 "모험시작" 버튼에 이벤트 연결
         if (storyStartBtn) {
             // 기존 이벤트 리스너 완전히 제거
             storyStartBtn.onclick = null;
             // 모든 이벤트 리스너 제거를 위해 클론 후 교체
             const newBtn = storyStartBtn.cloneNode(true);
             storyStartBtn.parentNode.replaceChild(newBtn, storyStartBtn);
-            const freshBtn = document.getElementById('story-start-btn');
+            const freshBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
             
             // 새 이벤트 리스너 추가
-            freshBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Story start button clicked');
-                // 게임 오버 처리 중이면 시작하지 않음
-                if (game.isProcessing) {
-                    console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
-                    return;
-                }
-                console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
-                game.init(story.mode, resolvedAtIntro);
-            }, { capture: true });
-            freshBtn.style.pointerEvents = 'auto'; // 클릭 활성화
-            freshBtn.style.cursor = 'pointer';
-            freshBtn.style.zIndex = '25';
+            if (freshBtn) {
+                freshBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Story start button clicked');
+                    // 게임 오버 처리 중이면 시작하지 않음
+                    if (game.isProcessing) {
+                        console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
+                        return;
+                    }
+                    const resolvedAtIntro = (story.mode === 'boss') ? 'boss' : daySel;
+                    console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
+                    game.init(story.mode, resolvedAtIntro);
+                }, { capture: true });
+                freshBtn.style.pointerEvents = 'auto'; // 클릭 활성화
+                freshBtn.style.cursor = 'pointer';
+                freshBtn.style.zIndex = '25';
+            }
         } else {
-            console.warn('story-start-btn not found');
+            console.warn(`${storyScreenPrefix}-start-btn not found`);
         }
     },
     showEnding: (win) => {
@@ -1015,25 +1016,60 @@ const story = {
         document.getElementById('game-screen').style.display = 'none';
         
         // story-screen을 확실히 닫기
-        const storyScreen = document.getElementById('story-screen');
-        if (storyScreen) {
-            storyScreen.style.display = 'none';
-            storyScreen.style.visibility = 'hidden';
-            storyScreen.style.opacity = '0';
-            storyScreen.style.zIndex = '100';
-            storyScreen.style.pointerEvents = 'none';
-            storyScreen.classList.remove('closing');
+        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
+        const bossStoryScreen = document.getElementById('boss-story-screen');
+        if (practiceModeStoryScreen) {
+            practiceModeStoryScreen.style.display = 'none';
+            practiceModeStoryScreen.style.visibility = 'hidden';
+            practiceModeStoryScreen.style.opacity = '0';
+            practiceModeStoryScreen.style.zIndex = '100';
+            practiceModeStoryScreen.style.pointerEvents = 'none';
+            practiceModeStoryScreen.classList.remove('closing');
+        }
+        if (battleModeStoryScreen) {
+            battleModeStoryScreen.style.display = 'none';
+            battleModeStoryScreen.style.visibility = 'hidden';
+            battleModeStoryScreen.style.opacity = '0';
+            battleModeStoryScreen.style.zIndex = '100';
+            battleModeStoryScreen.style.pointerEvents = 'none';
+            battleModeStoryScreen.classList.remove('closing');
+        }
+        if (bossStoryScreen) {
+            bossStoryScreen.style.display = 'none';
+            bossStoryScreen.style.visibility = 'hidden';
+            bossStoryScreen.style.opacity = '0';
+            bossStoryScreen.style.zIndex = '100';
+            bossStoryScreen.style.pointerEvents = 'none';
+            bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-popup 닫기
-        const practicePopup = document.getElementById('practice-popup');
-        if (practicePopup) {
-            practicePopup.style.display = 'none';
-            practicePopup.style.visibility = 'hidden';
-            practicePopup.style.opacity = '0';
-            practicePopup.style.zIndex = '100';
-            practicePopup.style.pointerEvents = 'none';
-            practicePopup.classList.remove('closing');
+        // practice-mode-popup과 battle-setting-popup 닫기
+        const practiceModePopup = document.getElementById('practice-mode-popup');
+        const battleModePopup = document.getElementById('battle-setting-popup');
+        if (practiceModePopup) {
+            practiceModePopup.style.display = 'none';
+            practiceModePopup.style.visibility = 'hidden';
+            practiceModePopup.style.opacity = '0';
+            practiceModePopup.style.zIndex = '100';
+            practiceModePopup.style.pointerEvents = 'none';
+            practiceModePopup.classList.remove('closing');
+        }
+        if (battleModePopup) {
+            battleModePopup.style.display = 'none';
+            battleModePopup.style.visibility = 'hidden';
+            battleModePopup.style.opacity = '0';
+            battleModePopup.style.zIndex = '100';
+            battleModePopup.style.pointerEvents = 'none';
+            battleModePopup.classList.remove('closing');
+        }
+        if (battleModePopup) {
+            battleModePopup.style.display = 'none';
+            battleModePopup.style.visibility = 'hidden';
+            battleModePopup.style.opacity = '0';
+            battleModePopup.style.zIndex = '100';
+            battleModePopup.style.pointerEvents = 'none';
+            battleModePopup.classList.remove('closing');
         }
         
         // 모든 모드에서 story-screen을 건너뛰고 바로 결과 화면으로
@@ -1042,6 +1078,9 @@ const story = {
 };
 
 // safety helpers — cleanup and runtime sanity checks (kept top-level for easy console access)
+// 개발/디버깅용 함수들 - HTML에 #story-title 요소가 없으므로 비활성화됨
+// 필요시 주석을 해제하고 HTML에 해당 요소를 추가하면 사용 가능
+/*
 function __purgeDuplicateStoryTitle(opts = {}) {
     try {
         const hard = opts.hard === undefined ? true : !!opts.hard;
@@ -1109,16 +1148,17 @@ function __runGameSanityChecks(opts = {}) {
         console.error('[__runGameSanityChecks] unexpected error', err);
         out.error = String(err);
     }
-    // convenience alias from console
-    window.runGameSanityTest = () => __runGameSanityChecks(opts);
+    // convenience alias from console - 비활성화됨 (HTML에 #story-title 요소 없음)
+    // window.runGameSanityTest = () => __runGameSanityChecks(opts);
     return out;
 }
+*/
 
 // 4. GAME Logic
 const game = {
     list: [], idx: 0, timer: null, timeLeft: 0, maxTime: 10,
-    stats: { gain: 0, lost: 0 }, currentQ: null, isProcessing: false, currentAns: "", mode: 'normal',
-    deck: [], currentDay: null, chaosQuestionType: 'mixed',
+    stats: { gain: 0, lost: 0 }, currentQ: null, isProcessing: false, currentAns: "", mode: 'battle',
+    deck: [], currentDay: null, battleQuestionType: 'mixed',
     subjectiveTotal: 0, // 주관식 문제 총 개수
     subjectiveCorrect: 0, // 주관식 문제 정답 개수
 
@@ -1128,11 +1168,13 @@ const game = {
         game.currentDay = day;
 
         // story-screen을 애니메이션과 함께 닫기
-        closeScreenOverlay('story-screen', true);
+        closeScreenOverlay('practice-mode-screen', true);
+        closeScreenOverlay('battle-mode-screen', true);
+        closeScreenOverlay('boss-story-screen', true);
 
         let pool;
         // normalize day and strictly match numeric day values to avoid cross-day leakage
-        if (day === 'all' || day === 'rush') {
+        if (day === 'all' || day === 'boss') {
             pool = rawData;
         } else {
             const dayNum = Number(day);
@@ -1148,14 +1190,14 @@ const game = {
         game.subjectiveTotal = 0;
         game.subjectiveCorrect = 0;
 
-        if (mode === 'rush') {
+        if (mode === 'boss') {
             game.deck = game.shuffle([...rawData]);
             game.list = [];
-        } else if (mode === 'chaos') {
-            // Chaos Rift: Question type depends on user selection
+        } else if (mode === 'battle') {
+            // Battle Mode: Question type depends on user selection
             let shuffledPool = game.shuffle(pool);
-            const questionType = game.chaosQuestionType || 'mixed'; // default to 'mixed'
-            console.log('[game.init] chaos mode - questionType:', questionType, 'chaosQuestionType:', game.chaosQuestionType);
+            const questionType = game.battleQuestionType || 'mixed'; // default to 'mixed'
+            console.log('[game.init] battle mode - questionType:', questionType, 'battleQuestionType:', game.battleQuestionType);
             
             if (questionType === 'objective') {
                 // 객관식만: 모든 문제를 객관식으로
@@ -1260,13 +1302,13 @@ const game = {
         game.isProcessing = false; // Reset lock
 
         // 게임 종료 조건 체크
-        if (game.mode === 'normal' && game.idx >= game.list.length) {
+        if (game.mode === 'battle' && game.idx >= game.list.length) {
             story.showEnding(true);
             return;
         }
         
-        // Chaos Rift 모드 종료 조건 체크
-        if (game.mode === 'chaos' && game.idx >= game.list.length) {
+        // Battle 모드 종료 조건 체크
+        if (game.mode === 'battle' && game.idx >= game.list.length) {
             story.showEnding(true);
             return;
         }
@@ -1275,25 +1317,25 @@ const game = {
         ui.updateGameInfo(game.mode, game.currentDay);
 
         // choose an appropriate monster sprite (day-specific > boss/normal > fallback)
-        const upcoming = (game.mode === 'rush') ? null : (game.list && game.list[game.idx]) || null;
-        const isBossPreview = (game.mode === 'rush') ? true : !!(upcoming && upcoming.isBoss);
+        const upcoming = (game.mode === 'boss') ? null : (game.list && game.list[game.idx]) || null;
+        const isBossPreview = (game.mode === 'boss') ? true : !!(upcoming && upcoming.isBoss);
         const sprite = pickMonsterSprite(upcoming || story.day, isBossPreview);
         document.getElementById('monster-img').src = sprite;
 
-        if (game.mode === 'rush') {
+        if (game.mode === 'boss') {
             if (game.deck.length === 0) { story.showEnding(true); return; }
             game.currentQ = game.deck.pop();
             document.getElementById('wave-badge').innerText = "Wave: " + (game.idx + 1);
             game.currentAns = game.currentQ.word;
-            // rush 모드에서는 모든 문제가 주관식이므로, 첫 문제일 때 총 개수 초기화
+            // boss 모드에서는 모든 문제가 주관식이므로, 첫 문제일 때 총 개수 초기화
             if (game.idx === 0) {
                 game.subjectiveTotal = 0;
                 game.subjectiveCorrect = 0;
             }
-            game.subjectiveTotal++; // rush 모드에서는 모든 문제가 주관식
-            game.renderBoss(game.currentQ, true);
-        } else if (game.mode === 'chaos') {
-            // Chaos Rift: Question type depends on user selection
+            game.subjectiveTotal++; // boss 모드에서는 모든 문제가 주관식
+            game.renderBoss(game.currentQ, true); // boss mode
+        } else if (game.mode === 'battle') {
+            // Battle Mode: Question type depends on user selection
             document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
@@ -1381,8 +1423,8 @@ const game = {
         ui.updateSkills();
     },
 
-    renderBoss: (data, isRush) => {
-        console.log('[game.renderBoss] day=', data && data.day, 'word=', data && data.word, 'isRush=', !!isRush);
+    renderBoss: (data, isBoss) => {
+        console.log('[game.renderBoss] day=', data && data.day, 'word=', data && data.word, 'isBoss=', !!isBoss);
         if (!data || !data.word || !data.meaning) {
             game.idx++;
             game.nextLevel();
@@ -1398,8 +1440,8 @@ const game = {
             gameInfoBadge.style.display = 'block';
         }
 
-        const isFinalBoss = !isRush && game.idx === game.list.length - 1;
-        document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isRush ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
+        const isFinalBoss = !isBoss && game.idx === game.list.length - 1;
+        document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isBoss ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
 
         document.getElementById('q-label').innerText = "TYPE IN ENGLISH";
         document.getElementById('q-text').innerText = data.meaning;
@@ -1493,7 +1535,7 @@ const game = {
 
             // Reward Logic
             let baseGain = 40;
-            if (game.mode === 'rush') {
+            if (game.mode === 'boss') {
                 baseGain = 80;
             } else if (game.currentQ.isBoss) {
                 baseGain = (game.list.length >= 20) ? 600 : (game.list.length >= 10 ? 200 : 100);
@@ -1526,7 +1568,7 @@ const game = {
             setTimeout(() => { game.idx++; game.nextLevel(); }, 800);
         } else {
             // Wrong Answer
-            if (game.mode === 'rush') {
+            if (game.mode === 'boss') {
                 // 게임 종료 처리 중이므로 더 이상 진행하지 않음
                 game.isProcessing = true;
                 
@@ -1591,7 +1633,7 @@ const game = {
 
     // Skills
     useHint: () => {
-        if (game.isProcessing || game.mode === 'rush' || db.skills.hint <= 0) return;
+        if (game.isProcessing || game.mode === 'boss' || db.skills.hint <= 0) return;
         if (document.getElementById('options-box').style.display === 'none') return;
 
         db.skills.hint--;
@@ -1603,7 +1645,7 @@ const game = {
         game.shuffle(wrongBtns).slice(0, 2).forEach(b => { b.classList.add('disabled'); b.style.opacity = "0.2"; });
     },
     useUltimate: () => {
-        if (game.isProcessing || game.mode === 'rush' || db.skills.ultimate <= 0) return;
+        if (game.isProcessing || game.mode === 'boss' || db.skills.ultimate <= 0) return;
         if (document.getElementById('options-box').style.display === 'none') return;
 
         db.skills.ultimate--;
@@ -1731,25 +1773,60 @@ const game = {
 
     end: (win) => {
         // story-screen이 확실히 닫혀있는지 확인
-        const storyScreen = document.getElementById('story-screen');
-        if (storyScreen) {
-            storyScreen.style.display = 'none';
-            storyScreen.style.visibility = 'hidden';
-            storyScreen.style.opacity = '0';
-            storyScreen.style.zIndex = '100';
-            storyScreen.style.pointerEvents = 'none';
-            storyScreen.classList.remove('closing');
+        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
+        const bossStoryScreen = document.getElementById('boss-story-screen');
+        if (practiceModeStoryScreen) {
+            practiceModeStoryScreen.style.display = 'none';
+            practiceModeStoryScreen.style.visibility = 'hidden';
+            practiceModeStoryScreen.style.opacity = '0';
+            practiceModeStoryScreen.style.zIndex = '100';
+            practiceModeStoryScreen.style.pointerEvents = 'none';
+            practiceModeStoryScreen.classList.remove('closing');
+        }
+        if (battleModeStoryScreen) {
+            battleModeStoryScreen.style.display = 'none';
+            battleModeStoryScreen.style.visibility = 'hidden';
+            battleModeStoryScreen.style.opacity = '0';
+            battleModeStoryScreen.style.zIndex = '100';
+            battleModeStoryScreen.style.pointerEvents = 'none';
+            battleModeStoryScreen.classList.remove('closing');
+        }
+        if (bossStoryScreen) {
+            bossStoryScreen.style.display = 'none';
+            bossStoryScreen.style.visibility = 'hidden';
+            bossStoryScreen.style.opacity = '0';
+            bossStoryScreen.style.zIndex = '100';
+            bossStoryScreen.style.pointerEvents = 'none';
+            bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-popup도 닫기
-        const practicePopup = document.getElementById('practice-popup');
-        if (practicePopup) {
-            practicePopup.style.display = 'none';
-            practicePopup.style.visibility = 'hidden';
-            practicePopup.style.opacity = '0';
-            practicePopup.style.zIndex = '100';
-            practicePopup.style.pointerEvents = 'none';
-            practicePopup.classList.remove('closing');
+        // practice-mode-popup과 battle-setting-popup도 닫기
+        const practiceModePopup = document.getElementById('practice-mode-popup');
+        const battleModePopup = document.getElementById('battle-setting-popup');
+        if (practiceModePopup) {
+            practiceModePopup.style.display = 'none';
+            practiceModePopup.style.visibility = 'hidden';
+            practiceModePopup.style.opacity = '0';
+            practiceModePopup.style.zIndex = '100';
+            practiceModePopup.style.pointerEvents = 'none';
+            practiceModePopup.classList.remove('closing');
+        }
+        if (battleModePopup) {
+            battleModePopup.style.display = 'none';
+            battleModePopup.style.visibility = 'hidden';
+            battleModePopup.style.opacity = '0';
+            battleModePopup.style.zIndex = '100';
+            battleModePopup.style.pointerEvents = 'none';
+            battleModePopup.classList.remove('closing');
+        }
+        if (battleModePopup) {
+            battleModePopup.style.display = 'none';
+            battleModePopup.style.visibility = 'hidden';
+            battleModePopup.style.opacity = '0';
+            battleModePopup.style.zIndex = '100';
+            battleModePopup.style.pointerEvents = 'none';
+            battleModePopup.classList.remove('closing');
         }
         
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
@@ -1758,7 +1835,7 @@ const game = {
         const gain = game.stats.gain;
         const lost = game.stats.lost;
 
-        document.getElementById('res-title').innerText = (win || game.mode === 'rush') ? "FINISHED!" : "FAILED";
+        document.getElementById('res-title').innerText = (win || game.mode === 'boss') ? "FINISHED!" : "FAILED";
 
         document.getElementById('res-gain').innerText = gain;
         document.getElementById('res-lost').innerText = lost;
@@ -1809,7 +1886,7 @@ const game = {
         
         // 게임 상태 완전히 리셋
         game.isProcessing = false;
-        game.mode = 'normal';
+        game.mode = 'battle';
         game.currentDay = null;
     }
 };
@@ -1984,7 +2061,8 @@ const secret = {
 };
 function initSelections() {
     const daySelect = document.getElementById('day-select');
-    const popupDaySelect = document.getElementById('popup-day-select');
+    const practiceDaySelect = document.getElementById('practice-mode-popup-day-select');
+    const battleDaySelect = document.getElementById('battle-setting-popup-day-select');
     
     // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
@@ -2001,7 +2079,7 @@ function initSelections() {
         const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : `Day ${d}`;
         html += `<option value="${d}">${label}</option>`;
     });
-    html += `<option value="all">전체 (혼돈의 균열)</option>`;
+    html += `<option value="all">전체 (배틀 모드)</option>`;
 
     // Initialize both selects
     if (daySelect) {
@@ -2016,33 +2094,35 @@ function initSelections() {
         }
     }
     
-    if (popupDaySelect) {
-        popupDaySelect.innerHTML = html;
+    if (practiceDaySelect) {
+        practiceDaySelect.innerHTML = html;
         const last = db.lastSelectedDay || 'all';
-        if (Array.from(popupDaySelect.options).some(o => o.value === String(last))) {
-            popupDaySelect.value = last;
+        if (Array.from(practiceDaySelect.options).some(o => o.value === String(last))) {
+            practiceDaySelect.value = last;
         } else {
-            popupDaySelect.value = 'all';
+            practiceDaySelect.value = 'all';
+        }
+    }
+    
+    if (battleDaySelect) {
+        battleDaySelect.innerHTML = html;
+        const last = db.lastSelectedDay || 'all';
+        if (Array.from(battleDaySelect.options).some(o => o.value === String(last))) {
+            battleDaySelect.value = last;
+        } else {
+            battleDaySelect.value = 'all';
         }
     }
 }
 
 // Open practice mode selection popup
 function openPracticePopup() {
-    const popup = document.getElementById('practice-popup');
-    const popupDaySelect = document.getElementById('popup-day-select');
-    const popupCountSelect = document.getElementById('popup-count-select');
+    const popup = document.getElementById('practice-mode-popup');
+    const popupDaySelect = document.getElementById('practice-mode-popup-day-select');
+    const popupCountSelect = document.getElementById('practice-mode-popup-count-select');
+    const popupImg = document.getElementById('practice-mode-popup-background-img');
     
     if (!popup) return;
-    
-    // Mark popup as practice mode
-    popup.dataset.mode = 'practice';
-    
-    // Hide question type radio buttons for practice mode
-    const questionTypeGroup = document.getElementById('popup-question-type-group');
-    if (questionTypeGroup) {
-        questionTypeGroup.style.display = 'none';
-    }
     
     // Enable day selection for practice mode
     if (popupDaySelect) {
@@ -2064,7 +2144,7 @@ function openPracticePopup() {
     popup.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'practice-popup' }, '', window.location.href);
+    history.pushState({ screen: 'practice-mode-popup' }, '', window.location.href);
     
     // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
@@ -2072,37 +2152,35 @@ function openPracticePopup() {
     }
     
     // 이미지 로드 후 버튼 오버레이 동기화
-    const popupImg = document.getElementById('popup-background-img');
     if (popupImg) {
         if (popupImg.complete) {
             setTimeout(() => {
-                syncPopupButtonOverlay();
+                syncPopupButtonOverlay('practice-mode-popup');
             }, 100);
         } else {
             popupImg.addEventListener('load', () => {
                 setTimeout(() => {
-                    syncPopupButtonOverlay();
+                    syncPopupButtonOverlay('practice-mode-popup');
                 }, 100);
             }, { once: true });
         }
     }
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment();
+    setupSelectFontSizeAdjustment('practice-mode-popup');
 }
 
-// Open chaos rift selection popup
-function openChaosRiftPopup() {
-    const popup = document.getElementById('practice-popup');
-    const popupDaySelect = document.getElementById('popup-day-select');
-    const popupCountSelect = document.getElementById('popup-count-select');
+// Open battle mode selection popup
+function openBattleModePopup() {
+    const popup = document.getElementById('battle-setting-popup');
+    const popupDaySelect = document.getElementById('battle-setting-popup-day-select');
+    const popupCountSelect = document.getElementById('battle-setting-popup-count-select');
+    const popupImg = document.getElementById('battle-setting-popup-background-img');
+    const questionTypeGroup = document.getElementById('battle-setting-popup-question-type-group');
     
     if (!popup) return;
     
-    // Mark popup as chaos mode
-    popup.dataset.mode = 'chaos';
-    
-    // For chaos rift, allow day selection
+    // For battle mode, allow day selection
     if (popupDaySelect) {
         // 기본값을 'all'로 설정하되 사용자가 변경 가능
         const lastDay = db.lastSelectedDay || 'all';
@@ -2112,7 +2190,7 @@ function openChaosRiftPopup() {
             popupDaySelect.value = 'all';
         }
         popupDaySelect.style.display = ''; // Show day selection
-        popupDaySelect.disabled = false; // Enable day selection for chaos rift
+        popupDaySelect.disabled = false; // Enable day selection for battle mode
     }
     
     const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
@@ -2120,8 +2198,7 @@ function openChaosRiftPopup() {
         popupCountSelect.value = String(lastCount);
     }
     
-    // Show question type radio buttons for chaos rift
-    const questionTypeGroup = document.getElementById('popup-question-type-group');
+    // Show question type radio buttons for battle mode
     if (questionTypeGroup) {
         questionTypeGroup.style.display = 'flex';
         // Load last selected question type or default to 'mixed'
@@ -2136,7 +2213,7 @@ function openChaosRiftPopup() {
         }
         
         // Update checked class for all radio labels
-        const allRadios = questionTypeGroup.querySelectorAll('input[name="question-type"]');
+        const allRadios = questionTypeGroup.querySelectorAll('input[name="battle-question-type"]');
         const allLabels = questionTypeGroup.querySelectorAll('.popup-radio-label');
         allLabels.forEach(label => label.classList.remove('checked'));
         allRadios.forEach(radio => {
@@ -2149,7 +2226,7 @@ function openChaosRiftPopup() {
         allRadios.forEach(radio => {
             radio.addEventListener('change', () => {
                 allLabels.forEach(label => label.classList.remove('checked'));
-                const checkedRadio = questionTypeGroup.querySelector('input[name="question-type"]:checked');
+                const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
                 if (checkedRadio) {
                     checkedRadio.closest('.popup-radio-label')?.classList.add('checked');
                 }
@@ -2160,7 +2237,7 @@ function openChaosRiftPopup() {
     popup.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'chaos-rift-popup' }, '', window.location.href);
+    history.pushState({ screen: 'battle-setting-popup' }, '', window.location.href);
     
     // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
@@ -2168,23 +2245,22 @@ function openChaosRiftPopup() {
     }
     
     // 이미지 로드 후 버튼 오버레이 동기화
-    const popupImg = document.getElementById('popup-background-img');
     if (popupImg) {
         if (popupImg.complete) {
             setTimeout(() => {
-                syncPopupButtonOverlay();
+                syncPopupButtonOverlay('battle-setting-popup');
             }, 100);
         } else {
             popupImg.addEventListener('load', () => {
                 setTimeout(() => {
-                    syncPopupButtonOverlay();
+                    syncPopupButtonOverlay('battle-setting-popup');
                 }, 100);
             }, { once: true });
         }
     }
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment();
+    setupSelectFontSizeAdjustment('battle-setting-popup');
 }
 
 // 공통 팝업 애니메이션 함수
@@ -2243,9 +2319,10 @@ function openScreenOverlay(elementId, animated = true) {
     }
 }
 
-// Close practice mode selection popup
+// Close practice or battle mode selection popup
 function closePracticePopup(animated = true) {
-    closeScreenOverlay('practice-popup', animated);
+    closeScreenOverlay('practice-mode-popup', animated);
+    closeScreenOverlay('battle-setting-popup', animated);
     // 히스토리 상태 업데이트
     history.pushState(null, '', window.location.href);
 }
@@ -2295,16 +2372,21 @@ function adjustSelectFontSize(selectElement, width, height) {
 }
 
 // 드롭박스 값 변경 시 폰트 크기 재조정 설정
-function setupSelectFontSizeAdjustment() {
-    const popupDaySelect = document.getElementById('popup-day-select');
-    const popupCountSelect = document.getElementById('popup-count-select');
+function setupSelectFontSizeAdjustment(popupId) {
+    if (!popupId) return;
+    
+    const popup = document.getElementById(popupId);
+    if (!popup) return;
+    
+    const popupImg = popup.querySelector('.popup-background');
+    const popupDaySelect = popup.querySelector('.popup-day-select');
+    const popupCountSelect = popup.querySelector('.popup-count-select');
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
     if (popupDaySelect && !popupDaySelect.dataset.fontAdjustmentSetup) {
         popupDaySelect.dataset.fontAdjustmentSetup = 'true';
         popupDaySelect.addEventListener('change', () => {
             setTimeout(() => {
-                const popupImg = document.getElementById('popup-background-img');
                 if (popupImg && popupImg.complete) {
                     const imgRect = popupImg.getBoundingClientRect();
                     adjustSelectFontSize(popupDaySelect, imgRect.width * 0.6, imgRect.height * 0.11);
@@ -2317,7 +2399,6 @@ function setupSelectFontSizeAdjustment() {
         popupCountSelect.dataset.fontAdjustmentSetup = 'true';
         popupCountSelect.addEventListener('change', () => {
             setTimeout(() => {
-                const popupImg = document.getElementById('popup-background-img');
                 if (popupImg && popupImg.complete) {
                     const imgRect = popupImg.getBoundingClientRect();
                     adjustSelectFontSize(popupCountSelect, imgRect.width * 0.6, imgRect.height * 0.11);
@@ -2328,16 +2409,18 @@ function setupSelectFontSizeAdjustment() {
 }
 
 // Popup 이미지 크기에 맞춰 CSS 변수 설정 (브라우저 크기에 반응)
-function syncPopupButtonOverlay() {
-    const popup = document.getElementById('practice-popup');
+function syncPopupButtonOverlay(popupId) {
+    if (!popupId) return;
+    
+    const popup = document.getElementById(popupId);
     // popup이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!popup || popup.style.display === 'none' || popup.style.display === '') {
         return;
     }
     
-    const popupImg = document.getElementById('popup-background-img');
-    const overlay = document.querySelector('.popup-buttons-overlay');
-    const container = document.querySelector('.popup-container-wrapper');
+    const popupImg = popup.querySelector('.popup-background');
+    const overlay = popup.querySelector('.popup-buttons-overlay');
+    const container = popup.querySelector('.popup-container-wrapper');
     
     if (!popupImg || !overlay || !container) return;
     
@@ -2364,14 +2447,14 @@ function syncPopupButtonOverlay() {
             overlay.style.setProperty('--popup-img-top', top + 'px');
             
             // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
-            const daySelect = document.getElementById('popup-day-select');
+            const daySelect = popup.querySelector('.popup-day-select');
             if (daySelect) {
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.095;
                 adjustSelectFontSize(daySelect, width, height);
             }
             
-            const countSelect = document.getElementById('popup-count-select');
+            const countSelect = popup.querySelector('.popup-count-select');
             if (countSelect) {
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.095;
@@ -2386,16 +2469,31 @@ function syncPopupButtonOverlay() {
 }
 
 // Story screen 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기 기준)
-function syncStoryButtonOverlay() {
-    const storyScreen = document.getElementById('story-screen');
+function syncStoryButtonOverlay(storyScreenId) {
+    if (!storyScreenId) {
+        // 모두 확인
+        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
+        const bossStoryScreen = document.getElementById('boss-story-screen');
+        if (practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '') {
+            syncStoryButtonOverlay('practice-mode-screen');
+        } else if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
+            syncStoryButtonOverlay('battle-mode-screen');
+        } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
+            syncStoryButtonOverlay('boss-story-screen');
+        }
+        return;
+    }
+    
+    const storyScreen = document.getElementById(storyScreenId);
     // story-screen이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!storyScreen || storyScreen.style.display === 'none' || storyScreen.style.display === '') {
         return;
     }
     
-    const storyImg = document.querySelector('.story-background');
-    const overlay = document.querySelector('.story-buttons-overlay');
-    const container = document.querySelector('.story-container-wrapper');
+    const storyImg = storyScreen.querySelector('.story-background');
+    const overlay = storyScreen.querySelector('.story-buttons-overlay');
+    const container = storyScreen.querySelector('.story-container-wrapper');
     
     if (!storyImg || !overlay || !container) return;
     
@@ -2585,68 +2683,160 @@ window.onload = () => {
         }, 100);
     });
 
-    // Add event listeners for buttons
-    document.getElementById('start-battle-btn').addEventListener('click', () => {
-        const selectedDay = document.getElementById('day-select').value;
-        console.log('[start-battle] selectedDay=', selectedDay);
-        story.startIntro('normal', selectedDay);
-    });
-    document.getElementById('boss-rush-btn').addEventListener('click', () => story.startIntro('rush'));
+    // Add event listeners for buttons (with error handling)
+    try {
+        const startBattleBtn = document.getElementById('start-battle-btn');
+        if (startBattleBtn) {
+            startBattleBtn.addEventListener('click', () => {
+                const selectedDay = document.getElementById('day-select').value;
+                console.log('[start-battle] selectedDay=', selectedDay);
+                story.startIntro('battle', selectedDay);
+            });
+        }
+    } catch (e) {
+        console.error('Error setting up start-battle-btn:', e);
+    }
+    
+    try {
+        const bossModeBtn = document.getElementById('boss-mode-btn');
+        if (bossModeBtn) {
+            bossModeBtn.addEventListener('click', () => story.startIntro('boss'));
+        }
+    } catch (e) {
+        console.error('Error setting up boss-mode-btn:', e);
+    }
     
     // Connect title image button areas to actual buttons
     const titlePracticeBtn = document.getElementById('title-practice-btn'); // PRACTICE MODE
-    const titleChaosRiftBtn = document.getElementById('title-chaos-rift-btn'); // CHAOS RIFT
-    const titleBossRushBtn = document.getElementById('title-boss-rush-btn');   // BOSS RUSH
+    const titleBattleModeBtn = document.getElementById('title-battle-mode-btn'); // BATTLE MODE
+    const titleBossModeBtn = document.getElementById('title-boss-mode-btn');   // BOSS MODE
     const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
     const titleProfileBtn = document.getElementById('title-profile-btn');     // PROFILE
     const titleStatisticsBtn = document.getElementById('title-statistics-btn'); // STATISTICS
     const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
     
+    console.log('[Button Setup] titlePracticeBtn:', titlePracticeBtn);
+    console.log('[Button Setup] titleBattleModeBtn:', titleBattleModeBtn);
+    console.log('[Button Setup] titleBossModeBtn:', titleBossModeBtn);
+    
+    // Practice 버튼 설정
     if (titlePracticeBtn) {
-        // 기존 이벤트 리스너 제거 후 재등록
-        titlePracticeBtn.onclick = null;
-        titlePracticeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Practice Mode button clicked');
-            if (typeof openPracticePopup === 'function') {
-                openPracticePopup();
-            } else {
-                console.error('openPracticePopup function not found');
+        try {
+            // 기존 이벤트 리스너 제거 후 재등록
+            titlePracticeBtn.onclick = null;
+            // 모든 이벤트 리스너 제거
+            const newBtn = titlePracticeBtn.cloneNode(true);
+            titlePracticeBtn.parentNode.replaceChild(newBtn, titlePracticeBtn);
+            const freshPracticeBtn = document.getElementById('title-practice-btn');
+            
+            if (freshPracticeBtn) {
+                freshPracticeBtn.style.pointerEvents = 'auto';
+                freshPracticeBtn.style.zIndex = '25';
+                freshPracticeBtn.style.cursor = 'pointer';
+                // 버튼 내부 이미지도 클릭 가능하도록 설정
+                const btnImage = freshPracticeBtn.querySelector('.btn-image');
+                if (btnImage) {
+                    btnImage.style.pointerEvents = 'none';
+                }
+                // 버튼 자체와 모든 자식 요소에 클릭 이벤트 추가
+                freshPracticeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Practice Mode button clicked');
+                    if (typeof openPracticePopup === 'function') {
+                        openPracticePopup();
+                    } else {
+                        console.error('openPracticePopup function not found');
+                    }
+                }, { capture: true });
+                // mousedown 이벤트도 추가 (모바일 호환성)
+                freshPracticeBtn.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                freshPracticeBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Practice Mode button touched');
+                    if (typeof openPracticePopup === 'function') {
+                        openPracticePopup();
+                    }
+                }, { capture: true });
+                console.log('[Button Setup] Practice button event listener added');
             }
-        }, { capture: true });
+        } catch (e) {
+            console.error('Error setting up practice button:', e);
+        }
     } else {
         console.warn('title-practice-btn not found');
     }
     
-    // Popup event listeners
-    const popupStartBtn = document.getElementById('popup-start-btn');
-    const popupCancelBtn = document.getElementById('popup-cancel-btn');
-    const popupDaySelect = document.getElementById('popup-day-select');
-    const popupCountSelect = document.getElementById('popup-count-select');
+    // Practice Setting Popup event listeners
+    const practiceStartBtn = document.getElementById('practice-mode-popup-start-btn');
+    const practiceCancelBtn = document.getElementById('practice-mode-popup-cancel-btn');
+    const practiceDaySelect = document.getElementById('practice-mode-popup-day-select');
+    const practiceCountSelect = document.getElementById('practice-mode-popup-count-select');
     
-    if (popupStartBtn) {
-        popupStartBtn.addEventListener('click', () => {
-            const popup = document.getElementById('practice-popup');
-            const selectedDay = popupDaySelect ? popupDaySelect.value : 'all';
-            const selectedCount = popupCountSelect ? parseInt(popupCountSelect.value) : 10;
+    if (practiceStartBtn) {
+        practiceStartBtn.addEventListener('click', () => {
+            const selectedDay = practiceDaySelect ? practiceDaySelect.value : 'all';
+            const selectedCount = practiceCountSelect ? parseInt(practiceCountSelect.value) : 10;
             
-            // Check which mode opened the popup
-            const popupMode = popup ? (popup.dataset.mode || 'battle') : 'battle';
+            // Save selections
+            db.lastSelectedDay = selectedDay;
+            localStorage.setItem('v7_last_count', selectedCount);
+            db.save();
             
-            // Get selected question type for chaos rift
-            let selectedQuestionType = 'mixed'; // default
-            if (popupMode === 'chaos') {
-                const questionTypeGroup = document.getElementById('popup-question-type-group');
-                if (questionTypeGroup) {
-                    const checkedRadio = questionTypeGroup.querySelector('input[name="question-type"]:checked');
-                    if (checkedRadio) {
-                        selectedQuestionType = checkedRadio.value;
-                    }
-                }
-                // Save question type preference
-                localStorage.setItem('v7_last_question_type', selectedQuestionType);
+            // Update hidden selects for compatibility
+            const daySelect = document.getElementById('day-select');
+            const countSelect = document.getElementById('count-select');
+            if (daySelect) daySelect.value = selectedDay;
+            if (countSelect) countSelect.value = String(selectedCount);
+            
+            // 시작화면 숨기기 (검정 배경만 보이도록)
+            const startScreen = document.getElementById('start-screen');
+            if (startScreen) {
+                startScreen.style.display = 'none';
             }
+            
+            // Close popup with animation and start game
+            closePracticePopup(true);
+            
+            // 애니메이션이 완료된 후 게임 시작 (practice 모드)
+            setTimeout(() => {
+                story.startIntro('practice', selectedDay);
+            }, 400); // 애니메이션 시간과 일치
+        });
+    }
+    
+    if (practiceCancelBtn) {
+        practiceCancelBtn.addEventListener('click', () => {
+            closePracticePopup();
+        });
+    }
+    
+    // Battle Setting Popup event listeners
+    const battleStartBtn = document.getElementById('battle-setting-popup-start-btn');
+    const battleCancelBtn = document.getElementById('battle-setting-popup-cancel-btn');
+    const battleDaySelect = document.getElementById('battle-setting-popup-day-select');
+    const battleCountSelect = document.getElementById('battle-setting-popup-count-select');
+    
+    if (battleStartBtn) {
+        battleStartBtn.addEventListener('click', () => {
+            const selectedDay = battleDaySelect ? battleDaySelect.value : 'all';
+            const selectedCount = battleCountSelect ? parseInt(battleCountSelect.value) : 10;
+            
+            // Get selected question type for battle mode
+            let selectedQuestionType = 'mixed'; // default
+            const questionTypeGroup = document.getElementById('battle-setting-popup-question-type-group');
+            if (questionTypeGroup) {
+                const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
+                if (checkedRadio) {
+                    selectedQuestionType = checkedRadio.value;
+                }
+            }
+            // Save question type preference
+            localStorage.setItem('v7_last_question_type', selectedQuestionType);
             
             // Save selections
             db.lastSelectedDay = selectedDay;
@@ -2654,9 +2844,7 @@ window.onload = () => {
             db.save();
             
             // Store question type for game.init to use
-            if (popupMode === 'chaos') {
-                game.chaosQuestionType = selectedQuestionType;
-            }
+            game.battleQuestionType = selectedQuestionType;
             
             // Update hidden selects for compatibility
             const daySelect = document.getElementById('day-select');
@@ -2675,49 +2863,104 @@ window.onload = () => {
             
             // 애니메이션이 완료된 후 게임 시작
             setTimeout(() => {
-                if (popupMode === 'chaos') {
-                    story.startIntro('chaos', selectedDay);
-                } else {
-                    story.startIntro('normal', selectedDay);
-                }
+                story.startIntro('battle', selectedDay);
             }, 400); // 애니메이션 시간과 일치
         });
     }
     
-    if (popupCancelBtn) {
-        popupCancelBtn.addEventListener('click', () => {
+    if (battleCancelBtn) {
+        battleCancelBtn.addEventListener('click', () => {
             closePracticePopup();
         });
     }
-    if (titleChaosRiftBtn) {
-        titleChaosRiftBtn.onclick = null;
-        titleChaosRiftBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Chaos Rift button clicked');
-            if (typeof openChaosRiftPopup === 'function') {
-                openChaosRiftPopup();
-            } else {
-                console.error('openChaosRiftPopup function not found');
+    // Battle Mode 버튼 설정
+    if (titleBattleModeBtn) {
+        try {
+            titleBattleModeBtn.onclick = null;
+            // 모든 이벤트 리스너 제거
+            const newBtn = titleBattleModeBtn.cloneNode(true);
+            titleBattleModeBtn.parentNode.replaceChild(newBtn, titleBattleModeBtn);
+            const freshBattleBtn = document.getElementById('title-battle-mode-btn');
+            
+            if (freshBattleBtn) {
+                freshBattleBtn.style.pointerEvents = 'auto';
+                freshBattleBtn.style.zIndex = '25';
+                freshBattleBtn.style.cursor = 'pointer';
+                // 버튼 내부 이미지도 클릭 가능하도록 설정
+                const btnImage = freshBattleBtn.querySelector('.btn-image');
+                if (btnImage) {
+                    btnImage.style.pointerEvents = 'none';
+                }
+                freshBattleBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Battle Mode button clicked');
+                    if (typeof openBattleModePopup === 'function') {
+                        openBattleModePopup();
+                    } else {
+                        console.error('openBattleModePopup function not found');
+                    }
+                }, { capture: true });
+                freshBattleBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Battle Mode button touched');
+                    if (typeof openBattleModePopup === 'function') {
+                        openBattleModePopup();
+                    }
+                }, { capture: true });
+                console.log('[Button Setup] Battle Mode button event listener added');
             }
-        }, { capture: true });
+        } catch (e) {
+            console.error('Error setting up battle mode button:', e);
+        }
     } else {
-        console.warn('title-chaos-rift-btn not found');
+        console.warn('title-battle-mode-btn not found');
     }
-    if (titleBossRushBtn) {
-        titleBossRushBtn.onclick = null;
-        titleBossRushBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Boss Rush button clicked');
-            if (typeof story !== 'undefined' && typeof story.startIntro === 'function') {
-                story.startIntro('rush');
-            } else {
-                console.error('story.startIntro function not found');
+    
+    // Boss Mode 버튼 설정
+    if (titleBossModeBtn) {
+        try {
+            titleBossModeBtn.onclick = null;
+            // 모든 이벤트 리스너 제거
+            const newBtn = titleBossModeBtn.cloneNode(true);
+            titleBossModeBtn.parentNode.replaceChild(newBtn, titleBossModeBtn);
+            const freshBossBtn = document.getElementById('title-boss-mode-btn');
+            
+            if (freshBossBtn) {
+                freshBossBtn.style.pointerEvents = 'auto';
+                freshBossBtn.style.zIndex = '25';
+                freshBossBtn.style.cursor = 'pointer';
+                // 버튼 내부 이미지도 클릭 가능하도록 설정
+                const btnImage = freshBossBtn.querySelector('.btn-image');
+                if (btnImage) {
+                    btnImage.style.pointerEvents = 'none';
+                }
+                freshBossBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Boss Mode button clicked');
+                    if (typeof story !== 'undefined' && typeof story.startIntro === 'function') {
+                        story.startIntro('boss');
+                    } else {
+                        console.error('story.startIntro function not found');
+                    }
+                }, { capture: true });
+                freshBossBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Boss Mode button touched');
+                    if (typeof story !== 'undefined' && typeof story.startIntro === 'function') {
+                        story.startIntro('boss');
+                    }
+                }, { capture: true });
+                console.log('[Button Setup] Boss Mode button event listener added');
             }
-        }, { capture: true });
+        } catch (e) {
+            console.error('Error setting up boss mode button:', e);
+        }
     } else {
-        console.warn('title-boss-rush-btn not found');
+        console.warn('title-boss-mode-btn not found');
     }
     if (titleShopBtn) {
         titleShopBtn.onclick = null;
@@ -2781,62 +3024,139 @@ window.onload = () => {
     }
     
     // Popup 이미지 로드 후 버튼 오버레이 동기화
-    const popupImg = document.getElementById('popup-background-img');
-    if (popupImg) {
-        if (popupImg.complete) {
-            syncPopupButtonOverlay();
+    const practiceModePopupImg = document.getElementById('practice-mode-popup-background-img');
+    const battleModePopupImg = document.getElementById('battle-setting-popup-background-img');
+    
+    if (practiceModePopupImg) {
+        if (practiceModePopupImg.complete) {
+            syncPopupButtonOverlay('practice-mode-popup');
         } else {
-            popupImg.addEventListener('load', syncPopupButtonOverlay);
+            practiceModePopupImg.addEventListener('load', () => syncPopupButtonOverlay('practice-mode-popup'));
         }
-        // 팝업이 열려있을 때만 resize 이벤트 처리
-        let popupResizeTimeout;
-        const popupResizeHandler = () => {
-            const popup = document.getElementById('practice-popup');
-            if (popup && popup.style.display !== 'none' && popup.style.display !== '') {
-                clearTimeout(popupResizeTimeout);
-                popupResizeTimeout = setTimeout(() => {
-                    syncPopupButtonOverlay();
-                }, 100);
-            }
-        };
-        window.addEventListener('resize', popupResizeHandler);
-        
-        // Story screen resize handler
-        let storyResizeTimeout;
-        const storyResizeHandler = () => {
-            const storyScreen = document.getElementById('story-screen');
-            if (storyScreen && storyScreen.style.display !== 'none' && storyScreen.style.display !== '') {
-                clearTimeout(storyResizeTimeout);
-                storyResizeTimeout = setTimeout(() => {
-                    syncStoryButtonOverlay();
-                }, 100);
-            }
-        };
-        window.addEventListener('resize', storyResizeHandler);
     }
+    
+    if (battleModePopupImg) {
+        if (battleModePopupImg.complete) {
+            syncPopupButtonOverlay('battle-setting-popup');
+        } else {
+            battleModePopupImg.addEventListener('load', () => syncPopupButtonOverlay('battle-setting-popup'));
+        }
+    }
+    
+    // 팝업이 열려있을 때만 resize 이벤트 처리
+    let popupResizeTimeout;
+    const popupResizeHandler = () => {
+        const practiceModePopup = document.getElementById('practice-mode-popup');
+        const battleModePopup = document.getElementById('battle-setting-popup');
+        if (practiceModePopup && practiceModePopup.style.display !== 'none' && practiceModePopup.style.display !== '') {
+            clearTimeout(popupResizeTimeout);
+            popupResizeTimeout = setTimeout(() => {
+                syncPopupButtonOverlay('practice-mode-popup');
+            }, 100);
+        } else if (battleModePopup && battleModePopup.style.display !== 'none' && battleModePopup.style.display !== '') {
+            clearTimeout(popupResizeTimeout);
+            popupResizeTimeout = setTimeout(() => {
+                syncPopupButtonOverlay('battle-setting-popup');
+            }, 100);
+        }
+    };
+    window.addEventListener('resize', popupResizeHandler);
+    
+    // Story screen resize handler
+    let storyResizeTimeout;
+    const storyResizeHandler = () => {
+        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
+        const bossStoryScreen = document.getElementById('boss-story-screen');
+        if (practiceModeStoryScreen && practiceModeStoryScreen.style.display !== 'none' && practiceModeStoryScreen.style.display !== '') {
+            clearTimeout(storyResizeTimeout);
+            storyResizeTimeout = setTimeout(() => {
+                syncStoryButtonOverlay('practice-mode-screen');
+            }, 100);
+        } else if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
+            clearTimeout(storyResizeTimeout);
+            storyResizeTimeout = setTimeout(() => {
+                syncStoryButtonOverlay('battle-mode-screen');
+            }, 100);
+        } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
+            clearTimeout(storyResizeTimeout);
+            storyResizeTimeout = setTimeout(() => {
+                syncStoryButtonOverlay('boss-story-screen');
+            }, 100);
+        }
+    };
+    window.addEventListener('resize', storyResizeHandler);
     
     // 결과 화면 닫기 함수
     window.closeResultScreen = function() {
         closeScreenOverlay('result-screen', true);
         
         // story-screen 완전히 초기화
-        const storyScreen = document.getElementById('story-screen');
-        if (storyScreen) {
-            storyScreen.style.display = 'none';
-            storyScreen.style.visibility = '';
-            storyScreen.style.opacity = '';
-            storyScreen.style.zIndex = '';
-            storyScreen.style.pointerEvents = '';
-            storyScreen.classList.remove('closing');
+        const practiceModeStoryScreen = document.getElementById('practice-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
+        const bossStoryScreen = document.getElementById('boss-story-screen');
+        if (practiceModeStoryScreen) {
+            practiceModeStoryScreen.style.display = 'none';
+            practiceModeStoryScreen.style.visibility = '';
+            practiceModeStoryScreen.style.opacity = '';
+            practiceModeStoryScreen.style.zIndex = '';
+            practiceModeStoryScreen.style.pointerEvents = '';
+            practiceModeStoryScreen.classList.remove('closing');
             
             // 배경 이미지 초기화
-            const storyImg = document.getElementById('story-background-img');
+            const storyImg = document.getElementById('practice-mode-background-img');
             if (storyImg) {
                 storyImg.src = 'images/main/boss_battle_popup.webp';
             }
             
             // 버튼 초기화
-            const storyStartBtn = document.getElementById('story-start-btn');
+            const storyStartBtn = document.getElementById('practice-mode-start-btn');
+            if (storyStartBtn) {
+                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.remove('practice-btn');
+                storyStartBtn.style.pointerEvents = '';
+                storyStartBtn.onclick = null;
+            }
+        }
+        if (battleModeStoryScreen) {
+            battleModeStoryScreen.style.display = 'none';
+            battleModeStoryScreen.style.visibility = '';
+            battleModeStoryScreen.style.opacity = '';
+            battleModeStoryScreen.style.zIndex = '';
+            battleModeStoryScreen.style.pointerEvents = '';
+            battleModeStoryScreen.classList.remove('closing');
+            
+            // 배경 이미지 초기화
+            const storyImg = document.getElementById('battle-mode-background-img');
+            if (storyImg) {
+                storyImg.src = 'images/main/boss_battle_popup.webp';
+            }
+            
+            // 버튼 초기화
+            const storyStartBtn = document.getElementById('battle-mode-start-btn');
+            if (storyStartBtn) {
+                storyStartBtn.classList.add('boss-battle-btn');
+                storyStartBtn.classList.remove('practice-btn');
+                storyStartBtn.style.pointerEvents = '';
+                storyStartBtn.onclick = null;
+            }
+        }
+        if (bossStoryScreen) {
+            bossStoryScreen.style.display = 'none';
+            bossStoryScreen.style.visibility = '';
+            bossStoryScreen.style.opacity = '';
+            bossStoryScreen.style.zIndex = '';
+            bossStoryScreen.style.pointerEvents = '';
+            bossStoryScreen.classList.remove('closing');
+            
+            // 배경 이미지 초기화
+            const storyImg = document.getElementById('boss-story-background-img');
+            if (storyImg) {
+                storyImg.src = 'images/main/boss_battle_popup.webp';
+            }
+            
+            // 버튼 초기화
+            const storyStartBtn = document.getElementById('boss-story-start-btn');
             if (storyStartBtn) {
                 storyStartBtn.classList.add('boss-battle-btn');
                 storyStartBtn.classList.remove('practice-btn');
@@ -2845,15 +3165,24 @@ window.onload = () => {
             }
         }
         
-        // practice-popup 초기화
-        const practicePopup = document.getElementById('practice-popup');
-        if (practicePopup) {
-            practicePopup.style.display = 'none';
-            practicePopup.style.visibility = '';
-            practicePopup.style.opacity = '';
-            practicePopup.style.zIndex = '';
-            practicePopup.style.pointerEvents = '';
-            practicePopup.classList.remove('closing');
+        // practice-mode-popup과 battle-setting-popup 초기화
+        const practiceModePopup = document.getElementById('practice-mode-popup');
+        const battleModePopup = document.getElementById('battle-setting-popup');
+        if (practiceModePopup) {
+            practiceModePopup.style.display = 'none';
+            practiceModePopup.style.visibility = '';
+            practiceModePopup.style.opacity = '';
+            practiceModePopup.style.zIndex = '';
+            practiceModePopup.style.pointerEvents = '';
+            practiceModePopup.classList.remove('closing');
+        }
+        if (battleModePopup) {
+            battleModePopup.style.display = 'none';
+            battleModePopup.style.visibility = '';
+            battleModePopup.style.opacity = '';
+            battleModePopup.style.zIndex = '';
+            battleModePopup.style.pointerEvents = '';
+            battleModePopup.classList.remove('closing');
         }
         
         // game-screen도 확실히 닫기

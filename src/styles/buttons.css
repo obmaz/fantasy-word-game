@@ -79,13 +79,13 @@
     border-color: rgba(255, 210, 210, 0.28) !important;
 }
 
-.btn-boss-rush { 
-    background: linear-gradient(45deg, var(--rush-color), #AB47BC);
+.btn-boss-mode { 
+    background: linear-gradient(45deg, var(--boss-color), #AB47BC);
     color: #fff; 
     box-shadow: 0 4px 15px rgba(224,64,251,0.2);
 }
 
-.btn-boss-rush:hover {
+.btn-boss-mode:hover {
     box-shadow: 0 8px 25px rgba(224,64,251,0.4);
 }
 
@@ -141,7 +141,7 @@
 
 .option-btn.disabled { opacity: 0.3; pointer-events: none; }
 
-/* Boss/Rush UI */
+/* Boss Mode UI */
 .boss-ui { width: 100%; display: none; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
 .boss-hint { font-size: 28px; letter-spacing: 4px; text-align: center; font-family: monospace; color: var(--success); }
 .boss-input { padding: 12px; font-size: 20px; text-align: center; background: #222; border: 2px solid var(--primary); color: white; border-radius: 8px; outline: none; }

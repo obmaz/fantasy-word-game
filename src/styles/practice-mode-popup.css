@@ -1,0 +1,39 @@
+/* ============================================
+   Practice Setting Popup 스타일
+   ============================================ */
+
+/* Practice 설정 팝업 - 모험 지역 드롭박스 위치 */
+#practice-mode-popup .popup-day-select {
+    /* practice_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
+    width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 14.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.46);     /* 위쪽 위치 (이미지 높이의 46%) */
+}
+
+/* Practice 설정 팝업 - 난이도 드롭박스 위치 */
+#practice-mode-popup .popup-count-select {
+    /* practice_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
+    width: calc(var(--popup-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--popup-img-height, 100%) * 0.095);   /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--popup-img-width, 100%) * 0.145);      /* 왼쪽 위치 (이미지 너비의 14.5%) */
+    top: calc(var(--popup-img-height, 100%) * 0.13);      /* 위쪽 위치 (이미지 높이의 13%) */
+}
+
+/* Practice 설정 팝업 - 시작하기 버튼 위치 */
+#practice-mode-popup #practice-mode-popup-start-btn {
+    /* practice_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
+    width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--popup-img-height, 100%) * 0.17);   /* 높이 (이미지 높이의 17%) */
+    left: calc(var(--popup-img-width, 100%) * 0.096);     /* 왼쪽 위치 (이미지 너비의 9.6%) */
+    top: calc(var(--popup-img-height, 100%) * 0.75);        /* 위쪽 위치 (이미지 높이의 75%) */
+}
+
+/* Practice 설정 팝업 - 취소 버튼 위치 */
+#practice-mode-popup #practice-mode-popup-cancel-btn {
+    /* practice_mode_select_popup.webp 이미지에 맞춰 조정 가능 */
+    width: calc(var(--popup-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--popup-img-height, 100%) * 0.17);   /* 높이 (이미지 높이의 17%) */
+    left: calc(var(--popup-img-width, 100%) * 0.53);       /* 왼쪽 위치 (이미지 너비의 53%) */
+    top: calc(var(--popup-img-height, 100%) * 0.75);        /* 위쪽 위치 (이미지 높이의 75%) */
+}

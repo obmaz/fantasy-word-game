@@ -27,9 +27,9 @@ const dayCatalog = (function () {
   // `dayCatalog.validateCoverage()` to avoid referencing `rawData` before
   // it is initialized (prevents TDZ / runtime ReferenceError).
 
-  // ensure 'all' and 'rush' are present in the canonical catalog
-  c.all = { label: (stories && stories.all && stories.all.title) ? stories.all.title : '혼돈의 균열', story: (stories && stories.all) ? stories.all : null };
-  c.rush = { label: (stories && stories.rush && stories.rush.title) ? stories.rush.title : '무한의 전장 (Boss Rush)', story: (stories && stories.rush) ? stories.rush : null };
+  // ensure 'all' and 'boss' are present in the canonical catalog
+  c.all = { label: (stories && stories.all && stories.all.title) ? stories.all.title : '배틀 모드', story: (stories && stories.all) ? stories.all : null };
+  c.boss = { label: (stories && stories.boss && stories.boss.title) ? stories.boss.title : '무한의 전장 (Boss Mode)', story: (stories && stories.boss) ? stories.boss : null };
   console.log('[words.js] dayCatalog created:', Object.keys(c).length, 'entries');
   return c;
 })();
@@ -93,4 +93,17 @@ if (typeof dayCatalog.validateCoverage === 'undefined') {
 const rawData = typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : [];
 console.log('[words.js] rawData loaded:', rawData ? rawData.length : 0, 'items');
 
-const decoyWords = typeof window !== 'undefined' && window.decoyWordsData ? window.decoyWordsData : [];
+// 현재 데이터셋에 따라 적절한 decoyWordsData 사용
+const decoyWords = (function() {
+    if (typeof window === 'undefined') return [];
+    
+    // 현재 데이터셋 ID 확인
+    const currentDataSetId = window.currentGameDataSetId || '1';
+    
+    // 데이터셋 ID에 따라 적절한 decoyWordsData 선택
+    if (currentDataSetId === '2') {
+        return window.decoyWordsData_2 || [];
+    } else {
+        return window.decoyWordsData || [];
+    }
+})();

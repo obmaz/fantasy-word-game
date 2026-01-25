@@ -72,25 +72,29 @@
     pointer-events: none; /* Allow clicks to pass through to buttons */
     display: block;
     visibility: visible;
-    overflow: hidden; /* 버튼들이 이미지 범위를 넘지 않도록 */
+    overflow: visible; /* 버튼들이 클릭 가능하도록 visible로 변경 */
     box-sizing: border-box;
     z-index: 20; /* 버튼들이 다른 요소 위에 표시되도록 */
 }
 
 .title-btn-area {
     position: absolute;
-    z-index: 25; /* 타이틀 헤더(z-index: 15)보다 높게 설정 */
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    opacity: 1;
+    z-index: 25 !important; /* 타이틀 헤더(z-index: 15)보다 높게 설정 */
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
     transition: all 0.2s ease;
-    padding: 0;
-    display: flex;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible; /* 버튼이 클릭 가능하도록 visible로 변경 */
     pointer-events: auto !important; /* Re-enable clicks on buttons */
+    visibility: visible !important;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    touch-action: manipulation;
 }
 
 .title-btn-area.content-visible {
@@ -128,8 +132,8 @@
     height: 11%;
 }
 
-/* CHAOS RIFT = 혼돈의 균열 */
-#title-chaos-rift-btn {
+/* BATTLE MODE = 배틀 모드 */
+#title-battle-mode-btn {
     top: 59%;
     left: 50%;
     transform: translateX(-50%);
@@ -137,8 +141,8 @@
     height: 11%;
 }
 
-/* BOSS RUSH = 무한의 전장 */
-#title-boss-rush-btn {
+/* BOSS MODE = 무한의 전장 */
+#title-boss-mode-btn {
     top: 71%;
     left: 50%;
     transform: translateX(-50%);
@@ -301,7 +305,7 @@
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(135deg, var(--primary), var(--rush-color), var(--primary));
+    background: linear-gradient(135deg, var(--primary), var(--boss-color), var(--primary));
     border-radius: 20px;
     z-index: -1;
     opacity: 0.5;
