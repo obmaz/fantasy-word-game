@@ -31,7 +31,7 @@
 /* Battle Mode Screen - 설명 텍스트 폰트 크기 조정 */
 #battle-mode-screen .story-text-content {
     /* 폰트 크기 조정 (원하는 값으로 변경하세요) */
-    font-size: clamp(14px, calc(var(--story-img-width, 100vw) * 0.03), 32px);
+    font-size: clamp(10px, calc(var(--story-img-width, 100vw) * 0.03), 32px);
     /* 예시: 더 크게 하려면 아래 주석을 해제하고 값을 변경하세요 */
     /* font-size: clamp(20px, calc(var(--story-img-width, 100vw) * 0.035), 36px); */
     /* 예시: 더 작게 하려면 */
