@@ -251,6 +251,13 @@
 
 /* 비밀메뉴 숫자패드도 같은 톤으로 */
 .card.rpg-panel .num-btn{
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
     border: 2px solid rgba(231, 189, 105, 0.55);
     background: rgba(0,0,0,0.25);
     color: rgba(245,245,255,0.95);

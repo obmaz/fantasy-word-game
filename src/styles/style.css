@@ -199,8 +199,8 @@ body {
 
 /* Quiz Area */
 .quiz-area { flex: 1; background: var(--card-bg); padding: 15px; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
-.question-box { background: rgba(0,0,0,0.3); width: 100%; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 10px; border: 1px solid #444; flex-shrink: 0; }
-.q-label { font-size: 11px; color: #888; margin-bottom: 3px; letter-spacing: 2px; }
+.question-box { background: rgba(0,0,0,0.3); width: 100%; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 5px; border: 1px solid #444; flex-shrink: 0; }
+.q-label { font-size: 11px; color: #888; margin-bottom: 3px; letter-spacing: 2px; display: none; }
 .q-text { font-size: 22px; font-weight: bold; color: var(--primary); word-break: keep-all; }
 .options-grid { width: 100%; display: grid; gap: 8px; flex: 1; }
 .option-btn { 
@@ -653,6 +653,13 @@ img[src*="exit_btn"]:active {
 
 /* 비밀메뉴 숫자패드도 같은 톤으로 */
 .card.rpg-panel .num-btn{
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
     border: 2px solid rgba(231, 189, 105, 0.55);
     background: rgba(0,0,0,0.25);
     color: rgba(245,245,255,0.95);
@@ -969,7 +976,7 @@ img[src*="exit_btn"]:active {
     text-align: center;
     color: var(--gold);
     /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
-    font-size: clamp(10px, calc(var(--story-img-width, 100vw) * 0.055), 50px);
+    font-size: clamp(16px, calc(var(--story-img-width, 100vw) * 0.08), 70px);
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     pointer-events: none;
@@ -1864,7 +1871,7 @@ select:focus {
 }
 
 .num-btn {
-    padding: 15px;
+    padding: 0;
     font-size: 18px;
     font-weight: bold;
     background-color: #333;
@@ -1872,6 +1879,12 @@ select:focus {
     color: white;
     border-radius: 8px;
     cursor: pointer;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
 }
 .num-btn:active {
     background-color: #555;

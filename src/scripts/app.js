@@ -653,17 +653,6 @@ const statistics = {
             <div style="font-size:20px; color:var(--primary); font-weight:bold;">${db.inventoryCapacity}개</div>
         </div>`;
 
-        // 장착한 장비
-        if (equippedItems.length > 0) {
-            html += '<div class="shop-section" style="margin-top:20px;">⚔️ 장착한 장비</div>';
-            equippedItems.forEach(eq => {
-                html += `<div class="shop-item">
-                    <div><b>${eq.slot}</b></div>
-                    <div style="font-size:18px;">${eq.icon} ${eq.name}</div>
-                </div>`;
-            });
-        }
-
         // 보유 스킬
         if (skills.length > 0) {
             html += '<div class="shop-section" style="margin-top:20px;">✨ 보유 스킬</div>';
@@ -688,7 +677,29 @@ const ui = {
     },
     updateGameInfo: (mode, day) => {
         const modeText = mode === 'rush' ? '보스 러쉬' : (mode === 'chaos' ? '혼돈의 균열' : '배틀 모드');
-        const dayText = mode === 'rush' ? '무한' : (mode === 'chaos' ? '전체' : (day === 'all' ? '전체' : `Day ${day}`));
+        let dayText;
+        if (mode === 'rush') {
+            dayText = '무한';
+        } else if (mode === 'chaos') {
+            dayText = '전체';
+        } else {
+            // day가 숫자 문자열이면 그대로 사용, 'all'이면 '전체', 그 외는 숫자로 변환 시도
+            if (day === 'all') {
+                dayText = '전체';
+            } else if (day && !isNaN(Number(day))) {
+                dayText = `Day ${day}`;
+            } else {
+                // game.currentDay를 확인
+                const currentDay = game.currentDay;
+                if (currentDay === 'all') {
+                    dayText = '전체';
+                } else if (currentDay && !isNaN(Number(currentDay))) {
+                    dayText = `Day ${currentDay}`;
+                } else {
+                    dayText = '전체';
+                }
+            }
+        }
         const gameInfoEl = document.getElementById('game-info-badge');
         if (gameInfoEl) {
             gameInfoEl.innerText = `${modeText} - ${dayText}`;
@@ -1274,6 +1285,9 @@ const game = {
             story.showEnding(true);
             return;
         }
+
+        // Day 정보 업데이트 (게임 중에도 day 정보가 올바르게 표시되도록)
+        ui.updateGameInfo(game.mode, game.currentDay);
 
         // choose an appropriate monster sprite (day-specific > boss/normal > fallback)
         const upcoming = (game.mode === 'rush') ? null : (game.list && game.list[game.idx]) || null;
