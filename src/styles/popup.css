@@ -226,7 +226,7 @@
 .story-text-content {
     color: #ddd;
     /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
-    font-size: clamp(16px, calc(var(--story-img-width, 100vw) * 0.03), 32px);
+    font-size: clamp(18px, calc(var(--story-img-width, 100vw) * 0.03), 32px);
     line-height: 1.6;
     white-space: pre-wrap;
     word-wrap: break-word;
