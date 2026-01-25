@@ -638,21 +638,6 @@ const statistics = {
         html += '</div>';
         html += '</div>';
 
-        // 재화 및 아이템
-        html += '<div class="shop-section" style="margin-top:30px; clear:both; display:block;">💰 재화 및 아이템</div>';
-        html += `<div class="shop-item">
-            <div><b>보유 골드</b></div>
-            <div style="font-size:20px; color:var(--gold); font-weight:bold;">${db.gold} G</div>
-        </div>`;
-        html += `<div class="shop-item">
-            <div><b>보유 아이템 수</b></div>
-            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${totalItems}개</div>
-        </div>`;
-        html += `<div class="shop-item">
-            <div><b>인벤토리 용량</b></div>
-            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${db.inventoryCapacity}개</div>
-        </div>`;
-
         // 보유 스킬
         if (skills.length > 0) {
             html += '<div class="shop-section" style="margin-top:20px;">✨ 보유 스킬</div>';

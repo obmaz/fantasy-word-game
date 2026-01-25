@@ -385,14 +385,14 @@
 .equipped-summary { 
     display:flex; 
     gap:12px; 
-    margin-top:20px; 
-    margin-bottom: 20px;
+    margin-top:10px; 
+    margin-bottom: 10px;
     align-items:center; 
     color:#ddd; 
     font-size:14px; 
     justify-content:center;
     flex-wrap: wrap;
-    padding: 12px;
+    padding: 6px 12px;
     background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(30,20,40,0.3) 100%);
     border-radius: 12px;
     border: 1px solid rgba(255, 213, 79, 0.15);
@@ -402,7 +402,7 @@
     gap:8px; 
     align-items:center; 
     background: rgba(0,0,0,0.4); 
-    padding:8px 12px; 
+    padding:4px 10px; 
     border-radius:10px; 
     border:1px solid rgba(255, 213, 79, 0.2);
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
