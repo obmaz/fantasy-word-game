@@ -1,9 +1,9 @@
 /* ============================================
-   SECRET MENU PANEL STYLES
+   SETTING PANEL STYLES
    ============================================ */
 
 /* RPG Panel 공통 스타일 */
-#secret-menu-overlay .card.rpg-panel {
+#setting-overlay .card.rpg-panel {
     border-radius: 18px;
     background:
         radial-gradient(120% 120% at 50% 0%, rgba(255, 215, 130, 0.06) 0%, rgba(0,0,0,0) 55%),
@@ -14,15 +14,15 @@
         inset 0 1px 0 rgba(255,255,255,0.08);
     border: none;
     animation: none;
-    /* 타이틀 컨테이너 크기를 넘어가지 않도록 제한 */
-    max-width: min(var(--title-container-width, 95vw), 95vw);
-    max-height: min(var(--title-container-height, 95vh), 95vh);
-    width: min(90%, var(--title-container-width, 95vw));
+    /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-screen, boss-mode-screen과 동일) */
+    width: 90%;
+    max-width: min(90%, var(--title-container-width, 95vw));
+    max-height: min(var(--title-container-height, 95vh), 85vh);
     box-sizing: border-box;
     overflow-y: auto;
 }
 
-#secret-menu-overlay .card.rpg-panel::before {
+#setting-overlay .card.rpg-panel::before {
     content: "";
     position: absolute;
     inset: 6px;
@@ -34,7 +34,7 @@
     pointer-events: none;
 }
 
-#secret-menu-overlay .card.rpg-panel::after {
+#setting-overlay .card.rpg-panel::after {
     content: "";
     position: absolute;
     inset: 12px;
@@ -43,16 +43,17 @@
     pointer-events: none;
 }
 
-#secret-menu-overlay .card.rpg-panel h2,
-#secret-menu-overlay .card.rpg-panel h3 {
+#setting-overlay .card.rpg-panel h2,
+#setting-overlay .card.rpg-panel h3 {
     color: rgba(255, 214, 120, 0.98);
     text-shadow:
         0 2px 0 rgba(60, 40, 10, 0.9),
         0 10px 24px rgba(0,0,0,0.6);
+    font-size: 18px;
 }
 
-/* Secret Menu 버튼 스타일 */
-#secret-menu-overlay .card.rpg-panel .btn-main {
+/* Setting Menu 버튼 스타일 */
+#setting-overlay .card.rpg-panel .btn-main {
     height: 58px;
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
@@ -70,18 +71,18 @@
     text-align: center;
 }
 
-#secret-menu-overlay .card.rpg-panel .btn-main.btn-blue {
+#setting-overlay .card.rpg-panel .btn-main.btn-blue {
     background: linear-gradient(45deg, rgba(41,121,255,0.95), rgba(41,121,255,0.85)) !important;
     color: #fff !important;
 }
 
-#secret-menu-overlay .card.rpg-panel .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
+#setting-overlay .card.rpg-panel .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
     background: linear-gradient(45deg, rgba(255, 214, 120, 0.95), rgba(214, 140, 45, 0.95)) !important;
     color: rgba(20, 15, 10, 0.92) !important;
 }
 
-/* 비밀메뉴 숫자패드 */
-#secret-menu-overlay .card.rpg-panel .num-btn {
+/* 설정메뉴 숫자패드 */
+#setting-overlay .card.rpg-panel .num-btn {
     width: 60px;
     height: 60px;
     padding: 0;
@@ -95,7 +96,7 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
-#secret-menu-overlay .card.rpg-panel .num-btn:active {
+#setting-overlay .card.rpg-panel .num-btn:active {
     transform: translateY(1px);
 }
 

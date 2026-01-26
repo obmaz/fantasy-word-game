@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/title.css">
     <link rel="stylesheet" href="styles/battle-mode-game.css">
-    <link rel="stylesheet" href="styles/popup-common.css">
-    <link rel="stylesheet" href="styles/practice-mode-popup.css">
-    <link rel="stylesheet" href="styles/battle-mode-popup.css">
+    <link rel="stylesheet" href="styles/modal-common.css">
+    <link rel="stylesheet" href="styles/practice-mode-modal.css">
+    <link rel="stylesheet" href="styles/battle-mode-modal.css">
     <link rel="stylesheet" href="styles/practice-mode-game.css">
     <link rel="stylesheet" href="styles/battle-mode-screen.css">
     <link rel="stylesheet" href="styles/boss-mode-screen.css">
@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="styles/shop-panel.css">
     <link rel="stylesheet" href="styles/inventory-panel.css">
     <link rel="stylesheet" href="styles/statistics-panel.css">
-    <link rel="stylesheet" href="styles/secret-menu-panel.css">
+    <link rel="stylesheet" href="styles/setting-panel.css">
     <link rel="stylesheet" href="styles/result-panel.css">
 </head>
 
@@ -211,72 +211,75 @@
     </div>
 
 
-    <!-- Practice Mode Selection Popup -->
-    <div id="practice-mode-popup" class="screen-overlay" style="display:none;">
-        <div class="popup-container-wrapper">
-            <img src="images/practice_mode/practice_mode_select_popup .webp" alt="Practice Mode Settings" class="popup-background" id="practice-mode-popup-background-img" />
-            <div class="popup-buttons-overlay">
+    <!-- Practice Mode Selection Modal -->
+    <div id="practice-mode-modal" class="screen-overlay" style="display:none;">
+        <div class="modal-container-wrapper">
+            <img src="images/practice_mode/practice_mode_select_popup .webp" alt="Practice Mode Settings" class="modal-background" id="practice-mode-modal-background-img" />
+            <div class="modal-buttons-overlay">
+                <!-- 모달 타이틀 -->
+                <div class="modal-title">연습모드</div>
+                
                 <!-- 모험 지역 드롭박스 영역 -->
-                <select id="practice-mode-popup-day-select" class="popup-select popup-day-select"></select>
+                <select id="practice-mode-modal-day-select" class="modal-select modal-day-select"></select>
                 
                 <!-- 난이도 드롭박스 영역 -->
-                <select id="practice-mode-popup-count-select" class="popup-select popup-count-select">
+                <select id="practice-mode-modal-count-select" class="modal-select modal-count-select">
                     <option value="5">5 마리 (쉬움)</option>
                     <option value="10" selected>10 마리 (보통)</option>
                     <option value="20">20 마리 (어려움)</option>
                 </select>
                 
                 <!-- 시작하기 버튼 영역 -->
-                <button class="popup-btn-area" id="practice-mode-popup-start-btn" title="시작하기"></button>
+                <button class="modal-btn-area" id="practice-mode-modal-start-btn" title="시작하기"></button>
                 
                 <!-- 취소 버튼 영역 -->
-                <button class="popup-btn-area" id="practice-mode-popup-cancel-btn" title="취소"></button>
+                <button class="modal-btn-area" id="practice-mode-modal-cancel-btn" title="취소"></button>
             </div>
         </div>
     </div>
 
-    <!-- Battle Mode Selection Popup -->
-    <div id="battle-mode-setting-popup" class="screen-overlay" style="display:none;">
-        <div class="popup-container-wrapper">
-            <img src="images/battle_mode/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="popup-background" id="battle-mode-setting-popup-background-img" />
-            <div class="popup-buttons-overlay">
+    <!-- Battle Mode Selection Modal -->
+    <div id="battle-mode-setting-modal" class="screen-overlay" style="display:none;">
+        <div class="modal-container-wrapper">
+            <img src="images/battle_mode/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="modal-background" id="battle-mode-setting-modal-background-img" />
+            <div class="modal-buttons-overlay">
                 <!-- 모험 지역 드롭박스 영역 -->
-                <select id="battle-mode-setting-popup-day-select" class="popup-select popup-day-select"></select>
+                <select id="battle-mode-setting-modal-day-select" class="modal-select modal-day-select"></select>
                 
                 <!-- 난이도 드롭박스 영역 -->
-                <select id="battle-mode-setting-popup-count-select" class="popup-select popup-count-select">
+                <select id="battle-mode-setting-modal-count-select" class="modal-select modal-count-select">
                     <option value="5">5 마리 (쉬움)</option>
                     <option value="10" selected>10 마리 (보통)</option>
                     <option value="20">20 마리 (어려움)</option>
                 </select>
                 
                 <!-- 문제 타입 라디오 버튼 (Battle Mode 전용) -->
-                <div id="battle-mode-setting-popup-question-type-group" class="popup-radio-group">
-                    <label class="popup-radio-label">
-                        <input type="radio" name="battle-question-type" value="objective" class="popup-radio">
-                        <span class="popup-radio-text">객관식</span>
+                <div id="battle-mode-setting-modal-question-type-group" class="modal-radio-group">
+                    <label class="modal-radio-label">
+                        <input type="radio" name="battle-question-type" value="objective" class="modal-radio">
+                        <span class="modal-radio-text">객관식</span>
                     </label>
-                    <label class="popup-radio-label">
-                        <input type="radio" name="battle-question-type" value="mixed" checked class="popup-radio">
-                        <span class="popup-radio-text">혼합형</span>
+                    <label class="modal-radio-label">
+                        <input type="radio" name="battle-question-type" value="mixed" checked class="modal-radio">
+                        <span class="modal-radio-text">혼합형</span>
                     </label>
-                    <label class="popup-radio-label">
-                        <input type="radio" name="battle-question-type" value="subjective" class="popup-radio">
-                        <span class="popup-radio-text">주관식</span>
+                    <label class="modal-radio-label">
+                        <input type="radio" name="battle-question-type" value="subjective" class="modal-radio">
+                        <span class="modal-radio-text">주관식</span>
                     </label>
                 </div>
                 
                 <!-- 시작하기 버튼 영역 -->
-                <button class="popup-btn-area" id="battle-mode-setting-popup-start-btn" title="시작하기"></button>
+                <button class="modal-btn-area" id="battle-mode-setting-modal-start-btn" title="시작하기"></button>
                 
                 <!-- 취소 버튼 영역 -->
-                <button class="popup-btn-area" id="battle-mode-setting-popup-cancel-btn" title="취소"></button>
+                <button class="modal-btn-area" id="battle-mode-setting-modal-cancel-btn" title="취소"></button>
             </div>
         </div>
     </div>
 
     <!-- Practice Mode Memorization Screen (단어 암기 화면) -->
-    <div id="practice-memorization-screen" class="screen-overlay" style="display:none; height:100%; flex-direction:column;">
+    <div id="practice-memorization-screen" style="display:none; height:100%; flex-direction:column;">
         <div class="practice-memorization-container">
             <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
             <div class="practice-memorization-arena">
@@ -407,8 +410,7 @@
 
 
 
-    <div id="secret-menu-overlay" class="screen-overlay"
-        style="display:none; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
+    <div id="setting-overlay" class="screen-overlay" style="display:none;">
 
         <div id="password-modal" class="card rpg-panel">
 
@@ -570,14 +572,14 @@
         let isShopScreen = false;
         let isInventoryScreen = false;
         let isStatisticsScreen = false;
-        let isSecretMenuScreen = false;
+        let isSettingScreen = false;
 
         // 화면 상태 추적
         const gameScreen = document.getElementById('game-screen');
         const shopScreen = document.getElementById('shop-screen');
         const inventoryScreen = document.getElementById('inventory-screen');
         const statisticsScreen = document.getElementById('statistics-screen');
-        const secretMenuScreen = document.getElementById('secret-menu-overlay');
+        const settingScreen = document.getElementById('setting-overlay');
         const startScreen = document.getElementById('start-screen');
 
         // MutationObserver로 화면 상태 감지
@@ -586,7 +588,7 @@
             isShopScreen = shopScreen.style.display !== 'none';
             isInventoryScreen = inventoryScreen.style.display !== 'none';
             isStatisticsScreen = statisticsScreen && statisticsScreen.style.display !== 'none';
-            isSecretMenuScreen = secretMenuScreen && secretMenuScreen.style.display !== 'none';
+            isSettingScreen = settingScreen && settingScreen.style.display !== 'none';
         });
 
         observer.observe(gameScreen, { attributes: true, attributeFilter: ['style'] });
@@ -595,28 +597,28 @@
         if (statisticsScreen) {
             observer.observe(statisticsScreen, { attributes: true, attributeFilter: ['style'] });
         }
-        if (secretMenuScreen) {
-            observer.observe(secretMenuScreen, { attributes: true, attributeFilter: ['style'] });
+        if (settingScreen) {
+            observer.observe(settingScreen, { attributes: true, attributeFilter: ['style'] });
         }
 
         // 백버튼 이벤트 처리 (모바일 브라우저)
         window.addEventListener('popstate', (e) => {
             const battleModeStoryScreen = document.getElementById('battle-mode-screen');
             const bossStoryScreen = document.getElementById('boss-mode-screen');
-            const practiceModePopup = document.getElementById('practice-mode-popup');
-            const battleModePopup = document.getElementById('battle-mode-setting-popup');
+            const practiceModeModal = document.getElementById('practice-mode-modal');
+            const battleModeModal = document.getElementById('battle-mode-setting-modal');
             const resultScreen = document.getElementById('result-screen');
             const practiceMemorizationScreen = document.getElementById('practice-memorization-screen');
             
             const isPracticeModeStoryScreen = false; // practice-mode-screen은 더 이상 사용하지 않음
             const isBattleModeStoryScreen = battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '';
             const isBossStoryScreen = bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '';
-            const isPracticeModePopup = practiceModePopup && practiceModePopup.style.display !== 'none' && practiceModePopup.style.display !== '';
-            const isBattleModePopup = battleModePopup && battleModePopup.style.display !== 'none' && battleModePopup.style.display !== '';
+            const isPracticeModeModal = practiceModeModal && practiceModeModal.style.display !== 'none' && practiceModeModal.style.display !== '';
+            const isBattleModeModal = battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '';
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
             
-            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isSecretMenuScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModePopup || isBattleModePopup || isResultScreen || isPracticeMemorizationScreen) {
+            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isSettingScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModeModal || isBattleModeModal || isResultScreen || isPracticeMemorizationScreen) {
                 // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
                 if (isGameScreen && typeof game !== 'undefined') {
                     if (game.timer) {
@@ -642,16 +644,16 @@
                 if (statisticsScreen) {
                     statisticsScreen.style.display = 'none';
                 }
-                if (secretMenuScreen) {
-                    secretMenuScreen.style.display = 'none';
-                    secretMenuScreen.classList.remove('closing');
+                if (settingScreen) {
+                    settingScreen.style.display = 'none';
+                    settingScreen.classList.remove('closing');
                     // secret.close() 호출하여 내부 상태도 정리
                     if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
                         secret.close();
                     }
                 }
                 
-                // 팝업과 스토리 화면도 숨기기
+                // 모달과 스토리 화면도 숨기기
                 if (battleModeStoryScreen) {
                     battleModeStoryScreen.style.display = 'none';
                     battleModeStoryScreen.style.visibility = '';
@@ -672,21 +674,21 @@
                 if ((isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen) && typeof game !== 'undefined') {
                     game.isProcessing = false;
                 }
-                if (practiceModePopup) {
-                    practiceModePopup.style.display = 'none';
-                    practiceModePopup.style.visibility = '';
-                    practiceModePopup.style.opacity = '';
-                    practiceModePopup.style.zIndex = '';
-                    practiceModePopup.style.pointerEvents = '';
-                    practiceModePopup.classList.remove('closing');
+                if (practiceModeModal) {
+                    practiceModeModal.style.display = 'none';
+                    practiceModeModal.style.visibility = '';
+                    practiceModeModal.style.opacity = '';
+                    practiceModeModal.style.zIndex = '';
+                    practiceModeModal.style.pointerEvents = '';
+                    practiceModeModal.classList.remove('closing');
                 }
-                if (battleModePopup) {
-                    battleModePopup.style.display = 'none';
-                    battleModePopup.style.visibility = '';
-                    battleModePopup.style.opacity = '';
-                    battleModePopup.style.zIndex = '';
-                    battleModePopup.style.pointerEvents = '';
-                    battleModePopup.classList.remove('closing');
+                if (battleModeModal) {
+                    battleModeModal.style.display = 'none';
+                    battleModeModal.style.visibility = '';
+                    battleModeModal.style.opacity = '';
+                    battleModeModal.style.zIndex = '';
+                    battleModeModal.style.pointerEvents = '';
+                    battleModeModal.classList.remove('closing');
                 }
                 if (resultScreen) {
                     resultScreen.style.display = 'none';

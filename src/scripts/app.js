@@ -105,7 +105,7 @@ const db = {
 };
 const inventory = {
     open: () => {
-        // start-screen은 숨기지 않고 팝업만 표시
+        // start-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('inventory-screen', true);
         history.pushState({ screen: 'inventory' }, '', window.location.href);
         inventory.hideDetails(); // Hide details on open
@@ -412,7 +412,7 @@ const inventory = {
 
 const shop = {
     open: () => {
-        // start-screen은 숨기지 않고 팝업만 표시
+        // start-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('shop-screen', true);
         history.pushState({ screen: 'shop' }, '', window.location.href);
         shop.render();
@@ -505,7 +505,7 @@ const shop = {
 
 const statistics = {
     open: () => {
-        // start-screen은 숨기지 않고 팝업만 표시
+        // start-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('statistics-screen', true);
         history.pushState({ screen: 'statistics' }, '', window.location.href);
         statistics.render();
@@ -887,7 +887,11 @@ const story = {
         const _t = data && data.title ? String(data.title).trim() : '';
         const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
 
-        closeScreenOverlay('start-screen', false);
+        // start-screen을 닫지 않고 z-index만 조정하여 backdrop-filter가 작동하도록 함
+        const startScreen = document.getElementById('start-screen');
+        if (startScreen) {
+            startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
+        }
         
         // 다른 story-screen 닫기
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
@@ -1043,32 +1047,32 @@ const story = {
             bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-mode-popup과 battle-mode-setting-popup 닫기
-        const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-mode-setting-popup');
-        if (practiceModePopup) {
-            practiceModePopup.style.display = 'none';
-            practiceModePopup.style.visibility = 'hidden';
-            practiceModePopup.style.opacity = '0';
-            practiceModePopup.style.zIndex = '100';
-            practiceModePopup.style.pointerEvents = 'none';
-            practiceModePopup.classList.remove('closing');
+        // practice-mode-modal과 battle-mode-setting-modal 닫기
+        const practiceModeModal = document.getElementById('practice-mode-modal');
+        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        if (practiceModeModal) {
+            practiceModeModal.style.display = 'none';
+            practiceModeModal.style.visibility = 'hidden';
+            practiceModeModal.style.opacity = '0';
+            practiceModeModal.style.zIndex = '100';
+            practiceModeModal.style.pointerEvents = 'none';
+            practiceModeModal.classList.remove('closing');
         }
-        if (battleModePopup) {
-            battleModePopup.style.display = 'none';
-            battleModePopup.style.visibility = 'hidden';
-            battleModePopup.style.opacity = '0';
-            battleModePopup.style.zIndex = '100';
-            battleModePopup.style.pointerEvents = 'none';
-            battleModePopup.classList.remove('closing');
+        if (battleModeModal) {
+            battleModeModal.style.display = 'none';
+            battleModeModal.style.visibility = 'hidden';
+            battleModeModal.style.opacity = '0';
+            battleModeModal.style.zIndex = '100';
+            battleModeModal.style.pointerEvents = 'none';
+            battleModeModal.classList.remove('closing');
         }
-        if (battleModePopup) {
-            battleModePopup.style.display = 'none';
-            battleModePopup.style.visibility = 'hidden';
-            battleModePopup.style.opacity = '0';
-            battleModePopup.style.zIndex = '100';
-            battleModePopup.style.pointerEvents = 'none';
-            battleModePopup.classList.remove('closing');
+        if (battleModeModal) {
+            battleModeModal.style.display = 'none';
+            battleModeModal.style.visibility = 'hidden';
+            battleModeModal.style.opacity = '0';
+            battleModeModal.style.zIndex = '100';
+            battleModeModal.style.pointerEvents = 'none';
+            battleModeModal.classList.remove('closing');
         }
         
         // 모든 모드에서 story-screen을 건너뛰고 바로 결과 화면으로
@@ -1162,7 +1166,9 @@ const game = {
     subjectiveCorrect: 0, // 주관식 문제 정답 개수
 
     init: (mode, day) => {
-        const count = parseInt(document.getElementById('count-select').value);
+        // boss 모드가 아닐 때만 count-select 참조
+        const countSelect = document.getElementById('count-select');
+        const count = (mode === 'boss') ? 0 : (countSelect ? parseInt(countSelect.value) || 10 : 10);
         game.mode = mode;
         game.currentDay = day;
 
@@ -1273,7 +1279,13 @@ const game = {
 
         // 애니메이션 완료 후 게임 화면 표시
         setTimeout(() => {
-            document.getElementById('game-screen').style.display = 'flex';
+            const gameScreen = document.getElementById('game-screen');
+            if (gameScreen) {
+                gameScreen.style.display = 'flex';
+                gameScreen.style.visibility = 'visible';
+                gameScreen.style.opacity = '1';
+                gameScreen.style.zIndex = '250';
+            }
             
             // 배경음악 재생
             const bgMusic = document.getElementById('background-music');
@@ -1406,15 +1418,19 @@ const game = {
             gameInfoBadge.style.display = 'block';
         }
 
+        const qLabel = document.getElementById('q-label');
+        if (qLabel) {
+            qLabel.innerText = '';
+            qLabel.style.display = 'none';
+        }
+
         const isKor = Math.random() < 0.5;
         if (isKor) {
-            document.getElementById('q-label').innerText = "TRANSLATE";
             document.getElementById('q-text').innerText = data.meaning;
             game.currentAns = data.word;
             const opts = game.getDistractors(data.word, 'word');
             game.shuffle([data.word, ...opts]).forEach(opt => game.createBtn(opt, opt === data.word));
         } else {
-            document.getElementById('q-label').innerText = "MEANING";
             document.getElementById('q-text').innerText = data.word;
             game.currentAns = data.meaning;
             const opts = game.getDistractors(data.meaning, 'meaning');
@@ -1445,7 +1461,11 @@ const game = {
         const isFinalBoss = !isBoss && game.idx === game.list.length - 1;
         document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isBoss ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
 
-        document.getElementById('q-label').innerText = "TYPE IN ENGLISH";
+        const qLabel = document.getElementById('q-label');
+        if (qLabel) {
+            qLabel.innerText = '';
+            qLabel.style.display = 'none';
+        }
         document.getElementById('q-text').innerText = data.meaning;
         
         // 띄어쓰기가 있는 단어는 _도 띄어쓰기 처리 (첫 글자는 보여주고 나머지는 _)
@@ -1811,32 +1831,39 @@ const game = {
             bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-mode-popup과 battle-mode-setting-popup도 닫기
-        const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-mode-setting-popup');
-        if (practiceModePopup) {
-            practiceModePopup.style.display = 'none';
-            practiceModePopup.style.visibility = 'hidden';
-            practiceModePopup.style.opacity = '0';
-            practiceModePopup.style.zIndex = '100';
-            practiceModePopup.style.pointerEvents = 'none';
-            practiceModePopup.classList.remove('closing');
+        // practice-mode-modal과 battle-mode-setting-modal도 닫기
+        const practiceModeModal = document.getElementById('practice-mode-modal');
+        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        if (practiceModeModal) {
+            practiceModeModal.style.display = 'none';
+            practiceModeModal.style.visibility = 'hidden';
+            practiceModeModal.style.opacity = '0';
+            practiceModeModal.style.zIndex = '100';
+            practiceModeModal.style.pointerEvents = 'none';
+            practiceModeModal.classList.remove('closing');
         }
-        if (battleModePopup) {
-            battleModePopup.style.display = 'none';
-            battleModePopup.style.visibility = 'hidden';
-            battleModePopup.style.opacity = '0';
-            battleModePopup.style.zIndex = '100';
-            battleModePopup.style.pointerEvents = 'none';
-            battleModePopup.classList.remove('closing');
+        if (battleModeModal) {
+            battleModeModal.style.display = 'none';
+            battleModeModal.style.visibility = 'hidden';
+            battleModeModal.style.opacity = '0';
+            battleModeModal.style.zIndex = '100';
+            battleModeModal.style.pointerEvents = 'none';
+            battleModeModal.classList.remove('closing');
         }
-        if (battleModePopup) {
-            battleModePopup.style.display = 'none';
-            battleModePopup.style.visibility = 'hidden';
-            battleModePopup.style.opacity = '0';
-            battleModePopup.style.zIndex = '100';
-            battleModePopup.style.pointerEvents = 'none';
-            battleModePopup.classList.remove('closing');
+        if (battleModeModal) {
+            battleModeModal.style.display = 'none';
+            battleModeModal.style.visibility = 'hidden';
+            battleModeModal.style.opacity = '0';
+            battleModeModal.style.zIndex = '100';
+            battleModeModal.style.pointerEvents = 'none';
+            battleModeModal.classList.remove('closing');
+        }
+        
+        // start-screen이 뒤에 있도록 보장 (backdrop-filter가 작동하도록)
+        const startScreen = document.getElementById('start-screen');
+        if (startScreen) {
+            startScreen.style.display = 'flex';
+            startScreen.style.zIndex = '100'; // result-screen(z-index: 300) 뒤에 위치
         }
         
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
@@ -1931,14 +1958,14 @@ const secret = {
     },
 
     open: () => {
-        // start-screen은 숨기지 않고 팝업만 표시
-        openScreenOverlay('secret-menu-overlay', true);
+        // start-screen은 숨기지 않고 모달만 표시
+        openScreenOverlay('setting-overlay', true);
         // 설정 화면을 바로 표시 (비밀번호 없이)
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('gold-adjuster-modal').style.display = 'block';
         
-        // 타이틀 컨테이너 크기를 CSS 변수로 설정 (다른 팝업과 동일하게)
-        const secretOverlay = document.getElementById('secret-menu-overlay');
+        // 타이틀 컨테이너 크기를 CSS 변수로 설정 (다른 모달과 동일하게)
+        const secretOverlay = document.getElementById('setting-overlay');
         const titleContainer = document.querySelector('.title-container-wrapper');
         if (secretOverlay && titleContainer) {
             const computedStyle = window.getComputedStyle(titleContainer);
@@ -1964,7 +1991,7 @@ const secret = {
         }
         
         // 히스토리 상태 추가 (백버튼 처리용)
-        history.pushState({ screen: 'secret-menu' }, '', window.location.href);
+        history.pushState({ screen: 'setting' }, '', window.location.href);
     },
 
     close: () => {
@@ -1983,7 +2010,7 @@ const secret = {
             secret.previousModal = null;
             return;
         }
-        closeScreenOverlay('secret-menu-overlay', true);
+        closeScreenOverlay('setting-overlay', true);
         secret.pendingAction = null;
         secret.previousModal = null;
         // 히스토리 상태 업데이트
@@ -2304,6 +2331,38 @@ const secret = {
         
         // 객관식 문제용 단어 선택 (정답과 오답용)
         const objectiveWords = [...dayWords].sort(() => Math.random() - 0.5);
+
+        const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
+        const buildObjectiveOptions = (correctValue, key, primaryPool, count = 4) => {
+            const unique = new Set();
+            if (correctValue) {
+                unique.add(correctValue);
+            }
+
+            const pools = [
+                primaryPool,
+                currentRawData,
+                (typeof decoyWords !== 'undefined' ? decoyWords : [])
+            ];
+
+            pools.forEach(pool => {
+                if (!Array.isArray(pool)) return;
+                const shuffledPool = shuffle([...pool]);
+                for (const item of shuffledPool) {
+                    const value = item && item[key];
+                    if (!value || unique.has(value)) continue;
+                    unique.add(value);
+                    if (unique.size >= count) break;
+                }
+            });
+
+            const options = Array.from(unique);
+            while (options.length < count) {
+                options.push(correctValue);
+            }
+
+            return shuffle(options).slice(0, count);
+        };
         
         // 모든 문제를 하나의 배열로 합치기
         const allQuestions = [];
@@ -2318,8 +2377,7 @@ const secret = {
         // 1. 한글 뜻 → 영어 단어 객관식
         if (objectiveWords.length >= 4) {
             const objItem1 = objectiveWords[0];
-            const wrongAnswers1 = objectiveWords.slice(1, 4).map(w => w.word);
-            const allOptions1 = [objItem1.word, ...wrongAnswers1].sort(() => Math.random() - 0.5);
+            const allOptions1 = buildObjectiveOptions(objItem1.word, 'word', objectiveWords);
             const correctIndex1 = allOptions1.indexOf(objItem1.word);
             allQuestions.push({ 
                 type: 'objective-ko-en', 
@@ -2333,8 +2391,7 @@ const secret = {
         // 2. 영어 단어 → 한글 뜻 객관식
         if (objectiveWords.length >= 8) {
             const objItem2 = objectiveWords[4];
-            const wrongAnswers2 = objectiveWords.slice(5, 8).map(w => w.meaning);
-            const allOptions2 = [objItem2.meaning, ...wrongAnswers2].sort(() => Math.random() - 0.5);
+            const allOptions2 = buildObjectiveOptions(objItem2.meaning, 'meaning', objectiveWords);
             const correctIndex2 = allOptions2.indexOf(objItem2.meaning);
             allQuestions.push({ 
                 type: 'objective-en-ko', 
@@ -2372,9 +2429,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line">영어 단어: ________________</div>
+                            <div class="answer-line">________________</div>
                         </div>
                     </div>
                 `;
@@ -2382,9 +2438,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line answer">영어 단어: <strong>${q.item.word}</strong></div>
+                            <div class="answer-line answer"><strong>${q.item.word}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2393,9 +2448,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line">한글 뜻: ________________</div>
+                            <div class="answer-line">________________</div>
                         </div>
                     </div>
                 `;
@@ -2403,9 +2457,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line answer">한글 뜻: <strong>${q.item.meaning}</strong></div>
+                            <div class="answer-line answer"><strong>${q.item.meaning}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2416,7 +2469,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
@@ -2428,7 +2480,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => {
@@ -2446,7 +2497,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
@@ -2458,7 +2508,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => {
@@ -2485,9 +2534,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line">영어 단어: ________________</div>
+                            <div class="answer-line">________________</div>
                         </div>
                     </div>
                 `;
@@ -2495,9 +2543,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line answer">영어 단어: <strong>${q.item.word}</strong></div>
+                            <div class="answer-line answer"><strong>${q.item.word}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2506,9 +2553,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line">한글 뜻: ________________</div>
+                            <div class="answer-line">________________</div>
                         </div>
                     </div>
                 `;
@@ -2516,9 +2562,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line answer">한글 뜻: <strong>${q.item.meaning}</strong></div>
+                            <div class="answer-line answer"><strong>${q.item.meaning}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2529,7 +2574,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
@@ -2541,7 +2585,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">한글 뜻</div>
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => {
@@ -2559,7 +2602,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
@@ -2571,7 +2613,6 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-label">영어 단어</div>
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 ${q.options.map((opt, idx) => {
@@ -2750,8 +2791,8 @@ const secret = {
 };
 function initSelections() {
     const daySelect = document.getElementById('day-select');
-    const practiceDaySelect = document.getElementById('practice-mode-popup-day-select');
-    const battleDaySelect = document.getElementById('battle-mode-setting-popup-day-select');
+    const practiceDaySelect = document.getElementById('practice-mode-modal-day-select');
+    const battleDaySelect = document.getElementById('battle-mode-setting-modal-day-select');
     
     // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
@@ -2841,6 +2882,10 @@ const practiceMemorization = {
             const memorizationScreen = document.getElementById('practice-memorization-screen');
             if (memorizationScreen) {
                 memorizationScreen.style.display = 'flex';
+                
+                // 타이틀 이미지 크기에 맞춰 연습 모드 크기 동기화
+                syncGameScreenSizeToTitle();
+                
                 history.pushState({ screen: 'practice-memorization' }, '', window.location.href);
                 
                 // 첫 번째 단어 표시
@@ -2937,87 +2982,87 @@ const practiceMemorization = {
     }
 };
 
-// Open practice mode selection popup
-function openPracticePopup() {
-    const popup = document.getElementById('practice-mode-popup');
-    const popupDaySelect = document.getElementById('practice-mode-popup-day-select');
-    const popupCountSelect = document.getElementById('practice-mode-popup-count-select');
-    const popupImg = document.getElementById('practice-mode-popup-background-img');
+// Open practice mode selection modal
+function openPracticeModal() {
+    const modal = document.getElementById('practice-mode-modal');
+    const modalDaySelect = document.getElementById('practice-mode-modal-day-select');
+    const modalCountSelect = document.getElementById('practice-mode-modal-count-select');
+    const modalImg = document.getElementById('practice-mode-modal-background-img');
     
-    if (!popup) return;
+    if (!modal) return;
     
     // Enable day selection for practice mode
-    if (popupDaySelect) {
-        popupDaySelect.disabled = false;
-        popupDaySelect.style.display = ''; // Show day selection for practice mode
+    if (modalDaySelect) {
+        modalDaySelect.disabled = false;
+        modalDaySelect.style.display = ''; // Show day selection for practice mode
     }
     
     // Practice 모드는 암기 모드이므로 난이도 선택 숨기기
-    if (popupCountSelect) {
-        popupCountSelect.style.display = 'none';
+    if (modalCountSelect) {
+        modalCountSelect.style.display = 'none';
     }
     
     // Restore last selected values
     const lastDay = db.lastSelectedDay || 'all';
-    if (popupDaySelect && Array.from(popupDaySelect.options).some(o => o.value === String(lastDay))) {
-        popupDaySelect.value = lastDay;
+    if (modalDaySelect && Array.from(modalDaySelect.options).some(o => o.value === String(lastDay))) {
+        modalDaySelect.value = lastDay;
     }
     
-    popup.style.display = 'flex';
+    modal.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'practice-mode-popup' }, '', window.location.href);
+    history.pushState({ screen: 'practice-mode-modal' }, '', window.location.href);
     
-    // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
+    // 타이틀 크기 먼저 동기화 (모달 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
         syncTitleButtonOverlay();
     }
     
     // 이미지 로드 후 버튼 오버레이 동기화
-    if (popupImg) {
-        if (popupImg.complete) {
+    if (modalImg) {
+        if (modalImg.complete) {
             setTimeout(() => {
-                syncPopupButtonOverlay('practice-mode-popup');
+                syncModalButtonOverlay('practice-mode-modal');
             }, 100);
         } else {
-            popupImg.addEventListener('load', () => {
+            modalImg.addEventListener('load', () => {
                 setTimeout(() => {
-                    syncPopupButtonOverlay('practice-mode-popup');
+                    syncModalButtonOverlay('practice-mode-modal');
                 }, 100);
             }, { once: true });
         }
     }
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment('practice-mode-popup');
+    setupSelectFontSizeAdjustment('practice-mode-modal');
 }
 
-// Open battle mode selection popup
-function openBattleModePopup() {
-    const popup = document.getElementById('battle-mode-setting-popup');
-    const popupDaySelect = document.getElementById('battle-mode-setting-popup-day-select');
-    const popupCountSelect = document.getElementById('battle-mode-setting-popup-count-select');
-    const popupImg = document.getElementById('battle-mode-setting-popup-background-img');
-    const questionTypeGroup = document.getElementById('battle-mode-setting-popup-question-type-group');
+// Open battle mode selection modal
+function openBattleModeModal() {
+    const modal = document.getElementById('battle-mode-setting-modal');
+    const modalDaySelect = document.getElementById('battle-mode-setting-modal-day-select');
+    const modalCountSelect = document.getElementById('battle-mode-setting-modal-count-select');
+    const modalImg = document.getElementById('battle-mode-setting-modal-background-img');
+    const questionTypeGroup = document.getElementById('battle-mode-setting-modal-question-type-group');
     
-    if (!popup) return;
+    if (!modal) return;
     
     // For battle mode, allow day selection
-    if (popupDaySelect) {
+    if (modalDaySelect) {
         // 기본값을 'all'로 설정하되 사용자가 변경 가능
         const lastDay = db.lastSelectedDay || 'all';
-        if (Array.from(popupDaySelect.options).some(o => o.value === String(lastDay))) {
-            popupDaySelect.value = lastDay;
+        if (Array.from(modalDaySelect.options).some(o => o.value === String(lastDay))) {
+            modalDaySelect.value = lastDay;
         } else {
-            popupDaySelect.value = 'all';
+            modalDaySelect.value = 'all';
         }
-        popupDaySelect.style.display = ''; // Show day selection
-        popupDaySelect.disabled = false; // Enable day selection for battle mode
+        modalDaySelect.style.display = ''; // Show day selection
+        modalDaySelect.disabled = false; // Enable day selection for battle mode
     }
     
     const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
-    if (popupCountSelect) {
-        popupCountSelect.value = String(lastCount);
+    if (modalCountSelect) {
+        modalCountSelect.value = String(lastCount);
     }
     
     // Show question type radio buttons for battle mode
@@ -3036,11 +3081,11 @@ function openBattleModePopup() {
         
         // Update checked class for all radio labels
         const allRadios = questionTypeGroup.querySelectorAll('input[name="battle-question-type"]');
-        const allLabels = questionTypeGroup.querySelectorAll('.popup-radio-label');
+        const allLabels = questionTypeGroup.querySelectorAll('.modal-radio-label');
         allLabels.forEach(label => label.classList.remove('checked'));
         allRadios.forEach(radio => {
             if (radio.checked) {
-                radio.closest('.popup-radio-label')?.classList.add('checked');
+                radio.closest('.modal-radio-label')?.classList.add('checked');
             }
         });
         
@@ -3050,42 +3095,42 @@ function openBattleModePopup() {
                 allLabels.forEach(label => label.classList.remove('checked'));
                 const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
                 if (checkedRadio) {
-                    checkedRadio.closest('.popup-radio-label')?.classList.add('checked');
+                    checkedRadio.closest('.modal-radio-label')?.classList.add('checked');
                 }
             });
         });
     }
     
-    popup.style.display = 'flex';
+    modal.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'battle-mode-setting-popup' }, '', window.location.href);
+    history.pushState({ screen: 'battle-mode-setting-modal' }, '', window.location.href);
     
-    // 타이틀 크기 먼저 동기화 (팝업 크기가 타이틀 기준이므로)
+    // 타이틀 크기 먼저 동기화 (모달 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
         syncTitleButtonOverlay();
     }
     
     // 이미지 로드 후 버튼 오버레이 동기화
-    if (popupImg) {
-        if (popupImg.complete) {
+    if (modalImg) {
+        if (modalImg.complete) {
             setTimeout(() => {
-                syncPopupButtonOverlay('battle-mode-setting-popup');
+                syncModalButtonOverlay('battle-mode-setting-modal');
             }, 100);
         } else {
-            popupImg.addEventListener('load', () => {
+            modalImg.addEventListener('load', () => {
                 setTimeout(() => {
-                    syncPopupButtonOverlay('battle-mode-setting-popup');
+                    syncModalButtonOverlay('battle-mode-setting-modal');
                 }, 100);
             }, { once: true });
         }
     }
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment('battle-mode-setting-popup');
+    setupSelectFontSizeAdjustment('battle-mode-setting-modal');
 }
 
-// 공통 팝업 애니메이션 함수
+// 공통 모달 애니메이션 함수
 function closeScreenOverlay(elementId, animated = true) {
     const element = document.getElementById(elementId);
     if (element) {
@@ -3141,10 +3186,10 @@ function openScreenOverlay(elementId, animated = true) {
     }
 }
 
-// Close practice or battle mode selection popup
-function closePracticePopup(animated = true) {
-    closeScreenOverlay('practice-mode-popup', animated);
-    closeScreenOverlay('battle-mode-setting-popup', animated);
+// Close practice or battle mode selection modal
+function closePracticeModal(animated = true) {
+    closeScreenOverlay('practice-mode-modal', animated);
+    closeScreenOverlay('battle-mode-setting-modal', animated);
     // 히스토리 상태 업데이트
     history.pushState(null, '', window.location.href);
 }
@@ -3194,59 +3239,59 @@ function adjustSelectFontSize(selectElement, width, height) {
 }
 
 // 드롭박스 값 변경 시 폰트 크기 재조정 설정
-function setupSelectFontSizeAdjustment(popupId) {
-    if (!popupId) return;
+function setupSelectFontSizeAdjustment(modalId) {
+    if (!modalId) return;
     
-    const popup = document.getElementById(popupId);
-    if (!popup) return;
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
     
-    const popupImg = popup.querySelector('.popup-background');
-    const popupDaySelect = popup.querySelector('.popup-day-select');
-    const popupCountSelect = popup.querySelector('.popup-count-select');
+    const modalImg = modal.querySelector('.modal-background');
+    const modalDaySelect = modal.querySelector('.modal-day-select');
+    const modalCountSelect = modal.querySelector('.modal-count-select');
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    if (popupDaySelect && !popupDaySelect.dataset.fontAdjustmentSetup) {
-        popupDaySelect.dataset.fontAdjustmentSetup = 'true';
-        popupDaySelect.addEventListener('change', () => {
+    if (modalDaySelect && !modalDaySelect.dataset.fontAdjustmentSetup) {
+        modalDaySelect.dataset.fontAdjustmentSetup = 'true';
+        modalDaySelect.addEventListener('change', () => {
             setTimeout(() => {
-                if (popupImg && popupImg.complete) {
-                    const imgRect = popupImg.getBoundingClientRect();
-                    adjustSelectFontSize(popupDaySelect, imgRect.width * 0.6, imgRect.height * 0.11);
+                if (modalImg && modalImg.complete) {
+                    const imgRect = modalImg.getBoundingClientRect();
+                    adjustSelectFontSize(modalDaySelect, imgRect.width * 0.6, imgRect.height * 0.11);
                 }
             }, 50);
         });
     }
     
-    if (popupCountSelect && !popupCountSelect.dataset.fontAdjustmentSetup) {
-        popupCountSelect.dataset.fontAdjustmentSetup = 'true';
-        popupCountSelect.addEventListener('change', () => {
+    if (modalCountSelect && !modalCountSelect.dataset.fontAdjustmentSetup) {
+        modalCountSelect.dataset.fontAdjustmentSetup = 'true';
+        modalCountSelect.addEventListener('change', () => {
             setTimeout(() => {
-                if (popupImg && popupImg.complete) {
-                    const imgRect = popupImg.getBoundingClientRect();
-                    adjustSelectFontSize(popupCountSelect, imgRect.width * 0.6, imgRect.height * 0.11);
+                if (modalImg && modalImg.complete) {
+                    const imgRect = modalImg.getBoundingClientRect();
+                    adjustSelectFontSize(modalCountSelect, imgRect.width * 0.6, imgRect.height * 0.11);
                 }
             }, 50);
         });
     }
 }
 
-// Popup 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기에 맞춰 스케일)
-function syncPopupButtonOverlay(popupId) {
-    if (!popupId) return;
+// Modal 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기에 맞춰 스케일)
+function syncModalButtonOverlay(modalId) {
+    if (!modalId) return;
     
-    const popup = document.getElementById(popupId);
-    // popup이 숨겨져 있으면 CSS 변수 설정하지 않음
-    if (!popup || popup.style.display === 'none' || popup.style.display === '') {
+    const modal = document.getElementById(modalId);
+    // modal이 숨겨져 있으면 CSS 변수 설정하지 않음
+    if (!modal || modal.style.display === 'none' || modal.style.display === '') {
         return;
     }
     
-    const popupImg = popup.querySelector('.popup-background');
-    const overlay = popup.querySelector('.popup-buttons-overlay');
-    const container = popup.querySelector('.popup-container-wrapper');
+    const modalImg = modal.querySelector('.modal-background');
+    const overlay = modal.querySelector('.modal-buttons-overlay');
+    const container = modal.querySelector('.modal-container-wrapper');
     
-    if (!popupImg || !overlay || !container) return;
+    if (!modalImg || !overlay || !container) return;
     
-    // 타이틀 컨테이너 크기 가져오기 (팝업이 타이틀 크기를 벗어나지 않도록)
+    // 타이틀 컨테이너 크기 가져오기 (모달이 타이틀 크기를 벗어나지 않도록)
     const titleContainer = document.querySelector('.title-container-wrapper');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -3274,41 +3319,51 @@ function syncPopupButtonOverlay(popupId) {
         }
     }
     
-    // 팝업 이미지의 자연 비율 계산 및 설정
-    if (popupImg.complete && popupImg.naturalWidth > 0 && popupImg.naturalHeight > 0) {
-        const aspectRatio = popupImg.naturalWidth / popupImg.naturalHeight;
-        popupImg.style.setProperty('--popup-aspect-ratio', aspectRatio);
+    // 모달 이미지의 자연 비율 계산 및 설정
+    let modalAspectRatio = null;
+    if (modalImg.complete && modalImg.naturalWidth > 0 && modalImg.naturalHeight > 0) {
+        modalAspectRatio = modalImg.naturalWidth / modalImg.naturalHeight;
+        modalImg.style.setProperty('--modal-aspect-ratio', modalAspectRatio);
     }
     
-    // 타이틀 컨테이너 크기를 CSS 변수로 설정 (팝업이 타이틀 크기를 벗어나지 않도록)
-    popupImg.style.setProperty('--title-container-width', titleWidth + 'px');
-    popupImg.style.setProperty('--title-container-height', titleHeight + 'px');
+    // 배틀 모드 모달 폭을 전역 CSS 변수로 저장 (설정 레이아웃 폭 맞춤용)
+    if (modalId === 'battle-mode-setting-modal' && modalAspectRatio) {
+        const modalWidth = Math.min(titleWidth, titleHeight * modalAspectRatio);
+        document.documentElement.style.setProperty('--battle-mode-modal-width', modalWidth + 'px');
+    }
+
+    // 타이틀 컨테이너 크기를 CSS 변수로 설정 (모달이 타이틀 크기를 벗어나지 않도록)
+    modalImg.style.setProperty('--title-container-width', titleWidth + 'px');
+    modalImg.style.setProperty('--title-container-height', titleHeight + 'px');
+    // 전역 CSS 변수로도 설정 (다른 모달들이 참조할 수 있도록)
+    document.documentElement.style.setProperty('--title-container-width', titleWidth + 'px');
+    document.documentElement.style.setProperty('--title-container-height', titleHeight + 'px');
     
     // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
-    if (popupImg.complete) {
+    if (modalImg.complete) {
         // 잠시 후 다시 계산하여 브라우저 크기 변경 반영
         setTimeout(() => {
-            const imgRect = popupImg.getBoundingClientRect();
+            const imgRect = modalImg.getBoundingClientRect();
             const containerRect = container.getBoundingClientRect();
             
             const left = imgRect.left - containerRect.left;
             const top = imgRect.top - containerRect.top;
             
             // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
-            overlay.style.setProperty('--popup-img-width', imgRect.width + 'px');
-            overlay.style.setProperty('--popup-img-height', imgRect.height + 'px');
-            overlay.style.setProperty('--popup-img-left', left + 'px');
-            overlay.style.setProperty('--popup-img-top', top + 'px');
+            overlay.style.setProperty('--modal-img-width', imgRect.width + 'px');
+            overlay.style.setProperty('--modal-img-height', imgRect.height + 'px');
+            overlay.style.setProperty('--modal-img-left', left + 'px');
+            overlay.style.setProperty('--modal-img-top', top + 'px');
             
             // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
-            const daySelect = popup.querySelector('.popup-day-select');
+            const daySelect = modal.querySelector('.modal-day-select');
             if (daySelect) {
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.095;
                 adjustSelectFontSize(daySelect, width, height);
             }
             
-            const countSelect = popup.querySelector('.popup-count-select');
+            const countSelect = modal.querySelector('.modal-count-select');
             if (countSelect) {
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.095;
@@ -3348,7 +3403,7 @@ function syncStoryButtonOverlay(storyScreenId) {
     
     if (!storyImg || !overlay || !container) return;
     
-    // 타이틀 컨테이너 크기 가져오기 (popup과 동일한 방식)
+    // 타이틀 컨테이너 크기 가져오기 (modal과 동일한 방식)
     const titleContainer = document.querySelector('.title-container-wrapper');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -3382,9 +3437,12 @@ function syncStoryButtonOverlay(storyScreenId) {
     if (storyImg.complete && storyImg.naturalWidth > 0 && storyImg.naturalHeight > 0) {
         const aspectRatio = storyImg.naturalWidth / storyImg.naturalHeight;
         storyImg.style.setProperty('--story-aspect-ratio', aspectRatio);
-        // 타이틀 컨테이너 크기를 CSS 변수로 설정 (popup과 동일)
+        // 타이틀 컨테이너 크기를 CSS 변수로 설정 (modal과 동일)
         container.style.setProperty('--title-container-width', titleWidth + 'px');
         container.style.setProperty('--title-container-height', titleHeight + 'px');
+        // 전역 CSS 변수로도 설정 (다른 팝업들이 참조할 수 있도록)
+        document.documentElement.style.setProperty('--title-container-width', titleWidth + 'px');
+        document.documentElement.style.setProperty('--title-container-height', titleHeight + 'px');
     }
     
     // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
@@ -3478,6 +3536,10 @@ function syncTitleButtonOverlay() {
     container.style.setProperty('--title-container-height', imgHeight + 'px');
     container.style.width = imgWidth + 'px';
     container.style.height = imgHeight + 'px';
+    
+    // 전역 CSS 변수로도 설정 (다른 팝업들이 참조할 수 있도록)
+    document.documentElement.style.setProperty('--title-container-width', imgWidth + 'px');
+    document.documentElement.style.setProperty('--title-container-height', imgHeight + 'px');
 
     // 타이틀 이미지는 contain으로 비율 유지하며 표시 (CSS에서 처리)
     // 오버레이는 컨테이너 전체를 사용 (0,0 ~ 100%)
@@ -3490,14 +3552,15 @@ function syncTitleButtonOverlay() {
     syncGameScreenSizeToTitle();
     
     // 팝업도 타이틀 크기에 맞춰 동기화
-    syncPopupButtonOverlay('practice-mode-popup');
-    syncPopupButtonOverlay('battle-mode-setting-popup');
+    syncModalButtonOverlay('practice-mode-modal');
+    syncModalButtonOverlay('battle-mode-setting-modal');
 }
 
 function syncGameScreenSizeToTitle() {
     const titleImg = document.querySelector('.title-background');
     const gameScreen = document.getElementById('game-screen');
-    if (!titleImg || !gameScreen) return;
+    const practiceScreen = document.getElementById('practice-memorization-screen');
+    if (!titleImg) return;
 
     const naturalW = titleImg.naturalWidth || 0;
     const naturalH = titleImg.naturalHeight || 0;
@@ -3510,8 +3573,15 @@ function syncGameScreenSizeToTitle() {
     const w = Math.floor(naturalW * scale);
     const h = Math.floor(naturalH * scale);
 
-    gameScreen.style.width = w + 'px';
-    gameScreen.style.height = h + 'px';
+    if (gameScreen) {
+        gameScreen.style.width = w + 'px';
+        gameScreen.style.height = h + 'px';
+    }
+    
+    if (practiceScreen) {
+        practiceScreen.style.width = w + 'px';
+        practiceScreen.style.height = h + 'px';
+    }
 }
 
 window.onload = () => {
@@ -3610,10 +3680,10 @@ window.onload = () => {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('Practice Mode button clicked');
-                    if (typeof openPracticePopup === 'function') {
-                        openPracticePopup();
+                    if (typeof openPracticeModal === 'function') {
+                        openPracticeModal();
                     } else {
-                        console.error('openPracticePopup function not found');
+                        console.error('openPracticeModal function not found');
                     }
                 }, { capture: true });
                 console.log('[Button Setup] Practice button event listener added');
@@ -3625,11 +3695,11 @@ window.onload = () => {
         console.warn('title-practice-btn not found');
     }
     
-    // Practice Setting Popup event listeners
-    const practiceStartBtn = document.getElementById('practice-mode-popup-start-btn');
-    const practiceCancelBtn = document.getElementById('practice-mode-popup-cancel-btn');
-    const practiceDaySelect = document.getElementById('practice-mode-popup-day-select');
-    const practiceCountSelect = document.getElementById('practice-mode-popup-count-select');
+    // Practice Setting Modal event listeners
+    const practiceStartBtn = document.getElementById('practice-mode-modal-start-btn');
+    const practiceCancelBtn = document.getElementById('practice-mode-modal-cancel-btn');
+    const practiceDaySelect = document.getElementById('practice-mode-modal-day-select');
+    const practiceCountSelect = document.getElementById('practice-mode-modal-count-select');
     
     if (practiceStartBtn) {
         practiceStartBtn.addEventListener('click', () => {
@@ -3653,8 +3723,8 @@ window.onload = () => {
                 startScreen.style.display = 'none';
             }
             
-            // Close popup with animation and start memorization mode directly
-            closePracticePopup(true);
+            // Close modal with animation and start memorization mode directly
+            closePracticeModal(true);
             
             // 애니메이션이 완료된 후 암기 모드로 바로 시작 (practice-mode-screen 건너뛰기)
             setTimeout(() => {
@@ -3665,7 +3735,7 @@ window.onload = () => {
     
     if (practiceCancelBtn) {
         practiceCancelBtn.addEventListener('click', () => {
-            closePracticePopup();
+            closePracticeModal();
         });
     }
     
@@ -3692,11 +3762,11 @@ window.onload = () => {
         });
     }
     
-    // Battle Setting Popup event listeners
-    const battleStartBtn = document.getElementById('battle-mode-setting-popup-start-btn');
-    const battleCancelBtn = document.getElementById('battle-mode-setting-popup-cancel-btn');
-    const battleDaySelect = document.getElementById('battle-mode-setting-popup-day-select');
-    const battleCountSelect = document.getElementById('battle-mode-setting-popup-count-select');
+    // Battle Setting Modal event listeners
+    const battleStartBtn = document.getElementById('battle-mode-setting-modal-start-btn');
+    const battleCancelBtn = document.getElementById('battle-mode-setting-modal-cancel-btn');
+    const battleDaySelect = document.getElementById('battle-mode-setting-modal-day-select');
+    const battleCountSelect = document.getElementById('battle-mode-setting-modal-count-select');
     
     if (battleStartBtn) {
         battleStartBtn.addEventListener('click', () => {
@@ -3705,7 +3775,7 @@ window.onload = () => {
             
             // Get selected question type for battle mode
             let selectedQuestionType = 'mixed'; // default
-            const questionTypeGroup = document.getElementById('battle-mode-setting-popup-question-type-group');
+            const questionTypeGroup = document.getElementById('battle-mode-setting-modal-question-type-group');
             if (questionTypeGroup) {
                 const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
                 if (checkedRadio) {
@@ -3735,8 +3805,8 @@ window.onload = () => {
                 startScreen.style.display = 'none';
             }
             
-            // Close popup with animation and start game
-            closePracticePopup(true);
+            // Close modal with animation and start game
+            closePracticeModal(true);
             
             // 애니메이션이 완료된 후 게임 시작
             setTimeout(() => {
@@ -3747,7 +3817,7 @@ window.onload = () => {
     
     if (battleCancelBtn) {
         battleCancelBtn.addEventListener('click', () => {
-            closePracticePopup();
+            closePracticeModal();
         });
     }
     // Battle Mode 버튼 설정
@@ -3772,10 +3842,10 @@ window.onload = () => {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('Battle Mode button clicked');
-                    if (typeof openBattleModePopup === 'function') {
-                        openBattleModePopup();
+                    if (typeof openBattleModeModal === 'function') {
+                        openBattleModeModal();
                     } else {
-                        console.error('openBattleModePopup function not found');
+                        console.error('openBattleModeModal function not found');
                     }
                 }, { capture: true });
                 console.log('[Button Setup] Battle Mode button event listener added');
@@ -3884,44 +3954,44 @@ window.onload = () => {
         console.warn('title-setting-btn not found');
     }
     
-    // Popup 이미지 로드 후 버튼 오버레이 동기화
-    const practiceModePopupImg = document.getElementById('practice-mode-popup-background-img');
-    const battleModePopupImg = document.getElementById('battle-mode-setting-popup-background-img');
+    // Modal 이미지 로드 후 버튼 오버레이 동기화
+    const practiceModeModalImg = document.getElementById('practice-mode-modal-background-img');
+    const battleModeModalImg = document.getElementById('battle-mode-setting-modal-background-img');
     
-    if (practiceModePopupImg) {
-        if (practiceModePopupImg.complete) {
-            syncPopupButtonOverlay('practice-mode-popup');
+    if (practiceModeModalImg) {
+        if (practiceModeModalImg.complete) {
+            syncModalButtonOverlay('practice-mode-modal');
         } else {
-            practiceModePopupImg.addEventListener('load', () => syncPopupButtonOverlay('practice-mode-popup'));
+            practiceModeModalImg.addEventListener('load', () => syncModalButtonOverlay('practice-mode-modal'));
         }
     }
     
-    if (battleModePopupImg) {
-        if (battleModePopupImg.complete) {
-            syncPopupButtonOverlay('battle-mode-setting-popup');
+    if (battleModeModalImg) {
+        if (battleModeModalImg.complete) {
+            syncModalButtonOverlay('battle-mode-setting-modal');
         } else {
-            battleModePopupImg.addEventListener('load', () => syncPopupButtonOverlay('battle-mode-setting-popup'));
+            battleModeModalImg.addEventListener('load', () => syncModalButtonOverlay('battle-mode-setting-modal'));
         }
     }
     
     // 팝업이 열려있을 때만 resize 이벤트 처리
-    let popupResizeTimeout;
-    const popupResizeHandler = () => {
-        const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-mode-setting-popup');
-        if (practiceModePopup && practiceModePopup.style.display !== 'none' && practiceModePopup.style.display !== '') {
-            clearTimeout(popupResizeTimeout);
-            popupResizeTimeout = setTimeout(() => {
-                syncPopupButtonOverlay('practice-mode-popup');
+    let modalResizeTimeout;
+    const modalResizeHandler = () => {
+        const practiceModeModal = document.getElementById('practice-mode-modal');
+        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        if (practiceModeModal && practiceModeModal.style.display !== 'none' && practiceModeModal.style.display !== '') {
+            clearTimeout(modalResizeTimeout);
+            modalResizeTimeout = setTimeout(() => {
+                syncModalButtonOverlay('practice-mode-modal');
             }, 100);
-        } else if (battleModePopup && battleModePopup.style.display !== 'none' && battleModePopup.style.display !== '') {
-            clearTimeout(popupResizeTimeout);
-            popupResizeTimeout = setTimeout(() => {
-                syncPopupButtonOverlay('battle-mode-setting-popup');
+        } else if (battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '') {
+            clearTimeout(modalResizeTimeout);
+            modalResizeTimeout = setTimeout(() => {
+                syncModalButtonOverlay('battle-mode-setting-modal');
             }, 100);
         }
     };
-    window.addEventListener('resize', popupResizeHandler);
+    window.addEventListener('resize', modalResizeHandler);
     
     // Story screen resize handler
     let storyResizeTimeout;
@@ -3996,24 +4066,24 @@ window.onload = () => {
             }
         }
         
-        // practice-mode-popup과 battle-mode-setting-popup 초기화
-        const practiceModePopup = document.getElementById('practice-mode-popup');
-        const battleModePopup = document.getElementById('battle-mode-setting-popup');
-        if (practiceModePopup) {
-            practiceModePopup.style.display = 'none';
-            practiceModePopup.style.visibility = '';
-            practiceModePopup.style.opacity = '';
-            practiceModePopup.style.zIndex = '';
-            practiceModePopup.style.pointerEvents = '';
-            practiceModePopup.classList.remove('closing');
+        // practice-mode-modal과 battle-mode-setting-modal 초기화
+        const practiceModeModal = document.getElementById('practice-mode-modal');
+        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        if (practiceModeModal) {
+            practiceModeModal.style.display = 'none';
+            practiceModeModal.style.visibility = '';
+            practiceModeModal.style.opacity = '';
+            practiceModeModal.style.zIndex = '';
+            practiceModeModal.style.pointerEvents = '';
+            practiceModeModal.classList.remove('closing');
         }
-        if (battleModePopup) {
-            battleModePopup.style.display = 'none';
-            battleModePopup.style.visibility = '';
-            battleModePopup.style.opacity = '';
-            battleModePopup.style.zIndex = '';
-            battleModePopup.style.pointerEvents = '';
-            battleModePopup.classList.remove('closing');
+        if (battleModeModal) {
+            battleModeModal.style.display = 'none';
+            battleModeModal.style.visibility = '';
+            battleModeModal.style.opacity = '';
+            battleModeModal.style.zIndex = '';
+            battleModeModal.style.pointerEvents = '';
+            battleModeModal.classList.remove('closing');
         }
         
         // game-screen도 확실히 닫기

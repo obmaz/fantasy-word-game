@@ -26,3 +26,9 @@
     /* max-height: 50%; */ /* 최대 높이 (기본: 45%) */
     /* padding: clamp(15px, 2vw, 25px); */ /* 내부 여백 */
 }
+
+/* Boss Mode Screen - 설명 텍스트 폰트 크기 조정 */
+#boss-mode-screen .story-text-content {
+    /* 폰트 크기 - battle-mode와 동일하게 작은 크기로 설정 */
+    font-size: 14px;
+}

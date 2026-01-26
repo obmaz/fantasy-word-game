@@ -3,9 +3,12 @@
    ============================================ */
 
 /* Result Screen — 이미지 없이 day_select.webp 느낌을 CSS로 재현 */
-.result-panel {
+#result-screen .result-panel {
     position: relative;
-    width: min(92vw, 520px);
+    /* 타이틀 컨테이너 크기를 기준으로 설정 (다른 panel들과 동일) */
+    width: 90%;
+    max-width: min(90%, var(--title-container-width, 95vw));
+    max-height: min(var(--title-container-height, 95vh), 85vh);
     padding: 22px 22px 18px;
     border-radius: 18px;
     background:
@@ -16,6 +19,7 @@
         0 18px 55px rgba(0,0,0,0.7),
         inset 0 1px 0 rgba(255,255,255,0.08);
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* 금색 외곽 프레임 */

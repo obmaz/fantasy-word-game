@@ -14,6 +14,12 @@
         inset 0 1px 0 rgba(255,255,255,0.08);
     border: none;
     animation: none;
+    /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-screen, boss-mode-screen과 동일) */
+    width: 90%;
+    max-width: min(90%, var(--title-container-width, 95vw));
+    max-height: min(var(--title-container-height, 95vh), 85vh);
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 #shop-screen .card.rpg-panel::before {
