@@ -1283,17 +1283,37 @@ window.decoyWordsData_2 = [
   { day: 7, word: "language", meaning: "언어" }, // linguistics와 비슷
   { day: 7, word: "approve", meaning: "승인하다" }, // improve와 비슷
   
-  // Day 8: 비슷한 글자지만 다른 뜻 (학교 생활)
-  { day: 8, word: "education", meaning: "교육" }, // educate와 비슷
-  { day: 8, word: "instruction", meaning: "지시" }, // instruct와 비슷
-  { day: 8, word: "lecturer", meaning: "강사" }, // lecture와 비슷
-  { day: 8, word: "due date", meaning: "기한" }, // due와 비슷
-  { day: 8, word: "termly", meaning: "학기별로" }, // term과 비슷
-  { day: 8, word: "examination", meaning: "시험" }, // examine와 비슷
+  // Day 8: educate, instruct, lecture, due, term, examine, award, multiply, calculate, memorize, institute, laboratory, dormitory, principal, aisle, semester, absent, attendance, motivate, attitude, eager, entrance, submit, portfolio, peer, scholarship, grant, get along with, catch up with, drop out
+  { day: 8, word: "dedicate", meaning: "헌신하다" }, // educate와 비슷
+  { day: 8, word: "construct", meaning: "건설하다" }, // instruct와 비슷
+  { day: 8, word: "picture", meaning: "그림" }, // lecture와 비슷
+  { day: 8, word: "duke", meaning: "공작" }, // due와 비슷
+  { day: 8, word: "team", meaning: "팀" }, // term과 비슷
+  { day: 8, word: "example", meaning: "예시" }, // examine와 비슷
   { day: 8, word: "awarded", meaning: "수상한" }, // award와 비슷
-  { day: 8, word: "multiplication", meaning: "곱셈" }, // multiply와 비슷
-  { day: 8, word: "calculation", meaning: "계산" }, // calculate와 비슷
-  { day: 8, word: "memorization", meaning: "암기" }, // memorize와 비슷
+  { day: 8, word: "supply", meaning: "공급하다" }, // multiply와 비슷
+  { day: 8, word: "circulate", meaning: "순환하다" }, // calculate와 비슷
+  { day: 8, word: "memorize", meaning: "암기하다" }, // memorize와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "institute", meaning: "연구소" }, // institute와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "laboratory", meaning: "실험실" }, // laboratory와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "dormitory", meaning: "기숙사" }, // dormitory와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "principal", meaning: "교장" }, // principal와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "aisle", meaning: "통로" }, // aisle와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "semester", meaning: "학기" }, // semester와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "absent", meaning: "결석한" }, // absent와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "attendance", meaning: "출석" }, // attendance와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "motivate", meaning: "동기 부여하다" }, // motivate와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "attitude", meaning: "태도" }, // attitude와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "eager", meaning: "열렬한" }, // eager와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "entrance", meaning: "입학" }, // entrance와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "submit", meaning: "제출하다" }, // submit와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "portfolio", meaning: "작품집" }, // portfolio와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "peer", meaning: "또래" }, // peer와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "scholarship", meaning: "장학금" }, // scholarship와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "grant", meaning: "수여하다" }, // grant와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "get along with", meaning: "잘 지내다" }, // get along with와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "catch up with", meaning: "따라잡다" }, // catch up with와 동일 - 다른 단어로 변경 필요
+  { day: 8, word: "drop out", meaning: "중퇴하다" }, // drop out와 동일 - 다른 단어로 변경 필요
   
   // Day 9: 비슷한 글자지만 다른 뜻 (직업 및 업무)
   { day: 9, word: "manufacturing", meaning: "제조" }, // manufacture와 비슷
