@@ -104,6 +104,6 @@ const decoyWords = (function() {
     if (currentDataSetId === '2') {
         return window.decoyWordsData_2 || [];
     } else {
-        return window.decoyWordsData || [];
+        return window.decoyWordsData_1 || [];
     }
 })();
