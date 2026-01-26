@@ -105,7 +105,7 @@ const db = {
 };
 const inventory = {
     open: () => {
-        closeScreenOverlay('start-screen', false);
+        // start-screen은 숨기지 않고 팝업만 표시
         openScreenOverlay('inventory-screen', true);
         history.pushState({ screen: 'inventory' }, '', window.location.href);
         inventory.hideDetails(); // Hide details on open
@@ -120,9 +120,7 @@ const inventory = {
     },
     close: () => {
         closeScreenOverlay('inventory-screen', true);
-        setTimeout(() => {
-            openScreenOverlay('start-screen', false);
-        }, 400);
+        // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
     render: () => {
@@ -414,16 +412,14 @@ const inventory = {
 
 const shop = {
     open: () => {
-        closeScreenOverlay('start-screen', false);
+        // start-screen은 숨기지 않고 팝업만 표시
         openScreenOverlay('shop-screen', true);
         history.pushState({ screen: 'shop' }, '', window.location.href);
         shop.render();
     },
     close: () => {
         closeScreenOverlay('shop-screen', true);
-        setTimeout(() => {
-            openScreenOverlay('start-screen', false);
-        }, 400);
+        // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
     render: () => {
@@ -509,16 +505,14 @@ const shop = {
 
 const statistics = {
     open: () => {
-        closeScreenOverlay('start-screen', false);
+        // start-screen은 숨기지 않고 팝업만 표시
         openScreenOverlay('statistics-screen', true);
         history.pushState({ screen: 'statistics' }, '', window.location.href);
         statistics.render();
     },
     close: () => {
         closeScreenOverlay('statistics-screen', true);
-        setTimeout(() => {
-            openScreenOverlay('start-screen', false);
-        }, 400);
+        // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
     render: () => {
@@ -595,7 +589,7 @@ const statistics = {
         </div>`;
         html += `<div class="shop-item">
             <div><b>정답률</b></div>
-            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${rate}%</div>
+            <div style="font-size:20px; color:var(--primary); font-weight:bold; text-align:right;">${rate}%</div>
         </div>`;
 
         // 문제 타입별 통계
@@ -609,7 +603,7 @@ const statistics = {
                 <span>해결: ${objectiveSolved}개</span>
                 <span style="color:#4CAF50; margin-left:12px;">정답: ${objectiveCorrect}개</span>
             </div>
-            <div style="font-size:18px; color:#2196F3; font-weight:bold;">정답률: ${objectiveRate}%</div>
+            <div style="font-size:18px; color:#2196F3; font-weight:bold; text-align:right;">정답률: ${objectiveRate}%</div>
         </div>`;
         html += '</div>';
         
@@ -621,7 +615,7 @@ const statistics = {
                 <span>해결: ${subjectiveSolved}개</span>
                 <span style="color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
             </div>
-            <div style="font-size:18px; color:#9C27B0; font-weight:bold;">정답률: ${subjectiveRate}%</div>`;
+            <div style="font-size:18px; color:#9C27B0; font-weight:bold; text-align:right;">정답률: ${subjectiveRate}%</div>`;
         
         // 주관식을 전부 맞춘 날 표시
         const perfectDays = db.stats.subjective?.perfectDays || [];
@@ -1918,6 +1912,7 @@ const secret = {
     password: "770458",
     entered: "",
     adjustGold: 0,
+    previousModal: null, // 비밀번호 모달로 오기 전 모달 추적 (gold-adjuster-modal 또는 gold-edit-modal)
 
     init: () => {
         const h1 = document.querySelector('#start-screen .card h1');
@@ -1936,29 +1931,63 @@ const secret = {
     },
 
     open: () => {
+        // start-screen은 숨기지 않고 팝업만 표시
         openScreenOverlay('secret-menu-overlay', true);
+        // 설정 화면을 바로 표시 (비밀번호 없이)
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('gold-adjuster-modal').style.display = 'block';
-        secret.adjustGold = 0;
-        document.getElementById('current-gold-display').innerText = db.gold;
-        document.getElementById('adjust-gold-display').innerText = secret.adjustGold;
-
-        document.getElementById('gold-up').onclick = () => secret.updateGold(500);
-        document.getElementById('gold-down').onclick = () => secret.updateGold(-500);
+        
+        // 타이틀 컨테이너 크기를 CSS 변수로 설정 (다른 팝업과 동일하게)
+        const secretOverlay = document.getElementById('secret-menu-overlay');
+        const titleContainer = document.querySelector('.title-container-wrapper');
+        if (secretOverlay && titleContainer) {
+            const computedStyle = window.getComputedStyle(titleContainer);
+            const titleWidth = computedStyle.getPropertyValue('--title-container-width');
+            const titleHeight = computedStyle.getPropertyValue('--title-container-height');
+            const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            
+            let containerWidth = parseFloat(titleWidth) || (0.95 * vw);
+            let containerHeight = parseFloat(titleHeight) || (0.95 * vh);
+            
+            if (!titleWidth || isNaN(containerWidth)) {
+                const rect = titleContainer.getBoundingClientRect();
+                containerWidth = rect.width || (0.95 * vw);
+            }
+            if (!titleHeight || isNaN(containerHeight)) {
+                const rect = titleContainer.getBoundingClientRect();
+                containerHeight = rect.height || (0.95 * vh);
+            }
+            
+            secretOverlay.style.setProperty('--title-container-width', containerWidth + 'px');
+            secretOverlay.style.setProperty('--title-container-height', containerHeight + 'px');
+        }
+        
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'secret-menu' }, '', window.location.href);
     },
 
     close: () => {
-        // 비밀번호 모달이 열려있으면 골드 조정 화면으로 돌아가기
+        // 비밀번호 모달이 열려있으면 이전 모달로 돌아가기
         const passwordModal = document.getElementById('password-modal');
         if (passwordModal && passwordModal.style.display !== 'none') {
             passwordModal.style.display = 'none';
-            document.getElementById('gold-adjuster-modal').style.display = 'block';
+            // 이전 모달로 돌아가기
+            if (secret.previousModal === 'gold-edit-modal') {
+                document.getElementById('gold-edit-modal').style.display = 'block';
+            } else {
+                document.getElementById('gold-adjuster-modal').style.display = 'block';
+            }
             secret.entered = "";
             secret.pendingAction = null;
+            secret.previousModal = null;
             return;
         }
         closeScreenOverlay('secret-menu-overlay', true);
         secret.pendingAction = null;
+        secret.previousModal = null;
+        // 히스토리 상태 업데이트
+        history.pushState(null, '', window.location.href);
     },
 
     enter: (num) => {
@@ -1993,12 +2022,12 @@ const secret = {
         if (secret.entered === secret.password) {
             document.getElementById('password-modal').style.display = 'none';
             
-            // pendingAction이 있으면 실행 (applyGold 또는 resetStats)
+            // pendingAction이 있으면 실행 (applyGold, resetGold, resetStatistics 등)
             if (secret.pendingAction) {
                 secret.pendingAction();
-                secret.pendingAction = null;
+                // pendingAction 실행 후에는 null로 설정하지 않음 (함수 내에서 처리)
             } else {
-                // 기존 로직 (처음 열 때)
+                // pendingAction이 없으면 골드 조정 화면 표시 (open()에서 설정했을 경우)
                 document.getElementById('gold-adjuster-modal').style.display = 'block';
                 secret.adjustGold = 0;
                 document.getElementById('current-gold-display').innerText = db.gold;
@@ -2024,12 +2053,145 @@ const secret = {
         // 비밀번호 확인
         secret.entered = "";
         secret.updatePasswordDisplay();
+        secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
             db.addGold(secret.adjustGold);
+            secret.pendingAction = null;
+            secret.previousModal = null;
+            secret.close();
+        };
+    },
+
+    resetGold: () => {
+        // 비밀번호 확인
+        secret.entered = "";
+        secret.updatePasswordDisplay();
+        secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
+        document.getElementById('password-modal').style.display = 'block';
+        document.getElementById('gold-adjuster-modal').style.display = 'none';
+        
+        // 비밀번호 확인 후 실행할 함수
+        secret.pendingAction = () => {
+            if (confirm("정말 골드를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+                db.gold = 0;
+                db.save();
+                
+                ui.updateGold();
+                if (typeof shop !== 'undefined' && typeof shop.render === 'function') {
+                    shop.render();
+                }
+                if (typeof inventory !== 'undefined' && typeof inventory.render === 'function') {
+                    inventory.render();
+                }
+                if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
+                    statistics.render();
+                }
+                
+                alert("골드가 초기화되었습니다.");
+                secret.pendingAction = null;
+                secret.previousModal = null;
+                secret.close();
+            } else {
+                // 취소하면 다시 골드 조정 화면으로
+                secret.pendingAction = null;
+                secret.previousModal = null;
+                document.getElementById('password-modal').style.display = 'none';
+                document.getElementById('gold-adjuster-modal').style.display = 'block';
+            }
+        };
+    },
+
+    resetStatistics: () => {
+        // 비밀번호 확인
+        secret.entered = "";
+        secret.updatePasswordDisplay();
+        secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
+        document.getElementById('password-modal').style.display = 'block';
+        document.getElementById('gold-adjuster-modal').style.display = 'none';
+        
+        // 비밀번호 확인 후 실행할 함수
+        secret.pendingAction = () => {
+            if (confirm("정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+                db.stats = { solved: 0, correct: 0, objective: { solved: 0, correct: 0 }, subjective: { solved: 0, correct: 0, perfectDays: [] } };
+                db.save();
+                
+                ui.updateMainStats();
+                if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
+                    statistics.render();
+                }
+                
+                alert("통계가 초기화되었습니다.");
+                secret.pendingAction = null;
+                secret.previousModal = null;
+                secret.close();
+            } else {
+                // 취소하면 다시 골드 조정 화면으로
+                secret.pendingAction = null;
+                secret.previousModal = null;
+                document.getElementById('password-modal').style.display = 'none';
+                document.getElementById('gold-adjuster-modal').style.display = 'block';
+            }
+        };
+    },
+
+    editGold: 0, // 골드 수정 값
+
+    openGoldEditModal: () => {
+        // 골드 수정 모달 열기
+        document.getElementById('gold-adjuster-modal').style.display = 'none';
+        document.getElementById('gold-edit-modal').style.display = 'block';
+        secret.editGold = db.gold; // 현재 골드로 초기화
+        document.getElementById('current-gold-edit-display').innerText = db.gold;
+        document.getElementById('edit-gold-display').innerText = secret.editGold;
+
+        document.getElementById('gold-edit-up').onclick = () => secret.updateGoldEdit(500);
+        document.getElementById('gold-edit-down').onclick = () => secret.updateGoldEdit(-500);
+    },
+
+    closeGoldEditModal: () => {
+        // 골드 수정 모달 닫고 골드 조정 화면으로 돌아가기
+        document.getElementById('gold-edit-modal').style.display = 'none';
+        document.getElementById('gold-adjuster-modal').style.display = 'block';
+        secret.editGold = 0;
+    },
+
+    updateGoldEdit: (amount) => {
+        secret.editGold = Math.max(0, secret.editGold + amount); // 음수 방지
+        document.getElementById('edit-gold-display').innerText = secret.editGold;
+    },
+
+    applyGoldEdit: () => {
+        // 비밀번호 확인
+        secret.entered = "";
+        secret.updatePasswordDisplay();
+        secret.previousModal = 'gold-edit-modal'; // 이전 모달 저장
+        document.getElementById('password-modal').style.display = 'block';
+        document.getElementById('gold-edit-modal').style.display = 'none';
+        
+        // 비밀번호 확인 후 실행할 함수
+        secret.pendingAction = () => {
+            db.gold = secret.editGold;
+            db.save();
+            
+            ui.updateGold();
+            if (typeof shop !== 'undefined' && typeof shop.render === 'function') {
+                shop.render();
+            }
+            if (typeof inventory !== 'undefined' && typeof inventory.render === 'function') {
+                inventory.render();
+            }
+            if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
+                statistics.render();
+            }
+            
+            alert("골드가 수정되었습니다.");
+            secret.pendingAction = null;
+            secret.previousModal = null;
+            secret.closeGoldEditModal();
             secret.close();
         };
     },
@@ -2038,6 +2200,7 @@ const secret = {
         // 비밀번호 확인
         secret.entered = "";
         secret.updatePasswordDisplay();
+        secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         
@@ -2063,10 +2226,13 @@ const secret = {
                 inventory.render();
 
                 alert("모든 데이터가 초기화되었습니다.");
+                secret.previousModal = null;
                 secret.close();
                 location.reload();
             } else {
                 // 취소하면 다시 골드 조정 화면으로
+                secret.pendingAction = null;
+                secret.previousModal = null;
                 document.getElementById('password-modal').style.display = 'none';
                 document.getElementById('gold-adjuster-modal').style.display = 'block';
             }
@@ -2074,6 +2240,513 @@ const secret = {
     },
     
     pendingAction: null, // 비밀번호 확인 후 실행할 함수
+
+    openPrintDaySelect: () => {
+        // Day 선택 모달 열기
+        document.getElementById('gold-adjuster-modal').style.display = 'none';
+        document.getElementById('print-day-select-modal').style.display = 'block';
+        
+        // Day 선택 옵션 채우기
+        const printDaySelect = document.getElementById('print-day-select');
+        if (printDaySelect) {
+            printDaySelect.innerHTML = '<option value="">Day 선택...</option>';
+            
+            // 현재 데이터셋의 rawData 사용
+            const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+            const daysFromData = new Set();
+            if (currentRawData && Array.isArray(currentRawData)) {
+                currentRawData.forEach(r => { 
+                    if (r && r.day && r.day !== 'all' && r.day !== 'boss') {
+                        daysFromData.add(Number(r.day)); 
+                    }
+                });
+            }
+            
+            const sortedDays = Array.from(daysFromData).filter(d => !Number.isNaN(d) && d > 0).sort((a, b) => a - b);
+            
+            sortedDays.forEach(d => {
+                const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : `Day ${d}`;
+                printDaySelect.innerHTML += `<option value="${d}">${label}</option>`;
+            });
+        }
+    },
+
+    closePrintDaySelect: () => {
+        // Day 선택 모달 닫고 설정 화면으로 돌아가기
+        document.getElementById('print-day-select-modal').style.display = 'none';
+        document.getElementById('gold-adjuster-modal').style.display = 'block';
+    },
+
+    generatePrintHTML: () => {
+        const daySelect = document.getElementById('print-day-select');
+        const selectedDay = daySelect ? daySelect.value : '';
+        
+        if (!selectedDay) {
+            alert('Day를 선택해주세요.');
+            return;
+        }
+        
+        // 현재 데이터셋의 rawData 사용
+        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+        const dayNum = Number(selectedDay);
+        const dayWords = currentRawData.filter(i => Number(i.day) === dayNum);
+        
+        if (dayWords.length === 0) {
+            alert('선택한 Day에 단어가 없습니다.');
+            return;
+        }
+        
+        // 단어를 섞고 한글→영문 50%, 영문→한글 50%로 나누기
+        const shuffled = [...dayWords].sort(() => Math.random() - 0.5);
+        const half = Math.ceil(shuffled.length / 2);
+        const koreanToEnglish = shuffled.slice(0, half); // 한글→영문
+        const englishToKorean = shuffled.slice(half); // 영문→한글
+        
+        // 객관식 문제용 단어 선택 (정답과 오답용)
+        const objectiveWords = [...dayWords].sort(() => Math.random() - 0.5);
+        
+        // 모든 문제를 하나의 배열로 합치기
+        const allQuestions = [];
+        koreanToEnglish.forEach((item, idx) => {
+            allQuestions.push({ type: 'ko-en', item, num: idx + 1 });
+        });
+        englishToKorean.forEach((item, idx) => {
+            allQuestions.push({ type: 'en-ko', item, num: koreanToEnglish.length + idx + 1 });
+        });
+        
+        // 객관식 문제 2개 추가
+        // 1. 한글 뜻 → 영어 단어 객관식
+        if (objectiveWords.length >= 4) {
+            const objItem1 = objectiveWords[0];
+            const wrongAnswers1 = objectiveWords.slice(1, 4).map(w => w.word);
+            const allOptions1 = [objItem1.word, ...wrongAnswers1].sort(() => Math.random() - 0.5);
+            const correctIndex1 = allOptions1.indexOf(objItem1.word);
+            allQuestions.push({ 
+                type: 'objective-ko-en', 
+                item: objItem1, 
+                options: allOptions1,
+                correctIndex: correctIndex1,
+                num: allQuestions.length + 1 
+            });
+        }
+        
+        // 2. 영어 단어 → 한글 뜻 객관식
+        if (objectiveWords.length >= 8) {
+            const objItem2 = objectiveWords[4];
+            const wrongAnswers2 = objectiveWords.slice(5, 8).map(w => w.meaning);
+            const allOptions2 = [objItem2.meaning, ...wrongAnswers2].sort(() => Math.random() - 0.5);
+            const correctIndex2 = allOptions2.indexOf(objItem2.meaning);
+            allQuestions.push({ 
+                type: 'objective-en-ko', 
+                item: objItem2, 
+                options: allOptions2,
+                correctIndex: correctIndex2,
+                num: allQuestions.length + 1 
+            });
+        }
+        
+        // 문제를 좌우로 나누기 (절반씩)
+        // A4 1페이지에 맞추기 위해 문제 수 제한 (각 컬럼당 최대 15개)
+        const maxQuestionsPerPage = 30; // 전체 최대 30개 (좌우 각 15개)
+        const limitedQuestions = allQuestions.slice(0, maxQuestionsPerPage);
+        const questionsPerColumn = Math.ceil(limitedQuestions.length / 2);
+        const leftQuestions = limitedQuestions.slice(0, questionsPerColumn);
+        const rightQuestions = limitedQuestions.slice(questionsPerColumn);
+        
+        // Day 정보 가져오기 (중복 제거)
+        const dayLabel = (dayCatalog && dayCatalog[selectedDay] && dayCatalog[selectedDay].label) 
+            ? dayCatalog[selectedDay].label 
+            : `Day ${selectedDay}`;
+        
+        // 문제 페이지 HTML 생성 (좌우 2열)
+        let questionsHTML = '<div class="print-columns">';
+        let answersHTML = '<div class="print-columns">';
+        
+        // 좌측 컬럼
+        questionsHTML += '<div class="print-column">';
+        answersHTML += '<div class="print-column">';
+        
+        leftQuestions.forEach((q) => {
+            if (q.type === 'ko-en') {
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="answer-line">영어 단어: ________________</div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="answer-line answer">영어 단어: <strong>${q.item.word}</strong></div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'en-ko') {
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="answer-line">한글 뜻: ________________</div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="answer-line answer">한글 뜻: <strong>${q.item.meaning}</strong></div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'objective-ko-en') {
+                // 한글 뜻 → 영어 단어 객관식
+                const optionLabels = ['①', '②', '③', '④'];
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => {
+                                    const isCorrect = idx === q.correctIndex;
+                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'objective-en-ko') {
+                // 영어 단어 → 한글 뜻 객관식
+                const optionLabels = ['①', '②', '③', '④'];
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => {
+                                    const isCorrect = idx === q.correctIndex;
+                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        questionsHTML += '</div>';
+        answersHTML += '</div>';
+        
+        // 우측 컬럼
+        questionsHTML += '<div class="print-column">';
+        answersHTML += '<div class="print-column">';
+        
+        rightQuestions.forEach((q) => {
+            if (q.type === 'ko-en') {
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="answer-line">영어 단어: ________________</div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="answer-line answer">영어 단어: <strong>${q.item.word}</strong></div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'en-ko') {
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="answer-line">한글 뜻: ________________</div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="answer-line answer">한글 뜻: <strong>${q.item.meaning}</strong></div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'objective-ko-en') {
+                // 한글 뜻 → 영어 단어 객관식
+                const optionLabels = ['①', '②', '③', '④'];
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">한글 뜻</div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => {
+                                    const isCorrect = idx === q.correctIndex;
+                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (q.type === 'objective-en-ko') {
+                // 영어 단어 → 한글 뜻 객관식
+                const optionLabels = ['①', '②', '③', '④'];
+                questionsHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                answersHTML += `
+                    <div class="print-question">
+                        <div class="question-number">${q.num}.</div>
+                        <div class="question-content">
+                            <div class="question-label">영어 단어</div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="objective-options">
+                                ${q.options.map((opt, idx) => {
+                                    const isCorrect = idx === q.correctIndex;
+                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        questionsHTML += '</div></div>';
+        answersHTML += '</div></div>';
+        
+        // 전체 HTML 생성
+        const printHTML = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>단어 문제 출력 - Day ${selectedDay}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.2cm;
+        }
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+        .print-page {
+            width: 21cm;
+            height: 29.7cm;
+            padding: 1.2cm;
+            box-sizing: border-box;
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .print-page:last-child {
+            page-break-after: auto;
+        }
+        .print-header {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+            flex-shrink: 0;
+        }
+        .print-header h1 {
+            margin: 0;
+            font-size: 18pt;
+            color: #333;
+        }
+        .print-header .day-info {
+            margin-top: 4px;
+            font-size: 11pt;
+            color: #666;
+        }
+        .print-columns {
+            display: flex;
+            gap: 1.2cm;
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .print-column {
+            flex: 1;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .print-question {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            page-break-inside: avoid;
+            flex-shrink: 0;
+        }
+        .question-number {
+            font-weight: bold;
+            margin-right: 8px;
+            min-width: 25px;
+            font-size: 10pt;
+        }
+        .question-content {
+            flex: 1;
+        }
+        .question-label {
+            font-size: 9pt;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        .question-text {
+            font-size: 11pt;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        .answer-line {
+            font-size: 10pt;
+            margin-top: 4px;
+            padding: 2px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+        .answer-line.answer {
+            border-bottom: none;
+            color: #2196F3;
+        }
+        .answer-line.answer strong {
+            color: #1976D2;
+        }
+        .objective-options {
+            margin-top: 6px;
+        }
+        .option-item {
+            font-size: 10pt;
+            margin-bottom: 4px;
+            padding: 3px 0;
+        }
+        .option-item.correct {
+            color: #2196F3;
+            font-weight: bold;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .print-page {
+                margin: 0;
+                padding: 2cm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 문제만 페이지 -->
+    <div class="print-page">
+        <div class="print-header">
+            <h1>단어 문제</h1>
+            <div class="day-info">${dayLabel}</div>
+        </div>
+        ${questionsHTML}
+    </div>
+    
+    <!-- 문제 + 정답 페이지 -->
+    <div class="print-page">
+        <div class="print-header">
+            <h1>단어 문제 및 정답</h1>
+            <div class="day-info">${dayLabel}</div>
+        </div>
+        ${answersHTML}
+    </div>
+</body>
+</html>
+        `;
+        
+        // 새 창에서 HTML 열기
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printHTML);
+        printWindow.document.close();
+        
+        // 모달 닫기
+        secret.closePrintDaySelect();
+    },
 };
 function initSelections() {
     const daySelect = document.getElementById('day-select');
@@ -2675,23 +3348,32 @@ function syncStoryButtonOverlay(storyScreenId) {
     
     if (!storyImg || !overlay || !container) return;
     
-    // 타이틀 이미지 크기 가져오기 (숨겨져 있어도 naturalWidth/naturalHeight 사용)
-    const titleImg = document.querySelector('.title-background');
+    // 타이틀 컨테이너 크기 가져오기 (popup과 동일한 방식)
+    const titleContainer = document.querySelector('.title-container-wrapper');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
     let titleWidth = vw; // 기본값 (화면 너비)
+    let titleHeight = vh; // 기본값 (화면 높이)
     
-    if (titleImg) {
-        // 이미지가 로드되어 있으면 naturalWidth 사용 (숨겨져 있어도 작동)
-        if (titleImg.complete && titleImg.naturalWidth > 0) {
-            // 화면 크기에 맞춰 스케일 계산
-            const scale = Math.min(vw / titleImg.naturalWidth, vh / titleImg.naturalHeight);
-            titleWidth = titleImg.naturalWidth * scale;
+    if (titleContainer) {
+        // CSS 변수에서 크기 가져오기
+        const computedStyle = window.getComputedStyle(titleContainer);
+        const containerWidth = computedStyle.getPropertyValue('--title-container-width');
+        const containerHeight = computedStyle.getPropertyValue('--title-container-height');
+        
+        if (containerWidth && containerWidth !== '100vw') {
+            titleWidth = parseFloat(containerWidth) || vw;
+        }
+        if (containerHeight && containerHeight !== '100vh') {
+            titleHeight = parseFloat(containerHeight) || vh;
         } else {
-            // getBoundingClientRect 시도 (표시되어 있을 때만 작동)
-            const titleRect = titleImg.getBoundingClientRect();
+            // getBoundingClientRect로 실제 크기 확인
+            const titleRect = titleContainer.getBoundingClientRect();
             if (titleRect.width > 0) {
                 titleWidth = titleRect.width;
+            }
+            if (titleRect.height > 0) {
+                titleHeight = titleRect.height;
             }
         }
     }
@@ -2700,6 +3382,9 @@ function syncStoryButtonOverlay(storyScreenId) {
     if (storyImg.complete && storyImg.naturalWidth > 0 && storyImg.naturalHeight > 0) {
         const aspectRatio = storyImg.naturalWidth / storyImg.naturalHeight;
         storyImg.style.setProperty('--story-aspect-ratio', aspectRatio);
+        // 타이틀 컨테이너 크기를 CSS 변수로 설정 (popup과 동일)
+        container.style.setProperty('--title-container-width', titleWidth + 'px');
+        container.style.setProperty('--title-container-height', titleHeight + 'px');
     }
     
     // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)

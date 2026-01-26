@@ -84,9 +84,9 @@
 }
 
 .story-background {
-    width: min(95vw, calc(100vh * var(--story-aspect-ratio, 1.5)));
-    max-width: 95vw;
-    max-height: 95vh;
+    width: min(var(--title-container-width, 95vw), calc(var(--title-container-height, 95vh) * var(--story-aspect-ratio, 1.5)));
+    max-width: var(--title-container-width, 95vw);
+    max-height: var(--title-container-height, 95vh);
     height: auto;
     object-fit: contain;
     display: block;
@@ -396,7 +396,7 @@
     background: rgba(30, 30, 30, 0.7);
     border: 2px solid rgba(255, 213, 79, 0.4);
     color: var(--primary);
-    font-size: clamp(15px, 2vw, 20px);
+    font-size: clamp(14px, 2vw, 16px);
     font-weight: bold;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     white-space: nowrap;

@@ -1,3 +1,4 @@
+// 
 // Game Data 1: 능률 보카 중등 기본
 window.gameDataName_1 = '능률 보카 중등 기본';
 

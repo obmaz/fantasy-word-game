@@ -459,58 +459,18 @@
 
 
 
-            <h3>골드 조정</h3>
+            <h3>설정</h3>
 
-
-
-            <div class="gold-adjuster">
-
-
-
-                <div class="gold-adjust-label">현재 골드</div>
-
-
-
-                <div id="current-gold-display" class="gold-display-box">0</div>
-
-
-
-                <div class="gold-adjust-label">조정 골드</div>
-
-
-
-                <div class="gold-adjust-controls">
-
-
-
-                    <button id="gold-down" class="gold-arrow">▼</button>
-
-
-
-                    <div id="adjust-gold-display" class="gold-display-box">0</div>
-
-
-
-                    <button id="gold-up" class="gold-arrow">▲</button>
-
-
-
-                </div>
-
-
-
+            <div style="text-align: center; width: 100%; margin-top: 20px;">
+                <button class="btn-main" onclick="secret.openGoldEditModal()" style="width: 80%; margin: 0 auto; display: block;">골드 수정</button>
             </div>
-
-
-
-            <div style="text-align: center; width: 100%;">
-                <img src="images/title/apply_btn.webp" alt="적용" onclick="secret.applyGold()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            <div style="text-align: center; width: 100%; margin-top: 10px;">
+                <button class="btn-main" onclick="secret.openPrintDaySelect()" style="width: 80%; margin: 0 auto; display: block;">문제 출력</button>
             </div>
-
-            <div style="text-align: center; width: 100%;">
-                <img src="images/title/factory_reset_btn.webp" alt="전체 초기화" onclick="secret.resetStats()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            <div style="text-align: center; width: 100%; margin-top: 10px;">
+                <button class="btn-main btn-danger" onclick="secret.resetStatistics()" style="width: 80%; margin: 0 auto; display: block;">통계 초기화</button>
             </div>
-            <div style="text-align: center; width: 100%;">
+            <div style="text-align: center; width: 100%; margin-top: 10px;">
                 <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
 
@@ -519,6 +479,54 @@
         </div>
 
 
+
+        <div id="gold-edit-modal" class="card rpg-panel" style="display:none;">
+
+            <h3>골드 수정</h3>
+
+            <div class="gold-adjuster">
+
+                <div class="gold-adjust-label">현재 골드</div>
+
+                <div id="current-gold-edit-display" class="gold-display-box">0</div>
+
+                <div class="gold-adjust-label">설정할 골드</div>
+
+                <div class="gold-adjust-controls">
+
+                    <button id="gold-edit-down" class="gold-arrow">▼</button>
+
+                    <div id="edit-gold-display" class="gold-display-box">0</div>
+
+                    <button id="gold-edit-up" class="gold-arrow">▲</button>
+
+                </div>
+
+            </div>
+
+            <div style="text-align: center; width: 100%;">
+                <img src="images/title/apply_btn.webp" alt="적용" onclick="secret.applyGoldEdit()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            </div>
+            <div style="text-align: center; width: 100%; margin-top: 10px;">
+                <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.closeGoldEditModal()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            </div>
+
+        </div>
+
+        <div id="print-day-select-modal" class="card rpg-panel" style="display:none;">
+            <h3>Day 선택</h3>
+            <div style="margin: 20px 0;">
+                <select id="print-day-select" class="btn-main" style="width: 100%; padding: 10px; font-size: 16px;">
+                    <option value="">Day 선택...</option>
+                </select>
+            </div>
+            <div style="text-align: center; width: 100%; margin-top: 20px;">
+                <button class="btn-main" onclick="secret.generatePrintHTML()" style="width: 80%; margin: 0 auto; display: block;">인쇄용 HTML 생성</button>
+            </div>
+            <div style="text-align: center; width: 100%; margin-top: 10px;">
+                <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.closePrintDaySelect()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+            </div>
+        </div>
 
     </div>
 
@@ -562,12 +570,14 @@
         let isShopScreen = false;
         let isInventoryScreen = false;
         let isStatisticsScreen = false;
+        let isSecretMenuScreen = false;
 
         // 화면 상태 추적
         const gameScreen = document.getElementById('game-screen');
         const shopScreen = document.getElementById('shop-screen');
         const inventoryScreen = document.getElementById('inventory-screen');
         const statisticsScreen = document.getElementById('statistics-screen');
+        const secretMenuScreen = document.getElementById('secret-menu-overlay');
         const startScreen = document.getElementById('start-screen');
 
         // MutationObserver로 화면 상태 감지
@@ -576,6 +586,7 @@
             isShopScreen = shopScreen.style.display !== 'none';
             isInventoryScreen = inventoryScreen.style.display !== 'none';
             isStatisticsScreen = statisticsScreen && statisticsScreen.style.display !== 'none';
+            isSecretMenuScreen = secretMenuScreen && secretMenuScreen.style.display !== 'none';
         });
 
         observer.observe(gameScreen, { attributes: true, attributeFilter: ['style'] });
@@ -583,6 +594,9 @@
         observer.observe(inventoryScreen, { attributes: true, attributeFilter: ['style'] });
         if (statisticsScreen) {
             observer.observe(statisticsScreen, { attributes: true, attributeFilter: ['style'] });
+        }
+        if (secretMenuScreen) {
+            observer.observe(secretMenuScreen, { attributes: true, attributeFilter: ['style'] });
         }
 
         // 백버튼 이벤트 처리 (모바일 브라우저)
@@ -602,7 +616,7 @@
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
             
-            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModePopup || isBattleModePopup || isResultScreen || isPracticeMemorizationScreen) {
+            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isSecretMenuScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModePopup || isBattleModePopup || isResultScreen || isPracticeMemorizationScreen) {
                 // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
                 if (isGameScreen && typeof game !== 'undefined') {
                     if (game.timer) {
@@ -627,6 +641,14 @@
                 inventoryScreen.style.display = 'none';
                 if (statisticsScreen) {
                     statisticsScreen.style.display = 'none';
+                }
+                if (secretMenuScreen) {
+                    secretMenuScreen.style.display = 'none';
+                    secretMenuScreen.classList.remove('closing');
+                    // secret.close() 호출하여 내부 상태도 정리
+                    if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
+                        secret.close();
+                    }
                 }
                 
                 // 팝업과 스토리 화면도 숨기기
@@ -675,14 +697,18 @@
                     practiceMemorizationScreen.classList.remove('closing');
                 }
                 
-                startScreen.style.display = 'flex';
-                
-                // 버튼 오버레이 동기화 (이미지 로드 후)
-                setTimeout(() => {
-                    if (typeof syncTitleButtonOverlay === 'function') {
-                        syncTitleButtonOverlay();
-                    }
-                }, 100);
+                // shop, inventory, statistics, secret은 팝업이므로 start-screen은 이미 표시되어 있음
+                // 게임 화면일 때만 start-screen 표시
+                if (isGameScreen) {
+                    startScreen.style.display = 'flex';
+                    
+                    // 버튼 오버레이 동기화 (이미지 로드 후)
+                    setTimeout(() => {
+                        if (typeof syncTitleButtonOverlay === 'function') {
+                            syncTitleButtonOverlay();
+                        }
+                    }, 100);
+                }
                 
                 // 히스토리 조작 방지
                 history.pushState(null, '', window.location.href);
