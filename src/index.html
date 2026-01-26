@@ -612,6 +612,15 @@
                     game.isProcessing = false; // 게임 상태 리셋하여 다시 시작 가능하도록
                 }
                 
+                // 게임 화면이 닫힐 때 배경음악 정지
+                if (isGameScreen) {
+                    const bgMusic = document.getElementById('background-music');
+                    if (bgMusic && !bgMusic.paused) {
+                        bgMusic.pause();
+                        bgMusic.currentTime = 0; // 처음부터 다시 재생되도록 리셋
+                    }
+                }
+                
                 // 모든 화면 숨기고 시작 화면 표시
                 gameScreen.style.display = 'none';
                 shopScreen.style.display = 'none';

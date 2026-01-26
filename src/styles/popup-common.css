@@ -220,9 +220,9 @@
 }
 
 .popup-background {
-    width: min(95vw, calc(100vh * var(--popup-aspect-ratio, 1.5)));
-    max-width: 95vw;
-    max-height: 95vh;
+    width: min(var(--title-container-width, 95vw), calc(var(--title-container-height, 95vh) * var(--popup-aspect-ratio, 1.5)));
+    max-width: var(--title-container-width, 95vw);
+    max-height: var(--title-container-height, 95vh);
     height: auto;
     object-fit: contain;
     display: block;

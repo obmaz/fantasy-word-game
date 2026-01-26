@@ -2557,7 +2557,7 @@ function setupSelectFontSizeAdjustment(popupId) {
     }
 }
 
-// Popup 이미지 크기에 맞춰 CSS 변수 설정 (브라우저 크기에 반응)
+// Popup 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기에 맞춰 스케일)
 function syncPopupButtonOverlay(popupId) {
     if (!popupId) return;
     
@@ -2573,11 +2573,43 @@ function syncPopupButtonOverlay(popupId) {
     
     if (!popupImg || !overlay || !container) return;
     
+    // 타이틀 컨테이너 크기 가져오기 (팝업이 타이틀 크기를 벗어나지 않도록)
+    const titleContainer = document.querySelector('.title-container-wrapper');
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    let titleWidth = 0.95 * vw;
+    let titleHeight = 0.95 * vh;
+    
+    if (titleContainer) {
+        const computedStyle = window.getComputedStyle(titleContainer);
+        const titleContainerWidth = computedStyle.getPropertyValue('--title-container-width');
+        const titleContainerHeight = computedStyle.getPropertyValue('--title-container-height');
+        if (titleContainerWidth) {
+            titleWidth = parseFloat(titleContainerWidth);
+        }
+        if (titleContainerHeight) {
+            titleHeight = parseFloat(titleContainerHeight);
+        }
+        // CSS 변수가 없으면 실제 크기 사용
+        if (!titleWidth || isNaN(titleWidth)) {
+            const rect = titleContainer.getBoundingClientRect();
+            titleWidth = rect.width || 0.95 * vw;
+        }
+        if (!titleHeight || isNaN(titleHeight)) {
+            const rect = titleContainer.getBoundingClientRect();
+            titleHeight = rect.height || 0.95 * vh;
+        }
+    }
+    
     // 팝업 이미지의 자연 비율 계산 및 설정
     if (popupImg.complete && popupImg.naturalWidth > 0 && popupImg.naturalHeight > 0) {
         const aspectRatio = popupImg.naturalWidth / popupImg.naturalHeight;
         popupImg.style.setProperty('--popup-aspect-ratio', aspectRatio);
     }
+    
+    // 타이틀 컨테이너 크기를 CSS 변수로 설정 (팝업이 타이틀 크기를 벗어나지 않도록)
+    popupImg.style.setProperty('--title-container-width', titleWidth + 'px');
+    popupImg.style.setProperty('--title-container-height', titleHeight + 'px');
     
     // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
     if (popupImg.complete) {
@@ -2771,6 +2803,10 @@ function syncTitleButtonOverlay() {
 
     // Keep game screen size in sync with the title image size
     syncGameScreenSizeToTitle();
+    
+    // 팝업도 타이틀 크기에 맞춰 동기화
+    syncPopupButtonOverlay('practice-mode-popup');
+    syncPopupButtonOverlay('battle-mode-setting-popup');
 }
 
 function syncGameScreenSizeToTitle() {
