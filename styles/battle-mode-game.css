@@ -2,7 +2,7 @@
    Battle Mode Game 스타일
    ============================================ */
 
-#game-screen {
+#battle-mode-game {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -15,7 +15,7 @@
 }
 
 /* Top Bar (only for game screen) */
-#game-screen .top-bar {
+#battle-mode-game .top-bar {
     height: 50px; flex: 0 0 50px;
     display: flex; justify-content: flex-end; align-items: center;
     padding: 0 15px; background: rgba(0,0,0,0.5); border-bottom: 1px solid #333; z-index: 10;

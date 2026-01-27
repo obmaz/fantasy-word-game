@@ -1028,7 +1028,7 @@ const story = {
         // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
         game.isProcessing = true;
         
-        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('battle-mode-game').style.display = 'none';
         
         // story-screen을 확실히 닫기
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
@@ -1206,7 +1206,7 @@ const game = {
 
         // 애니메이션 완료 후 게임 화면 표시
         setTimeout(() => {
-            const gameScreen = document.getElementById('game-screen');
+            const gameScreen = document.getElementById('battle-mode-game');
             if (gameScreen) {
                 gameScreen.style.display = 'flex';
                 gameScreen.style.visibility = 'visible';
@@ -2981,7 +2981,7 @@ const practiceMemorization = {
         if (memorizationScreen) {
             // 다른 화면들도 모두 닫기
             const otherScreens = [
-                'game-screen',
+                'battle-mode-game',
                 'shop-panel',
                 'inventory-panel',
                 'statistics-panel',
@@ -3183,7 +3183,7 @@ function closeScreenOverlay(elementId, animated = true) {
     const element = document.getElementById(elementId);
     if (element) {
         // 게임 화면을 닫을 때 타이머 정지
-        if (elementId === 'game-screen' && game && game.timer) {
+        if (elementId === 'battle-mode-game' && game && game.timer) {
             clearInterval(game.timer);
             game.timer = null;
             game.isProcessing = true; // 게임 진행 중지
@@ -3607,7 +3607,7 @@ function syncTitleButtonOverlay() {
 
 function syncGameScreenSizeToTitle() {
     const titleImg = document.querySelector('.title-background');
-    const gameScreen = document.getElementById('game-screen');
+    const gameScreen = document.getElementById('battle-mode-game');
     const practiceScreen = document.getElementById('practice-mode-game');
     if (!titleImg) return;
 
@@ -4135,8 +4135,8 @@ window.onload = () => {
             battleModeModal.classList.remove('closing');
         }
         
-        // game-screen도 확실히 닫기
-        const gameScreen = document.getElementById('game-screen');
+        // battle-mode-game도 확실히 닫기
+        const gameScreen = document.getElementById('battle-mode-game');
         if (gameScreen) {
             gameScreen.style.display = 'none';
         }
