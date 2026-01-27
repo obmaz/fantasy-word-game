@@ -2083,6 +2083,8 @@ const secret = {
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'password-modal' }, '', window.location.href);
         
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
@@ -2100,6 +2102,8 @@ const secret = {
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'password-modal' }, '', window.location.href);
         
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
@@ -2139,6 +2143,8 @@ const secret = {
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'password-modal' }, '', window.location.href);
         
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
@@ -2201,6 +2207,8 @@ const secret = {
         secret.previousModal = 'gold-edit-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-edit-modal').style.display = 'none';
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'password-modal' }, '', window.location.href);
         
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
@@ -2233,6 +2241,8 @@ const secret = {
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'password-modal' }, '', window.location.href);
         
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {

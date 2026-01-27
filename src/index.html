@@ -619,6 +619,18 @@
             const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
             const goldEditModal = document.getElementById('gold-edit-modal');
             const isGoldEditModal = goldEditModal && goldEditModal.style.display !== 'none' && goldEditModal.style.display !== '';
+            const passwordModal = document.getElementById('password-modal');
+            const isPasswordModal = passwordModal && passwordModal.style.display !== 'none' && passwordModal.style.display !== '';
+            
+            // 비밀번호 모달에서 백버튼을 누르면 나가기처럼 직전 화면으로 돌아가기
+            if (isPasswordModal) {
+                if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
+                    secret.close();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 비밀번호 모달만 처리하고 종료
+            }
             
             // 골드 수정 모달에서 백버튼을 누르면 골드 조정 화면으로 돌아가기
             if (isGoldEditModal) {
@@ -668,6 +680,11 @@
                 // 배틀 모드 스크린에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
                 if (isBattleModeStoryScreen) {
                     closeScreenOverlay('battle-mode-screen', false);
+                    // start-screen의 z-index를 조정하여 backdrop-filter가 작동하도록 함
+                    const startScreen = document.getElementById('start-screen');
+                    if (startScreen) {
+                        startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
+                    }
                     // 배틀 모드 모달 열기
                     if (typeof openBattleModeModal === 'function') {
                         openBattleModeModal();
