@@ -175,8 +175,8 @@
     height: 6.5%;
 }
 
-/* PROFILE = 인벤토리 */
-#title-profile-btn {
+/* INVENTORY = 인벤토리 */
+#title-inventory-btn {
     top: 83%;
     left: 60%;
     transform: translateX(-50%);

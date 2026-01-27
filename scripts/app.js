@@ -3633,7 +3633,7 @@ window.onload = () => {
     const titleBattleModeBtn = document.getElementById('title-battle-mode-btn'); // BATTLE MODE
     const titleBossModeBtn = document.getElementById('title-boss-mode-btn');   // BOSS MODE
     const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
-    const titleProfileBtn = document.getElementById('title-profile-btn');     // PROFILE
+    const titleInventoryBtn = document.getElementById('title-inventory-btn');     // INVENTORY
     const titleStatisticsBtn = document.getElementById('title-statistics-btn'); // STATISTICS
     const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
     
@@ -3893,12 +3893,12 @@ window.onload = () => {
     } else {
         console.warn('title-shop-btn not found');
     }
-    if (titleProfileBtn) {
-        titleProfileBtn.onclick = null;
-        titleProfileBtn.addEventListener('click', (e) => {
+    if (titleInventoryBtn) {
+        titleInventoryBtn.onclick = null;
+        titleInventoryBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Profile button clicked');
+            console.log('Inventory button clicked');
             if (typeof inventory !== 'undefined' && typeof inventory.open === 'function') {
                 inventory.open();
             } else {
@@ -3906,7 +3906,7 @@ window.onload = () => {
             }
         }, { capture: true });
     } else {
-        console.warn('title-profile-btn not found');
+        console.warn('title-inventory-btn not found');
     }
     if (titleStatisticsBtn) {
         titleStatisticsBtn.onclick = null;
