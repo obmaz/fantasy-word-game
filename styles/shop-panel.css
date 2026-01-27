@@ -43,10 +43,10 @@
     pointer-events: none;
 }
 
-/* Shop Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일한 패턴) */
+/* Shop Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일) */
 #shop-panel .card.rpg-panel .panel-title,
 #shop-panel .card.rpg-panel .shop-header .panel-title {
-    font-size: 18px !important;
+    font-size: 18px;
     font-weight: bold;
     color: var(--gold, #FFD700);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -76,11 +76,12 @@
     position: sticky;
     top: 0;
     background: #1E1E1E;
-    padding-bottom: 10px;
+    padding: 10px;
     border-bottom: 1px solid #333;
     margin-bottom: 10px;
     z-index: 5;
     flex-shrink: 0;
+    text-align: center;
 }
 
 .shop-body {

@@ -43,13 +43,15 @@
     pointer-events: none;
 }
 
-/* Inventory Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일한 패턴) */
+/* Inventory Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일) */
 #inventory-panel .card.rpg-panel .panel-title {
     font-size: 18px;
     font-weight: bold;
     color: var(--gold, #FFD700);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     text-align: center;
+    margin: 0;
+    padding: 0;
 }
 
 /* Inventory Layout */
@@ -95,11 +97,12 @@
 
 .inv-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding-bottom: 10px;
+    padding: 10px;
     border-bottom: 1px solid #333;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .inv-container {

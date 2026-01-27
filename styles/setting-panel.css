@@ -43,15 +43,14 @@
     pointer-events: none;
 }
 
-/* Setting Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일한 패턴) */
+/* Setting Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일) */
 #setting-panel .card.rpg-panel .panel-title {
-    font-size: 18px !important;
+    font-size: 18px;
     font-weight: bold;
     color: var(--gold, #FFD700);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     text-align: center;
-    margin: 0;
-    padding: 0;
+    pointer-events: none;
 }
 
 /* Setting Menu 버튼 스타일 */
