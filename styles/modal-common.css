@@ -15,7 +15,7 @@
     overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
 }
 
-#result-screen {
+#result-panel {
     z-index: 300 !important;
     background: rgba(0,0,0,0.6) !important;
     backdrop-filter: blur(12px) !important;
@@ -26,10 +26,10 @@
 #battle-mode-setting-modal,
 #battle-mode-screen,
 #boss-mode-screen,
-#shop-screen,
-#statistics-screen,
-#inventory-screen,
-#setting-overlay {
+#shop-panel,
+#statistics-panel,
+#inventory-panel,
+#setting-panel {
     backdrop-filter: blur(12px) !important;
     background: rgba(0,0,0,0.6) !important;
 }

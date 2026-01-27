@@ -3,7 +3,7 @@
    ============================================ */
 
 /* RPG Panel 공통 스타일 */
-#shop-screen .card.rpg-panel {
+#shop-panel .card.rpg-panel {
     border-radius: 18px;
     background:
         radial-gradient(120% 120% at 50% 0%, rgba(255, 215, 130, 0.06) 0%, rgba(0,0,0,0) 55%),
@@ -22,7 +22,7 @@
     overflow-y: auto;
 }
 
-#shop-screen .card.rpg-panel::before {
+#shop-panel .card.rpg-panel::before {
     content: "";
     position: absolute;
     inset: 6px;
@@ -34,7 +34,7 @@
     pointer-events: none;
 }
 
-#shop-screen .card.rpg-panel::after {
+#shop-panel .card.rpg-panel::after {
     content: "";
     position: absolute;
     inset: 12px;
@@ -43,26 +43,30 @@
     pointer-events: none;
 }
 
-#shop-screen .card.rpg-panel h2,
-#shop-screen .card.rpg-panel h3 {
-    color: rgba(255, 214, 120, 0.98);
-    text-shadow:
-        0 2px 0 rgba(60, 40, 10, 0.9),
-        0 10px 24px rgba(0,0,0,0.6);
+/* Shop Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일한 패턴) */
+#shop-panel .card.rpg-panel .panel-title,
+#shop-panel .card.rpg-panel .shop-header .panel-title {
+    font-size: 18px !important;
+    font-weight: bold;
+    color: var(--gold, #FFD700);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    margin: 0;
+    padding: 0;
 }
 
-#shop-screen .card.rpg-panel .shop-header {
+#shop-panel .card.rpg-panel .shop-header {
     background: rgba(0,0,0,0.15);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(255, 215, 130, 0.18);
 }
 
-#shop-screen .card.rpg-panel .shop-footer {
+#shop-panel .card.rpg-panel .shop-footer {
     border-top: 1px solid rgba(255, 215, 130, 0.18);
 }
 
 /* Shop Layout */
-#shop-screen .card {
+#shop-panel .card {
     display: flex;
     flex-direction: column;
     max-height: 85vh;
@@ -114,7 +118,7 @@
 }
 
 /* Shop 버튼 스타일 */
-#shop-screen .card.rpg-panel .btn-main {
+#shop-panel .card.rpg-panel .btn-main {
     height: 58px;
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
@@ -132,12 +136,12 @@
     text-align: center;
 }
 
-#shop-screen .card.rpg-panel .btn-main.btn-blue {
+#shop-panel .card.rpg-panel .btn-main.btn-blue {
     background: linear-gradient(45deg, rgba(41,121,255,0.95), rgba(41,121,255,0.85)) !important;
     color: #fff !important;
 }
 
-#shop-screen .card.rpg-panel .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
+#shop-panel .card.rpg-panel .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
     background: linear-gradient(45deg, rgba(255, 214, 120, 0.95), rgba(214, 140, 45, 0.95)) !important;
     color: rgba(20, 15, 10, 0.92) !important;
 }

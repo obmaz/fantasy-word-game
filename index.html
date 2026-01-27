@@ -151,7 +151,7 @@
         <button class="btn-main btn-inv" onclick="inventory.open()" style="display: none;">인벤토리 🎒</button>
     </div>
 
-    <div id="inventory-screen" class="screen-overlay" style="display:none;">
+    <div id="inventory-panel" class="screen-overlay" style="display:none;">
         <div class="card rpg-panel">
             <div id="inv-item-detail" style="display:none;">
                 <div id="detail-header">
@@ -164,7 +164,7 @@
             </div>
 
             <div class="shop-header">
-                <h2>인벤토리</h2>
+                <h2 class="panel-title">인벤토리</h2>
                 <div style="color:var(--gold);">보유 골드: <span id="inv-gold">0</span> G</div>
             </div>
             <div class="inv-container">
@@ -279,7 +279,7 @@
     </div>
 
     <!-- Practice Mode Memorization Screen (단어 암기 화면) -->
-    <div id="practice-memorization-screen" style="display:none; height:100%; flex-direction:column;">
+    <div id="practice-mode-game" style="display:none; height:100%; flex-direction:column;">
         <div class="practice-memorization-container">
             <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
             <div class="practice-memorization-arena">
@@ -352,10 +352,10 @@
         </div>
     </div>
 
-    <div id="shop-screen" class="screen-overlay" style="display:none;">
+    <div id="shop-panel" class="screen-overlay" style="display:none;">
         <div class="card rpg-panel">
             <div class="shop-header">
-                <h2>상점</h2>
+                <h2 class="panel-title">상점</h2>
                 <div style="color:var(--gold);">보유 골드: <span id="shop-gold">0</span> G</div>
             </div>
             <div class="shop-body">
@@ -367,10 +367,10 @@
         </div>
     </div>
 
-    <div id="statistics-screen" class="screen-overlay" style="display:none;">
+    <div id="statistics-panel" class="screen-overlay" style="display:none;">
         <div class="card rpg-panel">
             <div class="shop-header">
-                <h2>통계</h2>
+                <h2 class="panel-title">통계</h2>
                 <div style="color:var(--gold);">보유 골드: <span id="statistics-gold">0</span> G</div>
             </div>
             <div class="shop-body">
@@ -382,7 +382,7 @@
         </div>
     </div>
 
-    <div id="result-screen" class="screen-overlay" style="display:none;">
+    <div id="result-panel" class="screen-overlay" style="display:none;">
         <div class="result-panel" role="dialog" aria-label="결과">
             <div id="res-title" class="result-panel-title">FINISHED!</div>
 
@@ -408,11 +408,11 @@
 
 
 
-    <div id="setting-overlay" class="screen-overlay" style="display:none;">
+    <div id="setting-panel" class="screen-overlay" style="display:none;">
 
         <div id="password-modal" class="card rpg-panel">
 
-            <h3>비밀번호 입력</h3>
+            <h3 class="panel-title">비밀번호 입력</h3>
 
             <div id="password-input-boxes" style="display: flex; gap: 5px; justify-content: center; margin: 20px 0;">
 
@@ -459,7 +459,7 @@
 
 
 
-            <h3>설정</h3>
+            <h3 class="panel-title">설정</h3>
 
             <div style="text-align: center; width: 100%; margin-top: 20px;">
                 <button class="btn-main" onclick="secret.openGoldEditModal()" style="width: 80%; margin: 0 auto; display: block;">골드 수정</button>
@@ -482,7 +482,7 @@
 
         <div id="gold-edit-modal" class="card rpg-panel" style="display:none;">
 
-            <h3>골드 수정</h3>
+            <h3 class="panel-title">골드 수정</h3>
 
             <div class="gold-adjuster">
 
@@ -514,7 +514,7 @@
         </div>
 
         <div id="print-day-select-modal" class="card rpg-panel" style="display:none;">
-            <h3>Day 선택</h3>
+            <h3 class="panel-title">Day 선택</h3>
             <div style="margin: 20px 0;">
                 <select id="print-day-select" class="btn-main" style="width: 100%; padding: 10px; font-size: 16px;">
                     <option value="">Day 선택...</option>
@@ -574,10 +574,10 @@
 
         // 화면 상태 추적
         const gameScreen = document.getElementById('game-screen');
-        const shopScreen = document.getElementById('shop-screen');
-        const inventoryScreen = document.getElementById('inventory-screen');
-        const statisticsScreen = document.getElementById('statistics-screen');
-        const settingScreen = document.getElementById('setting-overlay');
+        const shopScreen = document.getElementById('shop-panel');
+        const inventoryScreen = document.getElementById('inventory-panel');
+        const statisticsScreen = document.getElementById('statistics-panel');
+        const settingScreen = document.getElementById('setting-panel');
         const startScreen = document.getElementById('start-screen');
 
         // MutationObserver로 화면 상태 감지
@@ -605,8 +605,8 @@
             const bossStoryScreen = document.getElementById('boss-mode-screen');
             const practiceModeModal = document.getElementById('practice-mode-modal');
             const battleModeModal = document.getElementById('battle-mode-setting-modal');
-            const resultScreen = document.getElementById('result-screen');
-            const practiceMemorizationScreen = document.getElementById('practice-memorization-screen');
+            const resultScreen = document.getElementById('result-panel');
+            const practiceMemorizationScreen = document.getElementById('practice-mode-game');
             
             const isPracticeModeStoryScreen = false; // practice-mode-screen은 더 이상 사용하지 않음
             const isBattleModeStoryScreen = battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '';

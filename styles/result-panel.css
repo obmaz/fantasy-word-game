@@ -3,7 +3,7 @@
    ============================================ */
 
 /* Result Screen — 이미지 없이 day_select.webp 느낌을 CSS로 재현 */
-#result-screen .result-panel {
+#result-panel .result-panel {
     position: relative;
     /* 타이틀 컨테이너 크기를 기준으로 설정 (다른 panel들과 동일) */
     width: 90%;

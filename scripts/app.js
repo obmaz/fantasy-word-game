@@ -106,7 +106,7 @@ const db = {
 const inventory = {
     open: () => {
         // start-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('inventory-screen', true);
+        openScreenOverlay('inventory-panel', true);
         history.pushState({ screen: 'inventory' }, '', window.location.href);
         inventory.hideDetails(); // Hide details on open
         inventory.render();
@@ -119,7 +119,7 @@ const inventory = {
         }
     },
     close: () => {
-        closeScreenOverlay('inventory-screen', true);
+        closeScreenOverlay('inventory-panel', true);
         // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
@@ -413,12 +413,12 @@ const inventory = {
 const shop = {
     open: () => {
         // start-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('shop-screen', true);
+        openScreenOverlay('shop-panel', true);
         history.pushState({ screen: 'shop' }, '', window.location.href);
         shop.render();
     },
     close: () => {
-        closeScreenOverlay('shop-screen', true);
+        closeScreenOverlay('shop-panel', true);
         // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
@@ -506,12 +506,12 @@ const shop = {
 const statistics = {
     open: () => {
         // start-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('statistics-screen', true);
+        openScreenOverlay('statistics-panel', true);
         history.pushState({ screen: 'statistics' }, '', window.location.href);
         statistics.render();
     },
     close: () => {
-        closeScreenOverlay('statistics-screen', true);
+        closeScreenOverlay('statistics-panel', true);
         // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
@@ -1788,11 +1788,11 @@ const game = {
         const startScreen = document.getElementById('start-screen');
         if (startScreen) {
             startScreen.style.display = 'flex';
-            startScreen.style.zIndex = '100'; // result-screen(z-index: 300) 뒤에 위치
+            startScreen.style.zIndex = '100'; // result-panel(z-index: 300) 뒤에 위치
         }
         
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
-        openScreenOverlay('result-screen', true);
+        openScreenOverlay('result-panel', true);
 
         const gain = game.stats.gain;
         const lost = game.stats.lost;
@@ -1884,13 +1884,13 @@ const secret = {
 
     open: () => {
         // start-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('setting-overlay', true);
+        openScreenOverlay('setting-panel', true);
         // 설정 화면을 바로 표시 (비밀번호 없이)
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('gold-adjuster-modal').style.display = 'block';
         
         // 타이틀 컨테이너 크기를 CSS 변수로 설정 (다른 모달과 동일하게)
-        const secretOverlay = document.getElementById('setting-overlay');
+        const secretOverlay = document.getElementById('setting-panel');
         const titleContainer = document.querySelector('.title-container-wrapper');
         if (secretOverlay && titleContainer) {
             const computedStyle = window.getComputedStyle(titleContainer);
@@ -1935,7 +1935,7 @@ const secret = {
             secret.previousModal = null;
             return;
         }
-        closeScreenOverlay('setting-overlay', true);
+        closeScreenOverlay('setting-panel', true);
         secret.pendingAction = null;
         secret.previousModal = null;
         // 히스토리 상태 업데이트
@@ -2819,16 +2819,16 @@ const practiceMemorization = {
         
         // 암기 화면 표시
         setTimeout(() => {
-            const memorizationScreen = document.getElementById('practice-memorization-screen');
+            const memorizationScreen = document.getElementById('practice-mode-game');
             if (memorizationScreen) {
                 // start-screen의 z-index 조정하여 backdrop-filter가 작동하도록 함
                 const startScreen = document.getElementById('start-screen');
                 if (startScreen) {
-                    startScreen.style.zIndex = '100'; // practice-memorization-screen(z-index: 200) 뒤에 위치
+                    startScreen.style.zIndex = '100'; // practice-mode-game(z-index: 200) 뒤에 위치
                 }
                 
                 // openScreenOverlay를 사용하여 화면 표시
-                openScreenOverlay('practice-memorization-screen', true);
+                openScreenOverlay('practice-mode-game', true);
                 
                 // 타이틀 이미지 크기에 맞춰 연습 모드 크기 동기화
                 syncGameScreenSizeToTitle();
@@ -2919,18 +2919,18 @@ const practiceMemorization = {
     },
     
     exit: () => {
-        const memorizationScreen = document.getElementById('practice-memorization-screen');
+        const memorizationScreen = document.getElementById('practice-mode-game');
         if (memorizationScreen) {
             // 다른 화면들도 모두 닫기
             const otherScreens = [
                 'game-screen',
-                'shop-screen',
-                'inventory-screen',
-                'statistics-screen',
-                'setting-overlay',
+                'shop-panel',
+                'inventory-panel',
+                'statistics-panel',
+                'setting-panel',
                 'battle-mode-screen',
                 'boss-mode-screen',
-                'result-screen',
+                'result-panel',
                 'practice-mode-modal',
                 'battle-mode-setting-modal'
             ];
@@ -2942,8 +2942,8 @@ const practiceMemorization = {
                 }
             });
             
-            // practice-memorization-screen 닫기
-            closeScreenOverlay('practice-memorization-screen', true);
+            // practice-mode-game 닫기
+            closeScreenOverlay('practice-mode-game', true);
             
             // start-screen 표시
             setTimeout(() => {
@@ -3544,7 +3544,7 @@ function syncTitleButtonOverlay() {
 function syncGameScreenSizeToTitle() {
     const titleImg = document.querySelector('.title-background');
     const gameScreen = document.getElementById('game-screen');
-    const practiceScreen = document.getElementById('practice-memorization-screen');
+    const practiceScreen = document.getElementById('practice-mode-game');
     if (!titleImg) return;
 
     const naturalW = titleImg.naturalWidth || 0;
@@ -3999,7 +3999,7 @@ window.onload = () => {
     
     // 결과 화면 닫기 함수
     window.closeResultScreen = function() {
-        closeScreenOverlay('result-screen', true);
+        closeScreenOverlay('result-panel', true);
         
         // story-screen 완전히 초기화
         const battleModeStoryScreen = document.getElementById('battle-mode-screen');
