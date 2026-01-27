@@ -294,13 +294,11 @@
             <div class="practice-memorization-content">
                 <!-- 영어 단어 -->
                 <div class="practice-word-section">
-                    <div class="practice-label">영어 단어</div>
                     <div class="practice-word-text" id="practice-word-text">Loading...</div>
                 </div>
                 
                 <!-- 한글 뜻 -->
                 <div class="practice-meaning-section">
-                    <div class="practice-label">한글 뜻</div>
                     <div class="practice-meaning-text" id="practice-meaning-text">Loading...</div>
                 </div>
                 
@@ -617,8 +615,126 @@
             const isBattleModeModal = battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '';
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
+            const printDaySelectModal = document.getElementById('print-day-select-modal');
+            const isPrintDaySelectModal = printDaySelectModal && printDaySelectModal.style.display !== 'none' && printDaySelectModal.style.display !== '';
+            const goldEditModal = document.getElementById('gold-edit-modal');
+            const isGoldEditModal = goldEditModal && goldEditModal.style.display !== 'none' && goldEditModal.style.display !== '';
+            const passwordModal = document.getElementById('password-modal');
+            const isPasswordModal = passwordModal && passwordModal.style.display !== 'none' && passwordModal.style.display !== '';
             
-            if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isSettingScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModeModal || isBattleModeModal || isResultScreen || isPracticeMemorizationScreen) {
+            // 문제출력 모달에서 백버튼을 누르면 설정 화면으로 돌아가기
+            if (isPrintDaySelectModal) {
+                if (typeof secret !== 'undefined' && typeof secret.closePrintDaySelect === 'function') {
+                    secret.closePrintDaySelect();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 문제출력 모달만 처리하고 종료
+            }
+            
+            // 골드 수정 모달에서 백버튼을 누르면 골드 조정 화면으로 돌아가기
+            if (isGoldEditModal) {
+                if (typeof secret !== 'undefined' && typeof secret.closeGoldEditModal === 'function') {
+                    secret.closeGoldEditModal();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 골드 수정 모달만 처리하고 종료
+            }
+            
+            // 비밀번호 모달에서 백버튼을 누르면 나가기처럼 직전 화면으로 돌아가기
+            if (isPasswordModal) {
+                if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
+                    secret.close();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 비밀번호 모달만 처리하고 종료
+            }
+            
+            // 상점에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+            if (isShopScreen) {
+                if (typeof shop !== 'undefined' && typeof shop.close === 'function') {
+                    shop.close();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 상점만 처리하고 종료
+            }
+            
+            // 인벤토리에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+            if (isInventoryScreen) {
+                if (typeof inventory !== 'undefined' && typeof inventory.close === 'function') {
+                    inventory.close();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 인벤토리만 처리하고 종료
+            }
+            
+            // 통계에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+            if (isStatisticsScreen) {
+                if (typeof statistics !== 'undefined' && typeof statistics.close === 'function') {
+                    statistics.close();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 통계만 처리하고 종료
+            }
+            
+            // 설정에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기 (하위 모달이 없을 때만)
+            if (isSettingScreen && !isPrintDaySelectModal && !isGoldEditModal && !isPasswordModal) {
+                if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
+                    secret.close();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 설정만 처리하고 종료
+            }
+            
+            // 결과 화면에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+            if (isResultScreen) {
+                if (typeof closeResultScreen === 'function') {
+                    closeResultScreen();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 결과 화면만 처리하고 종료
+            }
+            
+            // 연습 모드 모달에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+            if (isPracticeModeModal) {
+                if (typeof closePracticeModal === 'function') {
+                    closePracticeModal(false);
+                }
+                // start-screen 표시
+                const startScreen = document.getElementById('start-screen');
+                if (startScreen) {
+                    startScreen.style.display = 'flex';
+                    startScreen.style.zIndex = '';
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 연습 모드 모달만 처리하고 종료
+            }
+            
+            // 배틀 모드 모달에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+            if (isBattleModeModal && !isBattleModeStoryScreen) {
+                if (typeof closePracticeModal === 'function') {
+                    closePracticeModal(false);
+                }
+                // start-screen 표시
+                const startScreen = document.getElementById('start-screen');
+                if (startScreen) {
+                    startScreen.style.display = 'flex';
+                    startScreen.style.zIndex = '';
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 배틀 모드 모달만 처리하고 종료
+            }
+            
+            if (isGameScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeMemorizationScreen) {
                 // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
                 if (isGameScreen && typeof game !== 'undefined') {
                     if (game.timer) {
@@ -637,31 +753,45 @@
                     }
                 }
                 
-                // 모든 화면 숨기고 시작 화면 표시
+                // 게임 화면만 닫기
                 gameScreen.style.display = 'none';
-                shopScreen.style.display = 'none';
-                inventoryScreen.style.display = 'none';
-                if (statisticsScreen) {
-                    statisticsScreen.style.display = 'none';
-                }
-                if (settingScreen) {
-                    settingScreen.style.display = 'none';
-                    settingScreen.classList.remove('closing');
-                    // secret.close() 호출하여 내부 상태도 정리
-                    if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
-                        secret.close();
+                
+                // 배틀 모드 스크린에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
+                if (isBattleModeStoryScreen) {
+                    closeScreenOverlay('battle-mode-screen', false);
+                    // start-screen의 z-index를 조정하여 backdrop-filter가 작동하도록 함
+                    const startScreen = document.getElementById('start-screen');
+                    if (startScreen) {
+                        startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
+                    }
+                    // 배틀 모드 모달 열기
+                    if (typeof openBattleModeModal === 'function') {
+                        openBattleModeModal();
+                    }
+                } else {
+                    // 다른 스토리 화면은 일반적으로 닫기
+                    if (bossStoryScreen) {
+                        bossStoryScreen.style.display = 'none';
+                        bossStoryScreen.style.visibility = '';
+                        bossStoryScreen.style.opacity = '';
+                        bossStoryScreen.style.zIndex = '';
+                        bossStoryScreen.style.pointerEvents = '';
+                        bossStoryScreen.classList.remove('closing');
                     }
                 }
                 
-                // 모달과 스토리 화면도 숨기기
-                if (battleModeStoryScreen) {
-                    battleModeStoryScreen.style.display = 'none';
-                    battleModeStoryScreen.style.visibility = '';
-                    battleModeStoryScreen.style.opacity = '';
-                    battleModeStoryScreen.style.zIndex = '';
-                    battleModeStoryScreen.style.pointerEvents = '';
-                    battleModeStoryScreen.classList.remove('closing');
+                // 게임 상태 리셋
+                if ((isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen) && typeof game !== 'undefined') {
+                    game.isProcessing = false;
                 }
+                
+                // 연습 모드 화면에서 백버튼을 누르면 타이틀 화면으로 돌아가기
+                if (practiceMemorizationScreen) {
+                    practiceMemorizationScreen.style.display = 'none';
+                    practiceMemorizationScreen.classList.remove('closing');
+                }
+                
+                // 보스 스토리 화면에서 백버튼을 누르면 타이틀 화면으로 돌아가기
                 if (bossStoryScreen) {
                     bossStoryScreen.style.display = 'none';
                     bossStoryScreen.style.visibility = '';
@@ -670,39 +800,12 @@
                     bossStoryScreen.style.pointerEvents = '';
                     bossStoryScreen.classList.remove('closing');
                 }
-                // 게임 상태 리셋
-                if ((isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen) && typeof game !== 'undefined') {
-                    game.isProcessing = false;
-                }
-                if (practiceModeModal) {
-                    practiceModeModal.style.display = 'none';
-                    practiceModeModal.style.visibility = '';
-                    practiceModeModal.style.opacity = '';
-                    practiceModeModal.style.zIndex = '';
-                    practiceModeModal.style.pointerEvents = '';
-                    practiceModeModal.classList.remove('closing');
-                }
-                if (battleModeModal) {
-                    battleModeModal.style.display = 'none';
-                    battleModeModal.style.visibility = '';
-                    battleModeModal.style.opacity = '';
-                    battleModeModal.style.zIndex = '';
-                    battleModeModal.style.pointerEvents = '';
-                    battleModeModal.classList.remove('closing');
-                }
-                if (resultScreen) {
-                    resultScreen.style.display = 'none';
-                    resultScreen.classList.remove('closing');
-                }
-                if (practiceMemorizationScreen) {
-                    practiceMemorizationScreen.style.display = 'none';
-                    practiceMemorizationScreen.classList.remove('closing');
-                }
                 
-                // shop, inventory, statistics, secret은 팝업이므로 start-screen은 이미 표시되어 있음
-                // 게임 화면일 때만 start-screen 표시
-                if (isGameScreen) {
+                // 게임 화면, 보스 스토리 화면, 연습 모드 화면일 때 start-screen 표시
+                if (isGameScreen || isBossStoryScreen || isPracticeMemorizationScreen) {
                     startScreen.style.display = 'flex';
+                    // z-index 복원
+                    startScreen.style.zIndex = '';
                     
                     // 버튼 오버레이 동기화 (이미지 로드 후)
                     setTimeout(() => {
