@@ -18,11 +18,11 @@ fantasy-word-game/
 │   │   ├── shop-panel.css             # Shop panel styles
 │   │   ├── inventory-panel.css        # Inventory panel styles
 │   │   ├── statistics-panel.css       # Statistics panel styles
-│   │   ├── secret-menu-panel.css      # Secret menu panel styles
+│   │   ├── setting-panel.css          # Settings panel styles
 │   │   ├── result-panel.css           # Result screen panel styles
-│   │   ├── popup-common.css           # Common popup styles
-│   │   ├── practice-mode-popup.css    # Practice mode popup styles
-│   │   ├── battle-mode-popup.css      # Battle mode popup styles
+│   │   ├── modal-common.css           # Common modal and overlay styles
+│   │   ├── practice-mode-modal.css    # Practice mode modal styles
+│   │   ├── battle-mode-modal.css      # Battle mode modal styles
 │   │   ├── battle-mode-screen.css     # Battle mode story screen styles
 │   │   └── boss-mode-screen.css       # Boss mode story screen styles
 │   ├── scripts/
@@ -111,13 +111,15 @@ fantasy-word-game/
 - Statistics tracking
 
 ### UI Features
-- Responsive design optimized for mobile devices (9:16 aspect ratio)
+- Responsive design optimized for mobile devices with consistent scaling across all screen sizes
 - Image-based UI with precise button mapping
 - Real-time gold and timer display
 - Vibration feedback on mobile devices
 - Background music with loop playback
-- Back button navigation support
+- Back button navigation support with proper history management
 - Multiple game data sets support
+- Backdrop blur effects for modals and screens
+- Consistent font sizing using clamp() for mobile and desktop (same aspect ratio)
 
 ## How to Play
 
@@ -196,15 +198,22 @@ fantasy-word-game/
 
 ### CSS Architecture
 - **Modular CSS**: Styles are separated into multiple files for better organization
-- **Mode-specific styles**: Each game mode has its own CSS file for popup and screen styles
-- **Common styles**: Shared styles are in `popup-common.css`
+- **Mode-specific styles**: Each game mode has its own CSS file for modal and screen styles
+- **Common styles**: Shared styles are in `modal-common.css`
 - **CSS Variables**: Global variables defined in `variables.css`
+- **Responsive Typography**: All font sizes use `clamp()` for consistent scaling across devices
+  - Base font: `clamp(16px, 4vw, 24px)` - scales proportionally with viewport width
+  - All UI elements use viewport-relative units (vw) for consistent aspect ratio
+  - Desktop displays show the same mobile layout scaled up proportionally
+- **Backdrop Filters**: Blur effects applied to modals and screens for visual depth
+- **Z-index Management**: Proper layering system (start-screen: 100, modals: 200, result: 300)
 
 ### Image-Based UI
 - The game uses image-based UI elements with precise button mapping
-- Button positions are calculated relative to background images
+- Button positions are calculated relative to background images using CSS variables
 - Supports different layouts for different game modes
 - All images are in WebP format for optimal performance
+- Dynamic button overlay synchronization based on image dimensions
 
 ### Data Management
 - **Multiple Data Sets**: Support for multiple game data sets (game-data-1.js, game-data-2.js)
@@ -215,19 +224,22 @@ fantasy-word-game/
 ### Mobile Optimization
 - Optimized for mobile devices with touch controls
 - Vibration feedback on damage (mobile devices)
-- Responsive design that adapts to different screen sizes
+- Responsive design using clamp() for consistent scaling across all screen sizes
+- Desktop displays show the same mobile layout scaled proportionally
 - Background music with autoplay support
-- Back button navigation support
+- Back button navigation support with proper history state management
+- Backdrop blur effects for enhanced visual depth
 
 ### Data Storage
 - Game progress is saved to localStorage
 - Gold, inventory, equipment, and statistics are persisted between sessions
-- Last selected day and difficulty are remembered
+- Last selected day, difficulty, and question type are remembered
+- Selected game data set is saved and restored on page load
 
 ## File Organization
 
 ### Styles
-- `variables.css`: CSS variables and global styles
+- `variables.css`: CSS variables and global styles with responsive font sizing
 - `animations.css`: Animation keyframes and transitions
 - `title.css`: Title screen layout and styling
 - `battle-mode-game.css`: Battle mode game screen layout and battle arena
@@ -236,10 +248,10 @@ fantasy-word-game/
 - `shop-panel.css`: Shop panel styles
 - `inventory-panel.css`: Inventory panel styles
 - `statistics-panel.css`: Statistics panel styles
-- `secret-menu-panel.css`: Secret menu panel styles
+- `setting-panel.css`: Settings panel styles
 - `result-panel.css`: Result screen panel styles
-- `popup-common.css`: Common popup overlay and container styles
-- Mode-specific popup/screen CSS files for each game mode
+- `modal-common.css`: Common modal overlay and container styles with backdrop blur
+- Mode-specific modal/screen CSS files for each game mode
 
 ### Scripts
 - `app.js`: Main game logic, UI management, and game flow

@@ -3281,32 +3281,27 @@ function syncModalButtonOverlay(modalId) {
     
     if (!modalImg || !overlay || !container) return;
     
-    // 타이틀 컨테이너 크기 가져오기 (모달이 타이틀 크기를 벗어나지 않도록)
-    const titleContainer = document.querySelector('.title-container-wrapper');
+    // 모바일 기준 크기 계산 (타이틀 이미지의 자연 크기를 기준으로 모바일 화면에서의 크기 계산)
+    const titleImg = document.querySelector('.title-background');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    let titleWidth = 0.95 * vw;
-    let titleHeight = 0.95 * vh;
     
-    if (titleContainer) {
-        const computedStyle = window.getComputedStyle(titleContainer);
-        const titleContainerWidth = computedStyle.getPropertyValue('--title-container-width');
-        const titleContainerHeight = computedStyle.getPropertyValue('--title-container-height');
-        if (titleContainerWidth) {
-            titleWidth = parseFloat(titleContainerWidth);
-        }
-        if (titleContainerHeight) {
-            titleHeight = parseFloat(titleContainerHeight);
-        }
-        // CSS 변수가 없으면 실제 크기 사용
-        if (!titleWidth || isNaN(titleWidth)) {
-            const rect = titleContainer.getBoundingClientRect();
-            titleWidth = rect.width || 0.95 * vw;
-        }
-        if (!titleHeight || isNaN(titleHeight)) {
-            const rect = titleContainer.getBoundingClientRect();
-            titleHeight = rect.height || 0.95 * vh;
-        }
+    // 모바일 기준 화면 크기 (일반적인 모바일 화면: 375px 너비)
+    const mobileBaseWidth = 375;
+    const mobileBaseHeight = 667; // 9:16 비율 기준
+    
+    let titleWidth = mobileBaseWidth * 0.95;
+    let titleHeight = mobileBaseHeight * 0.95;
+    
+    // 타이틀 이미지의 자연 크기를 기준으로 모바일 크기 계산
+    if (titleImg && titleImg.complete && titleImg.naturalWidth > 0 && titleImg.naturalHeight > 0) {
+        const naturalW = titleImg.naturalWidth;
+        const naturalH = titleImg.naturalHeight;
+        
+        // 모바일 화면에서 타이틀 이미지가 차지할 크기 계산 (비율 유지)
+        const mobileScale = Math.min(mobileBaseWidth / naturalW, mobileBaseHeight / naturalH);
+        titleWidth = naturalW * mobileScale * 0.95;
+        titleHeight = naturalH * mobileScale * 0.95;
     }
     
     // 모달 이미지의 자연 비율 계산 및 설정

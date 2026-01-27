@@ -233,9 +233,10 @@
 }
 
 .modal-background {
-    width: min(var(--title-container-width, 95vw), calc(var(--title-container-height, 95vh) * var(--modal-aspect-ratio, 1.5)));
-    max-width: var(--title-container-width, 95vw);
-    max-height: var(--title-container-height, 95vh);
+    /* 모바일 기준 크기로 고정 (화면 크기와 무관하게 동일한 크기 유지) */
+    width: min(var(--title-container-width, 356px), calc(var(--title-container-height, 633px) * var(--modal-aspect-ratio, 1.5)));
+    max-width: var(--title-container-width, 356px);
+    max-height: var(--title-container-height, 633px);
     height: auto;
     object-fit: contain;
     display: block;
