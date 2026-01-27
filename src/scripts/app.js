@@ -2973,9 +2973,44 @@ const practiceMemorization = {
     exit: () => {
         const memorizationScreen = document.getElementById('practice-memorization-screen');
         if (memorizationScreen) {
+            // 다른 화면들도 모두 닫기
+            const otherScreens = [
+                'game-screen',
+                'shop-screen',
+                'inventory-screen',
+                'statistics-screen',
+                'setting-overlay',
+                'battle-mode-screen',
+                'boss-mode-screen',
+                'result-screen',
+                'practice-mode-modal',
+                'battle-mode-setting-modal'
+            ];
+            
+            otherScreens.forEach(screenId => {
+                const screen = document.getElementById(screenId);
+                if (screen && screen.style.display !== 'none') {
+                    closeScreenOverlay(screenId, false);
+                }
+            });
+            
+            // practice-memorization-screen 닫기
             closeScreenOverlay('practice-memorization-screen', true);
+            
+            // start-screen 표시
             setTimeout(() => {
-                openScreenOverlay('start-screen', false);
+                const startScreen = document.getElementById('start-screen');
+                if (startScreen) {
+                    startScreen.style.display = 'flex';
+                    startScreen.classList.remove('closing');
+                    
+                    // 버튼 오버레이 동기화
+                    setTimeout(() => {
+                        if (typeof syncTitleButtonOverlay === 'function') {
+                            syncTitleButtonOverlay();
+                        }
+                    }, 100);
+                }
                 history.pushState(null, '', window.location.href);
             }, 400);
         }
