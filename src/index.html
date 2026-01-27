@@ -617,6 +617,18 @@
             const isBattleModeModal = battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '';
             const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
             const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
+            const goldEditModal = document.getElementById('gold-edit-modal');
+            const isGoldEditModal = goldEditModal && goldEditModal.style.display !== 'none' && goldEditModal.style.display !== '';
+            
+            // 골드 수정 모달에서 백버튼을 누르면 골드 조정 화면으로 돌아가기
+            if (isGoldEditModal) {
+                if (typeof secret !== 'undefined' && typeof secret.closeGoldEditModal === 'function') {
+                    secret.closeGoldEditModal();
+                }
+                // 히스토리 조작 방지
+                history.pushState(null, '', window.location.href);
+                return; // 골드 수정 모달만 처리하고 종료
+            }
             
             if (isGameScreen || isShopScreen || isInventoryScreen || isStatisticsScreen || isSettingScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModeModal || isBattleModeModal || isResultScreen || isPracticeMemorizationScreen) {
                 // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
@@ -653,23 +665,25 @@
                     }
                 }
                 
-                // 모달과 스토리 화면도 숨기기
-                if (battleModeStoryScreen) {
-                    battleModeStoryScreen.style.display = 'none';
-                    battleModeStoryScreen.style.visibility = '';
-                    battleModeStoryScreen.style.opacity = '';
-                    battleModeStoryScreen.style.zIndex = '';
-                    battleModeStoryScreen.style.pointerEvents = '';
-                    battleModeStoryScreen.classList.remove('closing');
+                // 배틀 모드 스크린에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
+                if (isBattleModeStoryScreen) {
+                    closeScreenOverlay('battle-mode-screen', false);
+                    // 배틀 모드 모달 열기
+                    if (typeof openBattleModeModal === 'function') {
+                        openBattleModeModal();
+                    }
+                } else {
+                    // 다른 스토리 화면은 일반적으로 닫기
+                    if (bossStoryScreen) {
+                        bossStoryScreen.style.display = 'none';
+                        bossStoryScreen.style.visibility = '';
+                        bossStoryScreen.style.opacity = '';
+                        bossStoryScreen.style.zIndex = '';
+                        bossStoryScreen.style.pointerEvents = '';
+                        bossStoryScreen.classList.remove('closing');
+                    }
                 }
-                if (bossStoryScreen) {
-                    bossStoryScreen.style.display = 'none';
-                    bossStoryScreen.style.visibility = '';
-                    bossStoryScreen.style.opacity = '';
-                    bossStoryScreen.style.zIndex = '';
-                    bossStoryScreen.style.pointerEvents = '';
-                    bossStoryScreen.classList.remove('closing');
-                }
+                
                 // 게임 상태 리셋
                 if ((isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen) && typeof game !== 'undefined') {
                     game.isProcessing = false;
@@ -682,7 +696,8 @@
                     practiceModeModal.style.pointerEvents = '';
                     practiceModeModal.classList.remove('closing');
                 }
-                if (battleModeModal) {
+                if (battleModeModal && !isBattleModeStoryScreen) {
+                    // 배틀 모드 스크린에서 온 경우가 아니면 모달 닫기
                     battleModeModal.style.display = 'none';
                     battleModeModal.style.visibility = '';
                     battleModeModal.style.opacity = '';
@@ -699,8 +714,8 @@
                 }
                 
                 // shop, inventory, statistics, secret은 팝업이므로 start-screen은 이미 표시되어 있음
-                // 게임 화면, 스토리 화면, 모달일 때 start-screen 표시
-                if (isGameScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModeModal || isBattleModeModal || isResultScreen || isPracticeMemorizationScreen) {
+                // 게임 화면, 보스 스토리 화면, 모달일 때 start-screen 표시 (배틀 모드 스크린, 골드 수정 모달 제외)
+                if (isGameScreen || isBossStoryScreen || (isPracticeModeModal && !isBattleModeStoryScreen) || (isBattleModeModal && !isBattleModeStoryScreen) || isResultScreen || isPracticeMemorizationScreen) {
                     startScreen.style.display = 'flex';
                     // z-index 복원
                     startScreen.style.zIndex = '';

@@ -2177,6 +2177,9 @@ const secret = {
 
         document.getElementById('gold-edit-up').onclick = () => secret.updateGoldEdit(500);
         document.getElementById('gold-edit-down').onclick = () => secret.updateGoldEdit(-500);
+        
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'gold-edit-modal' }, '', window.location.href);
     },
 
     closeGoldEditModal: () => {
@@ -3142,6 +3145,12 @@ function openBattleModeModal() {
                 }
             });
         });
+    }
+    
+    // start-screen의 z-index 조정하여 backdrop-filter가 작동하도록 함
+    const startScreen = document.getElementById('start-screen');
+    if (startScreen) {
+        startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
     }
     
     modal.style.display = 'flex';
