@@ -2285,6 +2285,8 @@ const secret = {
         // Day 선택 모달 열기
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         document.getElementById('print-day-select-modal').style.display = 'block';
+        // 히스토리 상태 추가 (백버튼 처리용)
+        history.pushState({ screen: 'print-day-select-modal' }, '', window.location.href);
         
         // Day 선택 옵션 채우기
         const printDaySelect = document.getElementById('print-day-select');
