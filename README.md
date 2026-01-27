@@ -6,63 +6,62 @@ The Fantasy Word Game is a mobile-friendly, word guessing RPG game that challeng
 ## Project Structure
 ```
 fantasy-word-game/
-├── src/
-│   ├── index.html                    # Main HTML document for the game
-│   ├── styles/
-│   │   ├── variables.css             # CSS variables and global styles
-│   │   ├── animations.css             # Animation definitions
-│   │   ├── title.css                  # Title screen styles
-│   │   ├── battle-mode-game.css       # Battle mode game screen styles
-│   │   ├── practice-mode-game.css     # Practice mode game screen styles
-│   │   ├── buttons.css                # Button styles
-│   │   ├── shop-panel.css             # Shop panel styles
-│   │   ├── inventory-panel.css        # Inventory panel styles
-│   │   ├── statistics-panel.css       # Statistics panel styles
-│   │   ├── setting-panel.css          # Settings panel styles
-│   │   ├── result-panel.css           # Result screen panel styles
-│   │   ├── modal-common.css           # Common modal and overlay styles
-│   │   ├── practice-mode-modal.css    # Practice mode modal styles
-│   │   ├── battle-mode-modal.css      # Battle mode modal styles
-│   │   ├── battle-mode-screen.css     # Battle mode story screen styles
-│   │   └── boss-mode-screen.css       # Boss mode story screen styles
-│   ├── scripts/
-│   │   ├── app.js                     # Main game logic and UI management
-│   │   ├── words.js                   # Word data and word-related functions
-│   │   ├── items.js                   # Item data and item-related functions
-│   │   └── data-loader.js             # Data loading and management
-│   ├── data/
-│   │   ├── game-data-1.js             # Game data set 1 (능률 보카 중등 기본)
-│   │   ├── game-data-2.js             # Game data set 2 (워드 마스터 중등 고난도)
-│   │   ├── items-data.js              # Item definitions and properties
-│   │   └── background_music.mp3       # Background music file
-│   └── images/
-│       ├── battle_mode/               # Battle mode game images
-│       │   ├── background.webp        # Game battle background
-│       │   ├── hero.webp              # Hero character image
-│       │   ├── monster_1.webp         # Monster sprite 1
-│       │   ├── monster_2.webp         # Monster sprite 2
-│       │   ├── monster_3.webp          # Monster sprite 3
-│       │   ├── boss_mode_popup.webp # Story screen background (used for all modes: practice, battle, boss)
-│       │   ├── battle_mode_select_popup.webp    # Battle mode settings popup
-│       │   └── practice_mode_select_popup .webp # Practice mode settings popup
-│       ├── title/                     # Title screen images
-│       │   ├── title.webp             # Title screen background
-│       │   ├── title_header_1.webp    # Title header image 1
-│       │   ├── title_header_2.webp    # Title header image 2
-│       │   ├── title_header_3.webp    # Title header image 3
-│       │   ├── title_header_4.webp    # Title header image 4
-│       │   ├── practice_mode_btn.webp      # Practice mode button
-│       │   ├── battle_mode_btn.webp   # Battle mode button
-│       │   ├── boss_mode_btn.webp     # Boss mode button
-│       │   ├── shop_btn.webp          # Shop button
-│       │   ├── inventory_btn.webp     # Inventory button
-│       │   ├── statistics_btn.webp    # Statistics button
-│       │   ├── settings_btn.webp      # Settings button
-│       │   ├── exit_btn.webp          # Exit button
-│       │   ├── apply_btn.webp         # Apply button
-│       │   └── factory_reset_btn.webp # Factory reset button
-│       └── backup/                    # Backup images
-│           └── battle_start_btn.webp
+├── index.html                         # Main HTML document for the game
+├── styles/
+│   ├── variables.css                  # CSS variables and global styles
+│   ├── animations.css                 # Animation definitions
+│   ├── title.css                      # Title screen styles
+│   ├── battle-mode-game.css           # Battle mode game screen styles
+│   ├── practice-mode-game.css         # Practice mode game screen styles
+│   ├── buttons.css                    # Button styles
+│   ├── shop-panel.css                 # Shop panel styles
+│   ├── inventory-panel.css            # Inventory panel styles
+│   ├── statistics-panel.css           # Statistics panel styles
+│   ├── setting-panel.css              # Settings panel styles
+│   ├── result-panel.css              # Result screen panel styles
+│   ├── modal-common.css              # Common modal and overlay styles
+│   ├── practice-mode-modal.css       # Practice mode modal styles
+│   ├── battle-mode-modal.css         # Battle mode modal styles
+│   ├── battle-mode-screen.css        # Battle mode story screen styles
+│   └── boss-mode-screen.css          # Boss mode story screen styles
+├── scripts/
+│   ├── app.js                        # Main game logic and UI management
+│   ├── words.js                      # Word data and word-related functions
+│   ├── items.js                      # Item data and item-related functions
+│   └── data-loader.js                # Data loading and management
+├── data/
+│   ├── game-data-1.js                # Game data set 1 (능률 보카 중등 기본)
+│   ├── game-data-2.js                # Game data set 2 (워드 마스터 중등 고난도)
+│   ├── items-data.js                 # Item definitions and properties
+│   └── background_music.mp3          # Background music file
+├── images/
+│   ├── battle_mode/                  # Battle mode game images
+│   │   ├── background.webp           # Game battle background
+│   │   ├── hero.webp                 # Hero character image
+│   │   ├── monster_1.webp            # Monster sprite 1
+│   │   ├── monster_2.webp            # Monster sprite 2
+│   │   ├── monster_3.webp            # Monster sprite 3
+│   │   ├── boss_mode_popup.webp      # Story screen background (used for all modes: practice, battle, boss)
+│   │   ├── battle_mode_select_popup.webp    # Battle mode settings popup
+│   │   └── practice_mode_select_popup .webp # Practice mode settings popup
+│   ├── title/                        # Title screen images
+│   │   ├── title.webp                # Title screen background
+│   │   ├── title_header_1.webp       # Title header image 1
+│   │   ├── title_header_2.webp      # Title header image 2
+│   │   ├── title_header_3.webp      # Title header image 3
+│   │   ├── title_header_4.webp      # Title header image 4
+│   │   ├── practice_mode_btn.webp   # Practice mode button
+│   │   ├── battle_mode_btn.webp     # Battle mode button
+│   │   ├── boss_mode_btn.webp       # Boss mode button
+│   │   ├── shop_btn.webp            # Shop button
+│   │   ├── inventory_btn.webp        # Inventory button
+│   │   ├── statistics_btn.webp       # Statistics button
+│   │   ├── settings_btn.webp         # Settings button
+│   │   ├── exit_btn.webp            # Exit button
+│   │   ├── apply_btn.webp           # Apply button
+│   │   └── factory_reset_btn.webp   # Factory reset button
+│   └── backup/                       # Backup images
+│       └── battle_start_btn.webp
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -85,7 +84,7 @@ fantasy-word-game/
    ```
 
 ### Running the Game
-1. Open `src/index.html` in your web browser.
+1. Open `index.html` in your web browser.
 2. The game will start with the title screen.
 3. Select a game data set from the dropdown (능률 보카 중등 기본 or 워드 마스터 중등 고난도).
 4. Choose a game mode and enjoy the game!
