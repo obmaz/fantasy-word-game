@@ -2881,11 +2881,19 @@ const practiceMemorization = {
         setTimeout(() => {
             const memorizationScreen = document.getElementById('practice-memorization-screen');
             if (memorizationScreen) {
-                memorizationScreen.style.display = 'flex';
+                // start-screen의 z-index 조정하여 backdrop-filter가 작동하도록 함
+                const startScreen = document.getElementById('start-screen');
+                if (startScreen) {
+                    startScreen.style.zIndex = '100'; // practice-memorization-screen(z-index: 200) 뒤에 위치
+                }
+                
+                // openScreenOverlay를 사용하여 화면 표시
+                openScreenOverlay('practice-memorization-screen', true);
                 
                 // 타이틀 이미지 크기에 맞춰 연습 모드 크기 동기화
                 syncGameScreenSizeToTitle();
                 
+                // 히스토리 상태 추가 (백버튼 처리용)
                 history.pushState({ screen: 'practice-memorization' }, '', window.location.href);
                 
                 // 첫 번째 단어 표시

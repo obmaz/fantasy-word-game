@@ -695,14 +695,15 @@
                     resultScreen.classList.remove('closing');
                 }
                 if (practiceMemorizationScreen) {
-                    practiceMemorizationScreen.style.display = 'none';
-                    practiceMemorizationScreen.classList.remove('closing');
+                    closeScreenOverlay('practice-memorization-screen', false);
                 }
                 
                 // shop, inventory, statistics, secret은 팝업이므로 start-screen은 이미 표시되어 있음
-                // 게임 화면일 때만 start-screen 표시
-                if (isGameScreen) {
+                // 게임 화면, 스토리 화면, 모달일 때 start-screen 표시
+                if (isGameScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeModeModal || isBattleModeModal || isResultScreen || isPracticeMemorizationScreen) {
                     startScreen.style.display = 'flex';
+                    // z-index 복원
+                    startScreen.style.zIndex = '';
                     
                     // 버튼 오버레이 동기화 (이미지 로드 후)
                     setTimeout(() => {

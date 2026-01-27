@@ -6,6 +6,12 @@
    원하는 속성의 주석을 해제하고 값을 변경하면 됩니다.
    ============================================ */
 
+/* Battle Mode Screen 배경 블러 효과 */
+#battle-mode-screen {
+    backdrop-filter: blur(12px) !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Battle Mode Screen - Day 정보 표시 영역 (크기/위치 조정 가능) */
 #battle-mode-screen .story-day-info {
     /* 기본값 유지 (상위 스타일 상속) */
