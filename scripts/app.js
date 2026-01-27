@@ -126,7 +126,8 @@ const inventory = {
     render: () => {
         const invContainer = document.querySelector('.inv-items');
         invContainer.innerHTML = '';
-        document.getElementById('inv-gold').innerText = db.gold;
+        // 골드 표시 제거됨 (인벤토리에서는 골드 표시 안 함)
+        // document.getElementById('inv-gold').innerText = db.gold;
         document.getElementById('inv-cap').innerText = (db.inventory.length + db.owned.filter(id => id !== 'basic' && !Object.values(db.equipped).includes(id) && id !== db.equippedWeapon).length);
         document.getElementById('inv-max-cap').innerText = db.inventoryCapacity;
 
@@ -518,7 +519,8 @@ const statistics = {
     render: () => {
         const container = document.getElementById('statistics-container');
         container.innerHTML = '';
-        document.getElementById('statistics-gold').innerText = db.gold;
+        // 골드 표시 제거됨 (통계에서는 골드 표시 안 함)
+        // document.getElementById('statistics-gold').innerText = db.gold;
 
         // 통계 데이터 계산
         const solved = db.stats.solved || 0;
