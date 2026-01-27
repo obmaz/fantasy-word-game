@@ -457,10 +457,10 @@ const shop = {
         let btn = `<button class="buy-btn" onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">${item.cost} G</button>`;
 
         if (type === 'skill') {
-            return `<div class="shop-item"><div><b>${item.name} (현재 ${db.skills[item.id]}개)</b><br><span style="font-size:11px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
+            return `<div class="shop-item"><div style="font-size:15px;"><b>${item.name} (현재 ${db.skills[item.id]}개)</b><br><span style="font-size:15px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
         }
 
-        return `<div class="shop-item"><div><b>${item.name}</b><br><span style="font-size:11px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
+        return `<div class="shop-item"><div style="font-size:15px;"><b>${item.name}</b><br><span style="font-size:15px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
     },
         buy: (id, cost, type) => {
             if (db.gold < cost) {
@@ -578,20 +578,20 @@ const statistics = {
         // 게임 통계
         html += '<div class="shop-section">📊 게임 통계</div>';
         html += `<div class="shop-item">
-            <div><b>총 해결한 문제</b></div>
-            <div style="font-size:20px; color:var(--primary); font-weight:bold;">${solved}개</div>
+            <div style="font-size:15px;"><b>총 해결한 문제</b></div>
+            <div style="font-size:15px; color:var(--primary); font-weight:bold;">${solved}개</div>
         </div>`;
         html += `<div class="shop-item">
-            <div><b>정답 수</b></div>
-            <div style="font-size:20px; color:#4CAF50; font-weight:bold;">${correct}개</div>
+            <div style="font-size:15px;"><b>정답 수</b></div>
+            <div style="font-size:15px; color:#4CAF50; font-weight:bold;">${correct}개</div>
         </div>`;
         html += `<div class="shop-item">
-            <div><b>오답 수</b></div>
-            <div style="font-size:20px; color:#FF5252; font-weight:bold;">${wrong}개</div>
+            <div style="font-size:15px;"><b>오답 수</b></div>
+            <div style="font-size:15px; color:#FF5252; font-weight:bold;">${wrong}개</div>
         </div>`;
         html += `<div class="shop-item">
-            <div><b>정답률</b></div>
-            <div style="font-size:20px; color:var(--primary); font-weight:bold; text-align:right;">${rate}%</div>
+            <div style="font-size:15px;"><b>정답률</b></div>
+            <div style="font-size:15px; color:var(--primary); font-weight:bold; text-align:right;">${rate}%</div>
         </div>`;
 
         // 문제 타입별 통계
@@ -599,25 +599,25 @@ const statistics = {
         
         // 객관식 통계
         html += '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
-        html += '<div><b>📋 객관식</b></div>';
+        html += '<div style="font-size:15px;"><b>📋 객관식</b></div>';
         html += `<div style="margin-top:8px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span>해결: ${objectiveSolved}개</span>
-                <span style="color:#4CAF50; margin-left:12px;">정답: ${objectiveCorrect}개</span>
+                <span style="font-size:15px;">해결: ${objectiveSolved}개</span>
+                <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${objectiveCorrect}개</span>
             </div>
-            <div style="font-size:18px; color:#2196F3; font-weight:bold; text-align:right;">정답률: ${objectiveRate}%</div>
+            <div style="font-size:15px; color:#2196F3; font-weight:bold; text-align:right;">정답률: ${objectiveRate}%</div>
         </div>`;
         html += '</div>';
         
         // 주관식 통계 (객관식과 동일한 형식)
         html += '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
-        html += '<div><b>✍️ 주관식</b></div>';
+        html += '<div style="font-size:15px;"><b>✍️ 주관식</b></div>';
         html += `<div style="margin-top:8px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span>해결: ${subjectiveSolved}개</span>
-                <span style="color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
+                <span style="font-size:15px;">해결: ${subjectiveSolved}개</span>
+                <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
             </div>
-            <div style="font-size:18px; color:#9C27B0; font-weight:bold; text-align:right;">정답률: ${subjectiveRate}%</div>`;
+            <div style="font-size:15px; color:#9C27B0; font-weight:bold; text-align:right;">정답률: ${subjectiveRate}%</div>`;
         
         // 주관식을 전부 맞춘 날 표시
         const perfectDays = db.stats.subjective?.perfectDays || [];
@@ -625,9 +625,9 @@ const statistics = {
             // 가장 최근 날짜 (배열의 마지막 요소)
             const latestPerfect = perfectDays[perfectDays.length - 1];
             html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156, 39, 176, 0.3);">
-                <div style="font-size:14px; color:#9C27B0; font-weight:bold; margin-bottom:4px;">✨ 주관식 전부 맞춘 날</div>
-                <div style="font-size:16px; color:var(--gold);">${latestPerfect.displayDate || latestPerfect.date}</div>
-                ${perfectDays.length > 1 ? `<div style="font-size:12px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>` : ''}
+                <div style="font-size:9px; color:#9C27B0; font-weight:bold; margin-bottom:4px;">✨ 주관식 전부 맞춘 날</div>
+                <div style="font-size:11px; color:var(--gold);">${latestPerfect.displayDate || latestPerfect.date}</div>
+                ${perfectDays.length > 1 ? `<div style="font-size:7px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>` : ''}
             </div>`;
         }
         
@@ -639,8 +639,8 @@ const statistics = {
             html += '<div class="shop-section" style="margin-top:20px;">✨ 보유 스킬</div>';
             skills.forEach(skill => {
                 html += `<div class="shop-item">
-                    <div><b>${skill.name}</b></div>
-                    <div style="font-size:20px; color:var(--primary); font-weight:bold;">${skill.count}개</div>
+                    <div style="font-size:9px;"><b>${skill.name}</b></div>
+                    <div style="font-size:15px; color:var(--primary); font-weight:bold;">${skill.count}개</div>
                 </div>`;
             });
         }
@@ -926,11 +926,11 @@ const story = {
             syncTitleButtonOverlay();
         }
         
-        // 모든 모드에서 boss_mode_popup.webp 사용
+        // 모든 모드에서 battle_mode_popup.webp 사용
         const storyImg = document.getElementById(`${storyScreenPrefix}-background-img`);
         const storyStartBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
         if (storyImg) {
-            storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
+            storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
             // 보스 모드 클래스 추가
             if (storyStartBtn) {
                 storyStartBtn.classList.add('boss-mode-btn');
@@ -1050,9 +1050,9 @@ const story = {
             bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-mode-modal과 battle-mode-setting-modal 닫기
+        // practice-mode-modal과 battle-mode-modal 닫기
         const practiceModeModal = document.getElementById('practice-mode-modal');
-        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        const battleModeModal = document.getElementById('battle-mode-modal');
         if (practiceModeModal) {
             practiceModeModal.style.display = 'none';
             practiceModeModal.style.visibility = 'hidden';
@@ -1758,9 +1758,9 @@ const game = {
             bossStoryScreen.classList.remove('closing');
         }
         
-        // practice-mode-modal과 battle-mode-setting-modal도 닫기
+        // practice-mode-modal과 battle-mode-modal도 닫기
         const practiceModeModal = document.getElementById('practice-mode-modal');
-        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        const battleModeModal = document.getElementById('battle-mode-modal');
         if (practiceModeModal) {
             practiceModeModal.style.display = 'none';
             practiceModeModal.style.visibility = 'hidden';
@@ -2276,10 +2276,14 @@ const secret = {
 
         const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
         const buildObjectiveOptions = (correctValue, key, primaryPool, count = 4) => {
-            const unique = new Set();
-            if (correctValue) {
-                unique.add(correctValue);
+            if (!correctValue) {
+                // 정답이 없으면 빈 배열 반환
+                return [];
             }
+
+            const unique = new Set();
+            // 정답을 먼저 추가 (반드시 포함되도록)
+            unique.add(correctValue);
 
             const pools = [
                 primaryPool,
@@ -2287,23 +2291,47 @@ const secret = {
                 (typeof decoyWords !== 'undefined' ? decoyWords : [])
             ];
 
+            // 정답을 제외한 다른 선택지 찾기 (count - 1개만 필요)
             pools.forEach(pool => {
                 if (!Array.isArray(pool)) return;
                 const shuffledPool = shuffle([...pool]);
                 for (const item of shuffledPool) {
                     const value = item && item[key];
-                    if (!value || unique.has(value)) continue;
+                    if (!value || unique.has(value) || value === correctValue) continue;
                     unique.add(value);
                     if (unique.size >= count) break;
                 }
             });
 
             const options = Array.from(unique);
+            
+            // 정답이 반드시 포함되어 있는지 확인
+            if (!options.includes(correctValue)) {
+                options.push(correctValue);
+            }
+            
+            // 선택지가 부족하면 정답을 반복 추가 (최후의 수단)
             while (options.length < count) {
                 options.push(correctValue);
             }
 
-            return shuffle(options).slice(0, count);
+            // 정답을 포함한 상태로 섞기
+            const shuffled = shuffle([...options]);
+            
+            // 정답이 반드시 포함되도록 보장
+            if (!shuffled.slice(0, count).includes(correctValue)) {
+                // 정답이 없으면 마지막 항목을 정답으로 교체
+                const correctIdx = shuffled.indexOf(correctValue);
+                if (correctIdx >= 0) {
+                    // 정답이 count 범위 밖에 있으면 마지막 항목과 교체
+                    [shuffled[count - 1], shuffled[correctIdx]] = [shuffled[correctIdx], shuffled[count - 1]];
+                } else {
+                    // 정답이 아예 없으면 마지막 항목을 정답으로 교체
+                    shuffled[count - 1] = correctValue;
+                }
+            }
+
+            return shuffled.slice(0, count);
         };
         
         // 모든 문제를 하나의 배열로 합치기
@@ -2321,13 +2349,27 @@ const secret = {
             const objItem1 = objectiveWords[0];
             const allOptions1 = buildObjectiveOptions(objItem1.word, 'word', objectiveWords);
             const correctIndex1 = allOptions1.indexOf(objItem1.word);
-            allQuestions.push({ 
-                type: 'objective-ko-en', 
-                item: objItem1, 
-                options: allOptions1,
-                correctIndex: correctIndex1,
-                num: allQuestions.length + 1 
-            });
+            // 정답이 선택지에 없으면 에러 처리
+            if (correctIndex1 === -1) {
+                console.error('[generatePrintHTML] 정답이 선택지에 없습니다:', objItem1.word, allOptions1);
+                // 정답을 첫 번째 선택지로 강제 추가
+                allOptions1[0] = objItem1.word;
+                allQuestions.push({ 
+                    type: 'objective-ko-en', 
+                    item: objItem1, 
+                    options: allOptions1,
+                    correctIndex: 0,
+                    num: allQuestions.length + 1 
+                });
+            } else {
+                allQuestions.push({ 
+                    type: 'objective-ko-en', 
+                    item: objItem1, 
+                    options: allOptions1,
+                    correctIndex: correctIndex1,
+                    num: allQuestions.length + 1 
+                });
+            }
         }
         
         // 2. 영어 단어 → 한글 뜻 객관식
@@ -2335,13 +2377,27 @@ const secret = {
             const objItem2 = objectiveWords[4];
             const allOptions2 = buildObjectiveOptions(objItem2.meaning, 'meaning', objectiveWords);
             const correctIndex2 = allOptions2.indexOf(objItem2.meaning);
-            allQuestions.push({ 
-                type: 'objective-en-ko', 
-                item: objItem2, 
-                options: allOptions2,
-                correctIndex: correctIndex2,
-                num: allQuestions.length + 1 
-            });
+            // 정답이 선택지에 없으면 에러 처리
+            if (correctIndex2 === -1) {
+                console.error('[generatePrintHTML] 정답이 선택지에 없습니다:', objItem2.meaning, allOptions2);
+                // 정답을 첫 번째 선택지로 강제 추가
+                allOptions2[0] = objItem2.meaning;
+                allQuestions.push({ 
+                    type: 'objective-en-ko', 
+                    item: objItem2, 
+                    options: allOptions2,
+                    correctIndex: 0,
+                    num: allQuestions.length + 1 
+                });
+            } else {
+                allQuestions.push({ 
+                    type: 'objective-en-ko', 
+                    item: objItem2, 
+                    options: allOptions2,
+                    correctIndex: correctIndex2,
+                    num: allQuestions.length + 1 
+                });
+            }
         }
         
         // 문제를 좌우로 나누기 (절반씩)
@@ -2734,7 +2790,7 @@ const secret = {
 function initSelections() {
     const daySelect = document.getElementById('day-select');
     const practiceDaySelect = document.getElementById('practice-mode-modal-day-select');
-    const battleDaySelect = document.getElementById('battle-mode-setting-modal-day-select');
+    const battleDaySelect = document.getElementById('battle-mode-modal-day-select');
     
     // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
@@ -2934,7 +2990,7 @@ const practiceMemorization = {
                 'boss-mode-screen',
                 'result-panel',
                 'practice-mode-modal',
-                'battle-mode-setting-modal'
+                'battle-mode-modal'
             ];
             
             otherScreens.forEach(screenId => {
@@ -3024,11 +3080,11 @@ function openPracticeModal() {
 
 // Open battle mode selection modal
 function openBattleModeModal() {
-    const modal = document.getElementById('battle-mode-setting-modal');
-    const modalDaySelect = document.getElementById('battle-mode-setting-modal-day-select');
-    const modalCountSelect = document.getElementById('battle-mode-setting-modal-count-select');
-    const modalImg = document.getElementById('battle-mode-setting-modal-background-img');
-    const questionTypeGroup = document.getElementById('battle-mode-setting-modal-question-type-group');
+    const modal = document.getElementById('battle-mode-modal');
+    const modalDaySelect = document.getElementById('battle-mode-modal-day-select');
+    const modalCountSelect = document.getElementById('battle-mode-modal-count-select');
+    const modalImg = document.getElementById('battle-mode-modal-background-img');
+    const questionTypeGroup = document.getElementById('battle-mode-modal-question-type-group');
     
     if (!modal) return;
     
@@ -3096,7 +3152,7 @@ function openBattleModeModal() {
     modal.style.display = 'flex';
     
     // 히스토리 상태 추가 (백버튼 처리용)
-    history.pushState({ screen: 'battle-mode-setting-modal' }, '', window.location.href);
+    history.pushState({ screen: 'battle-mode-modal' }, '', window.location.href);
     
     // 타이틀 크기 먼저 동기화 (모달 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
@@ -3107,19 +3163,19 @@ function openBattleModeModal() {
     if (modalImg) {
         if (modalImg.complete) {
             setTimeout(() => {
-                syncModalButtonOverlay('battle-mode-setting-modal');
+                syncModalButtonOverlay('battle-mode-modal');
             }, 100);
         } else {
             modalImg.addEventListener('load', () => {
                 setTimeout(() => {
-                    syncModalButtonOverlay('battle-mode-setting-modal');
+                    syncModalButtonOverlay('battle-mode-modal');
                 }, 100);
             }, { once: true });
         }
     }
     
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment('battle-mode-setting-modal');
+    setupSelectFontSizeAdjustment('battle-mode-modal');
 }
 
 // 공통 모달 애니메이션 함수
@@ -3181,7 +3237,7 @@ function openScreenOverlay(elementId, animated = true) {
 // Close practice or battle mode selection modal
 function closePracticeModal(animated = true) {
     closeScreenOverlay('practice-mode-modal', animated);
-    closeScreenOverlay('battle-mode-setting-modal', animated);
+    closeScreenOverlay('battle-mode-modal', animated);
     // 히스토리 상태 업데이트
     history.pushState(null, '', window.location.href);
 }
@@ -3248,7 +3304,11 @@ function setupSelectFontSizeAdjustment(modalId) {
             setTimeout(() => {
                 if (modalImg && modalImg.complete) {
                     const imgRect = modalImg.getBoundingClientRect();
-                    adjustSelectFontSize(modalDaySelect, imgRect.width * 0.6, imgRect.height * 0.11);
+                    // practice-mode-modal과 battle-mode-modal의 day-select 폰트 크기를 동일하게 맞추기
+                    // battle-mode-modal과 동일한 크기 파라미터 사용 (0.65, 0.095)
+                    const width = imgRect.width * 0.65;
+                    const height = imgRect.height * 0.095;
+                    adjustSelectFontSize(modalDaySelect, width, height);
                 }
             }, 50);
         });
@@ -3314,7 +3374,7 @@ function syncModalButtonOverlay(modalId) {
     }
     
     // 배틀 모드 모달 폭을 전역 CSS 변수로 저장 (설정 레이아웃 폭 맞춤용)
-    if (modalId === 'battle-mode-setting-modal' && modalAspectRatio) {
+    if (modalId === 'battle-mode-modal' && modalAspectRatio) {
         const modalWidth = Math.min(titleWidth, titleHeight * modalAspectRatio);
         document.documentElement.style.setProperty('--battle-mode-modal-width', modalWidth + 'px');
     }
@@ -3343,8 +3403,10 @@ function syncModalButtonOverlay(modalId) {
             overlay.style.setProperty('--modal-img-top', top + 'px');
             
             // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
+            // practice-mode-modal과 battle-mode-modal의 day-select 폰트 크기를 동일하게 맞추기
             const daySelect = modal.querySelector('.modal-day-select');
             if (daySelect) {
+                // 모든 모달에서 battle-mode-modal과 동일한 크기 파라미터 사용 (0.65, 0.095)
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.095;
                 adjustSelectFontSize(daySelect, width, height);
@@ -3540,7 +3602,7 @@ function syncTitleButtonOverlay() {
     
     // 팝업도 타이틀 크기에 맞춰 동기화
     syncModalButtonOverlay('practice-mode-modal');
-    syncModalButtonOverlay('battle-mode-setting-modal');
+    syncModalButtonOverlay('battle-mode-modal');
 }
 
 function syncGameScreenSizeToTitle() {
@@ -3750,10 +3812,10 @@ window.onload = () => {
     }
     
     // Battle Setting Modal event listeners
-    const battleStartBtn = document.getElementById('battle-mode-setting-modal-start-btn');
-    const battleCancelBtn = document.getElementById('battle-mode-setting-modal-cancel-btn');
-    const battleDaySelect = document.getElementById('battle-mode-setting-modal-day-select');
-    const battleCountSelect = document.getElementById('battle-mode-setting-modal-count-select');
+    const battleStartBtn = document.getElementById('battle-mode-modal-start-btn');
+    const battleCancelBtn = document.getElementById('battle-mode-modal-cancel-btn');
+    const battleDaySelect = document.getElementById('battle-mode-modal-day-select');
+    const battleCountSelect = document.getElementById('battle-mode-modal-count-select');
     
     if (battleStartBtn) {
         battleStartBtn.addEventListener('click', () => {
@@ -3762,7 +3824,7 @@ window.onload = () => {
             
             // Get selected question type for battle mode
             let selectedQuestionType = 'mixed'; // default
-            const questionTypeGroup = document.getElementById('battle-mode-setting-modal-question-type-group');
+            const questionTypeGroup = document.getElementById('battle-mode-modal-question-type-group');
             if (questionTypeGroup) {
                 const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
                 if (checkedRadio) {
@@ -3943,7 +4005,7 @@ window.onload = () => {
     
     // Modal 이미지 로드 후 버튼 오버레이 동기화
     const practiceModeModalImg = document.getElementById('practice-mode-modal-background-img');
-    const battleModeModalImg = document.getElementById('battle-mode-setting-modal-background-img');
+    const battleModeModalImg = document.getElementById('battle-mode-modal-background-img');
     
     if (practiceModeModalImg) {
         if (practiceModeModalImg.complete) {
@@ -3955,9 +4017,9 @@ window.onload = () => {
     
     if (battleModeModalImg) {
         if (battleModeModalImg.complete) {
-            syncModalButtonOverlay('battle-mode-setting-modal');
+            syncModalButtonOverlay('battle-mode-modal');
         } else {
-            battleModeModalImg.addEventListener('load', () => syncModalButtonOverlay('battle-mode-setting-modal'));
+            battleModeModalImg.addEventListener('load', () => syncModalButtonOverlay('battle-mode-modal'));
         }
     }
     
@@ -3965,7 +4027,7 @@ window.onload = () => {
     let modalResizeTimeout;
     const modalResizeHandler = () => {
         const practiceModeModal = document.getElementById('practice-mode-modal');
-        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        const battleModeModal = document.getElementById('battle-mode-modal');
         if (practiceModeModal && practiceModeModal.style.display !== 'none' && practiceModeModal.style.display !== '') {
             clearTimeout(modalResizeTimeout);
             modalResizeTimeout = setTimeout(() => {
@@ -3974,7 +4036,7 @@ window.onload = () => {
         } else if (battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '') {
             clearTimeout(modalResizeTimeout);
             modalResizeTimeout = setTimeout(() => {
-                syncModalButtonOverlay('battle-mode-setting-modal');
+                syncModalButtonOverlay('battle-mode-modal');
             }, 100);
         }
     };
@@ -4017,7 +4079,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('battle-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
             }
             
             // 버튼 초기화
@@ -4040,7 +4102,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('boss-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/battle_mode/boss_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
             }
             
             // 버튼 초기화
@@ -4053,9 +4115,9 @@ window.onload = () => {
             }
         }
         
-        // practice-mode-modal과 battle-mode-setting-modal 초기화
+        // practice-mode-modal과 battle-mode-modal 초기화
         const practiceModeModal = document.getElementById('practice-mode-modal');
-        const battleModeModal = document.getElementById('battle-mode-setting-modal');
+        const battleModeModal = document.getElementById('battle-mode-modal');
         if (practiceModeModal) {
             practiceModeModal.style.display = 'none';
             practiceModeModal.style.visibility = '';

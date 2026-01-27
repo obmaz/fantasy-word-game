@@ -15,8 +15,8 @@
     border: none;
     animation: none;
     /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-screen, boss-mode-screen과 동일) */
-    width: 90%;
-    max-width: min(90%, var(--title-container-width, 95vw));
+    width: 81%;
+    max-width: min(81%, var(--title-container-width, 95vw));
     max-height: min(var(--title-container-height, 95vh), 85vh);
     box-sizing: border-box;
     overflow-y: auto;
@@ -45,7 +45,7 @@
 
 /* Setting Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일) */
 #setting-panel .card.rpg-panel .panel-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: var(--gold, #FFD700);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -59,7 +59,7 @@
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
     font-weight: 900;
-    font-size: clamp(16px, 4.2vw, 20px);
+    font-size: clamp(14px, 3.5vw, 16px);
     letter-spacing: 0.5px;
     box-shadow:
         0 10px 28px rgba(0,0,0,0.55),
@@ -116,7 +116,7 @@
     border-radius: 6px;
     text-align: center;
     line-height: 40px;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: bold;
     color: var(--primary);
 }
@@ -137,7 +137,7 @@
     background: #111;
     padding: 10px;
     border-radius: 8px;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     color: var(--gold);
     margin-bottom: 15px;
@@ -152,7 +152,7 @@
 }
 
 .gold-arrow {
-    font-size: 24px;
+    font-size: 18px;
     background: none;
     border: none;
     color: var(--primary);

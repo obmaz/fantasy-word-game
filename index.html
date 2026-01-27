@@ -238,22 +238,22 @@
     </div>
 
     <!-- Battle Mode Selection Modal -->
-    <div id="battle-mode-setting-modal" class="screen-overlay" style="display:none;">
+    <div id="battle-mode-modal" class="screen-overlay" style="display:none;">
         <div class="modal-container-wrapper">
-            <img src="images/battle_mode/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="modal-background" id="battle-mode-setting-modal-background-img" />
+            <img src="images/battle_mode/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="modal-background" id="battle-mode-modal-background-img" />
             <div class="modal-buttons-overlay">
                 <!-- 모험 지역 드롭박스 영역 -->
-                <select id="battle-mode-setting-modal-day-select" class="modal-select modal-day-select"></select>
+                <select id="battle-mode-modal-day-select" class="modal-select modal-day-select"></select>
                 
                 <!-- 난이도 드롭박스 영역 -->
-                <select id="battle-mode-setting-modal-count-select" class="modal-select modal-count-select">
+                <select id="battle-mode-modal-count-select" class="modal-select modal-count-select">
                     <option value="5">5 마리 (쉬움)</option>
                     <option value="10" selected>10 마리 (보통)</option>
                     <option value="20">20 마리 (어려움)</option>
                 </select>
                 
                 <!-- 문제 타입 라디오 버튼 (Battle Mode 전용) -->
-                <div id="battle-mode-setting-modal-question-type-group" class="modal-radio-group">
+                <div id="battle-mode-modal-question-type-group" class="modal-radio-group">
                     <label class="modal-radio-label">
                         <input type="radio" name="battle-question-type" value="objective" class="modal-radio">
                         <span class="modal-radio-text">객관식</span>
@@ -269,10 +269,10 @@
                 </div>
                 
                 <!-- 시작하기 버튼 영역 -->
-                <button class="modal-btn-area" id="battle-mode-setting-modal-start-btn" title="시작하기"></button>
+                <button class="modal-btn-area" id="battle-mode-modal-start-btn" title="시작하기"></button>
                 
                 <!-- 취소 버튼 영역 -->
-                <button class="modal-btn-area" id="battle-mode-setting-modal-cancel-btn" title="취소"></button>
+                <button class="modal-btn-area" id="battle-mode-modal-cancel-btn" title="취소"></button>
             </div>
         </div>
     </div>
@@ -317,10 +317,10 @@
         </div>
     </div>
 
-    <!-- Battle Mode Screen (battle 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
+    <!-- Battle Mode Screen (battle 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="battle-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/battle_mode/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
+            <img src="images/battle_mode/battle_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="battle-mode-start-btn" title="모험 시작"></button>
@@ -334,10 +334,10 @@
         </div>
     </div>
 
-    <!-- Boss Mode Screen (boss 모드용) - boss_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
+    <!-- Boss Mode Screen (boss 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
     <div id="boss-mode-screen" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
-            <img src="images/battle_mode/boss_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
+            <img src="images/battle_mode/battle_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
             <div class="story-buttons-overlay">
                 <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
                 <button class="story-btn-area" id="boss-mode-start-btn" title="모험 시작"></button>
@@ -602,7 +602,7 @@
             const battleModeStoryScreen = document.getElementById('battle-mode-screen');
             const bossStoryScreen = document.getElementById('boss-mode-screen');
             const practiceModeModal = document.getElementById('practice-mode-modal');
-            const battleModeModal = document.getElementById('battle-mode-setting-modal');
+            const battleModeModal = document.getElementById('battle-mode-modal');
             const resultScreen = document.getElementById('result-panel');
             const practiceMemorizationScreen = document.getElementById('practice-mode-game');
             

@@ -8,7 +8,7 @@
     top: calc(var(--modal-img-height, 100%) * 0.12);
     left: 50%;
     transform: translateX(-50%);
-    font-size: 18px; /* setting 타이틀과 동일한 크기 */
+    font-size: 20px; /* 통계 패널 타이틀과 동일한 크기 */
     font-weight: bold;
     color: var(--gold, #FFD700);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);

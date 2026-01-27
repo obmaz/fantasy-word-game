@@ -23,7 +23,7 @@
 
 /* 모든 모달에 동일한 블러 효과 보장 */
 #practice-mode-modal,
-#battle-mode-setting-modal,
+#battle-mode-modal,
 #battle-mode-screen,
 #boss-mode-screen,
 #shop-panel,
@@ -138,7 +138,7 @@
     transform: scale(1.05) !important;
 }
 
-/* 보스 모드 버튼 위치 (boss_mode_popup.webp의 "모험 시작" 버튼 영역) */
+/* 보스 모드 버튼 위치 (battle_mode_popup.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.boss-mode-btn {
     /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
     width: calc(var(--story-img-width, 100%) * 0.7);       /* 너비 (이미지 너비의 70%) */
@@ -317,7 +317,7 @@
     background: #1E1E1E;
     color: #FFD54F;
     padding: 10px;
-    font-size: 18px;
+    font-size: 15px;
     white-space: normal !important;
     overflow: visible !important;
     text-overflow: clip !important;
@@ -410,7 +410,7 @@
     background: rgba(30, 30, 30, 0.7);
     border: 2px solid rgba(255, 213, 79, 0.4);
     color: var(--primary);
-    font-size: clamp(14px, 2vw, 16px);
+    font-size: clamp(14px, 3.5vw, 14px);
     font-weight: bold;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     white-space: nowrap;

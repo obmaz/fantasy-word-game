@@ -15,8 +15,8 @@
     border: none;
     animation: none;
     /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-screen, boss-mode-screen과 동일) */
-    width: 90%;
-    max-width: min(90%, var(--title-container-width, 95vw));
+    width: 81%;
+    max-width: min(81%, var(--title-container-width, 95vw));
     max-height: min(var(--title-container-height, 95vh), 85vh);
     box-sizing: border-box;
     overflow-y: auto;
@@ -45,7 +45,7 @@
 
 /* Inventory Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일) */
 #inventory-panel .card.rpg-panel .panel-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: var(--gold, #FFD700);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -78,7 +78,9 @@
     flex-shrink: 0;
     z-index: 30;
     width: 100%;
-    margin-top: 12px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
     cursor: pointer;
 }
 
@@ -127,7 +129,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 30px;
+    font-size: 15px;
 }
 
 .inv-body {
@@ -165,7 +167,7 @@
 .inv-section-title {
     width: 100%;
     text-align: left;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: bold;
     color: rgba(255, 214, 120, 0.98);
     text-shadow:
@@ -217,7 +219,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 30px;
+    font-size: 15px;
     cursor: pointer;
 }
 
@@ -250,11 +252,11 @@
 }
 
 #detail-icon {
-    font-size: 30px;
+    font-size: 15px;
 }
 
 #detail-name {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
     flex-grow: 1;
 }
@@ -263,7 +265,7 @@
     background: none;
     border: none;
     color: #888;
-    font-size: 20px;
+    font-size: 15px;
     cursor: pointer;
 }
 
@@ -276,7 +278,7 @@
 #detail-actions button {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .relic-item {

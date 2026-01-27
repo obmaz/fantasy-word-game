@@ -41,7 +41,7 @@ fantasy-word-game/
 │   │   ├── monster_1.webp            # Monster sprite 1
 │   │   ├── monster_2.webp            # Monster sprite 2
 │   │   ├── monster_3.webp            # Monster sprite 3
-│   │   ├── boss_mode_popup.webp      # Story screen background (used for all modes: practice, battle, boss)
+│   │   ├── battle_mode_popup.webp      # Story screen background (used for all modes: practice, battle, boss)
 │   │   ├── battle_mode_select_popup.webp    # Battle mode settings popup
 │   │   └── practice_mode_select_popup .webp # Practice mode settings popup
 │   ├── title/                        # Title screen images
