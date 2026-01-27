@@ -884,8 +884,8 @@ const story = {
 
         // Prefer the Day label from the canonical catalog; fall back to legacy views
         const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'boss' ? '보스 모드' : `Day ${story.day}`));
-        const _t = data && data.title ? String(data.title).trim() : '';
-        const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
+        const titleText = data && data.title ? String(data.title).trim() : '';
+        const displayTitle = (titleText && dayLabel.indexOf(titleText) === -1) ? `${dayLabel} — ${titleText}` : dayLabel;
 
         // start-screen을 닫지 않고 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
         const startScreen = document.getElementById('start-screen');
@@ -1081,82 +1081,6 @@ const story = {
     }
 };
 
-// safety helpers — cleanup and runtime sanity checks (kept top-level for easy console access)
-// 개발/디버깅용 함수들 - HTML에 #story-title 요소가 없으므로 비활성화됨
-// 필요시 주석을 해제하고 HTML에 해당 요소를 추가하면 사용 가능
-/*
-function __purgeDuplicateStoryTitle(opts = {}) {
-    try {
-        const hard = opts.hard === undefined ? true : !!opts.hard;
-        const els = Array.from(document.querySelectorAll('#story-title'));
-        if (els.length <= 1) return { removed: 0, kept: els.length };
-        const canonical = els[0];
-        window.__removedStoryTitleBackups = window.__removedStoryTitleBackups || [];
-        let removed = 0;
-        els.slice(1).forEach(e => {
-            try { window.__removedStoryTitleBackups.push({ html: e.outerHTML, time: Date.now() }); } catch (ignore) { }
-            if (hard) e.remove(); else { e.style.display = 'none'; e.dataset._hiddenBy = '__purgeDuplicateStoryTitle'; }
-            removed++;
-        });
-        console.info('[__purgeDuplicateStoryTitle] removed duplicates:', removed, 'kept: 1');
-        setTimeout(() => { window.__removedStoryTitleBackups = (window.__removedStoryTitleBackups || []).filter(b => (Date.now() - b.time) < 30000); }, 31000);
-        return { removed, kept: 1 };
-    } catch (err) {
-        console.error('[__purgeDuplicateStoryTitle] error', err);
-        return { removed: 0, kept: (document.querySelectorAll('#story-title') || []).length };
-    }
-}
-
-function __runGameSanityChecks(opts = {}) {
-    const sample = opts.sampleDays || [1, 40, 55, 60];
-    const out = { summary: {}, failures: [] };
-    try {
-        sample.forEach(d => {
-            const dayKey = String(d);
-            const row = { day: d, ok: true, notes: [] };
-
-            const s = (typeof resolveStoryData === 'function') ? resolveStoryData(dayKey) : null;
-            if (!s || !s.title) { row.ok = false; row.notes.push('missing story/title'); }
-
-            const pool = (typeof rawData !== 'undefined') ? rawData.filter(r => Number(r.day) === Number(d)) : [];
-            if (!pool || pool.length === 0) row.notes.push('rawData pool empty');
-
-            let spriteNormal = null, spriteBoss = null;
-            try { spriteNormal = pickMonsterSprite(d, false); spriteBoss = pickMonsterSprite(d, true); } catch (e) { row.notes.push('sprite fn threw'); row.ok = false; }
-            if (!spriteNormal || typeof spriteNormal !== 'string') row.notes.push('missing normal sprite');
-            if (!spriteBoss || typeof spriteBoss !== 'string') row.notes.push('missing boss sprite');
-
-            const label = (typeof dayCatalog !== 'undefined' && dayCatalog[dayKey] && dayCatalog[dayKey].label) ? dayCatalog[dayKey].label : `Day ${day}`;
-            const _st = s && s.title ? String(s.title).trim() : '';
-            const displayTitle = (_st && String(label).indexOf(_st) === -1) ? `${label} — ${_st}` : label;
-
-            try {
-                // non-destructive title check: write & read back
-                const orig = (document.getElementById('story-title') || {}).innerText;
-                const el = document.getElementById('story-title');
-                if (el) { el.innerText = displayTitle; const shown = el.innerText || null; if (!shown || String(shown).indexOf(label) === -1) { row.ok = false; row.notes.push('title render mismatch'); } el.innerText = orig; }
-                else { row.ok = false; row.notes.push('no #story-title element'); }
-            } catch (e) { row.ok = false; row.notes.push('title render threw'); }
-
-            out.summary[dayKey] = row;
-            if (!row.ok || row.notes.length) out.failures.push(row);
-        });
-
-        out.passed = out.failures.length === 0;
-        console.group('[__runGameSanityChecks] report');
-        console.log('sampleDays:', sample);
-        Object.entries(out.summary).forEach(([k, v]) => console.log(k, v));
-        if (out.passed) console.log('Sanity checks PASSED ✅'); else console.warn('Sanity checks found issues — inspect failures');
-        console.groupEnd();
-    } catch (err) {
-        console.error('[__runGameSanityChecks] unexpected error', err);
-        out.error = String(err);
-    }
-    // convenience alias from console - 비활성화됨 (HTML에 #story-title 요소 없음)
-    // window.runGameSanityTest = () => __runGameSanityChecks(opts);
-    return out;
-}
-*/
 
 // 4. GAME Logic
 const game = {
