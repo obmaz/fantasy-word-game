@@ -887,10 +887,11 @@ const story = {
         const _t = data && data.title ? String(data.title).trim() : '';
         const displayTitle = (_t && dayLabel.indexOf(_t) === -1) ? `${dayLabel} — ${_t}` : dayLabel;
 
-        // start-screen을 닫지 않고 z-index만 조정하여 backdrop-filter가 작동하도록 함
+        // start-screen을 닫지 않고 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
         const startScreen = document.getElementById('start-screen');
         if (startScreen) {
             startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
+            startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
         }
         
         // 다른 story-screen 닫기
@@ -3159,10 +3160,11 @@ function openBattleModeModal() {
         });
     }
     
-    // start-screen의 z-index 조정하여 backdrop-filter가 작동하도록 함
+    // start-screen의 z-index와 display 조정하여 backdrop-filter가 작동하도록 함
     const startScreen = document.getElementById('start-screen');
     if (startScreen) {
         startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
+        startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
     }
     
     modal.style.display = 'flex';
