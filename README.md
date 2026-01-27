@@ -10,7 +10,7 @@ fantasy-word-game/
 ├── styles/
 │   ├── variables.css                  # CSS variables and global styles
 │   ├── animations.css                 # Animation definitions
-│   ├── title.css                      # Title screen styles
+│   ├── title-screen.css               # Title screen styles
 │   ├── battle-mode-game.css           # Battle mode game screen styles
 │   ├── practice-mode-game.css         # Practice mode game screen styles
 │   ├── buttons.css                    # Button styles
@@ -205,7 +205,7 @@ fantasy-word-game/
   - All UI elements use viewport-relative units (vw) for consistent aspect ratio
   - Desktop displays show the same mobile layout scaled up proportionally
 - **Backdrop Filters**: Blur effects applied to modals and screens for visual depth
-- **Z-index Management**: Proper layering system (start-screen: 100, modals: 200, result: 300)
+- **Z-index Management**: Proper layering system (title-screen: 100, modals: 200, result: 300)
 
 ### Image-Based UI
 - The game uses image-based UI elements with precise button mapping
@@ -240,7 +240,7 @@ fantasy-word-game/
 ### Styles
 - `variables.css`: CSS variables and global styles with responsive font sizing
 - `animations.css`: Animation keyframes and transitions
-- `title.css`: Title screen layout and styling
+- `title-screen.css`: Title screen layout and styling
 - `battle-mode-game.css`: Battle mode game screen layout and battle arena
 - `practice-mode-game.css`: Practice mode game screen (memorization) layout
 - `buttons.css`: Button styles for all game modes

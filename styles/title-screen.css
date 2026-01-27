@@ -2,7 +2,7 @@
    TITLE SCREEN STYLES
    ============================================ */
 
-#start-screen {
+#title-screen {
     background: #000;
     position: absolute; /* absolute로 변경하여 팝업과 같은 stacking context에 위치 */
     top: 0;
@@ -305,7 +305,7 @@
     width: 90%;
 }
 
-#start-screen .card::before {
+#title-screen .card::before {
     content: '';
     position: absolute;
     top: -2px;
@@ -319,7 +319,7 @@
     animation: borderPulse 2s ease-in-out infinite;
 }
 
-#start-screen .card h1 {
+#title-screen .card h1 {
     font-family: 'Cinzel', serif;
     font-size: 3rem;
     color: transparent;

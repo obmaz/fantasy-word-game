@@ -105,7 +105,7 @@ const db = {
 };
 const inventory = {
     open: () => {
-        // start-screen은 숨기지 않고 모달만 표시
+        // title-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('inventory-panel', true);
         history.pushState({ screen: 'inventory' }, '', window.location.href);
         inventory.hideDetails(); // Hide details on open
@@ -120,7 +120,7 @@ const inventory = {
     },
     close: () => {
         closeScreenOverlay('inventory-panel', true);
-        // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
+        // title-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
     render: () => {
@@ -413,14 +413,14 @@ const inventory = {
 
 const shop = {
     open: () => {
-        // start-screen은 숨기지 않고 모달만 표시
+        // title-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('shop-panel', true);
         history.pushState({ screen: 'shop' }, '', window.location.href);
         shop.render();
     },
     close: () => {
         closeScreenOverlay('shop-panel', true);
-        // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
+        // title-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
     render: () => {
@@ -506,14 +506,14 @@ const shop = {
 
 const statistics = {
     open: () => {
-        // start-screen은 숨기지 않고 모달만 표시
+        // title-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('statistics-panel', true);
         history.pushState({ screen: 'statistics' }, '', window.location.href);
         statistics.render();
     },
     close: () => {
         closeScreenOverlay('statistics-panel', true);
-        // start-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
+        // title-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
     render: () => {
@@ -889,8 +889,8 @@ const story = {
         const titleText = data && data.title ? String(data.title).trim() : '';
         const displayTitle = (titleText && dayLabel.indexOf(titleText) === -1) ? `${dayLabel} — ${titleText}` : dayLabel;
 
-        // start-screen을 닫지 않고 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
-        const startScreen = document.getElementById('start-screen');
+        // title-screen을 닫지 않고 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
+        const startScreen = document.getElementById('title-screen');
         if (startScreen) {
             startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
             startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
@@ -1786,8 +1786,8 @@ const game = {
             battleModeModal.classList.remove('closing');
         }
         
-        // start-screen이 뒤에 있도록 보장 (backdrop-filter가 작동하도록)
-        const startScreen = document.getElementById('start-screen');
+        // title-screen이 뒤에 있도록 보장 (backdrop-filter가 작동하도록)
+        const startScreen = document.getElementById('title-screen');
         if (startScreen) {
             startScreen.style.display = 'flex';
             startScreen.style.zIndex = '100'; // result-panel(z-index: 300) 뒤에 위치
@@ -1869,7 +1869,7 @@ const secret = {
     previousModal: null, // 비밀번호 모달로 오기 전 모달 추적 (gold-adjuster-modal 또는 gold-edit-modal)
 
     init: () => {
-        const h1 = document.querySelector('#start-screen .card h1');
+        const h1 = document.querySelector('#title-screen .card h1');
         if (h1 && h1.innerText.includes('킹왕짱 RPG')) {
             h1.innerHTML = h1.innerHTML.replace('킹', '<span id="secret-trigger" style="cursor:pointer;">킹</span>');
             document.getElementById('secret-trigger').addEventListener('click', secret.open);
@@ -1885,7 +1885,7 @@ const secret = {
     },
 
     open: () => {
-        // start-screen은 숨기지 않고 모달만 표시
+        // title-screen은 숨기지 않고 모달만 표시
         openScreenOverlay('setting-panel', true);
         // 설정 화면을 바로 표시 (비밀번호 없이)
         document.getElementById('password-modal').style.display = 'none';
@@ -2879,8 +2879,8 @@ const practiceMemorization = {
         setTimeout(() => {
             const memorizationScreen = document.getElementById('practice-mode-game');
             if (memorizationScreen) {
-                // start-screen의 z-index 조정하여 backdrop-filter가 작동하도록 함
-                const startScreen = document.getElementById('start-screen');
+                // title-screen의 z-index 조정하여 backdrop-filter가 작동하도록 함
+                const startScreen = document.getElementById('title-screen');
                 if (startScreen) {
                     startScreen.style.zIndex = '100'; // practice-mode-game(z-index: 200) 뒤에 위치
                 }
@@ -3003,9 +3003,9 @@ const practiceMemorization = {
             // practice-mode-game 닫기
             closeScreenOverlay('practice-mode-game', true);
             
-            // start-screen 표시
+            // title-screen 표시
             setTimeout(() => {
-                const startScreen = document.getElementById('start-screen');
+                const startScreen = document.getElementById('title-screen');
                 if (startScreen) {
                     startScreen.style.display = 'flex';
                     startScreen.classList.remove('closing');
@@ -3142,8 +3142,8 @@ function openBattleModeModal() {
         });
     }
     
-    // start-screen의 z-index와 display 조정하여 backdrop-filter가 작동하도록 함
-    const startScreen = document.getElementById('start-screen');
+    // title-screen의 z-index와 display 조정하여 backdrop-filter가 작동하도록 함
+    const startScreen = document.getElementById('title-screen');
     if (startScreen) {
         startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
         startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
@@ -3767,7 +3767,7 @@ window.onload = () => {
             if (countSelect) countSelect.value = String(selectedCount);
             
             // 시작화면 숨기기 (검정 배경만 보이도록)
-            const startScreen = document.getElementById('start-screen');
+            const startScreen = document.getElementById('title-screen');
             if (startScreen) {
                 startScreen.style.display = 'none';
             }
@@ -3849,7 +3849,7 @@ window.onload = () => {
             if (countSelect) countSelect.value = String(selectedCount);
             
             // 시작화면 숨기기 (검정 배경만 보이도록)
-            const startScreen = document.getElementById('start-screen');
+            const startScreen = document.getElementById('title-screen');
             if (startScreen) {
                 startScreen.style.display = 'none';
             }
@@ -4142,7 +4142,7 @@ window.onload = () => {
         }
         
         setTimeout(() => {
-            openScreenOverlay('start-screen', false);
+            openScreenOverlay('title-screen', false);
             // 랜덤 타이틀 헤더 다시 로딩
             loadRandomTitleHeader();
             // 버튼 오버레이 동기화
