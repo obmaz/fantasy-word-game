@@ -1976,21 +1976,40 @@ const game = {
         // 현재 데이터셋의 rawData 사용
         const currentRawData =
             typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
-        const source =
-            typeof decoyWords !== 'undefined' && decoyWords.length > 0
-                ? currentRawData.concat(decoyWords)
-                : currentRawData;
         const distractors = [];
-        const shuffled = game.shuffle([...source]);
-        for (let i = 0; i < shuffled.length; i++) {
-            if (shuffled[i] && shuffled[i][key] && shuffled[i][key] !== correct) {
-                if (!distractors.includes(shuffled[i][key])) {
-                    distractors.push(shuffled[i][key]);
+        const norm = (v) =>
+            String(v || '')
+                .trim()
+                .toLowerCase();
+        const correctNorm = norm(correct);
+
+        // 추천 방식: 유사 단어 집합(decoyWordsSet)이 있으면 word 보기에서 우선 사용
+        // - 그룹 매핑이 없으면 아래 랜덤 로직으로 fallback 됨
+        if (
+            key === 'word' &&
+            typeof window !== 'undefined' &&
+            typeof window.getDecoyWordCandidates === 'function'
+        ) {
+            const candidates = window.getDecoyWordCandidates(correct) || [];
+            const shuffledCandidates = game.shuffle([...candidates]);
+            for (const c of shuffledCandidates) {
+                const cNorm = norm(c);
+                if (!cNorm || cNorm === correctNorm) continue;
+                if (!distractors.some((d) => norm(d) === cNorm)) {
+                    distractors.push(c);
                 }
-                if (distractors.length >= 3) {
-                    break;
-                }
+                if (distractors.length >= 3) break;
             }
+        }
+        const shuffled = game.shuffle([...currentRawData]);
+        for (let i = 0; i < shuffled.length; i++) {
+            const value = shuffled[i] && shuffled[i][key];
+            const valueNorm = norm(value);
+            if (!valueNorm || valueNorm === correctNorm) continue;
+            if (!distractors.some((d) => norm(d) === valueNorm)) {
+                distractors.push(value);
+            }
+            if (distractors.length >= 3) break;
         }
         // Ensure we have 3 distractors, even if we have to grab randomly
         while (distractors.length < 3) {
@@ -2001,10 +2020,12 @@ const game = {
             if (
                 emergencyDistractor &&
                 emergencyDistractor[key] &&
-                emergencyDistractor[key] !== correct
+                norm(emergencyDistractor[key]) !== correctNorm
             ) {
-                if (!distractors.includes(emergencyDistractor[key])) {
-                    distractors.push(emergencyDistractor[key]);
+                const ev = emergencyDistractor[key];
+                const evNorm = norm(ev);
+                if (evNorm && !distractors.some((d) => norm(d) === evNorm)) {
+                    distractors.push(ev);
                 }
             }
         }
@@ -2580,11 +2601,19 @@ const secret = {
             // 정답을 먼저 추가 (반드시 포함되도록)
             unique.add(correctValue);
 
-            const pools = [
-                primaryPool,
-                currentRawData,
-                typeof decoyWords !== 'undefined' ? decoyWords : [],
-            ];
+            // word 보기에서는 유사 단어 그룹 후보를 먼저 추가 (있으면)
+            if (
+                key === 'word' &&
+                typeof window !== 'undefined' &&
+                typeof window.getDecoyWordCandidates === 'function'
+            ) {
+                const candidates = window.getDecoyWordCandidates(correctValue) || [];
+                candidates.forEach((c) => {
+                    if (c && c !== correctValue) unique.add(c);
+                });
+            }
+
+            const pools = [primaryPool, currentRawData];
 
             // 정답을 제외한 다른 선택지 찾기 (count - 1개만 필요)
             pools.forEach((pool) => {
