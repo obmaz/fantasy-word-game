@@ -2600,6 +2600,7 @@ const secret = {
                 printDaySelect.innerHTML += `<option value="${d}">${label}</option>`;
             });
         }
+
     },
 
     closePrintDaySelect: () => {
@@ -2617,14 +2618,9 @@ const secret = {
             return;
         }
 
-        // 체크박스 상태 확인
-        const objectiveChecked = document.getElementById('print-objective-check')?.checked ?? true;
-        const subjectiveChecked = document.getElementById('print-subjective-check')?.checked ?? true;
-
-        if (!objectiveChecked && !subjectiveChecked) {
-            alert('객관식 또는 주관식 중 하나 이상을 선택해주세요.');
-            return;
-        }
+        // 라디오 버튼에서 선택된 문제 타입 확인
+        const questionTypeRadio = document.querySelector('input[name="print-question-type"]:checked');
+        const questionType = questionTypeRadio ? questionTypeRadio.value : 'mixed';
 
         // 현재 데이터셋의 rawData 사용
         const currentRawData =
@@ -2708,238 +2704,180 @@ const secret = {
             return shuffledOptions.slice(0, count);
         };
 
-        // 객관식/주관식 문제 생성
-        const objectiveQuestions = [];
-        const subjectiveQuestions = [];
+        // 문제 타입에 따라 문제 생성
+        const maxQuestions = Math.min(dayWords.length, 30);
+        let leftQuestions = [];
+        let rightQuestions = [];
+        
+        // 사용된 단어 추적 (중복 방지용)
+        const usedWords = new Set(); // word와 meaning을 모두 추적
 
-        if (objectiveChecked && subjectiveChecked) {
-            // 둘 다 선택: 50%씩 균등 분배
-            const totalCount = Math.min(dayWords.length, 30); // 최대 30개
-            const objectiveCount = Math.floor(totalCount / 2);
-            const subjectiveCount = totalCount - objectiveCount;
-
-            // 객관식 문제 생성 (50%)
-            const objectiveWords = shuffle([...dayWords]).slice(0, objectiveCount);
-            const objectiveHalf = Math.ceil(objectiveWords.length / 2);
-            
-            // 객관식: 한글→영어, 영어→한글 균등 분배
-            objectiveWords.slice(0, objectiveHalf).forEach((item, idx) => {
-                const options = buildObjectiveOptions(item.word, 'word', dayWords);
-                const correctIndex = options.indexOf(item.word);
-                if (correctIndex === -1) {
-                    options[0] = item.word;
-                    objectiveQuestions.push({
-                        type: 'objective-ko-en',
-                        item,
-                        options,
-                        correctIndex: 0,
-                        num: idx + 1,
-                    });
-                } else {
-                    objectiveQuestions.push({
-                        type: 'objective-ko-en',
-                        item,
-                        options,
-                        correctIndex,
-                        num: idx + 1,
-                    });
-                }
-            });
-
-            objectiveWords.slice(objectiveHalf).forEach((item, idx) => {
-                const options = buildObjectiveOptions(item.meaning, 'meaning', dayWords);
-                const correctIndex = options.indexOf(item.meaning);
-                if (correctIndex === -1) {
-                    options[0] = item.meaning;
-                    objectiveQuestions.push({
-                        type: 'objective-en-ko',
-                        item,
-                        options,
-                        correctIndex: 0,
-                        num: objectiveHalf + idx + 1,
-                    });
-                } else {
-                    objectiveQuestions.push({
-                        type: 'objective-en-ko',
-                        item,
-                        options,
-                        correctIndex,
-                        num: objectiveHalf + idx + 1,
-                    });
-                }
-            });
-
-            // 주관식 문제 생성 (50%)
-            const subjectiveWords = shuffle([...dayWords]).slice(0, subjectiveCount);
-            const subjectiveHalf = Math.ceil(subjectiveWords.length / 2);
-            
-            // 주관식: 한글→영어, 영어→한글 균등 분배
-            subjectiveWords.slice(0, subjectiveHalf).forEach((item, idx) => {
-                subjectiveQuestions.push({
-                    type: 'ko-en',
-                    item,
-                    num: idx + 1,
-                });
-            });
-
-            subjectiveWords.slice(subjectiveHalf).forEach((item, idx) => {
-                subjectiveQuestions.push({
-                    type: 'en-ko',
-                    item,
-                    num: subjectiveHalf + idx + 1,
-                });
-            });
-        } else if (objectiveChecked) {
-            // 객관식만 선택: 100% 객관식
-            const objectiveWords = shuffle([...dayWords]).slice(0, Math.min(dayWords.length, 30));
-            const half = Math.ceil(objectiveWords.length / 2);
-            
-            objectiveWords.slice(0, half).forEach((item, idx) => {
-                const options = buildObjectiveOptions(item.word, 'word', dayWords);
-                const correctIndex = options.indexOf(item.word);
-                if (correctIndex === -1) {
-                    options[0] = item.word;
-                    objectiveQuestions.push({
-                        type: 'objective-ko-en',
-                        item,
-                        options,
-                        correctIndex: 0,
-                        num: idx + 1,
-                    });
-                } else {
-                    objectiveQuestions.push({
-                        type: 'objective-ko-en',
-                        item,
-                        options,
-                        correctIndex,
-                        num: idx + 1,
-                    });
-                }
-            });
-
-            objectiveWords.slice(half).forEach((item, idx) => {
-                const options = buildObjectiveOptions(item.meaning, 'meaning', dayWords);
-                const correctIndex = options.indexOf(item.meaning);
-                if (correctIndex === -1) {
-                    options[0] = item.meaning;
-                    objectiveQuestions.push({
-                        type: 'objective-en-ko',
-                        item,
-                        options,
-                        correctIndex: 0,
-                        num: half + idx + 1,
-                    });
-                } else {
-                    objectiveQuestions.push({
-                        type: 'objective-en-ko',
-                        item,
-                        options,
-                        correctIndex,
-                        num: half + idx + 1,
-                    });
-                }
-            });
-        } else if (subjectiveChecked) {
-            // 주관식만 선택: 100% 주관식
-            const subjectiveWords = shuffle([...dayWords]).slice(0, Math.min(dayWords.length, 30));
-            const half = Math.ceil(subjectiveWords.length / 2);
-            
-            subjectiveWords.slice(0, half).forEach((item, idx) => {
-                subjectiveQuestions.push({
-                    type: 'ko-en',
-                    item,
-                    num: idx + 1,
-                });
-            });
-
-            subjectiveWords.slice(half).forEach((item, idx) => {
-                subjectiveQuestions.push({
-                    type: 'en-ko',
-                    item,
-                    num: half + idx + 1,
-                });
-            });
-        }
-        const buildObjectiveOptions = (correctValue, key, primaryPool, count = 4) => {
-            if (!correctValue) {
-                // 정답이 없으면 빈 배열 반환
-                return [];
-            }
-
-            const unique = new Set();
-            // 정답을 먼저 추가 (반드시 포함되도록)
-            unique.add(correctValue);
-
-            // word 보기에서는 유사 단어 그룹 후보를 먼저 추가 (있으면)
-            if (
-                key === 'word' &&
-                typeof window !== 'undefined' &&
-                typeof window.getDecoyWordCandidates === 'function'
-            ) {
-                const candidates = window.getDecoyWordCandidates(correctValue) || [];
-                candidates.forEach((c) => {
-                    if (c && c !== correctValue) unique.add(c);
-                });
-            }
-
-            const pools = [primaryPool, currentRawData];
-
-            // 정답을 제외한 다른 선택지 찾기 (count - 1개만 필요)
-            pools.forEach((pool) => {
-                if (!Array.isArray(pool)) return;
-                const shuffledPool = shuffle([...pool]);
-                for (const item of shuffledPool) {
-                    const value = item && item[key];
-                    if (!value || unique.has(value) || value === correctValue) continue;
-                    unique.add(value);
-                    if (unique.size >= count) break;
-                }
-            });
-
-            const options = Array.from(unique);
-
-            // 정답이 반드시 포함되어 있는지 확인
-            if (!options.includes(correctValue)) {
-                options.push(correctValue);
-            }
-
-            // 선택지가 부족하면 정답을 반복 추가 (최후의 수단)
-            while (options.length < count) {
-                options.push(correctValue);
-            }
-
-            // 정답을 포함한 상태로 섞기
-            const shuffled = shuffle([...options]);
-
-            // 정답이 반드시 포함되도록 보장
-            if (!shuffled.slice(0, count).includes(correctValue)) {
-                // 정답이 없으면 마지막 항목을 정답으로 교체
-                const correctIdx = shuffled.indexOf(correctValue);
-                if (correctIdx >= 0) {
-                    // 정답이 count 범위 밖에 있으면 마지막 항목과 교체
-                    [shuffled[count - 1], shuffled[correctIdx]] = [
-                        shuffled[correctIdx],
-                        shuffled[count - 1],
-                    ];
-                } else {
-                    // 정답이 아예 없으면 마지막 항목을 정답으로 교체
-                    shuffled[count - 1] = correctValue;
-                }
-            }
-
-            return shuffled.slice(0, count);
+        // 단어가 이미 사용되었는지 확인
+        const isWordUsed = (item) => {
+            return usedWords.has(item.word) || usedWords.has(item.meaning);
         };
 
-        // 문제를 좌우로 나누기: 객관식 좌측, 주관식 우측
-        // 문제 번호 재매기기
-        const leftQuestions = objectiveQuestions.map((q, idx) => ({ ...q, num: idx + 1 }));
-        const rightQuestions = subjectiveQuestions.map((q, idx) => ({ ...q, num: idx + 1 }));
+        // 단어를 사용된 것으로 표시
+        const markWordAsUsed = (item) => {
+            usedWords.add(item.word);
+            usedWords.add(item.meaning);
+        };
+
+        // 문제 생성 헬퍼 함수
+        const createObjectiveQuestion = (item, isKoEn) => {
+            const key = isKoEn ? 'word' : 'meaning';
+            const correctValue = item[key];
+            const options = buildObjectiveOptions(correctValue, key, dayWords);
+            const correctIndex = options.indexOf(correctValue);
+            const type = isKoEn ? 'objective-ko-en' : 'objective-en-ko';
+            
+            if (correctIndex === -1) {
+                options[0] = correctValue;
+                return { type, item, options, correctIndex: 0 };
+            }
+            return { type, item, options, correctIndex };
+        };
+
+        const createSubjectiveQuestion = (item, isKoEn) => {
+            return { type: isKoEn ? 'ko-en' : 'en-ko', item };
+        };
+
+        // 사용 가능한 단어 필터링
+        const getAvailableWords = (words) => {
+            return words.filter(item => !isWordUsed(item));
+        };
+
+        if (questionType === 'mixed') {
+            // 혼합형: 좌측 객관식, 우측 주관식 (50%씩)
+            const objectiveCount = Math.floor(maxQuestions / 2);
+            const subjectiveCount = maxQuestions - objectiveCount;
+
+            // 좌측: 객관식 문제
+            let availableWords = getAvailableWords(shuffle([...dayWords]));
+            const objectiveWords = availableWords.slice(0, objectiveCount);
+            objectiveWords.forEach(item => markWordAsUsed(item));
+            
+            const objHalf = Math.ceil(objectiveWords.length / 2);
+            objectiveWords.slice(0, objHalf).forEach((item, idx) => {
+                leftQuestions.push({ ...createObjectiveQuestion(item, true), num: idx + 1 });
+            });
+            objectiveWords.slice(objHalf).forEach((item, idx) => {
+                leftQuestions.push({ ...createObjectiveQuestion(item, false), num: objHalf + idx + 1 });
+            });
+
+            // 우측: 주관식 문제 (이미 사용된 단어 제외)
+            availableWords = getAvailableWords(shuffle([...dayWords]));
+            const subjectiveWords = availableWords.slice(0, subjectiveCount);
+            subjectiveWords.forEach(item => markWordAsUsed(item));
+            
+            const subHalf = Math.ceil(subjectiveWords.length / 2);
+            const rightStartNum = leftQuestions.length + 1;
+            subjectiveWords.slice(0, subHalf).forEach((item, idx) => {
+                rightQuestions.push({ ...createSubjectiveQuestion(item, true), num: rightStartNum + idx });
+            });
+            subjectiveWords.slice(subHalf).forEach((item, idx) => {
+                rightQuestions.push({ ...createSubjectiveQuestion(item, false), num: rightStartNum + subHalf + idx });
+            });
+        } else if (questionType === 'objective') {
+            // 객관식만: 좌우 모두 객관식
+            let availableWords = getAvailableWords(shuffle([...dayWords]));
+            const words = availableWords.slice(0, maxQuestions);
+            words.forEach(item => markWordAsUsed(item));
+            
+            const leftHalf = Math.floor(words.length / 2);
+            const rightHalf = words.length - leftHalf;
+            
+            // 좌측: words의 절반
+            const leftWords = words.slice(0, leftHalf);
+            const leftKoEnCount = Math.ceil(leftWords.length / 2);
+            leftWords.slice(0, leftKoEnCount).forEach((item, idx) => {
+                leftQuestions.push({ ...createObjectiveQuestion(item, true), num: idx + 1 });
+            });
+            leftWords.slice(leftKoEnCount).forEach((item, idx) => {
+                leftQuestions.push({ ...createObjectiveQuestion(item, false), num: leftKoEnCount + idx + 1 });
+            });
+
+            // 우측: words의 나머지 절반
+            const rightWordsFromLeft = words.slice(leftHalf);
+            const rightKoEnCount = Math.ceil(rightWordsFromLeft.length / 2);
+            const rightStartNum = leftQuestions.length + 1;
+            rightWordsFromLeft.slice(0, rightKoEnCount).forEach((item, idx) => {
+                rightQuestions.push({ ...createObjectiveQuestion(item, true), num: rightStartNum + idx });
+            });
+            rightWordsFromLeft.slice(rightKoEnCount).forEach((item, idx) => {
+                rightQuestions.push({ ...createObjectiveQuestion(item, false), num: rightStartNum + rightKoEnCount + idx });
+            });
+
+            // 우측에 추가 단어가 필요하면 새로운 단어 추가
+            if (rightQuestions.length < rightHalf) {
+                availableWords = getAvailableWords(shuffle([...dayWords]));
+                const additionalWords = availableWords.slice(0, rightHalf - rightQuestions.length);
+                additionalWords.forEach(item => markWordAsUsed(item));
+                
+                const addKoEnCount = Math.ceil(additionalWords.length / 2);
+                const addStartNum = leftQuestions.length + rightQuestions.length + 1;
+                additionalWords.slice(0, addKoEnCount).forEach((item, idx) => {
+                    rightQuestions.push({ ...createObjectiveQuestion(item, true), num: addStartNum + idx });
+                });
+                additionalWords.slice(addKoEnCount).forEach((item, idx) => {
+                    rightQuestions.push({ ...createObjectiveQuestion(item, false), num: addStartNum + addKoEnCount + idx });
+                });
+            }
+        } else if (questionType === 'subjective') {
+            // 주관식만: 좌우 모두 주관식
+            let availableWords = getAvailableWords(shuffle([...dayWords]));
+            const words = availableWords.slice(0, maxQuestions);
+            words.forEach(item => markWordAsUsed(item));
+            
+            const leftHalf = Math.floor(words.length / 2);
+            const rightHalf = words.length - leftHalf;
+            
+            // 좌측: words의 절반
+            const leftWords = words.slice(0, leftHalf);
+            const leftKoEnCount = Math.ceil(leftWords.length / 2);
+            leftWords.slice(0, leftKoEnCount).forEach((item, idx) => {
+                leftQuestions.push({ ...createSubjectiveQuestion(item, true), num: idx + 1 });
+            });
+            leftWords.slice(leftKoEnCount).forEach((item, idx) => {
+                leftQuestions.push({ ...createSubjectiveQuestion(item, false), num: leftKoEnCount + idx + 1 });
+            });
+
+            // 우측: words의 나머지 절반
+            const rightWordsFromLeft = words.slice(leftHalf);
+            const rightKoEnCount = Math.ceil(rightWordsFromLeft.length / 2);
+            const rightStartNum = leftQuestions.length + 1;
+            rightWordsFromLeft.slice(0, rightKoEnCount).forEach((item, idx) => {
+                rightQuestions.push({ ...createSubjectiveQuestion(item, true), num: rightStartNum + idx });
+            });
+            rightWordsFromLeft.slice(rightKoEnCount).forEach((item, idx) => {
+                rightQuestions.push({ ...createSubjectiveQuestion(item, false), num: rightStartNum + rightKoEnCount + idx });
+            });
+
+            // 우측에 추가 단어가 필요하면 새로운 단어 추가
+            if (rightQuestions.length < rightHalf) {
+                availableWords = getAvailableWords(shuffle([...dayWords]));
+                const additionalWords = availableWords.slice(0, rightHalf - rightQuestions.length);
+                additionalWords.forEach(item => markWordAsUsed(item));
+                
+                const addKoEnCount = Math.ceil(additionalWords.length / 2);
+                const addStartNum = leftQuestions.length + rightQuestions.length + 1;
+                additionalWords.slice(0, addKoEnCount).forEach((item, idx) => {
+                    rightQuestions.push({ ...createSubjectiveQuestion(item, true), num: addStartNum + idx });
+                });
+                additionalWords.slice(addKoEnCount).forEach((item, idx) => {
+                    rightQuestions.push({ ...createSubjectiveQuestion(item, false), num: addStartNum + addKoEnCount + idx });
+                });
+            }
+        }
 
         // Day 정보 가져오기
         const dayLabel =
             dayCatalog && dayCatalog[selectedDay] && dayCatalog[selectedDay].label
                 ? dayCatalog[selectedDay].label
                 : `Day ${selectedDay}`;
+
+        // 총 문제 수 계산
+        const totalQuestionCount = leftQuestions.length + rightQuestions.length;
 
         // 문제 페이지 HTML 생성 (좌우 2열)
         let questionsHTML = '<div class="print-columns">';
@@ -2955,8 +2893,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line">________________</div>
+                            <div class="question-text">${q.item.meaning} <span class="answer-underline"></span></div>
                         </div>
                     </div>
                 `;
@@ -2964,8 +2901,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line answer"><strong>${q.item.word}</strong></div>
+                            <div class="question-text">${q.item.meaning} <strong>${q.item.word}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2974,8 +2910,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line">________________</div>
+                            <div class="question-text">${q.item.word} <span class="answer-underline"></span></div>
                         </div>
                     </div>
                 `;
@@ -2983,8 +2918,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line answer"><strong>${q.item.meaning}</strong></div>
+                            <div class="question-text">${q.item.word} <strong>${q.item.meaning}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2997,12 +2931,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map(
-                                        (opt, idx) =>
-                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
-                                    )
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[0]} ${q.options[0]}</div>
+                                    <div class="option-item">${optionLabels[1]} ${q.options[1]}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[2]} ${q.options[2]}</div>
+                                    <div class="option-item">${optionLabels[3]} ${q.options[3]}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3013,16 +2949,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map((opt, idx) => {
-                                        const isCorrect = idx === q.correctIndex;
-                                        return `<div class="option-item ${
-                                            isCorrect ? 'correct' : ''
-                                        }">${optionLabels[idx]} ${opt}${
-                                            isCorrect ? ' ✓' : ''
-                                        }</div>`;
-                                    })
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3036,12 +2970,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map(
-                                        (opt, idx) =>
-                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
-                                    )
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[0]} ${q.options[0]}</div>
+                                    <div class="option-item">${optionLabels[1]} ${q.options[1]}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[2]} ${q.options[2]}</div>
+                                    <div class="option-item">${optionLabels[3]} ${q.options[3]}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3052,16 +2988,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map((opt, idx) => {
-                                        const isCorrect = idx === q.correctIndex;
-                                        return `<div class="option-item ${
-                                            isCorrect ? 'correct' : ''
-                                        }">${optionLabels[idx]} ${opt}${
-                                            isCorrect ? ' ✓' : ''
-                                        }</div>`;
-                                    })
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3082,8 +3016,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line">________________</div>
+                            <div class="question-text">${q.item.meaning} <span class="answer-underline"></span></div>
                         </div>
                     </div>
                 `;
@@ -3091,8 +3024,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning}</div>
-                            <div class="answer-line answer"><strong>${q.item.word}</strong></div>
+                            <div class="question-text">${q.item.meaning} <strong>${q.item.word}</strong></div>
                         </div>
                     </div>
                 `;
@@ -3101,8 +3033,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line">________________</div>
+                            <div class="question-text">${q.item.word} <span class="answer-underline"></span></div>
                         </div>
                     </div>
                 `;
@@ -3110,8 +3041,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word}</div>
-                            <div class="answer-line answer"><strong>${q.item.meaning}</strong></div>
+                            <div class="question-text">${q.item.word} <strong>${q.item.meaning}</strong></div>
                         </div>
                     </div>
                 `;
@@ -3124,12 +3054,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map(
-                                        (opt, idx) =>
-                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
-                                    )
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[0]} ${q.options[0]}</div>
+                                    <div class="option-item">${optionLabels[1]} ${q.options[1]}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[2]} ${q.options[2]}</div>
+                                    <div class="option-item">${optionLabels[3]} ${q.options[3]}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3140,16 +3072,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map((opt, idx) => {
-                                        const isCorrect = idx === q.correctIndex;
-                                        return `<div class="option-item ${
-                                            isCorrect ? 'correct' : ''
-                                        }">${optionLabels[idx]} ${opt}${
-                                            isCorrect ? ' ✓' : ''
-                                        }</div>`;
-                                    })
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3163,12 +3093,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map(
-                                        (opt, idx) =>
-                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
-                                    )
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[0]} ${q.options[0]}</div>
+                                    <div class="option-item">${optionLabels[1]} ${q.options[1]}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">${optionLabels[2]} ${q.options[2]}</div>
+                                    <div class="option-item">${optionLabels[3]} ${q.options[3]}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3179,16 +3111,14 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options
-                                    .map((opt, idx) => {
-                                        const isCorrect = idx === q.correctIndex;
-                                        return `<div class="option-item ${
-                                            isCorrect ? 'correct' : ''
-                                        }">${optionLabels[idx]} ${opt}${
-                                            isCorrect ? ' ✓' : ''
-                                        }</div>`;
-                                    })
-                                    .join('')}
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3238,6 +3168,7 @@ const secret = {
             border-bottom: 2px solid #333;
             padding-bottom: 8px;
             flex-shrink: 0;
+            position: relative;
         }
         .print-header h1 {
             margin: 0;
@@ -3248,6 +3179,25 @@ const secret = {
             margin-top: 4px;
             font-size: 11pt;
             color: #666;
+        }
+        .print-header .score-box {
+            position: absolute;
+            top: 2.5em;
+            right: 0;
+            font-size: 12pt;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .print-header .score-input {
+            border: none;
+            padding: 2px 8px;
+            min-width: 50px;
+            text-align: center;
+            font-size: 12pt;
+            background: transparent;
+            display: inline-block;
+            text-decoration: none;
         }
         .print-columns {
             display: flex;
@@ -3271,14 +3221,22 @@ const secret = {
             page-break-inside: avoid;
             flex-shrink: 0;
         }
+        /* 객관식과 주관식 print-question 높이 통일 */
+        .print-question:has(.objective-options),
+        .print-question:has(.answer-underline) {
+            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
+        }
         .question-number {
             font-weight: bold;
             margin-right: 8px;
             min-width: 25px;
             font-size: 10pt;
+            line-height: 1.5;
         }
         .question-content {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .question-label {
             font-size: 9pt;
@@ -3290,6 +3248,8 @@ const secret = {
             font-weight: bold;
             margin-bottom: 4px;
             color: #333;
+            text-decoration: none;
+            line-height: 1.5;
         }
         .answer-line {
             font-size: 10pt;
@@ -3304,13 +3264,49 @@ const secret = {
         .answer-line.answer strong {
             color: #1976D2;
         }
+        /* 주관식 밑줄 - 간결하게 */
+        .answer-underline {
+            display: inline-block;
+            min-width: 120px;
+            margin-left: 4px;
+            text-decoration: none;
+            vertical-align: baseline;
+        }
+        .answer-underline.answer {
+            border-bottom: none;
+        }
+        .answer-underline.answer strong {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        /* 주관식 문제 높이를 객관식과 동일하게 */
+        .question-text:has(.answer-underline) {
+            margin-bottom: 0;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+        }
         .objective-options {
             margin-top: 6px;
+            min-height: 2.5em;
+        }
+        /* 객관식과 주관식 question-content 높이 통일 */
+        .question-content:has(.objective-options) {
+            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
+        }
+        .question-content:has(.answer-underline) {
+            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
+        }
+        .option-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 4px;
         }
         .option-item {
             font-size: 10pt;
-            margin-bottom: 4px;
+            margin: 0;
             padding: 3px 0;
+            flex: 1;
         }
         .option-item.correct {
             color: #2196F3;
@@ -3332,6 +3328,11 @@ const secret = {
     <!-- 문제만 페이지 -->
     <div class="print-page">
         <div class="print-header">
+            <div class="score-box">
+                <span class="score-input"></span>
+                <span>/</span>
+                <span>${totalQuestionCount}</span>
+            </div>
             <h1>단어 문제</h1>
             <div class="day-info">${dayLabel}</div>
         </div>
@@ -3341,6 +3342,11 @@ const secret = {
     <!-- 문제 + 정답 페이지 -->
     <div class="print-page">
         <div class="print-header">
+            <div class="score-box">
+                <span class="score-input"></span>
+                <span>/</span>
+                <span>${totalQuestionCount}</span>
+            </div>
             <h1>단어 문제 및 정답</h1>
             <div class="day-info">${dayLabel}</div>
         </div>
