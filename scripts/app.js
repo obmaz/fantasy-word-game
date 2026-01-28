@@ -3206,6 +3206,7 @@ const secret = {
             flex: 1;
             overflow: hidden;
             min-height: 0;
+            position: relative;
         }
         .print-column {
             flex: 1;
@@ -3213,6 +3214,15 @@ const secret = {
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+        .print-column:first-child::after {
+            content: '';
+            position: absolute;
+            right: calc(-0.6cm - 0.5px);
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #ccc;
         }
         .print-question {
             margin-bottom: 8px;
