@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
     <head>
         <meta charset="UTF-8" />
@@ -18,11 +18,11 @@
         <link rel="stylesheet" href="styles/battle-mode-story-modal.css" />
         <link rel="stylesheet" href="styles/boss-mode-story-modal.css" />
         <link rel="stylesheet" href="styles/buttons.css" />
-        <link rel="stylesheet" href="styles/shop-panel.css" />
-        <link rel="stylesheet" href="styles/inventory-panel.css" />
-        <link rel="stylesheet" href="styles/statistics-panel.css" />
-        <link rel="stylesheet" href="styles/setting-panel.css" />
-        <link rel="stylesheet" href="styles/result-panel.css" />
+        <link rel="stylesheet" href="styles/shop-modal.css" />
+        <link rel="stylesheet" href="styles/inventory-modal.css" />
+        <link rel="stylesheet" href="styles/statistics-modal.css" />
+        <link rel="stylesheet" href="styles/setting-modal.css" />
+        <link rel="stylesheet" href="styles/result-modal.css" />
     </head>
 
     <body>
@@ -231,8 +231,8 @@
             </button>
         </div>
 
-        <div id="inventory-panel" class="screen-overlay" style="display: none">
-            <div class="card rpg-panel">
+        <div id="inventory-modal" class="screen-overlay" style="display: none">
+            <div class="card rpg-modal">
                 <div id="inv-item-detail" style="display: none">
                     <div id="detail-header">
                         <div id="detail-icon"></div>
@@ -243,8 +243,8 @@
                     <div id="detail-actions"></div>
                 </div>
 
-                <div class="panel-header">
-                    <h2 class="panel-title">인벤토리</h2>
+                <div class="modal-header">
+                    <h2 class="modal-title">인벤토리</h2>
                 </div>
                 <div class="inv-container">
                     <div class="inv-player">
@@ -564,16 +564,16 @@
             </div>
         </div>
 
-        <div id="shop-panel" class="screen-overlay" style="display: none">
-            <div class="card rpg-panel">
-                <div class="panel-header">
-                    <h2 class="panel-title">상점</h2>
+        <div id="shop-modal" class="screen-overlay" style="display: none">
+            <div class="card rpg-modal">
+                <div class="modal-header">
+                    <h2 class="modal-title">상점</h2>
                     <div style="color: var(--gold)">보유 골드: <span id="shop-gold">0</span> G</div>
                 </div>
-                <div class="panel-body">
+                <div class="modal-body">
                     <div id="shop-container" style="text-align: left"></div>
                 </div>
-                <div class="panel-footer">
+                <div class="modal-footer">
                     <img
                         src="images/title/exit_btn.webp"
                         alt="나가기"
@@ -591,15 +591,15 @@
             </div>
         </div>
 
-        <div id="statistics-panel" class="screen-overlay" style="display: none">
-            <div class="card rpg-panel">
-                <div class="panel-header">
-                    <h2 class="panel-title">통계</h2>
+        <div id="statistics-modal" class="screen-overlay" style="display: none">
+            <div class="card rpg-modal">
+                <div class="modal-header">
+                    <h2 class="modal-title">통계</h2>
                 </div>
-                <div class="panel-body">
+                <div class="modal-body">
                     <div id="statistics-container" style="text-align: left"></div>
                 </div>
-                <div class="panel-footer">
+                <div class="modal-footer">
                     <img
                         src="images/title/exit_btn.webp"
                         alt="나가기"
@@ -617,25 +617,25 @@
             </div>
         </div>
 
-        <div id="result-panel" class="screen-overlay" style="display: none">
-            <div class="result-panel" role="dialog" aria-label="결과">
-                <div id="res-title" class="result-panel-title">FINISHED!</div>
+        <div id="result-modal" class="screen-overlay" style="display: none">
+            <div class="result-modal" role="dialog" aria-label="결과">
+                <div id="res-title" class="result-modal-title">FINISHED!</div>
 
-                <div class="result-panel-body">
-                    <div class="result-panel-row">
+                <div class="result-modal-body">
+                    <div class="result-modal-row">
                         <span class="result-label">이번 획득</span>
                         <span class="result-value gold">+<span id="res-gain">0</span> G</span>
                     </div>
-                    <div class="result-panel-row">
+                    <div class="result-modal-row">
                         <span class="result-label">이번 손실</span>
                         <span class="result-value danger">-<span id="res-lost">0</span> G</span>
                     </div>
-                    <div class="result-panel-total">
+                    <div class="result-modal-total">
                         내 지갑 총액: <span id="res-current-total">0</span> G
                     </div>
                 </div>
 
-                <div class="result-panel-actions">
+                <div class="result-modal-actions">
                     <button class="result-btn result-btn-gold" onclick="closeResultScreen()">
                         마을로 귀환
                     </button>
@@ -643,72 +643,75 @@
             </div>
         </div>
 
-        <div id="setting-panel" class="screen-overlay" style="display: none">
-            <div id="password-modal" class="card rpg-panel">
-                <h3 class="panel-title">비밀번호 입력</h3>
+        <div id="setting-modal" class="screen-overlay" style="display: none">
+            <div id="password-modal" class="card rpg-modal">
+                <div class="modal-header">
+                    <h2 class="modal-title">비밀번호 입력</h2>
+                </div>
+                <div class="modal-body">
+                    <div
+                        id="password-input-boxes"
+                        style="display: flex; gap: 5px; justify-content: center; margin: 20px 0"
+                    ></div>
 
-                <div
-                    id="password-input-boxes"
-                    style="display: flex; gap: 5px; justify-content: center; margin: 20px 0"
-                ></div>
+                    <p id="password-error" style="color: var(--danger); display: none">
+                        비밀번호가 틀렸습니다.
+                    </p>
 
-                <p id="password-error" style="color: var(--danger); display: none">
-                    비밀번호가 틀렸습니다.
-                </p>
-
-                <div
-                    id="password-numpad"
-                    style="
-                        display: grid;
-                        grid-template-columns: repeat(3, 1fr);
-                        gap: 10px;
-                        max-width: 200px;
-                        margin: 0 auto;
-                    "
-                >
-                    <button class="num-btn" onclick="secret.enter(1)">1</button>
-
-                    <button class="num-btn" onclick="secret.enter(2)">2</button>
-
-                    <button class="num-btn" onclick="secret.enter(3)">3</button>
-
-                    <button class="num-btn" onclick="secret.enter(4)">4</button>
-
-                    <button class="num-btn" onclick="secret.enter(5)">5</button>
-
-                    <button class="num-btn" onclick="secret.enter(6)">6</button>
-
-                    <button class="num-btn" onclick="secret.enter(7)">7</button>
-
-                    <button class="num-btn" onclick="secret.enter(8)">8</button>
-
-                    <button class="num-btn" onclick="secret.enter(9)">9</button>
-
-                    <button class="num-btn" onclick="secret.del()">⌫</button>
-
-                    <button class="num-btn" onclick="secret.enter(0)">0</button>
-
-                    <img
-                        class="num-btn"
-                        src="images/title/exit_btn.webp"
-                        alt="닫기"
-                        onclick="secret.close()"
+                    <div
+                        id="password-numpad"
                         style="
-                            width: 60px;
-                            height: 60px;
-                            object-fit: contain;
-                            cursor: pointer;
-                            box-sizing: border-box;
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 10px;
+                            max-width: 200px;
+                            margin: 0 auto;
                         "
-                    />
+                    >
+                        <button class="num-btn" onclick="secret.enter(1)">1</button>
+
+                        <button class="num-btn" onclick="secret.enter(2)">2</button>
+
+                        <button class="num-btn" onclick="secret.enter(3)">3</button>
+
+                        <button class="num-btn" onclick="secret.enter(4)">4</button>
+
+                        <button class="num-btn" onclick="secret.enter(5)">5</button>
+
+                        <button class="num-btn" onclick="secret.enter(6)">6</button>
+
+                        <button class="num-btn" onclick="secret.enter(7)">7</button>
+
+                        <button class="num-btn" onclick="secret.enter(8)">8</button>
+
+                        <button class="num-btn" onclick="secret.enter(9)">9</button>
+
+                        <button class="num-btn" onclick="secret.del()">⌫</button>
+
+                        <button class="num-btn" onclick="secret.enter(0)">0</button>
+
+                        <img
+                            class="num-btn"
+                            src="images/title/exit_btn.webp"
+                            alt="닫기"
+                            onclick="secret.close()"
+                            style="
+                                width: 60px;
+                                height: 60px;
+                                object-fit: contain;
+                                cursor: pointer;
+                                box-sizing: border-box;
+                            "
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div id="gold-adjuster-modal" class="card rpg-panel" style="display: none">
-                <div class="panel-header">
-                    <h3 class="panel-title">설정</h3>
+            <div id="gold-adjuster-modal" class="card rpg-modal" style="display: none">
+                <div class="modal-header">
+                    <h2 class="modal-title">설정</h2>
                 </div>
-                <div class="panel-body">
+                <div class="modal-body">
                     <div style="text-align: center; width: 100%; margin-top: 20px">
                         <button
                             class="btn-main"
@@ -737,7 +740,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="panel-footer">
+                <div class="modal-footer">
                     <img
                         src="images/title/exit_btn.webp"
                         alt="나가기"
@@ -754,99 +757,106 @@
                 </div>
             </div>
 
-            <div id="gold-edit-modal" class="card rpg-panel" style="display: none">
-                <h3 class="panel-title">골드 수정</h3>
+            <div id="gold-edit-modal" class="card rpg-modal" style="display: none">
+                <div class="modal-header">
+                    <h2 class="modal-title">골드 수정</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="gold-adjuster">
+                        <div class="gold-adjust-label">현재 골드</div>
 
-                <div class="gold-adjuster">
-                    <div class="gold-adjust-label">현재 골드</div>
+                        <div id="current-gold-edit-display" class="gold-display-box">0</div>
 
-                    <div id="current-gold-edit-display" class="gold-display-box">0</div>
+                        <div class="gold-adjust-label">설정할 골드</div>
 
-                    <div class="gold-adjust-label">설정할 골드</div>
+                        <div class="gold-adjust-controls">
+                            <button id="gold-edit-down" class="gold-arrow">▼</button>
 
-                    <div class="gold-adjust-controls">
-                        <button id="gold-edit-down" class="gold-arrow">▼</button>
+                            <div id="edit-gold-display" class="gold-display-box">0</div>
 
-                        <div id="edit-gold-display" class="gold-display-box">0</div>
-
-                        <button id="gold-edit-up" class="gold-arrow">▲</button>
+                            <button id="gold-edit-up" class="gold-arrow">▲</button>
+                        </div>
                     </div>
-                </div>
 
-                <div style="text-align: center; width: 100%">
-                    <img
-                        src="images/title/apply_btn.webp"
-                        alt="적용"
-                        onclick="secret.applyGoldEdit()"
-                        style="
-                            width: 80%;
-                            height: auto;
-                            display: block;
-                            margin: 0 auto;
-                            cursor: pointer;
-                            object-fit: contain;
-                        "
-                    />
-                </div>
-                <div style="text-align: center; width: 100%; margin-top: 10px">
-                    <img
-                        src="images/title/exit_btn.webp"
-                        alt="나가기"
-                        onclick="secret.closeGoldEditModal()"
-                        style="
-                            width: 80%;
-                            height: auto;
-                            display: block;
-                            margin: 0 auto;
-                            cursor: pointer;
-                            object-fit: contain;
-                        "
-                    />
+                    <div style="text-align: center; width: 100%">
+                        <img
+                            src="images/title/apply_btn.webp"
+                            alt="적용"
+                            onclick="secret.applyGoldEdit()"
+                            style="
+                                width: 80%;
+                                height: auto;
+                                display: block;
+                                margin: 0 auto;
+                                cursor: pointer;
+                                object-fit: contain;
+                            "
+                        />
+                    </div>
+                    <div style="text-align: center; width: 100%; margin-top: 10px">
+                        <img
+                            src="images/title/exit_btn.webp"
+                            alt="나가기"
+                            onclick="secret.closeGoldEditModal()"
+                            style="
+                                width: 80%;
+                                height: auto;
+                                display: block;
+                                margin: 0 auto;
+                                cursor: pointer;
+                                object-fit: contain;
+                            "
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div id="print-day-select-modal" class="card rpg-panel" style="display: none">
-                <h3 class="panel-title">Day 선택</h3>
-                <div style="margin: 20px 0">
-                    <select
-                        id="print-day-select"
-                        class="btn-main"
-                        style="width: 100%; padding: 10px; font-size: 16px"
-                    >
-                        <option value="">Day 선택...</option>
-                    </select>
+            <div id="print-day-select-modal" class="card rpg-modal" style="display: none">
+                <div class="modal-header">
+                    <h2 class="modal-title">Day 선택</h2>
                 </div>
-                <div style="text-align: center; width: 100%; margin-top: 20px">
-                    <button
-                        class="btn-main"
-                        onclick="secret.generatePrintHTML()"
-                        style="width: 80%; margin: 0 auto; display: block"
-                    >
-                        인쇄용 HTML 생성
-                    </button>
-                </div>
-                <div style="text-align: center; width: 100%; margin-top: 10px">
-                    <img
-                        src="images/title/exit_btn.webp"
-                        alt="나가기"
-                        onclick="secret.closePrintDaySelect()"
-                        style="
-                            width: 80%;
-                            height: auto;
-                            display: block;
-                            margin: 0 auto;
-                            cursor: pointer;
-                            object-fit: contain;
-                        "
-                    />
+                <div class="modal-body">
+                    <div style="margin: 20px 0">
+                        <select
+                            id="print-day-select"
+                            class="btn-main"
+                            style="width: 100%; padding: 10px; font-size: 16px"
+                        >
+                            <option value="">Day 선택...</option>
+                        </select>
+                    </div>
+                    <div style="text-align: center; width: 100%; margin-top: 20px">
+                        <button
+                            class="btn-main"
+                            onclick="secret.generatePrintHTML()"
+                            style="width: 80%; margin: 0 auto; display: block"
+                        >
+                            인쇄용 HTML 생성
+                        </button>
+                    </div>
+                    <div style="text-align: center; width: 100%; margin-top: 10px">
+                        <img
+                            src="images/title/exit_btn.webp"
+                            alt="나가기"
+                            onclick="secret.closePrintDaySelect()"
+                            style="
+                                width: 80%;
+                                height: auto;
+                                display: block;
+                                margin: 0 auto;
+                                cursor: pointer;
+                                object-fit: contain;
+                            "
+                        />
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
 
-        <script src="data/game-data-1.js" ></script>
-        <script src="data/game-data-2.js" ></script>
+        <script src="data/game-data-1.js"></script>
+        <script src="data/game-data-2.js"></script>
         <!-- decoy words set (유사 단어 집합) -->
         <script src="data/decoy-words-set.js"></script>
         <script src="data/items-data.js"></script>
@@ -879,10 +889,10 @@
 
             // 화면 상태 추적
             const gameScreen = document.getElementById('battle-mode-game');
-            const shopScreen = document.getElementById('shop-panel');
-            const inventoryScreen = document.getElementById('inventory-panel');
-            const statisticsScreen = document.getElementById('statistics-panel');
-            const settingScreen = document.getElementById('setting-panel');
+            const shopScreen = document.getElementById('shop-modal');
+            const inventoryScreen = document.getElementById('inventory-modal');
+            const statisticsScreen = document.getElementById('statistics-modal');
+            const settingScreen = document.getElementById('setting-modal');
             const startScreen = document.getElementById('title-screen');
 
             // MutationObserver로 화면 상태 감지
@@ -913,7 +923,7 @@
                 const bossStoryScreen = document.getElementById('boss-mode-story-modal');
                 const practiceModeModal = document.getElementById('practice-mode-modal');
                 const battleModeModal = document.getElementById('battle-mode-modal');
-                const resultScreen = document.getElementById('result-panel');
+                const resultScreen = document.getElementById('result-modal');
                 const practiceMemorizationScreen = document.getElementById('practice-mode-game');
 
                 const isPracticeModeStoryScreen = false; // practice-mode-screen은 더 이상 사용하지 않음

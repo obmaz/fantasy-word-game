@@ -18,6 +18,10 @@ const db = {
         if (!saved.subjective.perfectDays) {
             saved.subjective.perfectDays = [];
         }
+        // 보스 모드 최고 wave 기록 초기화
+        if (!saved.bossMode) {
+            saved.bossMode = { bestWave: 0, bestWaveDate: null };
+        }
         return saved;
     })(),
     inventory: JSON.parse(localStorage.getItem('v7_inventory')) || [],
@@ -106,7 +110,7 @@ const db = {
 const inventory = {
     open: () => {
         // title-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('inventory-panel', true);
+        openScreenOverlay('inventory-modal', true);
         history.pushState({ screen: 'inventory' }, '', window.location.href);
         inventory.hideDetails(); // Hide details on open
         inventory.render();
@@ -131,7 +135,7 @@ const inventory = {
         }
     },
     close: () => {
-        closeScreenOverlay('inventory-panel', true);
+        closeScreenOverlay('inventory-modal', true);
         // title-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
@@ -455,12 +459,12 @@ const inventory = {
 const shop = {
     open: () => {
         // title-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('shop-panel', true);
+        openScreenOverlay('shop-modal', true);
         history.pushState({ screen: 'shop' }, '', window.location.href);
         shop.render();
     },
     close: () => {
-        closeScreenOverlay('shop-panel', true);
+        closeScreenOverlay('shop-modal', true);
         // title-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
@@ -575,12 +579,12 @@ const shop = {
 const statistics = {
     open: () => {
         // title-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('statistics-panel', true);
+        openScreenOverlay('statistics-modal', true);
         history.pushState({ screen: 'statistics' }, '', window.location.href);
         statistics.render();
     },
     close: () => {
-        closeScreenOverlay('statistics-panel', true);
+        closeScreenOverlay('statistics-modal', true);
         // title-screen은 이미 표시되어 있으므로 다시 표시할 필요 없음
         history.pushState(null, '', window.location.href);
     },
@@ -716,6 +720,22 @@ const statistics = {
         }
 
         html += '</div>';
+        html += '</div>';
+
+        // 보스 모드 최고 wave 기록
+        const bossModeStats = db.stats.bossMode || { bestWave: 0, bestWaveDate: null };
+        const bestWave = bossModeStats.bestWave || 0;
+        const bestWaveDate = bossModeStats.bestWaveDate ? bossModeStats.bestWaveDate.displayDate : '기록 없음';
+        
+        html += '<div class="shop-section" style="margin-top:20px;">👑 보스 모드 기록</div>';
+        html += '<div class="shop-item" style="background:rgba(224, 64, 251, 0.1); border-left:3px solid #E040FB; padding-left:12px;">';
+        html += '<div style="font-size:15px;"><b>🔥 최고 Wave</b></div>';
+        html += `<div style="margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span style="font-size:15px;">Wave: <span style="color:#E040FB; font-weight:bold;">${bestWave}</span></span>
+            </div>
+            <div style="font-size:15px; color:#E040FB; font-weight:bold; text-align:right;">날짜: ${bestWaveDate}</div>
+        </div>`;
         html += '</div>';
 
         // 보유 스킬
@@ -2086,11 +2106,11 @@ const game = {
         const startScreen = document.getElementById('title-screen');
         if (startScreen) {
             startScreen.style.display = 'flex';
-            startScreen.style.zIndex = '100'; // result-panel(z-index: 300) 뒤에 위치
+            startScreen.style.zIndex = '100'; // result-modal(z-index: 300) 뒤에 위치
         }
 
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
-        openScreenOverlay('result-panel', true);
+        openScreenOverlay('result-modal', true);
 
         const gain = game.stats.gain;
         const lost = game.stats.lost;
@@ -2108,6 +2128,33 @@ const game = {
             db.save();
         }
         document.getElementById('res-current-total').innerText = db.gold;
+
+        // 보스 모드 최고 wave 기록 저장
+        if (game.mode === 'boss' && game.idx > 0) {
+            const currentWave = game.idx;
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+            const todayISO = today.toISOString().split('T')[0];
+
+            // 기존 데이터와의 호환성
+            if (!db.stats.bossMode) {
+                db.stats.bossMode = { bestWave: 0, bestWaveDate: null };
+            }
+
+            // 최고 기록 갱신
+            if (currentWave > db.stats.bossMode.bestWave) {
+                db.stats.bossMode.bestWave = currentWave;
+                db.stats.bossMode.bestWaveDate = {
+                    date: todayISO,
+                    displayDate: dateStr,
+                };
+                db.save();
+            }
+        }
 
         // 주관식 문제를 모두 맞췄는지 확인
         if (game.subjectiveTotal > 0 && game.subjectiveCorrect === game.subjectiveTotal) {
@@ -2191,13 +2238,13 @@ const secret = {
 
     open: () => {
         // title-screen은 숨기지 않고 모달만 표시
-        openScreenOverlay('setting-panel', true);
+        openScreenOverlay('setting-modal', true);
         // 설정 화면을 바로 표시 (비밀번호 없이)
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('gold-adjuster-modal').style.display = 'block';
 
         // 타이틀 컨테이너 크기를 CSS 변수로 설정 (다른 모달과 동일하게)
-        const secretOverlay = document.getElementById('setting-panel');
+        const secretOverlay = document.getElementById('setting-modal');
         const titleContainer = document.querySelector('.title-container-wrapper');
         if (secretOverlay && titleContainer) {
             const computedStyle = window.getComputedStyle(titleContainer);
@@ -2242,7 +2289,7 @@ const secret = {
             secret.previousModal = null;
             return;
         }
-        closeScreenOverlay('setting-panel', true);
+        closeScreenOverlay('setting-modal', true);
         secret.pendingAction = null;
         secret.previousModal = null;
         // 히스토리 상태 업데이트
@@ -3381,13 +3428,13 @@ const practiceMemorization = {
             // 다른 화면들도 모두 닫기
             const otherScreens = [
                 'battle-mode-game',
-                'shop-panel',
-                'inventory-panel',
-                'statistics-panel',
-                'setting-panel',
+                'shop-modal',
+                'inventory-modal',
+                'statistics-modal',
+                'setting-modal',
                 'battle-mode-story-modal',
                 'boss-mode-story-modal',
-                'result-panel',
+                'result-modal',
                 'practice-mode-modal',
                 'battle-mode-modal',
             ];
@@ -4546,7 +4593,7 @@ window.onload = () => {
 
     // 결과 화면 닫기 함수
     window.closeResultScreen = function () {
-        closeScreenOverlay('result-panel', true);
+        closeScreenOverlay('result-modal', true);
 
         // story-modal 완전히 초기화
         const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');

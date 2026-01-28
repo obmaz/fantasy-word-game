@@ -1,35 +1,35 @@
 /* ============================================
-   STATISTICS PANEL STYLES
+   STATISTICS MODAL STYLES
    ============================================ */
 
-/* Statistics Panel 전용 스타일 */
-/* RPG Panel 공통 스타일은 modal-common.css에 정의되어 있습니다 */
+/* Statistics Modal 전용 스타일 */
+/* RPG Modal 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
-/* Statistics Panel 타이틀 스타일 (margin, padding 추가) */
-#statistics-panel .card.rpg-panel .panel-title {
+/* Statistics Modal 타이틀 스타일 (margin, padding 추가) */
+#statistics-modal .card.rpg-modal .modal-title {
     margin: 0;
     padding: 0;
 }
 
-#statistics-panel .card.rpg-panel .panel-header {
+#statistics-modal .card.rpg-modal .modal-header {
     background: rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(255, 215, 130, 0.18);
 }
 
-#statistics-panel .card.rpg-panel .panel-footer {
+#statistics-modal .card.rpg-modal .modal-footer {
     border-top: 1px solid rgba(255, 215, 130, 0.18);
 }
 
 /* Statistics Layout */
-#statistics-panel .card {
+#statistics-modal .card {
     display: flex;
     flex-direction: column;
     max-height: 85vh;
 }
 
 /* Statistics 버튼 스타일 */
-#statistics-panel .card.rpg-panel .btn-main {
+#statistics-modal .card.rpg-modal .btn-main {
     height: 58px;
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
@@ -45,7 +45,7 @@
     text-align: center;
 }
 
-#statistics-panel .card.rpg-panel .btn-main.btn-blue {
+#statistics-modal .card.rpg-modal .btn-main.btn-blue {
     background: linear-gradient(
         45deg,
         rgba(41, 121, 255, 0.95),

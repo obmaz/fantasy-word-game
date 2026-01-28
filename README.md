@@ -14,11 +14,11 @@ fantasy-word-game/
 │   ├── battle-mode-game.css           # Battle mode game screen styles
 │   ├── practice-mode-game.css         # Practice mode game screen styles
 │   ├── buttons.css                    # Button styles
-│   ├── shop-panel.css                 # Shop panel styles
-│   ├── inventory-panel.css            # Inventory panel styles
-│   ├── statistics-panel.css           # Statistics panel styles
-│   ├── setting-panel.css              # Settings panel styles
-│   ├── result-panel.css              # Result screen panel styles
+│   ├── shop-modal.css                 # Shop modal styles
+│   ├── inventory-modal.css            # Inventory modal styles
+│   ├── statistics-modal.css           # Statistics modal styles
+│   ├── setting-modal.css              # Settings modal styles
+│   ├── result-modal.css              # Result screen modal styles
 │   ├── modal-common.css              # Common modal and overlay styles
 │   ├── practice-mode-modal.css       # Practice mode modal styles
 │   ├── battle-mode-modal.css         # Battle mode modal styles
@@ -244,11 +244,11 @@ fantasy-word-game/
 - `battle-mode-game.css`: Battle mode game screen layout and battle arena
 - `practice-mode-game.css`: Practice mode game screen (memorization) layout
 - `buttons.css`: Button styles for all game modes
-- `shop-panel.css`: Shop panel styles
-- `inventory-panel.css`: Inventory panel styles
-- `statistics-panel.css`: Statistics panel styles
-- `setting-panel.css`: Settings panel styles
-- `result-panel.css`: Result screen panel styles
+- `shop-modal.css`: Shop modal styles
+- `inventory-modal.css`: Inventory modal styles
+- `statistics-modal.css`: Statistics modal styles
+- `setting-modal.css`: Settings modal styles
+- `result-modal.css`: Result screen modal styles
 - `modal-common.css`: Common modal overlay and container styles with backdrop blur
 - Mode-specific modal/screen CSS files for each game mode
 

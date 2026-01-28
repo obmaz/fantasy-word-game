@@ -1,18 +1,18 @@
 /* ============================================
-   INVENTORY PANEL STYLES
+   INVENTORY MODAL STYLES
    ============================================ */
 
-/* Inventory Panel 전용 스타일 */
-/* RPG Panel 공통 스타일은 modal-common.css에 정의되어 있습니다 */
+/* Inventory Modal 전용 스타일 */
+/* RPG Modal 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
-/* Inventory Panel 타이틀 스타일 (margin, padding 추가) */
-#inventory-panel .card.rpg-panel .panel-title {
+/* Inventory Modal 타이틀 스타일 (margin, padding 추가) */
+#inventory-modal .card.rpg-modal .modal-title {
     margin: 0;
     padding: 0;
 }
 
 /* Inventory Layout */
-#inventory-panel .card {
+#inventory-modal .card {
     position: relative;
     overflow: hidden !important;
     display: flex;
@@ -20,11 +20,11 @@
     max-height: 85vh;
 }
 
-#inventory-panel .inv-header {
+#inventory-modal .inv-header {
     flex-shrink: 0;
 }
 
-#inventory-panel .inv-container {
+#inventory-modal .inv-container {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
@@ -49,7 +49,7 @@
         width: auto;
         max-width: 120px;
     }
-    #inventory-panel .card {
+    #inventory-modal .card {
         padding-bottom: 80px;
     }
 }

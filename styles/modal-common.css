@@ -22,7 +22,7 @@
     overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
 }
 
-#result-panel {
+#result-modal {
     z-index: 300 !important;
     background: rgba(0, 0, 0, 0.6) !important;
     backdrop-filter: blur(12px) !important;
@@ -33,10 +33,10 @@
 #battle-mode-modal,
 #battle-mode-story-modal,
 #boss-mode-story-modal,
-#shop-panel,
-#statistics-panel,
-#inventory-panel,
-#setting-panel {
+#shop-modal,
+#statistics-modal,
+#inventory-modal,
+#setting-modal {
     backdrop-filter: blur(12px) !important;
     background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -506,13 +506,13 @@
 }
 
 /* ============================================
-   RPG Panel 공통 스타일
+   RPG Modal 공통 스타일
    ============================================
-   설정, 상점, 인벤토리, 통계 패널에서 공통으로 사용되는 스타일
+   설정, 상점, 인벤토리, 통계 모달에서 공통으로 사용되는 스타일
    ============================================ */
 
-/* RPG Panel 기본 스타일 */
-.card.rpg-panel {
+/* RPG Modal 기본 스타일 */
+.card.rpg-modal {
     border-radius: 18px;
     background: radial-gradient(
             120% 120% at 50% 0%,
@@ -533,8 +533,8 @@
     position: relative;
 }
 
-/* RPG Panel 외곽 테두리 */
-.card.rpg-panel::before {
+/* RPG Modal 외곽 테두리 */
+.card.rpg-modal::before {
     content: '';
     position: absolute;
     inset: 6px;
@@ -544,8 +544,8 @@
     pointer-events: none;
 }
 
-/* RPG Panel 내부 테두리 */
-.card.rpg-panel::after {
+/* RPG Modal 내부 테두리 */
+.card.rpg-modal::after {
     content: '';
     position: absolute;
     inset: 12px;
@@ -554,8 +554,8 @@
     pointer-events: none;
 }
 
-/* RPG Panel 타이틀 공통 스타일 */
-.card.rpg-panel .panel-title {
+/* RPG Modal 타이틀 공통 스타일 */
+.card.rpg-modal .modal-title {
     font-size: 20px;
     font-weight: bold;
     color: var(--gold, #ffd700);
@@ -565,12 +565,12 @@
 }
 
 /* ============================================
-   Panel Layout 공통 스타일
+   Modal Layout 공통 스타일
    ============================================
-   패널의 header, body, footer 레이아웃
+   모달의 header, body, footer 레이아웃
    ============================================ */
 
-.panel-header {
+.modal-header {
     position: sticky;
     top: 0;
     background: #1e1e1e;
@@ -582,13 +582,13 @@
     text-align: center;
 }
 
-.panel-body {
+.modal-body {
     overflow-y: auto;
     overflow-x: hidden;
     flex-grow: 1;
 }
 
-.panel-footer {
+.modal-footer {
     flex-shrink: 0;
     padding-top: 15px;
     border-top: 1px solid #333;

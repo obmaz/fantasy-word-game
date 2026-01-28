@@ -1,11 +1,11 @@
 /* ============================================
-   RESULT PANEL STYLES
+   RESULT MODAL STYLES
    ============================================ */
 
 /* Result Screen — 이미지 없이 day_select.webp 느낌을 CSS로 재현 */
-#result-panel .result-panel {
+#result-modal .result-modal {
     position: relative;
-    /* 타이틀 컨테이너 크기를 기준으로 설정 (다른 panel들과 동일) */
+    /* 타이틀 컨테이너 크기를 기준으로 설정 (다른 modal들과 동일) */
     width: 90%;
     max-width: min(90%, var(--title-container-width, 95vw));
     max-height: min(var(--title-container-height, 95vh), 85vh);
@@ -24,7 +24,7 @@
 }
 
 /* 금색 외곽 프레임 */
-.result-panel::before {
+.result-modal::before {
     content: '';
     position: absolute;
     inset: 6px;
@@ -35,7 +35,7 @@
 }
 
 /* 내부 얇은 라인 */
-.result-panel::after {
+.result-modal::after {
     content: '';
     position: absolute;
     inset: 12px;
@@ -44,7 +44,7 @@
     pointer-events: none;
 }
 
-.result-panel-title {
+.result-modal-title {
     text-align: center;
     font-weight: 900;
     letter-spacing: 1px;
@@ -54,7 +54,7 @@
     margin: 10px 0 18px;
 }
 
-.result-panel-body {
+.result-modal-body {
     position: relative;
     z-index: 1;
     padding: 16px 16px 14px;
@@ -64,7 +64,7 @@
     box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.35);
 }
 
-.result-panel-row {
+.result-modal-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -90,7 +90,7 @@
     color: var(--danger);
 }
 
-.result-panel-total {
+.result-modal-total {
     margin-top: 8px;
     padding-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.18);
@@ -99,7 +99,7 @@
     color: rgba(170, 225, 255, 0.95);
 }
 
-.result-panel-actions {
+.result-modal-actions {
     position: relative;
     z-index: 1;
     display: flex;

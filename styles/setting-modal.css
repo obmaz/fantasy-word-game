@@ -1,12 +1,12 @@
 /* ============================================
-   SETTING PANEL STYLES
+   SETTING MODAL STYLES
    ============================================ */
 
-/* Setting Panel 전용 스타일 */
-/* RPG Panel 공통 스타일은 modal-common.css에 정의되어 있습니다 */
+/* Setting Modal 전용 스타일 */
+/* RPG Modal 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
 /* Setting Menu 버튼 스타일 */
-#setting-panel .card.rpg-panel .btn-main {
+#setting-modal .card.rpg-modal .btn-main {
     height: 58px;
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
@@ -22,7 +22,7 @@
     text-align: center;
 }
 
-#setting-panel .card.rpg-panel .btn-main.btn-blue {
+#setting-modal .card.rpg-modal .btn-main.btn-blue {
     background: linear-gradient(
         45deg,
         rgba(41, 121, 255, 0.95),
@@ -31,8 +31,8 @@
     color: #fff !important;
 }
 
-#setting-panel
-    .card.rpg-panel
+#setting-modal
+    .card.rpg-modal
     .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
     background: linear-gradient(
         45deg,
@@ -43,7 +43,7 @@
 }
 
 /* 설정메뉴 숫자패드 */
-#setting-panel .card.rpg-panel .num-btn {
+#setting-modal .card.rpg-modal .num-btn {
     width: 60px;
     height: 60px;
     padding: 0;
@@ -57,7 +57,7 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-#setting-panel .card.rpg-panel .num-btn:active {
+#setting-modal .card.rpg-modal .num-btn:active {
     transform: translateY(1px);
 }
 

@@ -1,13 +1,13 @@
 /* ============================================
-   SHOP PANEL STYLES
+   SHOP MODAL STYLES
    ============================================ */
 
-/* Shop Panel 전용 스타일 */
-/* RPG Panel 공통 스타일은 modal-common.css에 정의되어 있습니다 */
+/* Shop Modal 전용 스타일 */
+/* RPG Modal 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
-/* Shop Panel 타이틀 스타일 (panel-header 내부 타이틀 포함) */
-#shop-panel .card.rpg-panel .panel-title,
-#shop-panel .card.rpg-panel .panel-header .panel-title {
+/* Shop Modal 타이틀 스타일 (modal-header 내부 타이틀 포함) */
+#shop-modal .card.rpg-modal .modal-title,
+#shop-modal .card.rpg-modal .modal-header .modal-title {
     font-size: 20px;
     font-weight: bold;
     color: var(--gold, #ffd700);
@@ -17,24 +17,24 @@
     padding: 0;
 }
 
-#shop-panel .card.rpg-panel .panel-header {
+#shop-modal .card.rpg-modal .modal-header {
     background: rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(255, 215, 130, 0.18);
 }
 
-#shop-panel .card.rpg-panel .panel-footer {
+#shop-modal .card.rpg-modal .modal-footer {
     border-top: 1px solid rgba(255, 215, 130, 0.18);
 }
 
 /* Shop Layout */
-#shop-panel .card {
+#shop-modal .card {
     display: flex;
     flex-direction: column;
     max-height: 85vh;
 }
 
-/* Panel Layout 공통 스타일은 modal-common.css에 정의되어 있습니다 */
+/* Modal Layout 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
 .shop-section {
     text-align: left;
@@ -59,7 +59,7 @@
 }
 
 /* Shop 버튼 스타일 */
-#shop-panel .card.rpg-panel .btn-main {
+#shop-modal .card.rpg-modal .btn-main {
     height: 58px;
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
@@ -75,7 +75,7 @@
     text-align: center;
 }
 
-#shop-panel .card.rpg-panel .btn-main.btn-blue {
+#shop-modal .card.rpg-modal .btn-main.btn-blue {
     background: linear-gradient(
         45deg,
         rgba(41, 121, 255, 0.95),
@@ -84,8 +84,8 @@
     color: #fff !important;
 }
 
-#shop-panel
-    .card.rpg-panel
+#shop-modal
+    .card.rpg-modal
     .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
     background: linear-gradient(
         45deg,
