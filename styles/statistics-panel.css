@@ -11,13 +11,13 @@
     padding: 0;
 }
 
-#statistics-panel .card.rpg-panel .shop-header {
+#statistics-panel .card.rpg-panel .panel-header {
     background: rgba(0,0,0,0.15);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(255, 215, 130, 0.18);
 }
 
-#statistics-panel .card.rpg-panel .shop-footer {
+#statistics-panel .card.rpg-panel .panel-footer {
     border-top: 1px solid rgba(255, 215, 130, 0.18);
 }
 

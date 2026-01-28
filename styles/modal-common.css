@@ -534,3 +534,33 @@
     text-align: center;
     pointer-events: none;
 }
+
+/* ============================================
+   Panel Layout 공통 스타일
+   ============================================
+   패널의 header, body, footer 레이아웃
+   ============================================ */
+
+.panel-header {
+    position: sticky;
+    top: 0;
+    background: #1E1E1E;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 10px;
+    z-index: 5;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.panel-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-grow: 1;
+}
+
+.panel-footer {
+    flex-shrink: 0;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}

@@ -163,7 +163,7 @@
                 <div id="detail-actions"></div>
             </div>
 
-            <div class="shop-header">
+            <div class="panel-header">
                 <h2 class="panel-title">인벤토리</h2>
             </div>
             <div class="inv-container">
@@ -353,14 +353,14 @@
 
     <div id="shop-panel" class="screen-overlay" style="display:none;">
         <div class="card rpg-panel">
-            <div class="shop-header">
+            <div class="panel-header">
                 <h2 class="panel-title">상점</h2>
                 <div style="color:var(--gold);">보유 골드: <span id="shop-gold">0</span> G</div>
             </div>
-            <div class="shop-body">
+            <div class="panel-body">
                 <div id="shop-container" style="text-align:left;"></div>
             </div>
-            <div class="shop-footer">
+            <div class="panel-footer">
                 <img src="images/title/exit_btn.webp" alt="나가기" onclick="shop.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
         </div>
@@ -368,13 +368,13 @@
 
     <div id="statistics-panel" class="screen-overlay" style="display:none;">
         <div class="card rpg-panel">
-            <div class="shop-header">
+            <div class="panel-header">
                 <h2 class="panel-title">통계</h2>
             </div>
-            <div class="shop-body">
+            <div class="panel-body">
                 <div id="statistics-container" style="text-align:left;"></div>
             </div>
-            <div class="shop-footer">
+            <div class="panel-footer">
                 <img src="images/title/exit_btn.webp" alt="나가기" onclick="statistics.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
         </div>
@@ -454,26 +454,23 @@
 
 
         <div id="gold-adjuster-modal" class="card rpg-panel" style="display:none;">
-
-
-
-            <h3 class="panel-title">설정</h3>
-
-            <div style="text-align: center; width: 100%; margin-top: 20px;">
-                <button class="btn-main" onclick="secret.openGoldEditModal()" style="width: 80%; margin: 0 auto; display: block;">골드 수정</button>
+            <div class="panel-header">
+                <h3 class="panel-title">설정</h3>
             </div>
-            <div style="text-align: center; width: 100%; margin-top: 10px;">
-                <button class="btn-main" onclick="secret.openPrintDaySelect()" style="width: 80%; margin: 0 auto; display: block;">문제 출력</button>
+            <div class="panel-body">
+                <div style="text-align: center; width: 100%; margin-top: 20px;">
+                    <button class="btn-main" onclick="secret.openGoldEditModal()" style="width: 80%; margin: 0 auto; display: block;">골드 수정</button>
+                </div>
+                <div style="text-align: center; width: 100%; margin-top: 10px;">
+                    <button class="btn-main" onclick="secret.openPrintDaySelect()" style="width: 80%; margin: 0 auto; display: block;">문제 출력</button>
+                </div>
+                <div style="text-align: center; width: 100%; margin-top: 10px;">
+                    <button class="btn-main btn-danger" onclick="secret.resetStatistics()" style="width: 80%; margin: 0 auto; display: block;">통계 초기화</button>
+                </div>
             </div>
-            <div style="text-align: center; width: 100%; margin-top: 10px;">
-                <button class="btn-main btn-danger" onclick="secret.resetStatistics()" style="width: 80%; margin: 0 auto; display: block;">통계 초기화</button>
-            </div>
-            <div style="text-align: center; width: 100%; margin-top: 10px;">
+            <div class="panel-footer">
                 <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
-
-
-
         </div>
 
 

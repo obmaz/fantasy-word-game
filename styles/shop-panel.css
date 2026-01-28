@@ -5,9 +5,9 @@
 /* Shop Panel 전용 스타일 */
 /* RPG Panel 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
-/* Shop Panel 타이틀 스타일 (shop-header 내부 타이틀 포함) */
+/* Shop Panel 타이틀 스타일 (panel-header 내부 타이틀 포함) */
 #shop-panel .card.rpg-panel .panel-title,
-#shop-panel .card.rpg-panel .shop-header .panel-title {
+#shop-panel .card.rpg-panel .panel-header .panel-title {
     font-size: 20px;
     font-weight: bold;
     color: var(--gold, #FFD700);
@@ -17,13 +17,13 @@
     padding: 0;
 }
 
-#shop-panel .card.rpg-panel .shop-header {
+#shop-panel .card.rpg-panel .panel-header {
     background: rgba(0,0,0,0.15);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(255, 215, 130, 0.18);
 }
 
-#shop-panel .card.rpg-panel .shop-footer {
+#shop-panel .card.rpg-panel .panel-footer {
     border-top: 1px solid rgba(255, 215, 130, 0.18);
 }
 
@@ -34,29 +34,7 @@
     max-height: 85vh;
 }
 
-.shop-header {
-    position: sticky;
-    top: 0;
-    background: #1E1E1E;
-    padding: 10px;
-    border-bottom: 1px solid #333;
-    margin-bottom: 10px;
-    z-index: 5;
-    flex-shrink: 0;
-    text-align: center;
-}
-
-.shop-body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex-grow: 1;
-}
-
-.shop-footer {
-    flex-shrink: 0;
-    padding-top: 15px;
-    border-top: 1px solid #333;
-}
+/* Panel Layout 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
 .shop-section {
     text-align: left;
