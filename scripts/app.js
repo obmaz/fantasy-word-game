@@ -3699,7 +3699,7 @@ window.onload = () => {
     const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
     const titleInventoryBtn = document.getElementById('title-inventory-btn');     // INVENTORY
     const titleStatisticsBtn = document.getElementById('title-statistics-btn'); // STATISTICS
-    const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (Secret Menu)
+    const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (일반설정)
     
     console.log('[Button Setup] titlePracticeBtn:', titlePracticeBtn);
     console.log('[Button Setup] titleBattleModeBtn:', titleBattleModeBtn);

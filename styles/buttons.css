@@ -72,7 +72,7 @@
         inset 0 1px 0 rgba(255,255,255,0.28);
 }
 
-/* 비밀메뉴(Setting) 내 전체 초기화 버튼 강제 붉은색 */
+/* 일반설정(Setting) 내 전체 초기화 버튼 강제 붉은색 */
 #setting-panel .btn-danger{
     background: linear-gradient(45deg, rgba(255, 82, 82, 0.98), rgba(183, 28, 28, 0.98)) !important;
     color: #fff !important;
