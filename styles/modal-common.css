@@ -24,8 +24,8 @@
 /* 모든 모달에 동일한 블러 효과 보장 */
 #practice-mode-modal,
 #battle-mode-modal,
-#battle-mode-screen,
-#boss-mode-screen,
+#battle-mode-story-modal,
+#boss-mode-story-modal,
 #shop-panel,
 #statistics-panel,
 #inventory-panel,
@@ -34,9 +34,9 @@
     background: rgba(0,0,0,0.6) !important;
 }
 
-/* boss-mode-screen과 battle-mode-screen에 추가 보장 */
-#boss-mode-screen.screen-overlay,
-#battle-mode-screen.screen-overlay {
+/* boss-mode-story-modal과 battle-mode-story-modal에 추가 보장 */
+#boss-mode-story-modal.screen-overlay,
+#battle-mode-story-modal.screen-overlay {
     backdrop-filter: blur(12px) !important;
     background: rgba(0,0,0,0.6) !important;
 }
@@ -80,7 +80,7 @@
     opacity: 1;
 }
 
-/* 모험 시작 화면(story-screen) 공통 스타일 */
+/* 모험 시작 스토리 모달(story-modal) 공통 스타일 */
 .story-container-wrapper {
     position: relative;
     width: 100vw;
@@ -474,3 +474,63 @@
 /* Story Styles */
 .story-text { font-size: 15px; line-height: 1.6; color: #ddd; margin: 20px 0; white-space: pre-line; text-align: left; padding: 15px; background: #111; border-radius: 8px; border: 1px solid #333; }
 .story-title { font-size: 22px; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+
+/* ============================================
+   RPG Panel 공통 스타일
+   ============================================
+   설정, 상점, 인벤토리, 통계 패널에서 공통으로 사용되는 스타일
+   ============================================ */
+
+/* RPG Panel 기본 스타일 */
+.card.rpg-panel {
+    border-radius: 18px;
+    background:
+        radial-gradient(120% 120% at 50% 0%, rgba(255, 215, 130, 0.06) 0%, rgba(0,0,0,0) 55%),
+        radial-gradient(140% 120% at 50% 110%, rgba(255, 120, 50, 0.08) 0%, rgba(0,0,0,0) 55%),
+        linear-gradient(180deg, rgba(22, 24, 33, 0.98) 0%, rgba(12, 13, 18, 0.98) 100%);
+    box-shadow:
+        0 18px 55px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    border: none;
+    animation: none;
+    /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-story-modal, boss-mode-story-modal과 동일) */
+    width: 81%;
+    max-width: min(81%, var(--title-container-width, 95vw));
+    max-height: min(var(--title-container-height, 95vh), 85vh);
+    box-sizing: border-box;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* RPG Panel 외곽 테두리 */
+.card.rpg-panel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 14px;
+    border: 3px solid rgba(231, 189, 105, 0.95);
+    box-shadow:
+        0 0 0 2px rgba(70, 48, 16, 0.85),
+        inset 0 0 18px rgba(255, 208, 120, 0.10);
+    pointer-events: none;
+}
+
+/* RPG Panel 내부 테두리 */
+.card.rpg-panel::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 228, 165, 0.22);
+    pointer-events: none;
+}
+
+/* RPG Panel 타이틀 공통 스타일 */
+.card.rpg-panel .panel-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--gold, #FFD700);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    pointer-events: none;
+}

@@ -22,8 +22,8 @@ fantasy-word-game/
 │   ├── modal-common.css              # Common modal and overlay styles
 │   ├── practice-mode-modal.css       # Practice mode modal styles
 │   ├── battle-mode-modal.css         # Battle mode modal styles
-│   ├── battle-mode-screen.css        # Battle mode story screen styles
-│   └── boss-mode-screen.css          # Boss mode story screen styles
+│   ├── battle-mode-story-modal.css   # Battle mode story modal styles
+│   └── boss-mode-story-modal.css     # Boss mode story modal styles
 ├── scripts/
 │   ├── app.js                        # Main game logic and UI management
 │   ├── words.js                      # Word data and word-related functions

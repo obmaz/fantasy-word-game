@@ -1,19 +1,19 @@
 /* ============================================
-   Battle Mode Screen 스타일
+   Battle Mode Story Modal 스타일
    ============================================
    Battle 모드 - Day 타이틀 및 설명 박스 크기/위치 조정
    아래 CSS 규칙에서 크기와 위치를 조정하세요.
    원하는 속성의 주석을 해제하고 값을 변경하면 됩니다.
    ============================================ */
 
-/* Battle Mode Screen 배경 블러 효과 */
-#battle-mode-screen {
+/* Battle Mode Story Modal 배경 블러 효과 */
+#battle-mode-story-modal {
     backdrop-filter: blur(12px) !important;
     background: rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Battle Mode Screen - Day 정보 표시 영역 (크기/위치 조정 가능) */
-#battle-mode-screen .story-day-info {
+/* Battle Mode Story Modal - Day 정보 표시 영역 (크기/위치 조정 가능) */
+#battle-mode-story-modal .story-day-info {
     /* 기본값 유지 (상위 스타일 상속) */
     /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
     
@@ -22,8 +22,8 @@
     /* font-size: clamp(20px, 3vw, 32px); */ /* 폰트 크기 */
 }
 
-/* Battle Mode Screen - 이야기 텍스트 컨테이너 (크기/위치 조정 가능) */
-#battle-mode-screen .story-text-container {
+/* Battle Mode Story Modal - 이야기 텍스트 컨테이너 (크기/위치 조정 가능) */
+#battle-mode-story-modal .story-text-container {
     /* 기본값 유지 (상위 스타일 상속) */
     /* 아래 주석을 해제하고 원하는 값으로 변경하세요: */
     
@@ -34,8 +34,8 @@
     /* padding: clamp(15px, 2vw, 25px); */ /* 내부 여백 */
 }
 
-/* Battle Mode Screen - 설명 텍스트 폰트 크기 조정 */
-#battle-mode-screen .story-text-content {
-    /* 폰트 크기 - boss-mode와 동일하게 작은 크기로 설정 */
+/* Battle Mode Story Modal - 설명 텍스트 폰트 크기 조정 */
+#battle-mode-story-modal .story-text-content {
+    /* 폰트 크기 - boss-mode-story-modal과 동일하게 작은 크기로 설정 */
     font-size: 14px;
 }

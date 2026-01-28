@@ -868,8 +868,8 @@ const story = {
         story.mode = mode;
         const data = resolveStoryData(story.day);
 
-        // 모드에 따라 적절한 story-screen ID 결정 (practice 모드는 더 이상 story-screen 사용하지 않음)
-        const storyScreenId = (mode === 'boss') ? 'boss-mode-screen' : 'battle-mode-screen';
+        // 모드에 따라 적절한 story-modal ID 결정 (practice 모드는 practice-mode-game을 사용함)
+        const storyScreenId = (mode === 'boss') ? 'boss-mode-story-modal' : 'battle-mode-story-modal';
         const storyScreenPrefix = (mode === 'boss') ? 'boss-mode' : 'battle-mode';
 
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
@@ -896,17 +896,17 @@ const story = {
             startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
         }
         
-        // 다른 story-screen 닫기
-        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-mode-screen');
-        if (battleModeStoryScreen && storyScreenId !== 'battle-mode-screen') {
+        // 다른 story-modal 닫기
+        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
+        if (battleModeStoryScreen && storyScreenId !== 'battle-mode-story-modal') {
             battleModeStoryScreen.style.display = 'none';
         }
-        if (bossStoryScreen && storyScreenId !== 'boss-mode-screen') {
+        if (bossStoryScreen && storyScreenId !== 'boss-mode-story-modal') {
             bossStoryScreen.style.display = 'none';
         }
         
-        // story-screen 스타일 초기화
+        // story-modal 스타일 초기화
         const storyScreen = document.getElementById(storyScreenId);
         if (storyScreen) {
             storyScreen.style.visibility = '';
@@ -921,7 +921,7 @@ const story = {
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: storyScreenId }, '', window.location.href);
         
-        // 타이틀 크기 먼저 동기화 (스토리 화면 크기가 타이틀 기준이므로)
+        // 타이틀 크기 먼저 동기화 (스토리 모달 크기가 타이틀 기준이므로)
         if (typeof syncTitleButtonOverlay === 'function') {
             syncTitleButtonOverlay();
         }
@@ -1030,9 +1030,9 @@ const story = {
         
         document.getElementById('battle-mode-game').style.display = 'none';
         
-        // story-screen을 확실히 닫기
-        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-mode-screen');
+        // story-modal을 확실히 닫기
+        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
         if (battleModeStoryScreen) {
             battleModeStoryScreen.style.display = 'none';
             battleModeStoryScreen.style.visibility = 'hidden';
@@ -1078,7 +1078,7 @@ const story = {
             battleModeModal.classList.remove('closing');
         }
         
-        // 모든 모드에서 story-screen을 건너뛰고 바로 결과 화면으로
+        // 모든 모드에서 story-modal을 건너뛰고 바로 결과 화면으로
         game.end(win);
     }
 };
@@ -1099,9 +1099,9 @@ const game = {
         game.mode = mode;
         game.currentDay = day;
 
-        // story-screen을 애니메이션과 함께 닫기
-        closeScreenOverlay('battle-mode-screen', true);
-        closeScreenOverlay('boss-mode-screen', true);
+        // story-modal을 애니메이션과 함께 닫기
+        closeScreenOverlay('battle-mode-story-modal', true);
+        closeScreenOverlay('boss-mode-story-modal', true);
 
         let pool;
         // 현재 데이터셋의 rawData 사용 (게임 데이터 변경 시 최신 데이터 반영)
@@ -1738,9 +1738,9 @@ const game = {
     shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
 
     end: (win) => {
-        // story-screen이 확실히 닫혀있는지 확인
-        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-mode-screen');
+        // story-modal이 확실히 닫혀있는지 확인
+        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
         if (battleModeStoryScreen) {
             battleModeStoryScreen.style.display = 'none';
             battleModeStoryScreen.style.visibility = 'hidden';
@@ -2854,7 +2854,7 @@ const practiceMemorization = {
         practiceMemorization.currentDay = day;
         practiceMemorization.currentIndex = 0;
         
-        // story-screen 닫기 (practice-mode-screen은 더 이상 사용하지 않음)
+        // story-modal 닫기 (practice-mode-game을 사용함)
         
         // 단어 목록 로드
         let pool;
@@ -2986,8 +2986,8 @@ const practiceMemorization = {
                 'inventory-panel',
                 'statistics-panel',
                 'setting-panel',
-                'battle-mode-screen',
-                'boss-mode-screen',
+                'battle-mode-story-modal',
+                'boss-mode-story-modal',
                 'result-panel',
                 'practice-mode-modal',
                 'battle-mode-modal'
@@ -3430,18 +3430,18 @@ function syncModalButtonOverlay(modalId) {
 function syncStoryButtonOverlay(storyScreenId) {
     if (!storyScreenId) {
         // 모두 확인
-        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
         if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
-            syncStoryButtonOverlay('battle-mode-screen');
+            syncStoryButtonOverlay('battle-mode-story-modal');
         } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
-            syncStoryButtonOverlay('boss-mode-screen');
+            syncStoryButtonOverlay('boss-mode-story-modal');
         }
         return;
     }
     
     const storyScreen = document.getElementById(storyScreenId);
-    // story-screen이 숨겨져 있으면 CSS 변수 설정하지 않음
+    // story-modal이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!storyScreen || storyScreen.style.display === 'none' || storyScreen.style.display === '') {
         return;
     }
@@ -3775,7 +3775,7 @@ window.onload = () => {
             // Close modal with animation and start memorization mode directly
             closePracticeModal(true);
             
-            // 애니메이션이 완료된 후 암기 모드로 바로 시작 (practice-mode-screen 건너뛰기)
+            // 애니메이션이 완료된 후 암기 모드로 바로 시작 (practice-mode-game으로 바로 이동)
             setTimeout(() => {
                 practiceMemorization.start(selectedDay);
             }, 400); // 애니메이션 시간과 일치
@@ -4045,17 +4045,17 @@ window.onload = () => {
     // Story screen resize handler
     let storyResizeTimeout;
     const storyResizeHandler = () => {
-        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-mode-screen');
+        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
         if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
-                syncStoryButtonOverlay('battle-mode-screen');
+                syncStoryButtonOverlay('battle-mode-story-modal');
             }, 100);
         } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
-                syncStoryButtonOverlay('boss-mode-screen');
+                syncStoryButtonOverlay('boss-mode-story-modal');
             }, 100);
         }
     };
@@ -4065,9 +4065,9 @@ window.onload = () => {
     window.closeResultScreen = function() {
         closeScreenOverlay('result-panel', true);
         
-        // story-screen 완전히 초기화
-        const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-        const bossStoryScreen = document.getElementById('boss-mode-screen');
+        // story-modal 완전히 초기화
+        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
         if (battleModeStoryScreen) {
             battleModeStoryScreen.style.display = 'none';
             battleModeStoryScreen.style.visibility = '';

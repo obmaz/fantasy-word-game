@@ -2,54 +2,11 @@
    STATISTICS PANEL STYLES
    ============================================ */
 
-/* RPG Panel 공통 스타일 */
-#statistics-panel .card.rpg-panel {
-    border-radius: 18px;
-    background:
-        radial-gradient(120% 120% at 50% 0%, rgba(255, 215, 130, 0.06) 0%, rgba(0,0,0,0) 55%),
-        radial-gradient(140% 120% at 50% 110%, rgba(255, 120, 50, 0.08) 0%, rgba(0,0,0,0) 55%),
-        linear-gradient(180deg, rgba(22, 24, 33, 0.98) 0%, rgba(12, 13, 18, 0.98) 100%);
-    box-shadow:
-        0 18px 55px rgba(0,0,0,0.7),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-    border: none;
-    animation: none;
-    /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-screen, boss-mode-screen과 동일) */
-    width: 81%;
-    max-width: min(81%, var(--title-container-width, 95vw));
-    max-height: min(var(--title-container-height, 95vh), 85vh);
-    box-sizing: border-box;
-    overflow-y: auto;
-}
+/* Statistics Panel 전용 스타일 */
+/* RPG Panel 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
-#statistics-panel .card.rpg-panel::before {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    border-radius: 14px;
-    border: 3px solid rgba(231, 189, 105, 0.95);
-    box-shadow:
-        0 0 0 2px rgba(70, 48, 16, 0.85),
-        inset 0 0 18px rgba(255, 208, 120, 0.10);
-    pointer-events: none;
-}
-
-#statistics-panel .card.rpg-panel::after {
-    content: "";
-    position: absolute;
-    inset: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 228, 165, 0.22);
-    pointer-events: none;
-}
-
-/* Statistics Panel 타이틀 스타일 (practice-mode-modal .modal-title과 동일) */
+/* Statistics Panel 타이틀 스타일 (margin, padding 추가) */
 #statistics-panel .card.rpg-panel .panel-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--gold, #FFD700);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    text-align: center;
     margin: 0;
     padding: 0;
 }

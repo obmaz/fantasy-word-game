@@ -2,7 +2,7 @@
    Practice Setting Modal 스타일
    ============================================ */
 
-/* Practice 설정 팝업 - 타이틀 */
+/* Practice Mode Modal - 타이틀 */
 #practice-mode-modal .modal-title {
     position: absolute;
     top: calc(var(--modal-img-height, 100%) * 0.12);
@@ -17,7 +17,7 @@
     text-align: center;
 }
 
-/* Practice 설정 팝업 - 모험 지역 드롭박스 위치 */
+/* Practice Mode Modal - 모험 지역 드롭박스 위치 */
 #practice-mode-modal .modal-day-select {
     /* practice_mode_select_modal .webp 이미지에 맞춰 조정 가능 (파일명에 공백 포함) */
     width: calc(var(--modal-img-width, 100%) * 0.75);      /* 너비 (이미지 너비의 75% - 65%에서 증가) */
@@ -35,7 +35,7 @@
     z-index: 15 !important; /* 드롭다운이 열릴 때 다른 요소 위에 표시되도록 */
 }
 
-/* Practice 설정 팝업 - 난이도 드롭박스 위치 */
+/* Practice Mode Modal - 난이도 드롭박스 위치 */
 #practice-mode-modal .modal-count-select {
     /* practice_mode_select_modal .webp 이미지에 맞춰 조정 가능 (파일명에 공백 포함) */
     width: calc(var(--modal-img-width, 100%) * 0.65);      /* 너비 (이미지 너비의 65%) */
@@ -48,7 +48,7 @@
     /* font-size: clamp(16px, 3vw, 32px); */  /* 반응형 폰트 크기 (최소 16px, 최대 32px) */
 }
 
-/* Practice 설정 팝업 - 시작하기 버튼 위치 */
+/* Practice Mode Modal - 시작하기 버튼 위치 */
 #practice-mode-modal #practice-mode-modal-start-btn {
     /* practice_mode_select_modal .webp 이미지에 맞춰 조정 가능 (파일명에 공백 포함) */
     width: calc(var(--modal-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */
@@ -57,7 +57,7 @@
     top: calc(var(--modal-img-height, 100%) * 0.75);        /* 위쪽 위치 (이미지 높이의 75%) */
 }
 
-/* Practice 설정 팝업 - 취소 버튼 위치 */
+/* Practice Mode Modal - 취소 버튼 위치 */
 #practice-mode-modal #practice-mode-modal-cancel-btn {
     /* practice_mode_select_modal .webp 이미지에 맞춰 조정 가능 (파일명에 공백 포함) */
     width: calc(var(--modal-img-width, 100%) * 0.37);      /* 너비 (이미지 너비의 37%) */

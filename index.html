@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="styles/practice-mode-modal.css">
     <link rel="stylesheet" href="styles/battle-mode-modal.css">
     <link rel="stylesheet" href="styles/practice-mode-game.css">
-    <link rel="stylesheet" href="styles/battle-mode-screen.css">
-    <link rel="stylesheet" href="styles/boss-mode-screen.css">
+    <link rel="stylesheet" href="styles/battle-mode-story-modal.css">
+    <link rel="stylesheet" href="styles/boss-mode-story-modal.css">
     <link rel="stylesheet" href="styles/buttons.css">
     <link rel="stylesheet" href="styles/shop-panel.css">
     <link rel="stylesheet" href="styles/inventory-panel.css">
@@ -277,7 +277,7 @@
         </div>
     </div>
 
-    <!-- Practice Mode Memorization Screen (단어 암기 화면) -->
+    <!-- Practice Mode Game (단어 암기 화면) -->
     <div id="practice-mode-game" style="display:none; height:100%; flex-direction:column;">
         <div class="practice-memorization-container">
             <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
@@ -317,8 +317,8 @@
         </div>
     </div>
 
-    <!-- Battle Mode Screen (battle 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
-    <div id="battle-mode-screen" class="screen-overlay" style="display:none;">
+    <!-- Battle Mode Story Modal (battle 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
+    <div id="battle-mode-story-modal" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
             <img src="images/battle_mode/battle_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
             <div class="story-buttons-overlay">
@@ -334,8 +334,8 @@
         </div>
     </div>
 
-    <!-- Boss Mode Screen (boss 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 화면 배경으로 사용 -->
-    <div id="boss-mode-screen" class="screen-overlay" style="display:none;">
+    <!-- Boss Mode Story Modal (boss 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
+    <div id="boss-mode-story-modal" class="screen-overlay" style="display:none;">
         <div class="story-container-wrapper">
             <img src="images/battle_mode/battle_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
             <div class="story-buttons-overlay">
@@ -599,8 +599,8 @@
 
         // 백버튼 이벤트 처리 (모바일 브라우저)
         window.addEventListener('popstate', (e) => {
-            const battleModeStoryScreen = document.getElementById('battle-mode-screen');
-            const bossStoryScreen = document.getElementById('boss-mode-screen');
+            const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+            const bossStoryScreen = document.getElementById('boss-mode-story-modal');
             const practiceModeModal = document.getElementById('practice-mode-modal');
             const battleModeModal = document.getElementById('battle-mode-modal');
             const resultScreen = document.getElementById('result-panel');
@@ -754,9 +754,9 @@
                 // 게임 화면만 닫기
                 gameScreen.style.display = 'none';
                 
-                // 배틀 모드 스크린에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
+                // 배틀 모드 스토리 모달에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
                 if (isBattleModeStoryScreen) {
-                    closeScreenOverlay('battle-mode-screen', false);
+                    closeScreenOverlay('battle-mode-story-modal', false);
                     // title-screen의 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
                     const startScreen = document.getElementById('title-screen');
                     if (startScreen) {
@@ -768,7 +768,7 @@
                         openBattleModeModal();
                     }
                 } else {
-                    // 다른 스토리 화면은 일반적으로 닫기
+                    // 다른 스토리 모달은 일반적으로 닫기
                     if (bossStoryScreen) {
                         bossStoryScreen.style.display = 'none';
                         bossStoryScreen.style.visibility = '';
@@ -784,13 +784,13 @@
                     game.isProcessing = false;
                 }
                 
-                // 연습 모드 화면에서 백버튼을 누르면 타이틀 화면으로 돌아가기
+                // 연습 모드 게임에서 백버튼을 누르면 타이틀 화면으로 돌아가기
                 if (practiceMemorizationScreen) {
                     practiceMemorizationScreen.style.display = 'none';
                     practiceMemorizationScreen.classList.remove('closing');
                 }
                 
-                // 보스 스토리 화면에서 백버튼을 누르면 타이틀 화면으로 돌아가기
+                // 보스 스토리 모달에서 백버튼을 누르면 타이틀 화면으로 돌아가기
                 if (bossStoryScreen) {
                     bossStoryScreen.style.display = 'none';
                     bossStoryScreen.style.visibility = '';
@@ -800,7 +800,7 @@
                     bossStoryScreen.classList.remove('closing');
                 }
                 
-                // 게임 화면, 보스 스토리 화면, 연습 모드 화면일 때 title-screen 표시
+                // 게임 화면, 보스 스토리 모달, 연습 모드 게임일 때 title-screen 표시
                 if (isGameScreen || isBossStoryScreen || isPracticeMemorizationScreen) {
                     startScreen.style.display = 'flex';
                     // z-index 복원
