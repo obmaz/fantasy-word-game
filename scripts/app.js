@@ -3214,15 +3214,18 @@ const secret = {
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
-        .print-column:first-child::after {
+        .print-columns::before {
             content: '';
             position: absolute;
-            right: calc(-0.6cm - 0.5px);
+            left: 50%;
             top: 0;
             bottom: 0;
             width: 1px;
-            background-color: #ccc;
+            background-color: #999;
+            transform: translateX(-50%);
+            z-index: 1;
         }
         .print-question {
             margin-bottom: 8px;
