@@ -5,6 +5,26 @@
 /* Setting Modal 전용 스타일 */
 /* RPG Modal 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
+/* Setting Modal 타이틀 스타일 (인벤토리, 통계와 동일) */
+#gold-adjuster-modal .card.rpg-modal .modal-title,
+#password-modal .card.rpg-modal .modal-title,
+#gold-edit-modal .card.rpg-modal .modal-title,
+#print-day-select-modal .card.rpg-modal .modal-title {
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+/* Setting Modal header 스타일 (인벤토리, 통계와 동일) */
+#gold-adjuster-modal .card.rpg-modal .modal-header,
+#password-modal .card.rpg-modal .modal-header,
+#gold-edit-modal .card.rpg-modal .modal-header,
+#print-day-select-modal .card.rpg-modal .modal-header {
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255, 215, 130, 0.18);
+}
+
 /* Setting Menu 버튼 스타일 */
 #setting-modal .card.rpg-modal .btn-main {
     height: 58px;
@@ -118,4 +138,42 @@
     color: var(--primary);
     cursor: pointer;
     padding: 0 15px;
+}
+
+/* Print Modal 체크박스 스타일 */
+#print-day-select-modal label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.7);
+    border: 2px solid rgba(255, 213, 79, 0.4);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#print-day-select-modal label:hover {
+    background: rgba(255, 213, 79, 0.15);
+    border-color: rgba(255, 213, 79, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+}
+
+#print-day-select-modal label:has(input:checked) {
+    background: rgba(255, 193, 7, 0.25);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5), 0 4px 12px rgba(255, 213, 79, 0.4);
+    transform: translateY(-2px);
+}
+
+#print-day-select-modal label input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--gold);
 }

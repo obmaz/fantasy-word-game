@@ -2617,6 +2617,15 @@ const secret = {
             return;
         }
 
+        // 체크박스 상태 확인
+        const objectiveChecked = document.getElementById('print-objective-check')?.checked ?? true;
+        const subjectiveChecked = document.getElementById('print-subjective-check')?.checked ?? true;
+
+        if (!objectiveChecked && !subjectiveChecked) {
+            alert('객관식 또는 주관식 중 하나 이상을 선택해주세요.');
+            return;
+        }
+
         // 현재 데이터셋의 rawData 사용
         const currentRawData =
             typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
@@ -2628,16 +2637,229 @@ const secret = {
             return;
         }
 
-        // 단어를 섞고 한글→영문 50%, 영문→한글 50%로 나누기
+        // 단어를 섞기
         const shuffled = [...dayWords].sort(() => Math.random() - 0.5);
-        const half = Math.ceil(shuffled.length / 2);
-        const koreanToEnglish = shuffled.slice(0, half); // 한글→영문
-        const englishToKorean = shuffled.slice(half); // 영문→한글
-
-        // 객관식 문제용 단어 선택 (정답과 오답용)
-        const objectiveWords = [...dayWords].sort(() => Math.random() - 0.5);
 
         const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
+
+        // 객관식 선택지 생성 함수
+        const buildObjectiveOptions = (correctValue, key, primaryPool, count = 4) => {
+            if (!correctValue) {
+                return [];
+            }
+
+            const unique = new Set();
+            unique.add(correctValue);
+
+            // word 보기에서는 유사 단어 그룹 후보를 먼저 추가 (있으면)
+            if (
+                key === 'word' &&
+                typeof window !== 'undefined' &&
+                typeof window.getDecoyWordCandidates === 'function'
+            ) {
+                const candidates = window.getDecoyWordCandidates(correctValue) || [];
+                candidates.forEach((c) => {
+                    if (c && c !== correctValue) unique.add(c);
+                });
+            }
+
+            const pools = [primaryPool, currentRawData];
+
+            // 정답을 제외한 다른 선택지 찾기
+            pools.forEach((pool) => {
+                if (!Array.isArray(pool)) return;
+                const shuffledPool = shuffle([...pool]);
+                for (const item of shuffledPool) {
+                    const value = item && item[key];
+                    if (!value || unique.has(value) || value === correctValue) continue;
+                    unique.add(value);
+                    if (unique.size >= count) break;
+                }
+            });
+
+            const options = Array.from(unique);
+
+            // 정답이 반드시 포함되어 있는지 확인
+            if (!options.includes(correctValue)) {
+                options.push(correctValue);
+            }
+
+            // 선택지가 부족하면 정답을 반복 추가
+            while (options.length < count) {
+                options.push(correctValue);
+            }
+
+            // 정답을 포함한 상태로 섞기
+            const shuffledOptions = shuffle([...options]);
+
+            // 정답이 반드시 포함되도록 보장
+            if (!shuffledOptions.slice(0, count).includes(correctValue)) {
+                const correctIdx = shuffledOptions.indexOf(correctValue);
+                if (correctIdx >= 0) {
+                    [shuffledOptions[count - 1], shuffledOptions[correctIdx]] = [
+                        shuffledOptions[correctIdx],
+                        shuffledOptions[count - 1],
+                    ];
+                } else {
+                    shuffledOptions[count - 1] = correctValue;
+                }
+            }
+
+            return shuffledOptions.slice(0, count);
+        };
+
+        // 객관식/주관식 문제 생성
+        const objectiveQuestions = [];
+        const subjectiveQuestions = [];
+
+        if (objectiveChecked && subjectiveChecked) {
+            // 둘 다 선택: 50%씩 균등 분배
+            const totalCount = Math.min(dayWords.length, 30); // 최대 30개
+            const objectiveCount = Math.floor(totalCount / 2);
+            const subjectiveCount = totalCount - objectiveCount;
+
+            // 객관식 문제 생성 (50%)
+            const objectiveWords = shuffle([...dayWords]).slice(0, objectiveCount);
+            const objectiveHalf = Math.ceil(objectiveWords.length / 2);
+            
+            // 객관식: 한글→영어, 영어→한글 균등 분배
+            objectiveWords.slice(0, objectiveHalf).forEach((item, idx) => {
+                const options = buildObjectiveOptions(item.word, 'word', dayWords);
+                const correctIndex = options.indexOf(item.word);
+                if (correctIndex === -1) {
+                    options[0] = item.word;
+                    objectiveQuestions.push({
+                        type: 'objective-ko-en',
+                        item,
+                        options,
+                        correctIndex: 0,
+                        num: idx + 1,
+                    });
+                } else {
+                    objectiveQuestions.push({
+                        type: 'objective-ko-en',
+                        item,
+                        options,
+                        correctIndex,
+                        num: idx + 1,
+                    });
+                }
+            });
+
+            objectiveWords.slice(objectiveHalf).forEach((item, idx) => {
+                const options = buildObjectiveOptions(item.meaning, 'meaning', dayWords);
+                const correctIndex = options.indexOf(item.meaning);
+                if (correctIndex === -1) {
+                    options[0] = item.meaning;
+                    objectiveQuestions.push({
+                        type: 'objective-en-ko',
+                        item,
+                        options,
+                        correctIndex: 0,
+                        num: objectiveHalf + idx + 1,
+                    });
+                } else {
+                    objectiveQuestions.push({
+                        type: 'objective-en-ko',
+                        item,
+                        options,
+                        correctIndex,
+                        num: objectiveHalf + idx + 1,
+                    });
+                }
+            });
+
+            // 주관식 문제 생성 (50%)
+            const subjectiveWords = shuffle([...dayWords]).slice(0, subjectiveCount);
+            const subjectiveHalf = Math.ceil(subjectiveWords.length / 2);
+            
+            // 주관식: 한글→영어, 영어→한글 균등 분배
+            subjectiveWords.slice(0, subjectiveHalf).forEach((item, idx) => {
+                subjectiveQuestions.push({
+                    type: 'ko-en',
+                    item,
+                    num: idx + 1,
+                });
+            });
+
+            subjectiveWords.slice(subjectiveHalf).forEach((item, idx) => {
+                subjectiveQuestions.push({
+                    type: 'en-ko',
+                    item,
+                    num: subjectiveHalf + idx + 1,
+                });
+            });
+        } else if (objectiveChecked) {
+            // 객관식만 선택: 100% 객관식
+            const objectiveWords = shuffle([...dayWords]).slice(0, Math.min(dayWords.length, 30));
+            const half = Math.ceil(objectiveWords.length / 2);
+            
+            objectiveWords.slice(0, half).forEach((item, idx) => {
+                const options = buildObjectiveOptions(item.word, 'word', dayWords);
+                const correctIndex = options.indexOf(item.word);
+                if (correctIndex === -1) {
+                    options[0] = item.word;
+                    objectiveQuestions.push({
+                        type: 'objective-ko-en',
+                        item,
+                        options,
+                        correctIndex: 0,
+                        num: idx + 1,
+                    });
+                } else {
+                    objectiveQuestions.push({
+                        type: 'objective-ko-en',
+                        item,
+                        options,
+                        correctIndex,
+                        num: idx + 1,
+                    });
+                }
+            });
+
+            objectiveWords.slice(half).forEach((item, idx) => {
+                const options = buildObjectiveOptions(item.meaning, 'meaning', dayWords);
+                const correctIndex = options.indexOf(item.meaning);
+                if (correctIndex === -1) {
+                    options[0] = item.meaning;
+                    objectiveQuestions.push({
+                        type: 'objective-en-ko',
+                        item,
+                        options,
+                        correctIndex: 0,
+                        num: half + idx + 1,
+                    });
+                } else {
+                    objectiveQuestions.push({
+                        type: 'objective-en-ko',
+                        item,
+                        options,
+                        correctIndex,
+                        num: half + idx + 1,
+                    });
+                }
+            });
+        } else if (subjectiveChecked) {
+            // 주관식만 선택: 100% 주관식
+            const subjectiveWords = shuffle([...dayWords]).slice(0, Math.min(dayWords.length, 30));
+            const half = Math.ceil(subjectiveWords.length / 2);
+            
+            subjectiveWords.slice(0, half).forEach((item, idx) => {
+                subjectiveQuestions.push({
+                    type: 'ko-en',
+                    item,
+                    num: idx + 1,
+                });
+            });
+
+            subjectiveWords.slice(half).forEach((item, idx) => {
+                subjectiveQuestions.push({
+                    type: 'en-ko',
+                    item,
+                    num: half + idx + 1,
+                });
+            });
+        }
         const buildObjectiveOptions = (correctValue, key, primaryPool, count = 4) => {
             if (!correctValue) {
                 // 정답이 없으면 빈 배열 반환
@@ -2708,89 +2930,12 @@ const secret = {
             return shuffled.slice(0, count);
         };
 
-        // 모든 문제를 하나의 배열로 합치기
-        const allQuestions = [];
-        koreanToEnglish.forEach((item, idx) => {
-            allQuestions.push({ type: 'ko-en', item, num: idx + 1 });
-        });
-        englishToKorean.forEach((item, idx) => {
-            allQuestions.push({ type: 'en-ko', item, num: koreanToEnglish.length + idx + 1 });
-        });
+        // 문제를 좌우로 나누기: 객관식 좌측, 주관식 우측
+        // 문제 번호 재매기기
+        const leftQuestions = objectiveQuestions.map((q, idx) => ({ ...q, num: idx + 1 }));
+        const rightQuestions = subjectiveQuestions.map((q, idx) => ({ ...q, num: idx + 1 }));
 
-        // 객관식 문제 2개 추가
-        // 1. 한글 뜻 → 영어 단어 객관식
-        if (objectiveWords.length >= 4) {
-            const objItem1 = objectiveWords[0];
-            const allOptions1 = buildObjectiveOptions(objItem1.word, 'word', objectiveWords);
-            const correctIndex1 = allOptions1.indexOf(objItem1.word);
-            // 정답이 선택지에 없으면 에러 처리
-            if (correctIndex1 === -1) {
-                console.error(
-                    '[generatePrintHTML] 정답이 선택지에 없습니다:',
-                    objItem1.word,
-                    allOptions1
-                );
-                // 정답을 첫 번째 선택지로 강제 추가
-                allOptions1[0] = objItem1.word;
-                allQuestions.push({
-                    type: 'objective-ko-en',
-                    item: objItem1,
-                    options: allOptions1,
-                    correctIndex: 0,
-                    num: allQuestions.length + 1,
-                });
-            } else {
-                allQuestions.push({
-                    type: 'objective-ko-en',
-                    item: objItem1,
-                    options: allOptions1,
-                    correctIndex: correctIndex1,
-                    num: allQuestions.length + 1,
-                });
-            }
-        }
-
-        // 2. 영어 단어 → 한글 뜻 객관식
-        if (objectiveWords.length >= 8) {
-            const objItem2 = objectiveWords[4];
-            const allOptions2 = buildObjectiveOptions(objItem2.meaning, 'meaning', objectiveWords);
-            const correctIndex2 = allOptions2.indexOf(objItem2.meaning);
-            // 정답이 선택지에 없으면 에러 처리
-            if (correctIndex2 === -1) {
-                console.error(
-                    '[generatePrintHTML] 정답이 선택지에 없습니다:',
-                    objItem2.meaning,
-                    allOptions2
-                );
-                // 정답을 첫 번째 선택지로 강제 추가
-                allOptions2[0] = objItem2.meaning;
-                allQuestions.push({
-                    type: 'objective-en-ko',
-                    item: objItem2,
-                    options: allOptions2,
-                    correctIndex: 0,
-                    num: allQuestions.length + 1,
-                });
-            } else {
-                allQuestions.push({
-                    type: 'objective-en-ko',
-                    item: objItem2,
-                    options: allOptions2,
-                    correctIndex: correctIndex2,
-                    num: allQuestions.length + 1,
-                });
-            }
-        }
-
-        // 문제를 좌우로 나누기 (절반씩)
-        // A4 1페이지에 맞추기 위해 문제 수 제한 (각 컬럼당 최대 15개)
-        const maxQuestionsPerPage = 30; // 전체 최대 30개 (좌우 각 15개)
-        const limitedQuestions = allQuestions.slice(0, maxQuestionsPerPage);
-        const questionsPerColumn = Math.ceil(limitedQuestions.length / 2);
-        const leftQuestions = limitedQuestions.slice(0, questionsPerColumn);
-        const rightQuestions = limitedQuestions.slice(questionsPerColumn);
-
-        // Day 정보 가져오기 (중복 제거)
+        // Day 정보 가져오기
         const dayLabel =
             dayCatalog && dayCatalog[selectedDay] && dayCatalog[selectedDay].label
                 ? dayCatalog[selectedDay].label
@@ -2800,7 +2945,7 @@ const secret = {
         let questionsHTML = '<div class="print-columns">';
         let answersHTML = '<div class="print-columns">';
 
-        // 좌측 컬럼
+        // 좌측 컬럼 (객관식)
         questionsHTML += '<div class="print-column">';
         answersHTML += '<div class="print-column">';
 
@@ -2927,7 +3072,7 @@ const secret = {
         questionsHTML += '</div>';
         answersHTML += '</div>';
 
-        // 우측 컬럼
+        // 우측 컬럼 (주관식)
         questionsHTML += '<div class="print-column">';
         answersHTML += '<div class="print-column">';
 
