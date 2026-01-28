@@ -9,7 +9,6 @@ build/
 *.log
 
 # Data files
-data/*.js
 
 # Images
 images/
