@@ -1,31 +1,34 @@
 // Game Data Loader - 여러 게임 데이터셋을 관리하는 시스템
-(function() {
+(function () {
     'use strict';
 
     // 사용 가능한 게임 데이터셋 목록을 동적으로 생성
     function buildAvailableDataSets() {
         const dataSets = [];
         let id = 1;
-        
+
         // gameDataName_N이 존재하는 동안 계속 추가 (최대 10개까지 확인)
         while (id <= 10) {
             const nameKey = `gameDataName_${id}`;
             const storiesKey = `storiesData_${id}`;
             const rawDataKey = `rawData_${id}`;
-            
+
             // gameDataName이 있거나, storiesData와 rawData가 모두 있으면 추가
-            if (typeof window[nameKey] !== 'undefined' || 
-                (typeof window[storiesKey] !== 'undefined' && typeof window[rawDataKey] !== 'undefined')) {
+            if (
+                typeof window[nameKey] !== 'undefined' ||
+                (typeof window[storiesKey] !== 'undefined' &&
+                    typeof window[rawDataKey] !== 'undefined')
+            ) {
                 const name = window[nameKey] || `game_data_${id}`;
                 dataSets.push({ id: String(id), name: name });
             } else {
                 // 연속된 ID가 없으면 중단 (예: 1, 2는 있지만 3이 없으면 중단)
                 break;
             }
-            
+
             id++;
         }
-        
+
         return dataSets;
     }
 
@@ -41,7 +44,10 @@
         const rawDataKey = `rawData_${dataSetId}`;
         const nameKey = `gameDataName_${dataSetId}`;
 
-        if (typeof window[storiesKey] === 'undefined' || typeof window[rawDataKey] === 'undefined') {
+        if (
+            typeof window[storiesKey] === 'undefined' ||
+            typeof window[rawDataKey] === 'undefined'
+        ) {
             console.error(`[data-loader] Data set ${dataSetId} not found`);
             return false;
         }
@@ -52,7 +58,9 @@
         window.currentGameDataName = window[nameKey] || `game_data_${dataSetId}`;
         window.currentGameDataSetId = dataSetId;
 
-        console.log(`[data-loader] Loaded data set: ${window.currentGameDataName} (ID: ${dataSetId})`);
+        console.log(
+            `[data-loader] Loaded data set: ${window.currentGameDataName} (ID: ${dataSetId})`
+        );
         return true;
     }
 
@@ -64,15 +72,15 @@
             if (typeof Storage !== 'undefined') {
                 localStorage.setItem('selectedGameDataSet', dataSetId);
             }
-            
+
             // words.js의 dayCatalog 재생성 필요 시 호출
             if (typeof dayCatalog !== 'undefined' && typeof dayCatalog.rebuild === 'function') {
                 dayCatalog.rebuild();
             }
-            
+
             // UI 업데이트
             updateSelectorUI();
-            
+
             return true;
         }
         return false;
@@ -89,11 +97,11 @@
     // 초기화: localStorage에서 저장된 데이터셋 로드 또는 기본값 사용
     function init() {
         let dataSetId = '1'; // 기본값
-        
+
         // localStorage에서 저장된 값 확인
         if (typeof Storage !== 'undefined') {
             const saved = localStorage.getItem('selectedGameDataSet');
-            if (saved && availableDataSets.find(ds => ds.id === saved)) {
+            if (saved && availableDataSets.find((ds) => ds.id === saved)) {
                 dataSetId = saved;
             }
         }
@@ -105,7 +113,9 @@
             if (typeof Storage !== 'undefined') {
                 localStorage.setItem('selectedGameDataSet', dataSetId);
             }
-            console.log(`[data-loader] Initialized with data set: ${window.currentGameDataName} (ID: ${dataSetId})`);
+            console.log(
+                `[data-loader] Initialized with data set: ${window.currentGameDataName} (ID: ${dataSetId})`
+            );
         } else {
             console.error(`[data-loader] Failed to load initial data set: ${dataSetId}`);
         }
@@ -117,21 +127,25 @@
         if (selector) {
             // 동적으로 옵션 생성
             selector.innerHTML = '';
-            availableDataSets.forEach(dataSet => {
+            availableDataSets.forEach((dataSet) => {
                 const option = document.createElement('option');
                 option.value = dataSet.id;
                 option.textContent = dataSet.name;
                 selector.appendChild(option);
             });
-            
+
             // 현재 선택된 값으로 설정
             updateSelectorUI();
-            
-            selector.addEventListener('change', function(e) {
+
+            selector.addEventListener('change', function (e) {
                 const newDataSetId = e.target.value;
                 if (changeDataSet(newDataSetId)) {
                     // 페이지 새로고침 필요 (데이터가 이미 로드된 후 변경되므로)
-                    if (confirm('게임 데이터를 변경하려면 페이지를 새로고침해야 합니다. 새로고침하시겠습니까?')) {
+                    if (
+                        confirm(
+                            '게임 데이터를 변경하려면 페이지를 새로고침해야 합니다. 새로고침하시겠습니까?'
+                        )
+                    ) {
                         location.reload();
                     } else {
                         // 취소 시 이전 값으로 복원
@@ -147,10 +161,10 @@
 
     // 즉시 초기화 (words.js가 로드되기 전에 데이터를 설정해야 함)
     init();
-    
+
     // DOMContentLoaded 시 UI 설정
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             setupSelector();
         });
     } else {
@@ -166,6 +180,6 @@
             if (currentDataSetId) {
                 changeDataSet(currentDataSetId);
             }
-        }
+        },
     };
 })();

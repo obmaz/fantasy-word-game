@@ -127,9 +127,7 @@
     font-size: 14px;
     font-weight: bold;
     color: rgba(255, 214, 120, 0.98);
-    text-shadow:
-        0 2px 0 rgba(60, 40, 10, 0.9),
-        0 10px 24px rgba(0,0,0,0.6);
+    text-shadow: 0 2px 0 rgba(60, 40, 10, 0.9), 0 10px 24px rgba(0, 0, 0, 0.6);
     margin-top: 16px;
     margin-bottom: 8px;
 }
@@ -195,7 +193,7 @@
     border-radius: 12px;
     padding: 15px;
     z-index: 10;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     text-align: left;
 }
 

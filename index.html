@@ -1,771 +1,1157 @@
 <!DOCTYPE html>
 <html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>킹왕짱 RPG</title>
+        <link rel="stylesheet" href="styles/variables.css" />
+        <link rel="stylesheet" href="styles/animations.css" />
+        <link rel="stylesheet" href="styles/title-screen.css" />
+        <link rel="stylesheet" href="styles/battle-mode-game.css" />
+        <link rel="stylesheet" href="styles/modal-common.css" />
+        <link rel="stylesheet" href="styles/practice-mode-modal.css" />
+        <link rel="stylesheet" href="styles/battle-mode-modal.css" />
+        <link rel="stylesheet" href="styles/practice-mode-game.css" />
+        <link rel="stylesheet" href="styles/battle-mode-story-modal.css" />
+        <link rel="stylesheet" href="styles/boss-mode-story-modal.css" />
+        <link rel="stylesheet" href="styles/buttons.css" />
+        <link rel="stylesheet" href="styles/shop-panel.css" />
+        <link rel="stylesheet" href="styles/inventory-panel.css" />
+        <link rel="stylesheet" href="styles/statistics-panel.css" />
+        <link rel="stylesheet" href="styles/setting-panel.css" />
+        <link rel="stylesheet" href="styles/result-panel.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>킹왕짱 RPG</title>
-    <link rel="stylesheet" href="styles/variables.css">
-    <link rel="stylesheet" href="styles/animations.css">
-    <link rel="stylesheet" href="styles/title-screen.css">
-    <link rel="stylesheet" href="styles/battle-mode-game.css">
-    <link rel="stylesheet" href="styles/modal-common.css">
-    <link rel="stylesheet" href="styles/practice-mode-modal.css">
-    <link rel="stylesheet" href="styles/battle-mode-modal.css">
-    <link rel="stylesheet" href="styles/practice-mode-game.css">
-    <link rel="stylesheet" href="styles/battle-mode-story-modal.css">
-    <link rel="stylesheet" href="styles/boss-mode-story-modal.css">
-    <link rel="stylesheet" href="styles/buttons.css">
-    <link rel="stylesheet" href="styles/shop-panel.css">
-    <link rel="stylesheet" href="styles/inventory-panel.css">
-    <link rel="stylesheet" href="styles/statistics-panel.css">
-    <link rel="stylesheet" href="styles/setting-panel.css">
-    <link rel="stylesheet" href="styles/result-panel.css">
-</head>
-
-<body>
-
-    <div id="battle-mode-game" style="display:none; height:100%; flex-direction:column;">
-        <div class="battle-arena">
-            <div class="info-badge" id="wave-badge">Wave: 1</div>
-            <div class="info-badge" id="game-info-badge">배틀 모드 - Day 1</div>
-            <div class="durability-badge" id="durability-badge">🥊 30/30</div>
-            <!-- 배경 위에 골드와 시간 표시 -->
-            <div class="overlay-gold">💰 <span id="overlay-gold">0</span> G</div>
-            <div class="overlay-timer">
-                <div class="timer-bar-bg">
-                    <div id="overlay-timer" class="timer-bar-fill"></div>
-                </div>
-            </div>
-
-            <div class="char-wrapper" id="hero-wrapper">
-                <div id="hero-head" class="hero-equip-slot"></div>
-                <div id="hero-hand-1" class="hero-equip-slot"></div>
-                <div id="hero-hand-2" class="hero-equip-slot"></div>
-                <div id="hero-feet" class="hero-equip-slot"></div>
-                <img id="hero-img" class="char-img" src="" alt="Hero">
-                <div id="hero-weapon" class="equipped-weapon"></div>
-                <div id="hero-effect" class="hero-effect" style="display:none;"></div>
-            </div>
-
-            <div class="effect-layer">
-                <div id="effect-slash"></div>
-                <div id="effect-void-bg" class="slash-void-bg"></div>
-                <div id="effect-void-core" class="slash-void-core"></div>
-            </div>
-
-            <div class="char-wrapper">
-                <img id="monster-img" class="char-img" src="" alt="Monster">
-            </div>
-            <div id="dmg-txt" class="damage-txt"></div>
-        </div>
-
-        <div class="quiz-area">
-            <div class="question-box">
-                <div class="q-label" id="q-label">MEANING</div>
-                <div class="q-text" id="q-text">Loading...</div>
-            </div>
-
-            <div id="skill-display" class="skill-bar"></div>
-
-            <div id="options-box" class="options-grid"></div>
-
-            <div id="boss-box" class="boss-ui">
-                <div style="text-align:center; color:#FF5252; font-weight:bold;" id="boss-title">⚠️ FINAL BOSS</div>
-                <div id="boss-hint" class="boss-hint"></div>
-                <input type="text" id="boss-input" class="boss-input" placeholder="정답 입력" autocomplete="off">
-                <button class="boss-submit" onclick="game.checkBossAnswer()">공격하기</button>
-            </div>
-
-        </div>
-    </div>
-
-    <div id="title-screen" class="screen-overlay">
-        <!-- Title container - constrains buttons within image bounds -->
-        <div class="title-container-wrapper">
-            <!-- Game title header image (randomly loaded) -->
-            <img id="title-header-img" src="images/title/title_header_1.webp" alt="Game Title" class="title-header" />
-            <!-- Background image - displayed vertically centered, full height visible -->
-            <img src="images/title/title.webp" alt="Title Screen" class="title-background" />
-            
-            <!-- Button overlay - matches image size exactly -->
-            <div class="title-buttons-overlay">
-                <!-- Gold display on title screen -->
-                <div class="title-gold-display">💰 <span id="title-ui-gold">0</span> G</div>
-                <!-- Game Data Selector (options are dynamically populated by data-loader.js) -->
-                <select id="game-data-selector" class="title-data-selector" title="게임 데이터 선택">
-                    <option value="1">능률 보카 중등 기본</option>
-                    <option value="2">워드 마스터 중등 고난도</option>
-                </select>
-                <!-- Interactive button areas (invisible overlays on image buttons) -->
-                <!-- PRACTICE MODE = 연습 모드 -->
-                <button class="title-btn-area content-visible" id="title-practice-btn" title="연습 모드 (PRACTICE MODE)">
-                    <img src="images/title/practice_mode_btn.webp" alt="Practice Mode" class="btn-image">
-                </button>
-                <!-- BATTLE MODE = 배틀 모드 -->
-                <button class="title-btn-area content-visible" id="title-battle-mode-btn" title="배틀 모드 (BATTLE MODE)">
-                    <img src="images/title/battle_mode_btn.webp" alt="Battle Mode" class="btn-image">
-                </button>
-                <!-- BOSS MODE = 무한의 전장 -->
-                <button class="title-btn-area content-visible" id="title-boss-mode-btn" title="무한의 전장 (BOSS MODE)">
-                    <img src="images/title/boss_mode_btn.webp" alt="Boss Mode" class="btn-image">
-                </button>
-                
-                <!-- shop = 상점 -->
-                <button class="title-btn-area content-visible" id="title-shop-btn" title="상점 (SHOP)">
-                    <img src="images/title/shop_btn.webp" alt="Shop" class="btn-image">
-                </button>
-                <!-- inventory = 인벤토리 -->
-                <button class="title-btn-area content-visible" id="title-inventory-btn" title="인벤토리 (INVENTORY)">
-                    <img src="images/title/inventory_btn.webp" alt="Inventory" class="btn-image">
-                </button>
-                <!-- statistics = 통계 -->
-                <button class="title-btn-area content-visible" id="title-statistics-btn" title="통계 (STATISTICS)">
-                    <img src="images/title/statistics_btn.webp" alt="Statistics" class="btn-image">
-                </button>
-                <!-- 일반설정 메뉴 -->
-                <button class="title-btn-area content-visible" id="title-setting-btn" title="일반설정 (SETTING)">
-                    <img src="images/title/settings_btn.webp" alt="Settings" class="btn-image">
-                </button>
-            </div>
-        </div>
-        
-        <!-- Hidden UI elements (kept for functionality but not displayed) -->
-        <div style="display: none;">
-            <div class="stats-box" id="stat-solved">0</div>
-            <div class="stat-item" id="stat-correct">0</div>
-            <div class="stat-item" id="stat-rate">0%</div>
-            <div id="equipped-summary" class="equipped-summary"></div>
-            <select id="day-select"></select>
-            <select id="count-select">
-                <option value="5">5 마리 (쉬움)</option>
-                <option value="10" selected>10 마리 (보통)</option>
-                <option value="20">20 마리 (어려움)</option>
-            </select>
-        </div>
-        
-        <!-- Hidden buttons for functionality (kept for event listeners) -->
-        <button class="btn-main" id="start-battle-btn" style="display: none;">전투 시작 ⚔️</button>
-        <button class="btn-main btn-boss-mode" id="boss-mode-btn" style="display: none;">🔥 보스 모드 (무한)</button>
-        <button class="btn-main btn-shop" onclick="shop.open()" style="display: none;">상점 🛒</button>
-        <button class="btn-main btn-inv" onclick="inventory.open()" style="display: none;">인벤토리 🎒</button>
-    </div>
-
-    <div id="inventory-panel" class="screen-overlay" style="display:none;">
-        <div class="card rpg-panel">
-            <div id="inv-item-detail" style="display:none;">
-                <div id="detail-header">
-                    <div id="detail-icon"></div>
-                    <div id="detail-name"></div>
-                    <button id="detail-close" onclick="inventory.hideDetails()">X</button>
-                </div>
-                <div id="detail-desc"></div>
-                <div id="detail-actions"></div>
-            </div>
-
-            <div class="panel-header">
-                <h2 class="panel-title">인벤토리</h2>
-            </div>
-            <div class="inv-container">
-                <div class="inv-player">
-
-                    <!-- Head / hands / torso layout for "사람 모양" 슬롯 -->
-                    <div class="inv-head" style="margin-bottom:8px;">
-                        <div class="inv-slot" id="inv-head" role="button" tabindex="0" aria-label="머리 슬롯"
-                            onclick="inventory.unequip('head')"></div>
+    <body>
+        <div id="battle-mode-game" style="display: none; height: 100%; flex-direction: column">
+            <div class="battle-arena">
+                <div class="info-badge" id="wave-badge">Wave: 1</div>
+                <div class="info-badge" id="game-info-badge">배틀 모드 - Day 1</div>
+                <div class="durability-badge" id="durability-badge">🥊 30/30</div>
+                <!-- 배경 위에 골드와 시간 표시 -->
+                <div class="overlay-gold">💰 <span id="overlay-gold">0</span> G</div>
+                <div class="overlay-timer">
+                    <div class="timer-bar-bg">
+                        <div id="overlay-timer" class="timer-bar-fill"></div>
                     </div>
+                </div>
 
-                    <div class="inv-body">
-                        <div class="inv-slot" id="inv-hand-2" role="button" tabindex="0" aria-label="왼손 슬롯"
-                            onclick="inventory.unequip('hand-2')"></div>
-                        <div class="inv-torso">
-                            <div class="inv-slot" id="inv-weapon" role="button" tabindex="0" aria-label="무기 슬롯"
-                                onclick="inventory.unequip('weapon')"></div>
+                <div class="char-wrapper" id="hero-wrapper">
+                    <div id="hero-head" class="hero-equip-slot"></div>
+                    <div id="hero-hand-1" class="hero-equip-slot"></div>
+                    <div id="hero-hand-2" class="hero-equip-slot"></div>
+                    <div id="hero-feet" class="hero-equip-slot"></div>
+                    <img id="hero-img" class="char-img" src="" alt="Hero" />
+                    <div id="hero-weapon" class="equipped-weapon"></div>
+                    <div id="hero-effect" class="hero-effect" style="display: none"></div>
+                </div>
+
+                <div class="effect-layer">
+                    <div id="effect-slash"></div>
+                    <div id="effect-void-bg" class="slash-void-bg"></div>
+                    <div id="effect-void-core" class="slash-void-core"></div>
+                </div>
+
+                <div class="char-wrapper">
+                    <img id="monster-img" class="char-img" src="" alt="Monster" />
+                </div>
+                <div id="dmg-txt" class="damage-txt"></div>
+            </div>
+
+            <div class="quiz-area">
+                <div class="question-box">
+                    <div class="q-label" id="q-label">MEANING</div>
+                    <div class="q-text" id="q-text">Loading...</div>
+                </div>
+
+                <div id="skill-display" class="skill-bar"></div>
+
+                <div id="options-box" class="options-grid"></div>
+
+                <div id="boss-box" class="boss-ui">
+                    <div
+                        style="text-align: center; color: #ff5252; font-weight: bold"
+                        id="boss-title"
+                    >
+                        ⚠️ FINAL BOSS
+                    </div>
+                    <div id="boss-hint" class="boss-hint"></div>
+                    <input
+                        type="text"
+                        id="boss-input"
+                        class="boss-input"
+                        placeholder="정답 입력"
+                        autocomplete="off"
+                    />
+                    <button class="boss-submit" onclick="game.checkBossAnswer()">공격하기</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="title-screen" class="screen-overlay">
+            <!-- Title container - constrains buttons within image bounds -->
+            <div class="title-container-wrapper">
+                <!-- Game title header image (randomly loaded) -->
+                <img
+                    id="title-header-img"
+                    src="images/title/title_header_1.webp"
+                    alt="Game Title"
+                    class="title-header"
+                />
+                <!-- Background image - displayed vertically centered, full height visible -->
+                <img src="images/title/title.webp" alt="Title Screen" class="title-background" />
+
+                <!-- Button overlay - matches image size exactly -->
+                <div class="title-buttons-overlay">
+                    <!-- Gold display on title screen -->
+                    <div class="title-gold-display">💰 <span id="title-ui-gold">0</span> G</div>
+                    <!-- Game Data Selector (options are dynamically populated by data-loader.js) -->
+                    <select
+                        id="game-data-selector"
+                        class="title-data-selector"
+                        title="게임 데이터 선택"
+                    >
+                        <option value="1">능률 보카 중등 기본</option>
+                        <option value="2">워드 마스터 중등 고난도</option>
+                    </select>
+                    <!-- Interactive button areas (invisible overlays on image buttons) -->
+                    <!-- PRACTICE MODE = 연습 모드 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-practice-btn"
+                        title="연습 모드 (PRACTICE MODE)"
+                    >
+                        <img
+                            src="images/title/practice_mode_btn.webp"
+                            alt="Practice Mode"
+                            class="btn-image"
+                        />
+                    </button>
+                    <!-- BATTLE MODE = 배틀 모드 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-battle-mode-btn"
+                        title="배틀 모드 (BATTLE MODE)"
+                    >
+                        <img
+                            src="images/title/battle_mode_btn.webp"
+                            alt="Battle Mode"
+                            class="btn-image"
+                        />
+                    </button>
+                    <!-- BOSS MODE = 무한의 전장 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-boss-mode-btn"
+                        title="무한의 전장 (BOSS MODE)"
+                    >
+                        <img
+                            src="images/title/boss_mode_btn.webp"
+                            alt="Boss Mode"
+                            class="btn-image"
+                        />
+                    </button>
+
+                    <!-- shop = 상점 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-shop-btn"
+                        title="상점 (SHOP)"
+                    >
+                        <img src="images/title/shop_btn.webp" alt="Shop" class="btn-image" />
+                    </button>
+                    <!-- inventory = 인벤토리 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-inventory-btn"
+                        title="인벤토리 (INVENTORY)"
+                    >
+                        <img
+                            src="images/title/inventory_btn.webp"
+                            alt="Inventory"
+                            class="btn-image"
+                        />
+                    </button>
+                    <!-- statistics = 통계 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-statistics-btn"
+                        title="통계 (STATISTICS)"
+                    >
+                        <img
+                            src="images/title/statistics_btn.webp"
+                            alt="Statistics"
+                            class="btn-image"
+                        />
+                    </button>
+                    <!-- 일반설정 메뉴 -->
+                    <button
+                        class="title-btn-area content-visible"
+                        id="title-setting-btn"
+                        title="일반설정 (SETTING)"
+                    >
+                        <img
+                            src="images/title/settings_btn.webp"
+                            alt="Settings"
+                            class="btn-image"
+                        />
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hidden UI elements (kept for functionality but not displayed) -->
+            <div style="display: none">
+                <div class="stats-box" id="stat-solved">0</div>
+                <div class="stat-item" id="stat-correct">0</div>
+                <div class="stat-item" id="stat-rate">0%</div>
+                <div id="equipped-summary" class="equipped-summary"></div>
+                <select id="day-select"></select>
+                <select id="count-select">
+                    <option value="5">5 마리 (쉬움)</option>
+                    <option value="10" selected>10 마리 (보통)</option>
+                    <option value="20">20 마리 (어려움)</option>
+                </select>
+            </div>
+
+            <!-- Hidden buttons for functionality (kept for event listeners) -->
+            <button class="btn-main" id="start-battle-btn" style="display: none">
+                전투 시작 ⚔️
+            </button>
+            <button class="btn-main btn-boss-mode" id="boss-mode-btn" style="display: none">
+                🔥 보스 모드 (무한)
+            </button>
+            <button class="btn-main btn-shop" onclick="shop.open()" style="display: none">
+                상점 🛒
+            </button>
+            <button class="btn-main btn-inv" onclick="inventory.open()" style="display: none">
+                인벤토리 🎒
+            </button>
+        </div>
+
+        <div id="inventory-panel" class="screen-overlay" style="display: none">
+            <div class="card rpg-panel">
+                <div id="inv-item-detail" style="display: none">
+                    <div id="detail-header">
+                        <div id="detail-icon"></div>
+                        <div id="detail-name"></div>
+                        <button id="detail-close" onclick="inventory.hideDetails()">X</button>
+                    </div>
+                    <div id="detail-desc"></div>
+                    <div id="detail-actions"></div>
+                </div>
+
+                <div class="panel-header">
+                    <h2 class="panel-title">인벤토리</h2>
+                </div>
+                <div class="inv-container">
+                    <div class="inv-player">
+                        <!-- Head / hands / torso layout for "사람 모양" 슬롯 -->
+                        <div class="inv-head" style="margin-bottom: 8px">
+                            <div
+                                class="inv-slot"
+                                id="inv-head"
+                                role="button"
+                                tabindex="0"
+                                aria-label="머리 슬롯"
+                                onclick="inventory.unequip('head')"
+                            ></div>
                         </div>
-                        <div class="inv-slot" id="inv-hand-1" role="button" tabindex="0" aria-label="오른손 슬롯"
-                            onclick="inventory.unequip('hand-1')"></div>
+
+                        <div class="inv-body">
+                            <div
+                                class="inv-slot"
+                                id="inv-hand-2"
+                                role="button"
+                                tabindex="0"
+                                aria-label="왼손 슬롯"
+                                onclick="inventory.unequip('hand-2')"
+                            ></div>
+                            <div class="inv-torso">
+                                <div
+                                    class="inv-slot"
+                                    id="inv-weapon"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="무기 슬롯"
+                                    onclick="inventory.unequip('weapon')"
+                                ></div>
+                            </div>
+                            <div
+                                class="inv-slot"
+                                id="inv-hand-1"
+                                role="button"
+                                tabindex="0"
+                                aria-label="오른손 슬롯"
+                                onclick="inventory.unequip('hand-1')"
+                            ></div>
+                        </div>
+
+                        <div class="inv-legs">
+                            <div
+                                class="inv-slot"
+                                id="inv-foot-1"
+                                role="button"
+                                tabindex="0"
+                                aria-label="왼발 슬롯"
+                                onclick="inventory.unequip('foot-1')"
+                            ></div>
+                            <div
+                                class="inv-slot"
+                                id="inv-foot-2"
+                                role="button"
+                                tabindex="0"
+                                aria-label="오른발 슬롯"
+                                onclick="inventory.unequip('foot-2')"
+                            ></div>
+                        </div>
+                    </div>
+                    <div class="inv-storage">
+                        <h3 class="inv-section-title">보관함 (장비)</h3>
+                        <div class="inv-items"></div>
+                        <div class="inv-capacity">
+                            용량: <span id="inv-cap">0</span> / <span id="inv-max-cap">3</span>
+                        </div>
+
+                        <h3 class="inv-section-title" style="margin-top: 16px">보유 유물</h3>
+                        <div class="inv-relics"></div>
+                    </div>
+                </div>
+                <img
+                    id="inv-close-btn"
+                    src="images/title/exit_btn.webp"
+                    alt="나가기"
+                    onclick="inventory.close()"
+                    aria-label="인벤토리 닫기"
+                    style="
+                        width: 80%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
+                        cursor: pointer;
+                        object-fit: contain;
+                    "
+                />
+            </div>
+        </div>
+
+        <!-- Practice Mode Selection Modal -->
+        <div id="practice-mode-modal" class="screen-overlay" style="display: none">
+            <div class="modal-container-wrapper">
+                <img
+                    src="images/practice_mode/practice_mode_select_popup .webp"
+                    alt="Practice Mode Settings"
+                    class="modal-background"
+                    id="practice-mode-modal-background-img"
+                />
+                <div class="modal-buttons-overlay">
+                    <!-- 모달 타이틀 -->
+                    <div class="modal-title">연습모드</div>
+
+                    <!-- 모험 지역 드롭박스 영역 -->
+                    <select
+                        id="practice-mode-modal-day-select"
+                        class="modal-select modal-day-select"
+                    ></select>
+
+                    <!-- 난이도 드롭박스 영역 -->
+                    <select
+                        id="practice-mode-modal-count-select"
+                        class="modal-select modal-count-select"
+                    >
+                        <option value="5">5 마리 (쉬움)</option>
+                        <option value="10" selected>10 마리 (보통)</option>
+                        <option value="20">20 마리 (어려움)</option>
+                    </select>
+
+                    <!-- 시작하기 버튼 영역 -->
+                    <button
+                        class="modal-btn-area"
+                        id="practice-mode-modal-start-btn"
+                        title="시작하기"
+                    ></button>
+
+                    <!-- 취소 버튼 영역 -->
+                    <button
+                        class="modal-btn-area"
+                        id="practice-mode-modal-cancel-btn"
+                        title="취소"
+                    ></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Mode Selection Modal -->
+        <div id="battle-mode-modal" class="screen-overlay" style="display: none">
+            <div class="modal-container-wrapper">
+                <img
+                    src="images/battle_mode/battle_mode_select_popup.webp"
+                    alt="Battle Mode Settings"
+                    class="modal-background"
+                    id="battle-mode-modal-background-img"
+                />
+                <div class="modal-buttons-overlay">
+                    <!-- 모험 지역 드롭박스 영역 -->
+                    <select
+                        id="battle-mode-modal-day-select"
+                        class="modal-select modal-day-select"
+                    ></select>
+
+                    <!-- 난이도 드롭박스 영역 -->
+                    <select
+                        id="battle-mode-modal-count-select"
+                        class="modal-select modal-count-select"
+                    >
+                        <option value="5">5 마리 (쉬움)</option>
+                        <option value="10" selected>10 마리 (보통)</option>
+                        <option value="20">20 마리 (어려움)</option>
+                    </select>
+
+                    <!-- 문제 타입 라디오 버튼 (Battle Mode 전용) -->
+                    <div id="battle-mode-modal-question-type-group" class="modal-radio-group">
+                        <label class="modal-radio-label">
+                            <input
+                                type="radio"
+                                name="battle-question-type"
+                                value="objective"
+                                class="modal-radio"
+                            />
+                            <span class="modal-radio-text">객관식</span>
+                        </label>
+                        <label class="modal-radio-label">
+                            <input
+                                type="radio"
+                                name="battle-question-type"
+                                value="mixed"
+                                checked
+                                class="modal-radio"
+                            />
+                            <span class="modal-radio-text">혼합형</span>
+                        </label>
+                        <label class="modal-radio-label">
+                            <input
+                                type="radio"
+                                name="battle-question-type"
+                                value="subjective"
+                                class="modal-radio"
+                            />
+                            <span class="modal-radio-text">주관식</span>
+                        </label>
                     </div>
 
-                    <div class="inv-legs">
-                        <div class="inv-slot" id="inv-foot-1" role="button" tabindex="0" aria-label="왼발 슬롯"
-                            onclick="inventory.unequip('foot-1')"></div>
-                        <div class="inv-slot" id="inv-foot-2" role="button" tabindex="0" aria-label="오른발 슬롯"
-                            onclick="inventory.unequip('foot-2')"></div>
+                    <!-- 시작하기 버튼 영역 -->
+                    <button
+                        class="modal-btn-area"
+                        id="battle-mode-modal-start-btn"
+                        title="시작하기"
+                    ></button>
+
+                    <!-- 취소 버튼 영역 -->
+                    <button
+                        class="modal-btn-area"
+                        id="battle-mode-modal-cancel-btn"
+                        title="취소"
+                    ></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice Mode Game (단어 암기 화면) -->
+        <div id="practice-mode-game" style="display: none; height: 100%; flex-direction: column">
+            <div class="practice-memorization-container">
+                <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
+                <div class="practice-memorization-arena">
+                    <!-- 상단: Day 정보 및 단어 번호 -->
+                    <div class="practice-memorization-header">
+                        <div class="practice-day-info" id="practice-memorization-day-info"></div>
+                        <div class="practice-word-counter" id="practice-word-counter">1 / 1</div>
                     </div>
                 </div>
-                <div class="inv-storage">
-                    <h3 class="inv-section-title">보관함 (장비)</h3>
-                    <div class="inv-items">
+
+                <!-- 중앙: 단어 표시 영역 (배틀 모드의 quiz-area와 유사) -->
+                <div class="practice-memorization-content">
+                    <!-- 영어 단어 -->
+                    <div class="practice-word-section">
+                        <div class="practice-word-text" id="practice-word-text">Loading...</div>
                     </div>
-                    <div class="inv-capacity">용량: <span id="inv-cap">0</span> / <span id="inv-max-cap">3</span></div>
 
-                    <h3 class="inv-section-title" style="margin-top: 16px;">보유 유물</h3>
-                    <div class="inv-relics">
+                    <!-- 한글 뜻 -->
+                    <div class="practice-meaning-section">
+                        <div class="practice-meaning-text" id="practice-meaning-text">
+                            Loading...
+                        </div>
+                    </div>
+
+                    <!-- 영문 문장 (English Explanation) -->
+                    <div class="practice-explanation-section">
+                        <div class="practice-label">영문 설명</div>
+                        <div class="practice-explanation-text" id="practice-explanation-text">
+                            Loading...
+                        </div>
                     </div>
                 </div>
-            </div>
-            <img id="inv-close-btn" src="images/title/exit_btn.webp" alt="나가기" onclick="inventory.close()"
-                aria-label="인벤토리 닫기" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
-        </div>
-    </div>
 
-
-    <!-- Practice Mode Selection Modal -->
-    <div id="practice-mode-modal" class="screen-overlay" style="display:none;">
-        <div class="modal-container-wrapper">
-            <img src="images/practice_mode/practice_mode_select_popup .webp" alt="Practice Mode Settings" class="modal-background" id="practice-mode-modal-background-img" />
-            <div class="modal-buttons-overlay">
-                <!-- 모달 타이틀 -->
-                <div class="modal-title">연습모드</div>
-                
-                <!-- 모험 지역 드롭박스 영역 -->
-                <select id="practice-mode-modal-day-select" class="modal-select modal-day-select"></select>
-                
-                <!-- 난이도 드롭박스 영역 -->
-                <select id="practice-mode-modal-count-select" class="modal-select modal-count-select">
-                    <option value="5">5 마리 (쉬움)</option>
-                    <option value="10" selected>10 마리 (보통)</option>
-                    <option value="20">20 마리 (어려움)</option>
-                </select>
-                
-                <!-- 시작하기 버튼 영역 -->
-                <button class="modal-btn-area" id="practice-mode-modal-start-btn" title="시작하기"></button>
-                
-                <!-- 취소 버튼 영역 -->
-                <button class="modal-btn-area" id="practice-mode-modal-cancel-btn" title="취소"></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Battle Mode Selection Modal -->
-    <div id="battle-mode-modal" class="screen-overlay" style="display:none;">
-        <div class="modal-container-wrapper">
-            <img src="images/battle_mode/battle_mode_select_popup.webp" alt="Battle Mode Settings" class="modal-background" id="battle-mode-modal-background-img" />
-            <div class="modal-buttons-overlay">
-                <!-- 모험 지역 드롭박스 영역 -->
-                <select id="battle-mode-modal-day-select" class="modal-select modal-day-select"></select>
-                
-                <!-- 난이도 드롭박스 영역 -->
-                <select id="battle-mode-modal-count-select" class="modal-select modal-count-select">
-                    <option value="5">5 마리 (쉬움)</option>
-                    <option value="10" selected>10 마리 (보통)</option>
-                    <option value="20">20 마리 (어려움)</option>
-                </select>
-                
-                <!-- 문제 타입 라디오 버튼 (Battle Mode 전용) -->
-                <div id="battle-mode-modal-question-type-group" class="modal-radio-group">
-                    <label class="modal-radio-label">
-                        <input type="radio" name="battle-question-type" value="objective" class="modal-radio">
-                        <span class="modal-radio-text">객관식</span>
-                    </label>
-                    <label class="modal-radio-label">
-                        <input type="radio" name="battle-question-type" value="mixed" checked class="modal-radio">
-                        <span class="modal-radio-text">혼합형</span>
-                    </label>
-                    <label class="modal-radio-label">
-                        <input type="radio" name="battle-question-type" value="subjective" class="modal-radio">
-                        <span class="modal-radio-text">주관식</span>
-                    </label>
-                </div>
-                
-                <!-- 시작하기 버튼 영역 -->
-                <button class="modal-btn-area" id="battle-mode-modal-start-btn" title="시작하기"></button>
-                
-                <!-- 취소 버튼 영역 -->
-                <button class="modal-btn-area" id="battle-mode-modal-cancel-btn" title="취소"></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Practice Mode Game (단어 암기 화면) -->
-    <div id="practice-mode-game" style="display:none; height:100%; flex-direction:column;">
-        <div class="practice-memorization-container">
-            <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
-            <div class="practice-memorization-arena">
-                <!-- 상단: Day 정보 및 단어 번호 -->
-                <div class="practice-memorization-header">
-                    <div class="practice-day-info" id="practice-memorization-day-info"></div>
-                    <div class="practice-word-counter" id="practice-word-counter">1 / 1</div>
+                <!-- 하단: 네비게이션 버튼 -->
+                <div class="practice-memorization-navigation">
+                    <button class="practice-nav-btn" id="practice-prev-btn" title="이전 단어">
+                        ◀ 이전
+                    </button>
+                    <button
+                        class="practice-nav-btn practice-nav-exit"
+                        id="practice-exit-btn"
+                        title="나가기"
+                    >
+                        나가기
+                    </button>
+                    <button class="practice-nav-btn" id="practice-next-btn" title="다음 단어">
+                        다음 ▶
+                    </button>
                 </div>
             </div>
-            
-            <!-- 중앙: 단어 표시 영역 (배틀 모드의 quiz-area와 유사) -->
-            <div class="practice-memorization-content">
-                <!-- 영어 단어 -->
-                <div class="practice-word-section">
-                    <div class="practice-word-text" id="practice-word-text">Loading...</div>
-                </div>
-                
-                <!-- 한글 뜻 -->
-                <div class="practice-meaning-section">
-                    <div class="practice-meaning-text" id="practice-meaning-text">Loading...</div>
-                </div>
-                
-                <!-- 영문 문장 (English Explanation) -->
-                <div class="practice-explanation-section">
-                    <div class="practice-label">영문 설명</div>
-                    <div class="practice-explanation-text" id="practice-explanation-text">Loading...</div>
-                </div>
-            </div>
-            
-            <!-- 하단: 네비게이션 버튼 -->
-            <div class="practice-memorization-navigation">
-                <button class="practice-nav-btn" id="practice-prev-btn" title="이전 단어">◀ 이전</button>
-                <button class="practice-nav-btn practice-nav-exit" id="practice-exit-btn" title="나가기">나가기</button>
-                <button class="practice-nav-btn" id="practice-next-btn" title="다음 단어">다음 ▶</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Battle Mode Story Modal (battle 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
-    <div id="battle-mode-story-modal" class="screen-overlay" style="display:none;">
-        <div class="story-container-wrapper">
-            <img src="images/battle_mode/battle_mode_popup.webp" alt="Adventure Start" class="story-background" id="battle-mode-background-img" />
-            <div class="story-buttons-overlay">
-                <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
-                <button class="story-btn-area" id="battle-mode-start-btn" title="모험 시작"></button>
-            </div>
-            <!-- Day 정보 표시 영역 -->
-            <div class="story-day-info" id="battle-mode-day-info"></div>
-            <!-- 이야기 텍스트 영역 -->
-            <div class="story-text-container">
-                <div class="story-text-content" id="battle-mode-text"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Boss Mode Story Modal (boss 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
-    <div id="boss-mode-story-modal" class="screen-overlay" style="display:none;">
-        <div class="story-container-wrapper">
-            <img src="images/battle_mode/battle_mode_popup.webp" alt="Adventure Start" class="story-background" id="boss-mode-background-img" />
-            <div class="story-buttons-overlay">
-                <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
-                <button class="story-btn-area" id="boss-mode-start-btn" title="모험 시작"></button>
-            </div>
-            <!-- Day 정보 표시 영역 -->
-            <div class="story-day-info" id="boss-mode-day-info"></div>
-            <!-- 이야기 텍스트 영역 -->
-            <div class="story-text-container">
-                <div class="story-text-content" id="boss-mode-text"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="shop-panel" class="screen-overlay" style="display:none;">
-        <div class="card rpg-panel">
-            <div class="panel-header">
-                <h2 class="panel-title">상점</h2>
-                <div style="color:var(--gold);">보유 골드: <span id="shop-gold">0</span> G</div>
-            </div>
-            <div class="panel-body">
-                <div id="shop-container" style="text-align:left;"></div>
-            </div>
-            <div class="panel-footer">
-                <img src="images/title/exit_btn.webp" alt="나가기" onclick="shop.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
-            </div>
-        </div>
-    </div>
-
-    <div id="statistics-panel" class="screen-overlay" style="display:none;">
-        <div class="card rpg-panel">
-            <div class="panel-header">
-                <h2 class="panel-title">통계</h2>
-            </div>
-            <div class="panel-body">
-                <div id="statistics-container" style="text-align:left;"></div>
-            </div>
-            <div class="panel-footer">
-                <img src="images/title/exit_btn.webp" alt="나가기" onclick="statistics.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
-            </div>
-        </div>
-    </div>
-
-    <div id="result-panel" class="screen-overlay" style="display:none;">
-        <div class="result-panel" role="dialog" aria-label="결과">
-            <div id="res-title" class="result-panel-title">FINISHED!</div>
-
-            <div class="result-panel-body">
-                <div class="result-panel-row">
-                    <span class="result-label">이번 획득</span>
-                    <span class="result-value gold">+<span id="res-gain">0</span> G</span>
-                </div>
-                <div class="result-panel-row">
-                    <span class="result-label">이번 손실</span>
-                    <span class="result-value danger">-<span id="res-lost">0</span> G</span>
-                </div>
-                <div class="result-panel-total">
-                    내 지갑 총액: <span id="res-current-total">0</span> G
-                </div>
-            </div>
-
-            <div class="result-panel-actions">
-                <button class="result-btn result-btn-gold" onclick="closeResultScreen()">마을로 귀환</button>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div id="setting-panel" class="screen-overlay" style="display:none;">
-
-        <div id="password-modal" class="card rpg-panel">
-
-            <h3 class="panel-title">비밀번호 입력</h3>
-
-            <div id="password-input-boxes" style="display: flex; gap: 5px; justify-content: center; margin: 20px 0;">
-
-
-
-            </div>
-
-            <p id="password-error" style="color:var(--danger); display:none;">비밀번호가 틀렸습니다.</p>
-
-            <div id="password-numpad"
-                style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 200px; margin: 0 auto;">
-
-                <button class="num-btn" onclick="secret.enter(1)">1</button>
-
-                <button class="num-btn" onclick="secret.enter(2)">2</button>
-
-                <button class="num-btn" onclick="secret.enter(3)">3</button>
-
-                <button class="num-btn" onclick="secret.enter(4)">4</button>
-
-                <button class="num-btn" onclick="secret.enter(5)">5</button>
-
-                <button class="num-btn" onclick="secret.enter(6)">6</button>
-
-                <button class="num-btn" onclick="secret.enter(7)">7</button>
-
-                <button class="num-btn" onclick="secret.enter(8)">8</button>
-
-                <button class="num-btn" onclick="secret.enter(9)">9</button>
-
-                <button class="num-btn" onclick="secret.del()">⌫</button>
-
-                <button class="num-btn" onclick="secret.enter(0)">0</button>
-
-                <img class="num-btn" src="images/title/exit_btn.webp" alt="닫기" onclick="secret.close()" style="width: 60px; height: 60px; object-fit: contain; cursor: pointer; box-sizing: border-box;">
-
-            </div>
-
         </div>
 
-
-
-        <div id="gold-adjuster-modal" class="card rpg-panel" style="display:none;">
-            <div class="panel-header">
-                <h3 class="panel-title">설정</h3>
-            </div>
-            <div class="panel-body">
-                <div style="text-align: center; width: 100%; margin-top: 20px;">
-                    <button class="btn-main" onclick="secret.openGoldEditModal()" style="width: 80%; margin: 0 auto; display: block;">골드 수정</button>
+        <!-- Battle Mode Story Modal (battle 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
+        <div id="battle-mode-story-modal" class="screen-overlay" style="display: none">
+            <div class="story-container-wrapper">
+                <img
+                    src="images/battle_mode/battle_mode_popup.webp"
+                    alt="Adventure Start"
+                    class="story-background"
+                    id="battle-mode-background-img"
+                />
+                <div class="story-buttons-overlay">
+                    <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
+                    <button
+                        class="story-btn-area"
+                        id="battle-mode-start-btn"
+                        title="모험 시작"
+                    ></button>
                 </div>
-                <div style="text-align: center; width: 100%; margin-top: 10px;">
-                    <button class="btn-main" onclick="secret.openPrintDaySelect()" style="width: 80%; margin: 0 auto; display: block;">문제 출력</button>
+                <!-- Day 정보 표시 영역 -->
+                <div class="story-day-info" id="battle-mode-day-info"></div>
+                <!-- 이야기 텍스트 영역 -->
+                <div class="story-text-container">
+                    <div class="story-text-content" id="battle-mode-text"></div>
                 </div>
-                <div style="text-align: center; width: 100%; margin-top: 10px;">
-                    <button class="btn-main btn-danger" onclick="secret.resetStatistics()" style="width: 80%; margin: 0 auto; display: block;">통계 초기화</button>
-                </div>
-            </div>
-            <div class="panel-footer">
-                <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.close()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
             </div>
         </div>
 
+        <!-- Boss Mode Story Modal (boss 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
+        <div id="boss-mode-story-modal" class="screen-overlay" style="display: none">
+            <div class="story-container-wrapper">
+                <img
+                    src="images/battle_mode/battle_mode_popup.webp"
+                    alt="Adventure Start"
+                    class="story-background"
+                    id="boss-mode-background-img"
+                />
+                <div class="story-buttons-overlay">
+                    <!-- 모험시작 버튼 영역 (이미지의 "모험 시작" 부분) -->
+                    <button
+                        class="story-btn-area"
+                        id="boss-mode-start-btn"
+                        title="모험 시작"
+                    ></button>
+                </div>
+                <!-- Day 정보 표시 영역 -->
+                <div class="story-day-info" id="boss-mode-day-info"></div>
+                <!-- 이야기 텍스트 영역 -->
+                <div class="story-text-container">
+                    <div class="story-text-content" id="boss-mode-text"></div>
+                </div>
+            </div>
+        </div>
 
+        <div id="shop-panel" class="screen-overlay" style="display: none">
+            <div class="card rpg-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">상점</h2>
+                    <div style="color: var(--gold)">보유 골드: <span id="shop-gold">0</span> G</div>
+                </div>
+                <div class="panel-body">
+                    <div id="shop-container" style="text-align: left"></div>
+                </div>
+                <div class="panel-footer">
+                    <img
+                        src="images/title/exit_btn.webp"
+                        alt="나가기"
+                        onclick="shop.close()"
+                        style="
+                            width: 80%;
+                            height: auto;
+                            display: block;
+                            margin: 0 auto;
+                            cursor: pointer;
+                            object-fit: contain;
+                        "
+                    />
+                </div>
+            </div>
+        </div>
 
-        <div id="gold-edit-modal" class="card rpg-panel" style="display:none;">
+        <div id="statistics-panel" class="screen-overlay" style="display: none">
+            <div class="card rpg-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">통계</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="statistics-container" style="text-align: left"></div>
+                </div>
+                <div class="panel-footer">
+                    <img
+                        src="images/title/exit_btn.webp"
+                        alt="나가기"
+                        onclick="statistics.close()"
+                        style="
+                            width: 80%;
+                            height: auto;
+                            display: block;
+                            margin: 0 auto;
+                            cursor: pointer;
+                            object-fit: contain;
+                        "
+                    />
+                </div>
+            </div>
+        </div>
 
-            <h3 class="panel-title">골드 수정</h3>
+        <div id="result-panel" class="screen-overlay" style="display: none">
+            <div class="result-panel" role="dialog" aria-label="결과">
+                <div id="res-title" class="result-panel-title">FINISHED!</div>
 
-            <div class="gold-adjuster">
-
-                <div class="gold-adjust-label">현재 골드</div>
-
-                <div id="current-gold-edit-display" class="gold-display-box">0</div>
-
-                <div class="gold-adjust-label">설정할 골드</div>
-
-                <div class="gold-adjust-controls">
-
-                    <button id="gold-edit-down" class="gold-arrow">▼</button>
-
-                    <div id="edit-gold-display" class="gold-display-box">0</div>
-
-                    <button id="gold-edit-up" class="gold-arrow">▲</button>
-
+                <div class="result-panel-body">
+                    <div class="result-panel-row">
+                        <span class="result-label">이번 획득</span>
+                        <span class="result-value gold">+<span id="res-gain">0</span> G</span>
+                    </div>
+                    <div class="result-panel-row">
+                        <span class="result-label">이번 손실</span>
+                        <span class="result-value danger">-<span id="res-lost">0</span> G</span>
+                    </div>
+                    <div class="result-panel-total">
+                        내 지갑 총액: <span id="res-current-total">0</span> G
+                    </div>
                 </div>
 
-            </div>
-
-            <div style="text-align: center; width: 100%;">
-                <img src="images/title/apply_btn.webp" alt="적용" onclick="secret.applyGoldEdit()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
-            </div>
-            <div style="text-align: center; width: 100%; margin-top: 10px;">
-                <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.closeGoldEditModal()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
-            </div>
-
-        </div>
-
-        <div id="print-day-select-modal" class="card rpg-panel" style="display:none;">
-            <h3 class="panel-title">Day 선택</h3>
-            <div style="margin: 20px 0;">
-                <select id="print-day-select" class="btn-main" style="width: 100%; padding: 10px; font-size: 16px;">
-                    <option value="">Day 선택...</option>
-                </select>
-            </div>
-            <div style="text-align: center; width: 100%; margin-top: 20px;">
-                <button class="btn-main" onclick="secret.generatePrintHTML()" style="width: 80%; margin: 0 auto; display: block;">인쇄용 HTML 생성</button>
-            </div>
-            <div style="text-align: center; width: 100%; margin-top: 10px;">
-                <img src="images/title/exit_btn.webp" alt="나가기" onclick="secret.closePrintDaySelect()" style="width: 80%; height: auto; display: block; margin: 0 auto; cursor: pointer; object-fit: contain;">
+                <div class="result-panel-actions">
+                    <button class="result-btn result-btn-gold" onclick="closeResultScreen()">
+                        마을로 귀환
+                    </button>
+                </div>
             </div>
         </div>
 
-    </div>
+        <div id="setting-panel" class="screen-overlay" style="display: none">
+            <div id="password-modal" class="card rpg-panel">
+                <h3 class="panel-title">비밀번호 입력</h3>
 
+                <div
+                    id="password-input-boxes"
+                    style="display: flex; gap: 5px; justify-content: center; margin: 20px 0"
+                ></div>
 
+                <p id="password-error" style="color: var(--danger); display: none">
+                    비밀번호가 틀렸습니다.
+                </p>
 
-    <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
-    <script src="data/game-data-1.js"></script>
-    <script src="data/game-data-2.js"></script>
-    <script src="data/items-data.js"></script>
-    <script src="scripts/data-loader.js"></script>
-    <script src="scripts/words.js"></script>
+                <div
+                    id="password-numpad"
+                    style="
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 10px;
+                        max-width: 200px;
+                        margin: 0 auto;
+                    "
+                >
+                    <button class="num-btn" onclick="secret.enter(1)">1</button>
 
+                    <button class="num-btn" onclick="secret.enter(2)">2</button>
 
+                    <button class="num-btn" onclick="secret.enter(3)">3</button>
 
+                    <button class="num-btn" onclick="secret.enter(4)">4</button>
 
+                    <button class="num-btn" onclick="secret.enter(5)">5</button>
 
+                    <button class="num-btn" onclick="secret.enter(6)">6</button>
 
-    <script src="scripts/items.js"></script>
+                    <button class="num-btn" onclick="secret.enter(7)">7</button>
 
+                    <button class="num-btn" onclick="secret.enter(8)">8</button>
 
+                    <button class="num-btn" onclick="secret.enter(9)">9</button>
 
-    <script src="scripts/app.js"></script>
+                    <button class="num-btn" onclick="secret.del()">⌫</button>
 
-    <!-- Background Music -->
-    <audio id="background-music" loop>
-        <source src="data/background_music.mp3" type="audio/mpeg">
-    </audio>
+                    <button class="num-btn" onclick="secret.enter(0)">0</button>
 
-    <script>
-        // Background music 초기화 (게임 중에만 재생)
-        window.addEventListener('load', () => {
-            const bgMusic = document.getElementById('background-music');
-            if (bgMusic) {
-                bgMusic.volume = 0.5; // 볼륨 조절
-                // 타이틀에서는 재생하지 않음 (게임 시작 시 재생)
-            }
-        });
+                    <img
+                        class="num-btn"
+                        src="images/title/exit_btn.webp"
+                        alt="닫기"
+                        onclick="secret.close()"
+                        style="
+                            width: 60px;
+                            height: 60px;
+                            object-fit: contain;
+                            cursor: pointer;
+                            box-sizing: border-box;
+                        "
+                    />
+                </div>
+            </div>
 
-        // 백버튼 처리 (게임 중, 상점, 인벤토리에서 시작 화면으로)
-        let isGameScreen = false;
-        let isShopScreen = false;
-        let isInventoryScreen = false;
-        let isStatisticsScreen = false;
-        let isSettingScreen = false;
+            <div id="gold-adjuster-modal" class="card rpg-panel" style="display: none">
+                <div class="panel-header">
+                    <h3 class="panel-title">설정</h3>
+                </div>
+                <div class="panel-body">
+                    <div style="text-align: center; width: 100%; margin-top: 20px">
+                        <button
+                            class="btn-main"
+                            onclick="secret.openGoldEditModal()"
+                            style="width: 80%; margin: 0 auto; display: block"
+                        >
+                            골드 수정
+                        </button>
+                    </div>
+                    <div style="text-align: center; width: 100%; margin-top: 10px">
+                        <button
+                            class="btn-main"
+                            onclick="secret.openPrintDaySelect()"
+                            style="width: 80%; margin: 0 auto; display: block"
+                        >
+                            문제 출력
+                        </button>
+                    </div>
+                    <div style="text-align: center; width: 100%; margin-top: 10px">
+                        <button
+                            class="btn-main btn-danger"
+                            onclick="secret.resetStatistics()"
+                            style="width: 80%; margin: 0 auto; display: block"
+                        >
+                            통계 초기화
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <img
+                        src="images/title/exit_btn.webp"
+                        alt="나가기"
+                        onclick="secret.close()"
+                        style="
+                            width: 80%;
+                            height: auto;
+                            display: block;
+                            margin: 0 auto;
+                            cursor: pointer;
+                            object-fit: contain;
+                        "
+                    />
+                </div>
+            </div>
 
-        // 화면 상태 추적
+            <div id="gold-edit-modal" class="card rpg-panel" style="display: none">
+                <h3 class="panel-title">골드 수정</h3>
+
+                <div class="gold-adjuster">
+                    <div class="gold-adjust-label">현재 골드</div>
+
+                    <div id="current-gold-edit-display" class="gold-display-box">0</div>
+
+                    <div class="gold-adjust-label">설정할 골드</div>
+
+                    <div class="gold-adjust-controls">
+                        <button id="gold-edit-down" class="gold-arrow">▼</button>
+
+                        <div id="edit-gold-display" class="gold-display-box">0</div>
+
+                        <button id="gold-edit-up" class="gold-arrow">▲</button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; width: 100%">
+                    <img
+                        src="images/title/apply_btn.webp"
+                        alt="적용"
+                        onclick="secret.applyGoldEdit()"
+                        style="
+                            width: 80%;
+                            height: auto;
+                            display: block;
+                            margin: 0 auto;
+                            cursor: pointer;
+                            object-fit: contain;
+                        "
+                    />
+                </div>
+                <div style="text-align: center; width: 100%; margin-top: 10px">
+                    <img
+                        src="images/title/exit_btn.webp"
+                        alt="나가기"
+                        onclick="secret.closeGoldEditModal()"
+                        style="
+                            width: 80%;
+                            height: auto;
+                            display: block;
+                            margin: 0 auto;
+                            cursor: pointer;
+                            object-fit: contain;
+                        "
+                    />
+                </div>
+            </div>
+
+            <div id="print-day-select-modal" class="card rpg-panel" style="display: none">
+                <h3 class="panel-title">Day 선택</h3>
+                <div style="margin: 20px 0">
+                    <select
+                        id="print-day-select"
+                        class="btn-main"
+                        style="width: 100%; padding: 10px; font-size: 16px"
+                    >
+                        <option value="">Day 선택...</option>
+                    </select>
+                </div>
+                <div style="text-align: center; width: 100%; margin-top: 20px">
+                    <button
+                        class="btn-main"
+                        onclick="secret.generatePrintHTML()"
+                        style="width: 80%; margin: 0 auto; display: block"
+                    >
+                        인쇄용 HTML 생성
+                    </button>
+                </div>
+                <div style="text-align: center; width: 100%; margin-top: 10px">
+                    <img
+                        src="images/title/exit_btn.webp"
+                        alt="나가기"
+                        onclick="secret.closePrintDaySelect()"
+                        style="
+                            width: 80%;
+                            height: auto;
+                            display: block;
+                            margin: 0 auto;
+                            cursor: pointer;
+                            object-fit: contain;
+                        "
+                    />
+                </div>
+            </div>
+        </div>
+
+        <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
+        <script src="data/game-data-1.js"></script>
+        <script src="data/game-data-2.js"></script>
+        <script src="data/items-data.js"></script>
+        <script src="scripts/data-loader.js"></script>
+        <script src="scripts/words.js"></script>
+
+        <script src="scripts/items.js"></script>
+
+        <script src="scripts/app.js"></script>
+
+        <!-- Background Music -->
+        <audio id="background-music" loop>
+            <source src="data/background_music.mp3" type="audio/mpeg" />
+        </audio>
+
+        <script>
+            // Background music 초기화 (게임 중에만 재생)
+            window.addEventListener('load', () => {
+                const bgMusic = document.getElementById('background-music');
+                if (bgMusic) {
+                    bgMusic.volume = 0.5; // 볼륨 조절
+                    // 타이틀에서는 재생하지 않음 (게임 시작 시 재생)
+                }
+            });
+
+            // 백버튼 처리 (게임 중, 상점, 인벤토리에서 시작 화면으로)
+            let isGameScreen = false;
+            let isShopScreen = false;
+            let isInventoryScreen = false;
+            let isStatisticsScreen = false;
+            let isSettingScreen = false;
+
+            // 화면 상태 추적
             const gameScreen = document.getElementById('battle-mode-game');
-        const shopScreen = document.getElementById('shop-panel');
-        const inventoryScreen = document.getElementById('inventory-panel');
-        const statisticsScreen = document.getElementById('statistics-panel');
-        const settingScreen = document.getElementById('setting-panel');
-        const startScreen = document.getElementById('title-screen');
+            const shopScreen = document.getElementById('shop-panel');
+            const inventoryScreen = document.getElementById('inventory-panel');
+            const statisticsScreen = document.getElementById('statistics-panel');
+            const settingScreen = document.getElementById('setting-panel');
+            const startScreen = document.getElementById('title-screen');
 
-        // MutationObserver로 화면 상태 감지
-        const observer = new MutationObserver(() => {
-            isGameScreen = gameScreen.style.display !== 'none';
-            isShopScreen = shopScreen.style.display !== 'none';
-            isInventoryScreen = inventoryScreen.style.display !== 'none';
-            isStatisticsScreen = statisticsScreen && statisticsScreen.style.display !== 'none';
-            isSettingScreen = settingScreen && settingScreen.style.display !== 'none';
-        });
+            // MutationObserver로 화면 상태 감지
+            const observer = new MutationObserver(() => {
+                isGameScreen = gameScreen.style.display !== 'none';
+                isShopScreen = shopScreen.style.display !== 'none';
+                isInventoryScreen = inventoryScreen.style.display !== 'none';
+                isStatisticsScreen = statisticsScreen && statisticsScreen.style.display !== 'none';
+                isSettingScreen = settingScreen && settingScreen.style.display !== 'none';
+            });
 
-        observer.observe(gameScreen, { attributes: true, attributeFilter: ['style'] });
-        observer.observe(shopScreen, { attributes: true, attributeFilter: ['style'] });
-        observer.observe(inventoryScreen, { attributes: true, attributeFilter: ['style'] });
-        if (statisticsScreen) {
-            observer.observe(statisticsScreen, { attributes: true, attributeFilter: ['style'] });
-        }
-        if (settingScreen) {
-            observer.observe(settingScreen, { attributes: true, attributeFilter: ['style'] });
-        }
+            observer.observe(gameScreen, { attributes: true, attributeFilter: ['style'] });
+            observer.observe(shopScreen, { attributes: true, attributeFilter: ['style'] });
+            observer.observe(inventoryScreen, { attributes: true, attributeFilter: ['style'] });
+            if (statisticsScreen) {
+                observer.observe(statisticsScreen, {
+                    attributes: true,
+                    attributeFilter: ['style'],
+                });
+            }
+            if (settingScreen) {
+                observer.observe(settingScreen, { attributes: true, attributeFilter: ['style'] });
+            }
 
-        // 백버튼 이벤트 처리 (모바일 브라우저)
-        window.addEventListener('popstate', (e) => {
-            const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
-            const bossStoryScreen = document.getElementById('boss-mode-story-modal');
-            const practiceModeModal = document.getElementById('practice-mode-modal');
-            const battleModeModal = document.getElementById('battle-mode-modal');
-            const resultScreen = document.getElementById('result-panel');
-            const practiceMemorizationScreen = document.getElementById('practice-mode-game');
-            
-            const isPracticeModeStoryScreen = false; // practice-mode-screen은 더 이상 사용하지 않음
-            const isBattleModeStoryScreen = battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '';
-            const isBossStoryScreen = bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '';
-            const isPracticeModeModal = practiceModeModal && practiceModeModal.style.display !== 'none' && practiceModeModal.style.display !== '';
-            const isBattleModeModal = battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '';
-            const isResultScreen = resultScreen && resultScreen.style.display !== 'none' && resultScreen.style.display !== '';
-            const isPracticeMemorizationScreen = practiceMemorizationScreen && practiceMemorizationScreen.style.display !== 'none' && practiceMemorizationScreen.style.display !== '';
-            const printDaySelectModal = document.getElementById('print-day-select-modal');
-            const isPrintDaySelectModal = printDaySelectModal && printDaySelectModal.style.display !== 'none' && printDaySelectModal.style.display !== '';
-            const goldEditModal = document.getElementById('gold-edit-modal');
-            const isGoldEditModal = goldEditModal && goldEditModal.style.display !== 'none' && goldEditModal.style.display !== '';
-            const passwordModal = document.getElementById('password-modal');
-            const isPasswordModal = passwordModal && passwordModal.style.display !== 'none' && passwordModal.style.display !== '';
-            
-            // 문제출력 모달에서 백버튼을 누르면 설정 화면으로 돌아가기
-            if (isPrintDaySelectModal) {
-                if (typeof secret !== 'undefined' && typeof secret.closePrintDaySelect === 'function') {
-                    secret.closePrintDaySelect();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 문제출력 모달만 처리하고 종료
-            }
-            
-            // 골드 수정 모달에서 백버튼을 누르면 골드 조정 화면으로 돌아가기
-            if (isGoldEditModal) {
-                if (typeof secret !== 'undefined' && typeof secret.closeGoldEditModal === 'function') {
-                    secret.closeGoldEditModal();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 골드 수정 모달만 처리하고 종료
-            }
-            
-            // 비밀번호 모달에서 백버튼을 누르면 나가기처럼 직전 화면으로 돌아가기
-            if (isPasswordModal) {
-                if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
-                    secret.close();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 비밀번호 모달만 처리하고 종료
-            }
-            
-            // 상점에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
-            if (isShopScreen) {
-                if (typeof shop !== 'undefined' && typeof shop.close === 'function') {
-                    shop.close();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 상점만 처리하고 종료
-            }
-            
-            // 인벤토리에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
-            if (isInventoryScreen) {
-                if (typeof inventory !== 'undefined' && typeof inventory.close === 'function') {
-                    inventory.close();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 인벤토리만 처리하고 종료
-            }
-            
-            // 통계에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
-            if (isStatisticsScreen) {
-                if (typeof statistics !== 'undefined' && typeof statistics.close === 'function') {
-                    statistics.close();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 통계만 처리하고 종료
-            }
-            
-            // 설정에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기 (하위 모달이 없을 때만)
-            if (isSettingScreen && !isPrintDaySelectModal && !isGoldEditModal && !isPasswordModal) {
-                if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
-                    secret.close();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 설정만 처리하고 종료
-            }
-            
-            // 결과 화면에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
-            if (isResultScreen) {
-                if (typeof closeResultScreen === 'function') {
-                    closeResultScreen();
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 결과 화면만 처리하고 종료
-            }
-            
-            // 연습 모드 모달에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
-            if (isPracticeModeModal) {
-                if (typeof closePracticeModal === 'function') {
-                    closePracticeModal(false);
-                }
-                // title-screen 표시
-                const startScreen = document.getElementById('title-screen');
-                if (startScreen) {
-                    startScreen.style.display = 'flex';
-                    startScreen.style.zIndex = '';
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 연습 모드 모달만 처리하고 종료
-            }
-            
-            // 배틀 모드 모달에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
-            if (isBattleModeModal && !isBattleModeStoryScreen) {
-                if (typeof closePracticeModal === 'function') {
-                    closePracticeModal(false);
-                }
-                // title-screen 표시
-                const startScreen = document.getElementById('title-screen');
-                if (startScreen) {
-                    startScreen.style.display = 'flex';
-                    startScreen.style.zIndex = '';
-                }
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-                return; // 배틀 모드 모달만 처리하고 종료
-            }
-            
-            if (isGameScreen || isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen || isPracticeMemorizationScreen) {
-                // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
-                if (isGameScreen && typeof game !== 'undefined') {
-                    if (game.timer) {
-                        clearInterval(game.timer);
-                        game.timer = null;
+            // 백버튼 이벤트 처리 (모바일 브라우저)
+            window.addEventListener('popstate', (e) => {
+                const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
+                const bossStoryScreen = document.getElementById('boss-mode-story-modal');
+                const practiceModeModal = document.getElementById('practice-mode-modal');
+                const battleModeModal = document.getElementById('battle-mode-modal');
+                const resultScreen = document.getElementById('result-panel');
+                const practiceMemorizationScreen = document.getElementById('practice-mode-game');
+
+                const isPracticeModeStoryScreen = false; // practice-mode-screen은 더 이상 사용하지 않음
+                const isBattleModeStoryScreen =
+                    battleModeStoryScreen &&
+                    battleModeStoryScreen.style.display !== 'none' &&
+                    battleModeStoryScreen.style.display !== '';
+                const isBossStoryScreen =
+                    bossStoryScreen &&
+                    bossStoryScreen.style.display !== 'none' &&
+                    bossStoryScreen.style.display !== '';
+                const isPracticeModeModal =
+                    practiceModeModal &&
+                    practiceModeModal.style.display !== 'none' &&
+                    practiceModeModal.style.display !== '';
+                const isBattleModeModal =
+                    battleModeModal &&
+                    battleModeModal.style.display !== 'none' &&
+                    battleModeModal.style.display !== '';
+                const isResultScreen =
+                    resultScreen &&
+                    resultScreen.style.display !== 'none' &&
+                    resultScreen.style.display !== '';
+                const isPracticeMemorizationScreen =
+                    practiceMemorizationScreen &&
+                    practiceMemorizationScreen.style.display !== 'none' &&
+                    practiceMemorizationScreen.style.display !== '';
+                const printDaySelectModal = document.getElementById('print-day-select-modal');
+                const isPrintDaySelectModal =
+                    printDaySelectModal &&
+                    printDaySelectModal.style.display !== 'none' &&
+                    printDaySelectModal.style.display !== '';
+                const goldEditModal = document.getElementById('gold-edit-modal');
+                const isGoldEditModal =
+                    goldEditModal &&
+                    goldEditModal.style.display !== 'none' &&
+                    goldEditModal.style.display !== '';
+                const passwordModal = document.getElementById('password-modal');
+                const isPasswordModal =
+                    passwordModal &&
+                    passwordModal.style.display !== 'none' &&
+                    passwordModal.style.display !== '';
+
+                // 문제출력 모달에서 백버튼을 누르면 설정 화면으로 돌아가기
+                if (isPrintDaySelectModal) {
+                    if (
+                        typeof secret !== 'undefined' &&
+                        typeof secret.closePrintDaySelect === 'function'
+                    ) {
+                        secret.closePrintDaySelect();
                     }
-                    game.isProcessing = false; // 게임 상태 리셋하여 다시 시작 가능하도록
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 문제출력 모달만 처리하고 종료
                 }
-                
-                // 게임 화면이 닫힐 때 배경음악 정지
-                if (isGameScreen) {
-                    const bgMusic = document.getElementById('background-music');
-                    if (bgMusic && !bgMusic.paused) {
-                        bgMusic.pause();
-                        bgMusic.currentTime = 0; // 처음부터 다시 재생되도록 리셋
+
+                // 골드 수정 모달에서 백버튼을 누르면 골드 조정 화면으로 돌아가기
+                if (isGoldEditModal) {
+                    if (
+                        typeof secret !== 'undefined' &&
+                        typeof secret.closeGoldEditModal === 'function'
+                    ) {
+                        secret.closeGoldEditModal();
                     }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 골드 수정 모달만 처리하고 종료
                 }
-                
-                // 게임 화면만 닫기
-                gameScreen.style.display = 'none';
-                
-                // 배틀 모드 스토리 모달에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
-                if (isBattleModeStoryScreen) {
-                    closeScreenOverlay('battle-mode-story-modal', false);
-                    // title-screen의 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
+
+                // 비밀번호 모달에서 백버튼을 누르면 나가기처럼 직전 화면으로 돌아가기
+                if (isPasswordModal) {
+                    if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
+                        secret.close();
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 비밀번호 모달만 처리하고 종료
+                }
+
+                // 상점에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+                if (isShopScreen) {
+                    if (typeof shop !== 'undefined' && typeof shop.close === 'function') {
+                        shop.close();
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 상점만 처리하고 종료
+                }
+
+                // 인벤토리에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+                if (isInventoryScreen) {
+                    if (typeof inventory !== 'undefined' && typeof inventory.close === 'function') {
+                        inventory.close();
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 인벤토리만 처리하고 종료
+                }
+
+                // 통계에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+                if (isStatisticsScreen) {
+                    if (
+                        typeof statistics !== 'undefined' &&
+                        typeof statistics.close === 'function'
+                    ) {
+                        statistics.close();
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 통계만 처리하고 종료
+                }
+
+                // 설정에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기 (하위 모달이 없을 때만)
+                if (
+                    isSettingScreen &&
+                    !isPrintDaySelectModal &&
+                    !isGoldEditModal &&
+                    !isPasswordModal
+                ) {
+                    if (typeof secret !== 'undefined' && typeof secret.close === 'function') {
+                        secret.close();
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 설정만 처리하고 종료
+                }
+
+                // 결과 화면에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+                if (isResultScreen) {
+                    if (typeof closeResultScreen === 'function') {
+                        closeResultScreen();
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 결과 화면만 처리하고 종료
+                }
+
+                // 연습 모드 모달에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+                if (isPracticeModeModal) {
+                    if (typeof closePracticeModal === 'function') {
+                        closePracticeModal(false);
+                    }
+                    // title-screen 표시
                     const startScreen = document.getElementById('title-screen');
                     if (startScreen) {
-                        startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
-                        startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
+                        startScreen.style.display = 'flex';
+                        startScreen.style.zIndex = '';
                     }
-                    // 배틀 모드 모달 열기
-                    if (typeof openBattleModeModal === 'function') {
-                        openBattleModeModal();
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 연습 모드 모달만 처리하고 종료
+                }
+
+                // 배틀 모드 모달에서 백버튼을 누르면 나가기처럼 타이틀 화면으로 돌아가기
+                if (isBattleModeModal && !isBattleModeStoryScreen) {
+                    if (typeof closePracticeModal === 'function') {
+                        closePracticeModal(false);
                     }
-                } else {
-                    // 다른 스토리 모달은 일반적으로 닫기
+                    // title-screen 표시
+                    const startScreen = document.getElementById('title-screen');
+                    if (startScreen) {
+                        startScreen.style.display = 'flex';
+                        startScreen.style.zIndex = '';
+                    }
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                    return; // 배틀 모드 모달만 처리하고 종료
+                }
+
+                if (
+                    isGameScreen ||
+                    isPracticeModeStoryScreen ||
+                    isBattleModeStoryScreen ||
+                    isBossStoryScreen ||
+                    isPracticeMemorizationScreen
+                ) {
+                    // 게임 화면을 닫을 때 타이머 정지 및 상태 리셋
+                    if (isGameScreen && typeof game !== 'undefined') {
+                        if (game.timer) {
+                            clearInterval(game.timer);
+                            game.timer = null;
+                        }
+                        game.isProcessing = false; // 게임 상태 리셋하여 다시 시작 가능하도록
+                    }
+
+                    // 게임 화면이 닫힐 때 배경음악 정지
+                    if (isGameScreen) {
+                        const bgMusic = document.getElementById('background-music');
+                        if (bgMusic && !bgMusic.paused) {
+                            bgMusic.pause();
+                            bgMusic.currentTime = 0; // 처음부터 다시 재생되도록 리셋
+                        }
+                    }
+
+                    // 게임 화면만 닫기
+                    gameScreen.style.display = 'none';
+
+                    // 배틀 모드 스토리 모달에서 백버튼을 누르면 배틀 모드 모달로 돌아가기
+                    if (isBattleModeStoryScreen) {
+                        closeScreenOverlay('battle-mode-story-modal', false);
+                        // title-screen의 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
+                        const startScreen = document.getElementById('title-screen');
+                        if (startScreen) {
+                            startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
+                            startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
+                        }
+                        // 배틀 모드 모달 열기
+                        if (typeof openBattleModeModal === 'function') {
+                            openBattleModeModal();
+                        }
+                    } else {
+                        // 다른 스토리 모달은 일반적으로 닫기
+                        if (bossStoryScreen) {
+                            bossStoryScreen.style.display = 'none';
+                            bossStoryScreen.style.visibility = '';
+                            bossStoryScreen.style.opacity = '';
+                            bossStoryScreen.style.zIndex = '';
+                            bossStoryScreen.style.pointerEvents = '';
+                            bossStoryScreen.classList.remove('closing');
+                        }
+                    }
+
+                    // 게임 상태 리셋
+                    if (
+                        (isPracticeModeStoryScreen ||
+                            isBattleModeStoryScreen ||
+                            isBossStoryScreen) &&
+                        typeof game !== 'undefined'
+                    ) {
+                        game.isProcessing = false;
+                    }
+
+                    // 연습 모드 게임에서 백버튼을 누르면 타이틀 화면으로 돌아가기
+                    if (practiceMemorizationScreen) {
+                        practiceMemorizationScreen.style.display = 'none';
+                        practiceMemorizationScreen.classList.remove('closing');
+                    }
+
+                    // 보스 스토리 모달에서 백버튼을 누르면 타이틀 화면으로 돌아가기
                     if (bossStoryScreen) {
                         bossStoryScreen.style.display = 'none';
                         bossStoryScreen.style.visibility = '';
@@ -774,52 +1160,28 @@
                         bossStoryScreen.style.pointerEvents = '';
                         bossStoryScreen.classList.remove('closing');
                     }
-                }
-                
-                // 게임 상태 리셋
-                if ((isPracticeModeStoryScreen || isBattleModeStoryScreen || isBossStoryScreen) && typeof game !== 'undefined') {
-                    game.isProcessing = false;
-                }
-                
-                // 연습 모드 게임에서 백버튼을 누르면 타이틀 화면으로 돌아가기
-                if (practiceMemorizationScreen) {
-                    practiceMemorizationScreen.style.display = 'none';
-                    practiceMemorizationScreen.classList.remove('closing');
-                }
-                
-                // 보스 스토리 모달에서 백버튼을 누르면 타이틀 화면으로 돌아가기
-                if (bossStoryScreen) {
-                    bossStoryScreen.style.display = 'none';
-                    bossStoryScreen.style.visibility = '';
-                    bossStoryScreen.style.opacity = '';
-                    bossStoryScreen.style.zIndex = '';
-                    bossStoryScreen.style.pointerEvents = '';
-                    bossStoryScreen.classList.remove('closing');
-                }
-                
-                // 게임 화면, 보스 스토리 모달, 연습 모드 게임일 때 title-screen 표시
-                if (isGameScreen || isBossStoryScreen || isPracticeMemorizationScreen) {
-                    startScreen.style.display = 'flex';
-                    // z-index 복원
-                    startScreen.style.zIndex = '';
-                    
-                    // 버튼 오버레이 동기화 (이미지 로드 후)
-                    setTimeout(() => {
-                        if (typeof syncTitleButtonOverlay === 'function') {
-                            syncTitleButtonOverlay();
-                        }
-                    }, 100);
-                }
-                
-                // 히스토리 조작 방지
-                history.pushState(null, '', window.location.href);
-            }
-        });
 
-        // 초기 히스토리 상태 추가
-        history.pushState(null, '', window.location.href);
-    </script>
+                    // 게임 화면, 보스 스토리 모달, 연습 모드 게임일 때 title-screen 표시
+                    if (isGameScreen || isBossStoryScreen || isPracticeMemorizationScreen) {
+                        startScreen.style.display = 'flex';
+                        // z-index 복원
+                        startScreen.style.zIndex = '';
 
-</body>
+                        // 버튼 오버레이 동기화 (이미지 로드 후)
+                        setTimeout(() => {
+                            if (typeof syncTitleButtonOverlay === 'function') {
+                                syncTitleButtonOverlay();
+                            }
+                        }, 100);
+                    }
 
+                    // 히스토리 조작 방지
+                    history.pushState(null, '', window.location.href);
+                }
+            });
+
+            // 초기 히스토리 상태 추가
+            history.pushState(null, '', window.location.href);
+        </script>
+    </body>
 </html>

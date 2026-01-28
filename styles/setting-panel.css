@@ -13,9 +13,7 @@
     font-weight: 900;
     font-size: clamp(14px, 3.5vw, 16px);
     letter-spacing: 0.5px;
-    box-shadow:
-        0 10px 28px rgba(0,0,0,0.55),
-        inset 0 1px 0 rgba(255,255,255,0.35);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     animation: none !important;
     background-size: initial !important;
     display: flex;
@@ -25,12 +23,22 @@
 }
 
 #setting-panel .card.rpg-panel .btn-main.btn-blue {
-    background: linear-gradient(45deg, rgba(41,121,255,0.95), rgba(41,121,255,0.85)) !important;
+    background: linear-gradient(
+        45deg,
+        rgba(41, 121, 255, 0.95),
+        rgba(41, 121, 255, 0.85)
+    ) !important;
     color: #fff !important;
 }
 
-#setting-panel .card.rpg-panel .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
-    background: linear-gradient(45deg, rgba(255, 214, 120, 0.95), rgba(214, 140, 45, 0.95)) !important;
+#setting-panel
+    .card.rpg-panel
+    .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
+    background: linear-gradient(
+        45deg,
+        rgba(255, 214, 120, 0.95),
+        rgba(214, 140, 45, 0.95)
+    ) !important;
     color: rgba(20, 15, 10, 0.92) !important;
 }
 
@@ -44,9 +52,9 @@
     justify-content: center;
     box-sizing: border-box;
     border: 2px solid rgba(231, 189, 105, 0.55);
-    background: rgba(0,0,0,0.25);
-    color: rgba(245,245,255,0.95);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(245, 245, 255, 0.95);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 #setting-panel .card.rpg-panel .num-btn:active {

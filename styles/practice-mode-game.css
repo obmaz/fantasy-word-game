@@ -119,7 +119,7 @@
 .practice-word-text {
     font-size: clamp(22px, 2.5vw, 36px);
     font-weight: bold;
-    color: var(--primary, #FFD700);
+    color: var(--primary, #ffd700);
     text-align: center;
     word-break: keep-all;
     line-height: 1.4;
@@ -127,7 +127,7 @@
 
 .practice-meaning-text {
     font-size: clamp(20px, 2.3vw, 34px);
-    color: var(--primary, #FFD700);
+    color: var(--primary, #ffd700);
     text-align: center;
     word-break: keep-all;
     line-height: 1.5;
@@ -158,7 +158,7 @@
     padding: 12px 20px;
     font-size: 14px;
     font-weight: bold;
-    color: #FFFFFF;
+    color: #ffffff;
     background: rgba(0, 0, 0, 0.4);
     border: 2px solid #555;
     border-radius: 10px;
@@ -169,7 +169,7 @@
 
 .practice-nav-btn:hover {
     background: rgba(0, 0, 0, 0.6);
-    border-color: var(--primary, #FFD700);
+    border-color: var(--primary, #ffd700);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
 }
@@ -187,12 +187,12 @@
 
 .practice-nav-exit {
     background: rgba(211, 47, 47, 0.3);
-    border-color: #D32F2F;
+    border-color: #d32f2f;
 }
 
 .practice-nav-exit:hover {
     background: rgba(211, 47, 47, 0.5);
-    border-color: #F44336;
+    border-color: #f44336;
     box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
 }
 

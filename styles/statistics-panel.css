@@ -12,7 +12,7 @@
 }
 
 #statistics-panel .card.rpg-panel .panel-header {
-    background: rgba(0,0,0,0.15);
+    background: rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(255, 215, 130, 0.18);
 }
@@ -36,9 +36,7 @@
     font-weight: 900;
     font-size: clamp(14px, 3.5vw, 16px);
     letter-spacing: 0.5px;
-    box-shadow:
-        0 10px 28px rgba(0,0,0,0.55),
-        inset 0 1px 0 rgba(255,255,255,0.35);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     animation: none !important;
     background-size: initial !important;
     display: flex;
@@ -48,6 +46,10 @@
 }
 
 #statistics-panel .card.rpg-panel .btn-main.btn-blue {
-    background: linear-gradient(45deg, rgba(41,121,255,0.95), rgba(41,121,255,0.85)) !important;
+    background: linear-gradient(
+        45deg,
+        rgba(41, 121, 255, 0.95),
+        rgba(41, 121, 255, 0.85)
+    ) !important;
     color: #fff !important;
 }

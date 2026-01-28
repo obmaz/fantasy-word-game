@@ -53,7 +53,7 @@ const db = {
     has: (id) => db.owned.includes(id),
     equip: (id) => {
         // route equip through the weapon metadata so category/slot rules are consistent
-        const w = weapons.find(w => w.id === id);
+        const w = weapons.find((w) => w.id === id);
         if (!w) {
             db.equippedWeapon = id;
             db.save();
@@ -78,7 +78,7 @@ const db = {
     addStats: (isCorrect, questionType = 'objective') => {
         db.stats.solved++;
         if (isCorrect) db.stats.correct++;
-        
+
         // 문제 타입별 통계 추가
         if (!db.stats[questionType]) {
             db.stats[questionType] = { solved: 0, correct: 0 };
@@ -87,7 +87,7 @@ const db = {
         if (isCorrect) {
             db.stats[questionType].correct++;
         }
-        
+
         db.save();
     },
     useItem: (id) => {
@@ -95,13 +95,13 @@ const db = {
             db.durability[id]--;
             if (db.durability[id] <= 0) {
                 delete db.durability[id];
-                db.owned = db.owned.filter(x => x !== id);
+                db.owned = db.owned.filter((x) => x !== id);
                 alert(`[${id === 'goldGlove' ? '황금 장갑' : '아이템'}]이 파괴되었습니다!`);
             }
             db.save();
             ui.updateSkills(); // 황금장갑이 skill bar에 표시되므로
         }
-    }
+    },
 };
 const inventory = {
     open: () => {
@@ -114,8 +114,20 @@ const inventory = {
         // Accessibility / small-viewport fallback: ensure the close button is reachable
         const closeBtn = document.getElementById('inv-close-btn');
         if (closeBtn) {
-            try { closeBtn.focus({ preventScroll: true }); } catch (err) { try { closeBtn.focus(); } catch (__) { /* ignore */ } }
-            try { closeBtn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (__) { /* ignore */ }
+            try {
+                closeBtn.focus({ preventScroll: true });
+            } catch (err) {
+                try {
+                    closeBtn.focus();
+                } catch (__) {
+                    /* ignore */
+                }
+            }
+            try {
+                closeBtn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            } catch (__) {
+                /* ignore */
+            }
         }
     },
     close: () => {
@@ -128,11 +140,18 @@ const inventory = {
         invContainer.innerHTML = '';
         // 골드 표시 제거됨 (인벤토리에서는 골드 표시 안 함)
         // document.getElementById('inv-gold').innerText = db.gold;
-        document.getElementById('inv-cap').innerText = (db.inventory.length + db.owned.filter(id => id !== 'basic' && !Object.values(db.equipped).includes(id) && id !== db.equippedWeapon).length);
+        document.getElementById('inv-cap').innerText =
+            db.inventory.length +
+            db.owned.filter(
+                (id) =>
+                    id !== 'basic' &&
+                    !Object.values(db.equipped).includes(id) &&
+                    id !== db.equippedWeapon
+            ).length;
         document.getElementById('inv-max-cap').innerText = db.inventoryCapacity;
 
         // Clear inventory display slots
-        ['head', 'hand-1', 'hand-2', 'foot-1', 'foot-2', 'weapon'].forEach(slot => {
+        ['head', 'hand-1', 'hand-2', 'foot-1', 'foot-2', 'weapon'].forEach((slot) => {
             const equipSlot = document.getElementById(`inv-${slot}`);
             if (equipSlot) {
                 equipSlot.innerHTML = '';
@@ -140,11 +159,10 @@ const inventory = {
             }
         });
 
-
         // Render equipped items in inventory UI (including weapons that occupy hand/head/foot slots)
         for (const slot in db.equipped) {
             const itemId = db.equipped[slot];
-            const item = items.find(i => i.id === itemId) || weapons.find(w => w.id === itemId);
+            const item = items.find((i) => i.id === itemId) || weapons.find((w) => w.id === itemId);
             if (item) {
                 const equipSlot = document.getElementById(`inv-${slot}`);
                 if (equipSlot) {
@@ -161,30 +179,30 @@ const inventory = {
         document.getElementById('hero-feet').innerHTML = '';
 
         // Render equipped items on hero sprite
-        const headItem = items.find(i => i.id === db.equipped['head']);
+        const headItem = items.find((i) => i.id === db.equipped['head']);
         if (headItem) {
             const el = document.getElementById('hero-head');
             if (el) el.innerHTML = headItem.icon;
         }
-        const hand1Item = items.find(i => i.id === db.equipped['hand-1']);
+        const hand1Item = items.find((i) => i.id === db.equipped['hand-1']);
         if (hand1Item) {
             const el = document.getElementById('hero-hand-1');
             if (el) el.innerHTML = hand1Item.icon;
         }
-        const hand2Item = items.find(i => i.id === db.equipped['hand-2']);
+        const hand2Item = items.find((i) => i.id === db.equipped['hand-2']);
         if (hand2Item) {
             const el = document.getElementById('hero-hand-2');
             if (el) el.innerHTML = hand2Item.icon;
         }
-        const foot1Item = items.find(i => i.id === db.equipped['foot-1']);
+        const foot1Item = items.find((i) => i.id === db.equipped['foot-1']);
         if (foot1Item) {
             const el = document.getElementById('hero-feet');
             if (el) el.innerHTML = foot1Item.icon;
         }
 
         // Render items in storage
-        db.inventory.forEach(itemId => {
-            const item = items.find(i => i.id === itemId);
+        db.inventory.forEach((itemId) => {
+            const item = items.find((i) => i.id === itemId);
             if (item) {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'inv-item';
@@ -194,22 +212,31 @@ const inventory = {
             }
         });
 
-                // Render owned weapons in storage
-                 db.owned.forEach(weaponId => {
-                    const weapon = weapons.find(w => w.id === weaponId);
-                    if (weapon && weapon.id !== 'basic' && weapon.id !== db.equippedWeapon && !Object.values(db.equipped).includes(weaponId)) {
-                        const itemEl = document.createElement('div');
-                        itemEl.className = 'inv-item';
-                        itemEl.innerHTML = weapon.icon;
-                        itemEl.onclick = () => inventory.showDetails(weaponId, 'weapon');
-                        invContainer.appendChild(itemEl);
-                    }
-                });
+        // Render owned weapons in storage
+        db.owned.forEach((weaponId) => {
+            const weapon = weapons.find((w) => w.id === weaponId);
+            if (
+                weapon &&
+                weapon.id !== 'basic' &&
+                weapon.id !== db.equippedWeapon &&
+                !Object.values(db.equipped).includes(weaponId)
+            ) {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'inv-item';
+                itemEl.innerHTML = weapon.icon;
+                itemEl.onclick = () => inventory.showDetails(weaponId, 'weapon');
+                invContainer.appendChild(itemEl);
+            }
+        });
         // Render owned relics
         const relicsContainer = document.querySelector('.inv-relics');
         relicsContainer.innerHTML = '';
-        db.owned.forEach(itemId => {
-            const relic = relics.find(r => r.id === itemId && (r.type === 'passive' || r.type === 'consumable' || r.type === 'backpack'));
+        db.owned.forEach((itemId) => {
+            const relic = relics.find(
+                (r) =>
+                    r.id === itemId &&
+                    (r.type === 'passive' || r.type === 'consumable' || r.type === 'backpack')
+            );
             if (relic) {
                 const relicEl = document.createElement('div');
                 relicEl.className = 'relic-item';
@@ -225,7 +252,7 @@ const inventory = {
         });
 
         // Accessibility: allow Enter / Space to activate focused inventory slots
-        document.querySelectorAll('.inv-slot[tabindex]').forEach(el => {
+        document.querySelectorAll('.inv-slot[tabindex]').forEach((el) => {
             el.onkeydown = (ev) => {
                 if (ev.key === 'Enter' || ev.key === ' ') {
                     ev.preventDefault();
@@ -235,7 +262,8 @@ const inventory = {
         });
     },
     showDetails: (id, type) => {
-        const itemData = (type === 'item') ? items.find(i => i.id === id) : weapons.find(w => w.id === id);
+        const itemData =
+            type === 'item' ? items.find((i) => i.id === id) : weapons.find((w) => w.id === id);
         if (!itemData) return;
 
         document.getElementById('detail-icon').innerText = itemData.icon || '';
@@ -252,19 +280,28 @@ const inventory = {
                 const btn1 = document.createElement('button');
                 btn1.className = 'btn-main';
                 btn1.innerText = '오른손 장착';
-                btn1.onclick = () => { inventory.equip(id, 'weapon', 'hand-1'); inventory.hideDetails(); };
+                btn1.onclick = () => {
+                    inventory.equip(id, 'weapon', 'hand-1');
+                    inventory.hideDetails();
+                };
                 actionsContainer.appendChild(btn1);
 
                 const btn2 = document.createElement('button');
                 btn2.className = 'btn-main';
                 btn2.innerText = '왼손 장착';
-                btn2.onclick = () => { inventory.equip(id, 'weapon', 'hand-2'); inventory.hideDetails(); };
+                btn2.onclick = () => {
+                    inventory.equip(id, 'weapon', 'hand-2');
+                    inventory.hideDetails();
+                };
                 actionsContainer.appendChild(btn2);
             } else {
                 const equipBtn = document.createElement('button');
                 equipBtn.className = 'btn-main';
                 equipBtn.innerText = `장착하기 (${slot})`;
-                equipBtn.onclick = () => { inventory.equip(id, 'weapon', slot); inventory.hideDetails(); };
+                equipBtn.onclick = () => {
+                    inventory.equip(id, 'weapon', slot);
+                    inventory.hideDetails();
+                };
                 actionsContainer.appendChild(equipBtn);
             }
 
@@ -273,10 +310,12 @@ const inventory = {
                 const unequipBtn = document.createElement('button');
                 unequipBtn.className = 'btn-main btn-blue';
                 unequipBtn.innerText = '해제';
-                unequipBtn.onclick = () => { inventory.unequipWeapon(); inventory.hideDetails(); };
+                unequipBtn.onclick = () => {
+                    inventory.unequipWeapon();
+                    inventory.hideDetails();
+                };
                 actionsContainer.appendChild(unequipBtn);
             }
-
         } else {
             // item (consumable / equipment)
             const equipBtn = document.createElement('button');
@@ -289,12 +328,15 @@ const inventory = {
             actionsContainer.appendChild(equipBtn);
 
             // if consumable, add a use button
-            const isConsumable = relics.find(r => r.id === id && r.type === 'consumable');
+            const isConsumable = relics.find((r) => r.id === id && r.type === 'consumable');
             if (isConsumable) {
                 const useBtn = document.createElement('button');
                 useBtn.className = 'btn-main btn-blue';
                 useBtn.innerText = '사용하기';
-                useBtn.onclick = () => { db.useItem(id); inventory.hideDetails(); };
+                useBtn.onclick = () => {
+                    db.useItem(id);
+                    inventory.hideDetails();
+                };
                 actionsContainer.appendChild(useBtn);
             }
         }
@@ -306,7 +348,7 @@ const inventory = {
     },
     equip: (id, type, targetSlot) => {
         if (type === 'weapon') {
-            const w = weapons.find(w => w.id === id);
+            const w = weapons.find((w) => w.id === id);
             if (!w) return;
 
             // Enforce category -> canonical slot mapping
@@ -336,9 +378,9 @@ const inventory = {
 
             // ensure the weapon id is present in owned if applicable
             if (!db.owned.includes(id)) db.owned.push(id);
-
-        } else { // It's an item (armor, boots, relic)
-            const item = items.find(i => i.id === id);
+        } else {
+            // It's an item (armor, boots, relic)
+            const item = items.find((i) => i.id === id);
             if (!item) return;
 
             if (item.id === 'boots') {
@@ -350,7 +392,7 @@ const inventory = {
                 inventory.unequip(item.slot, true);
                 db.equipped[item.slot] = id;
             }
-            db.inventory = db.inventory.filter(i => i !== id);
+            db.inventory = db.inventory.filter((i) => i !== id);
         }
 
         db.save();
@@ -381,7 +423,7 @@ const inventory = {
         if (!itemId) return;
 
         // For weapons: do not move them into db.inventory (they remain in db.owned)
-        const isWeapon = !!weapons.find(w => w.id === itemId);
+        const isWeapon = !!weapons.find((w) => w.id === itemId);
 
         if (!silent && !isWeapon && db.inventory.length >= db.inventoryCapacity) {
             alert('인벤토리가 가득 찼습니다.');
@@ -407,9 +449,8 @@ const inventory = {
 
         db.save();
         inventory.render();
-    }
+    },
 };
-
 
 const shop = {
     open: () => {
@@ -428,28 +469,40 @@ const shop = {
         container.innerHTML = '';
         document.getElementById('shop-gold').innerText = db.gold;
 
-        const isPurchased = (item) => db.inventory.includes(item.id) || Object.values(db.equipped).includes(item.id) || db.owned.includes(item.id);
+        const isPurchased = (item) =>
+            db.inventory.includes(item.id) ||
+            Object.values(db.equipped).includes(item.id) ||
+            db.owned.includes(item.id);
 
         // Economy Weapons
         let html = '<div class="shop-section">💰 경제형 무기 (골드 보너스)</div>';
-        weapons.filter(w => w.multiplier > 1 && !isPurchased(w)).forEach(w => html += shop.createItemHtml(w, 'weapon'));
+        weapons
+            .filter((w) => w.multiplier > 1 && !isPurchased(w))
+            .forEach((w) => (html += shop.createItemHtml(w, 'weapon')));
 
         // Visual Weapons
         html += '<div class="shop-section">⚔️ 스킨 무기 (이펙트)</div>';
-        weapons.filter(w => w.multiplier === 1 && !isPurchased(w)).forEach(w => html += shop.createItemHtml(w, 'weapon'));
+        weapons
+            .filter((w) => w.multiplier === 1 && !isPurchased(w))
+            .forEach((w) => (html += shop.createItemHtml(w, 'weapon')));
 
         // Relics
         html += '<div class="shop-section">💍 유물/아이템</div>';
-        relics.filter(r => (r.type !== 'skill' && !isPurchased(r)) || r.id === 'backpack').forEach(r => html += shop.createItemHtml(r, r.type));
+        relics
+            .filter((r) => (r.type !== 'skill' && !isPurchased(r)) || r.id === 'backpack')
+            .forEach((r) => (html += shop.createItemHtml(r, r.type)));
 
         // Skills (always visible)
         html += '<div class="shop-section">✨ 스킬</div>';
-        relics.filter(r => r.type === 'skill').forEach(r => html += shop.createItemHtml(r, r.type));
-
+        relics
+            .filter((r) => r.type === 'skill')
+            .forEach((r) => (html += shop.createItemHtml(r, r.type)));
 
         // Items
         html += '<div class="shop-section">🛡️ 장비</div>';
-        items.filter(i => !isPurchased(i)).forEach(i => html += shop.createItemHtml(i, 'item'));
+        items
+            .filter((i) => !isPurchased(i))
+            .forEach((i) => (html += shop.createItemHtml(i, 'item')));
 
         container.innerHTML = html;
     },
@@ -457,51 +510,66 @@ const shop = {
         let btn = `<button class="buy-btn" onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">${item.cost} G</button>`;
 
         if (type === 'skill') {
-            return `<div class="shop-item"><div style="font-size:15px;"><b>${item.name} (현재 ${db.skills[item.id]}개)</b><br><span style="font-size:15px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
+            return `<div class="shop-item"><div style="font-size:15px;"><b>${item.name} (현재 ${
+                db.skills[item.id]
+            }개)</b><br><span style="font-size:15px;color:#aaa;">${
+                item.desc
+            }</span></div>${btn}</div>`;
         }
 
         return `<div class="shop-item"><div style="font-size:15px;"><b>${item.name}</b><br><span style="font-size:15px;color:#aaa;">${item.desc}</span></div>${btn}</div>`;
     },
-        buy: (id, cost, type) => {
-            if (db.gold < cost) {
-                alert("골드가 부족합니다.");
+    buy: (id, cost, type) => {
+        if (db.gold < cost) {
+            alert('골드가 부족합니다.');
+            return;
+        }
+
+        const isStorable = ['item', 'weapon', 'passive', 'consumable', 'effect', 'either'].includes(
+            type
+        );
+
+        if (isStorable) {
+            const unequippedOwned = db.owned.filter(
+                (oid) =>
+                    oid !== 'basic' &&
+                    !Object.values(db.equipped).includes(oid) &&
+                    oid !== db.equippedWeapon
+            );
+            const currentSize = db.inventory.length + unequippedOwned.length;
+            if (currentSize >= db.inventoryCapacity) {
+                alert('인벤토리가 가득 찼습니다.');
                 return;
             }
-    
-            const isStorable = ['item', 'weapon', 'passive', 'consumable', 'effect', 'either'].includes(type);
-    
-            if (isStorable) {
-                 const unequippedOwned = db.owned.filter(oid => oid !== 'basic' && !Object.values(db.equipped).includes(oid) && oid !== db.equippedWeapon);
-                 const currentSize = db.inventory.length + unequippedOwned.length;
-                 if (currentSize >= db.inventoryCapacity) {
-                    alert('인벤토리가 가득 찼습니다.');
-                    return;
-                }
+        }
+
+        // use API so clamp/persistence/UI are consistent
+        db.subGold(cost);
+
+        if (type === 'item') {
+            db.inventory.push(id);
+        } else if (type === 'backpack') {
+            db.inventoryCapacity++;
+        } else if (type === 'skill') {
+            const skill = relics.find((r) => r.id === id);
+            db.skills[id] += skill.uses;
+        } else {
+            // weapons and other relics
+            db.owned.push(id);
+            if (type === 'consumable') {
+                const relic = relics.find((r) => r.id === id);
+                db.durability[id] = relic.durability;
             }
-    
-            // use API so clamp/persistence/UI are consistent
-            db.subGold(cost);
-    
-            if (type === 'item') {
-                db.inventory.push(id);
-            } else if (type === 'backpack') {
-                db.inventoryCapacity++;
-            } else if (type === 'skill') {
-                const skill = relics.find(r=>r.id===id);
-                db.skills[id] += skill.uses;
-            } else { // weapons and other relics
-                db.owned.push(id);
-                if (type === 'consumable') {
-                    const relic = relics.find(r=>r.id===id);
-                    db.durability[id] = relic.durability;
-                }
-            }
-            
-            db.save();
-            shop.render();
-            inventory.render(); // Update inventory screen as well
-        },
-    equip: (id) => { db.equip(id); shop.render(); }
+        }
+
+        db.save();
+        shop.render();
+        inventory.render(); // Update inventory screen as well
+    },
+    equip: (id) => {
+        db.equip(id);
+        shop.render();
+    },
 };
 
 const statistics = {
@@ -527,16 +595,18 @@ const statistics = {
         const correct = db.stats.correct || 0;
         const rate = solved > 0 ? Math.round((correct / solved) * 100) : 0;
         const wrong = solved - correct;
-        
+
         // 객관식/주관식 통계
         const objectiveStats = db.stats.objective || { solved: 0, correct: 0 };
         const subjectiveStats = db.stats.subjective || { solved: 0, correct: 0 };
         const objectiveSolved = objectiveStats.solved || 0;
         const objectiveCorrect = objectiveStats.correct || 0;
-        const objectiveRate = objectiveSolved > 0 ? Math.round((objectiveCorrect / objectiveSolved) * 100) : 0;
+        const objectiveRate =
+            objectiveSolved > 0 ? Math.round((objectiveCorrect / objectiveSolved) * 100) : 0;
         const subjectiveSolved = subjectiveStats.solved || 0;
         const subjectiveCorrect = subjectiveStats.correct || 0;
-        const subjectiveRate = subjectiveSolved > 0 ? Math.round((subjectiveCorrect / subjectiveSolved) * 100) : 0;
+        const subjectiveRate =
+            subjectiveSolved > 0 ? Math.round((subjectiveCorrect / subjectiveSolved) * 100) : 0;
 
         // 보유 아이템 수
         const ownedItems = db.owned.length;
@@ -546,30 +616,36 @@ const statistics = {
         // 장착한 장비 목록
         const equippedItems = [];
         if (db.equipped['head']) {
-            const item = items.find(i => i.id === db.equipped['head']);
+            const item = items.find((i) => i.id === db.equipped['head']);
             if (item) equippedItems.push({ slot: '머리', name: item.name, icon: item.icon });
         }
         if (db.equipped['hand-1']) {
-            const item = weapons.find(w => w.id === db.equipped['hand-1']) || items.find(i => i.id === db.equipped['hand-1']);
+            const item =
+                weapons.find((w) => w.id === db.equipped['hand-1']) ||
+                items.find((i) => i.id === db.equipped['hand-1']);
             if (item) equippedItems.push({ slot: '오른손', name: item.name, icon: item.icon });
         }
         if (db.equipped['hand-2']) {
-            const item = weapons.find(w => w.id === db.equipped['hand-2']) || items.find(i => i.id === db.equipped['hand-2']);
+            const item =
+                weapons.find((w) => w.id === db.equipped['hand-2']) ||
+                items.find((i) => i.id === db.equipped['hand-2']);
             if (item) equippedItems.push({ slot: '왼손', name: item.name, icon: item.icon });
         }
         if (db.equipped['foot-1'] || db.equipped['foot-2']) {
-            const item = items.find(i => i.id === db.equipped['foot-1'] || i.id === db.equipped['foot-2']);
+            const item = items.find(
+                (i) => i.id === db.equipped['foot-1'] || i.id === db.equipped['foot-2']
+            );
             if (item) equippedItems.push({ slot: '발', name: item.name, icon: item.icon });
         }
 
         // 보유 스킬
         const skills = [];
         if (db.skills.hint > 0) {
-            const skill = relics.find(r => r.id === 'hint');
+            const skill = relics.find((r) => r.id === 'hint');
             if (skill) skills.push({ name: skill.name, count: db.skills.hint });
         }
         if (db.skills.ultimate > 0) {
-            const skill = relics.find(r => r.id === 'ultimate');
+            const skill = relics.find((r) => r.id === 'ultimate');
             if (skill) skills.push({ name: skill.name, count: db.skills.ultimate });
         }
 
@@ -596,9 +672,10 @@ const statistics = {
 
         // 문제 타입별 통계
         html += '<div class="shop-section" style="margin-top:20px;">📝 문제 타입별 통계</div>';
-        
+
         // 객관식 통계
-        html += '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
+        html +=
+            '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
         html += '<div style="font-size:15px;"><b>📋 객관식</b></div>';
         html += `<div style="margin-top:8px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
@@ -608,9 +685,10 @@ const statistics = {
             <div style="font-size:15px; color:#2196F3; font-weight:bold; text-align:right;">정답률: ${objectiveRate}%</div>
         </div>`;
         html += '</div>';
-        
+
         // 주관식 통계 (객관식과 동일한 형식)
-        html += '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
+        html +=
+            '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
         html += '<div style="font-size:15px;"><b>✍️ 주관식</b></div>';
         html += `<div style="margin-top:8px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
@@ -618,7 +696,7 @@ const statistics = {
                 <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
             </div>
             <div style="font-size:15px; color:#9C27B0; font-weight:bold; text-align:right;">정답률: ${subjectiveRate}%</div>`;
-        
+
         // 주관식을 전부 맞춘 날 표시
         const perfectDays = db.stats.subjective?.perfectDays || [];
         if (perfectDays.length > 0) {
@@ -626,18 +704,24 @@ const statistics = {
             const latestPerfect = perfectDays[perfectDays.length - 1];
             html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156, 39, 176, 0.3);">
                 <div style="font-size:9px; color:#9C27B0; font-weight:bold; margin-bottom:4px;">✨ 주관식 전부 맞춘 날</div>
-                <div style="font-size:11px; color:var(--gold);">${latestPerfect.displayDate || latestPerfect.date}</div>
-                ${perfectDays.length > 1 ? `<div style="font-size:7px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>` : ''}
+                <div style="font-size:11px; color:var(--gold);">${
+                    latestPerfect.displayDate || latestPerfect.date
+                }</div>
+                ${
+                    perfectDays.length > 1
+                        ? `<div style="font-size:7px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>`
+                        : ''
+                }
             </div>`;
         }
-        
+
         html += '</div>';
         html += '</div>';
 
         // 보유 스킬
         if (skills.length > 0) {
             html += '<div class="shop-section" style="margin-top:20px;">✨ 보유 스킬</div>';
-            skills.forEach(skill => {
+            skills.forEach((skill) => {
                 html += `<div class="shop-item">
                     <div style="font-size:9px;"><b>${skill.name}</b></div>
                     <div style="font-size:15px; color:var(--primary); font-weight:bold;">${skill.count}개</div>
@@ -646,7 +730,7 @@ const statistics = {
         }
 
         container.innerHTML = html;
-    }
+    },
 };
 
 const ui = {
@@ -657,7 +741,8 @@ const ui = {
         if (overlayGold) overlayGold.innerText = db.gold;
     },
     updateGameInfo: (mode, day) => {
-        const modeText = mode === 'boss' ? '보스 모드' : (mode === 'battle' ? '배틀 모드' : '연습모드');
+        const modeText =
+            mode === 'boss' ? '보스 모드' : mode === 'battle' ? '배틀 모드' : '연습모드';
         let dayText;
         if (mode === 'boss') {
             dayText = '무한';
@@ -665,28 +750,38 @@ const ui = {
             // battle 모드와 practice 모드 모두 day에 따라 표시 (제목 포함)
             if (day === 'all') {
                 // dayCatalog에서 'all'의 label 사용
-                const allLabel = (typeof dayCatalog !== 'undefined' && dayCatalog['all'] && dayCatalog['all'].label) 
-                    ? dayCatalog['all'].label 
-                    : '전체';
+                const allLabel =
+                    typeof dayCatalog !== 'undefined' &&
+                    dayCatalog['all'] &&
+                    dayCatalog['all'].label
+                        ? dayCatalog['all'].label
+                        : '전체';
                 dayText = allLabel;
             } else if (day && !isNaN(Number(day))) {
                 // dayCatalog에서 해당 day의 label 사용 (제목 포함)
-                const dayLabel = (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].label) 
-                    ? dayCatalog[day].label 
-                    : `Day ${day}`;
+                const dayLabel =
+                    typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].label
+                        ? dayCatalog[day].label
+                        : `Day ${day}`;
                 dayText = dayLabel;
             } else {
                 // game.currentDay를 확인
                 const currentDay = game.currentDay;
                 if (currentDay === 'all') {
-                    const allLabel = (typeof dayCatalog !== 'undefined' && dayCatalog['all'] && dayCatalog['all'].label) 
-                        ? dayCatalog['all'].label 
-                        : '전체';
+                    const allLabel =
+                        typeof dayCatalog !== 'undefined' &&
+                        dayCatalog['all'] &&
+                        dayCatalog['all'].label
+                            ? dayCatalog['all'].label
+                            : '전체';
                     dayText = allLabel;
                 } else if (currentDay && !isNaN(Number(currentDay))) {
-                    const dayLabel = (typeof dayCatalog !== 'undefined' && dayCatalog[currentDay] && dayCatalog[currentDay].label) 
-                        ? dayCatalog[currentDay].label 
-                        : `Day ${currentDay}`;
+                    const dayLabel =
+                        typeof dayCatalog !== 'undefined' &&
+                        dayCatalog[currentDay] &&
+                        dayCatalog[currentDay].label
+                            ? dayCatalog[currentDay].label
+                            : `Day ${currentDay}`;
                     dayText = dayLabel;
                 } else {
                     dayText = '전체';
@@ -699,17 +794,20 @@ const ui = {
         }
     },
     updateVisuals: () => {
-        document.getElementById('hero-img').src = "images/battle_mode/hero.webp";
+        document.getElementById('hero-img').src = 'images/battle_mode/hero.webp';
 
         // weapon -> hand-1 (gameplay)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
-        const wData = weapons.find(w => w.id === hand1Id) || weapons.find(w => w.id === db.equippedWeapon) || weapons[0];
+        const wData =
+            weapons.find((w) => w.id === hand1Id) ||
+            weapons.find((w) => w.id === db.equippedWeapon) ||
+            weapons[0];
         const heroWeaponEl = document.getElementById('hero-weapon');
         if (heroWeaponEl) heroWeaponEl.innerText = wData.icon || '';
 
         // effect -> hand-2 (visual)
         const hand2Id = db.equipped['hand-2'];
-        const effData = weapons.find(w => w.id === hand2Id);
+        const effData = weapons.find((w) => w.id === hand2Id);
         const heroEffEl = document.getElementById('hero-effect');
         if (heroEffEl) {
             heroEffEl.innerText = effData ? effData.icon : '';
@@ -719,7 +817,17 @@ const ui = {
         // quick equipped summary (visible without clicking)
         const summaryEl = document.getElementById('equipped-summary');
         if (summaryEl) {
-            summaryEl.innerHTML = `\n                <div class="eq" title="무기: ${wData.name}"><span class="icon">${wData.icon}</span><div><div style="font-weight:700">${wData.name}</div><div style="font-size:12px;color:#aaa">x${wData.multiplier || 1}</div></div></div>\n                ${effData ? `<div class="eq" title="이펙트: ${effData.name}"><span class="icon">${effData.icon}</span><div><div style="font-weight:700">${effData.name}</div><div style="font-size:12px;color:#aaa">${effData.desc}</div></div></div>` : ''}\n            `;
+            summaryEl.innerHTML = `\n                <div class="eq" title="무기: ${
+                wData.name
+            }"><span class="icon">${wData.icon}</span><div><div style="font-weight:700">${
+                wData.name
+            }</div><div style="font-size:12px;color:#aaa">x${
+                wData.multiplier || 1
+            }</div></div></div>\n                ${
+                effData
+                    ? `<div class="eq" title="이펙트: ${effData.name}"><span class="icon">${effData.icon}</span><div><div style="font-weight:700">${effData.name}</div><div style="font-size:12px;color:#aaa">${effData.desc}</div></div></div>`
+                    : ''
+            }\n            `;
         }
     },
     updateDurability: () => {
@@ -732,19 +840,21 @@ const ui = {
     updateMainStats: () => {
         document.getElementById('stat-solved').innerText = db.stats.solved;
         document.getElementById('stat-correct').innerText = db.stats.correct;
-        const rate = db.stats.solved > 0 ? Math.round((db.stats.correct / db.stats.solved) * 100) : 0;
-        document.getElementById('stat-rate').innerText = rate + "%";
+        const rate =
+            db.stats.solved > 0 ? Math.round((db.stats.correct / db.stats.solved) * 100) : 0;
+        document.getElementById('stat-rate').innerText = rate + '%';
     },
     updateSkills: () => {
         const container = document.getElementById('skill-display');
         container.innerHTML = '';
 
-        const hintData = relics.find(r => r.id === 'hint');
-        const ultimateData = relics.find(r => r.id === 'ultimate');
+        const hintData = relics.find((r) => r.id === 'hint');
+        const ultimateData = relics.find((r) => r.id === 'ultimate');
 
         // 주관식 문제인지 확인 (boss-box가 표시 중이면 주관식)
-        const isBossQuestion = document.getElementById('boss-box') && 
-                              document.getElementById('boss-box').style.display !== 'none';
+        const isBossQuestion =
+            document.getElementById('boss-box') &&
+            document.getElementById('boss-box').style.display !== 'none';
 
         let hasSkills = false;
 
@@ -753,7 +863,9 @@ const ui = {
             hasSkills = true;
             const gloveBtn = document.createElement('div');
             gloveBtn.className = 'skill-btn skill-passive';
-            gloveBtn.innerHTML = `<span>🥊</span> <span class="skill-count">${db.durability['goldGlove'] || 0}/30</span>`;
+            gloveBtn.innerHTML = `<span>🥊</span> <span class="skill-count">${
+                db.durability['goldGlove'] || 0
+            }/30</span>`;
             gloveBtn.title = '황금장갑 (패시브): 골드 획득 x1.5배';
             container.appendChild(gloveBtn);
         }
@@ -761,7 +873,9 @@ const ui = {
         if (hintData && db.skills.hint > 0) {
             hasSkills = true;
             const hintBtn = document.createElement('button');
-            hintBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
+            hintBtn.className = isBossQuestion
+                ? 'skill-btn skill-active disabled'
+                : 'skill-btn skill-active';
             const hintIcon = hintData.name.split(' ')[0] || '🧪';
             hintBtn.innerHTML = `<span>${hintIcon}</span> <span class="skill-count">${db.skills.hint}</span>`;
             hintBtn.onclick = game.useHint;
@@ -772,11 +886,15 @@ const ui = {
         if (ultimateData && db.skills.ultimate > 0) {
             hasSkills = true;
             const ultimateBtn = document.createElement('button');
-            ultimateBtn.className = isBossQuestion ? 'skill-btn skill-active disabled' : 'skill-btn skill-active';
+            ultimateBtn.className = isBossQuestion
+                ? 'skill-btn skill-active disabled'
+                : 'skill-btn skill-active';
             const ultimateIcon = ultimateData.name.split(' ')[0] || '⚡';
             ultimateBtn.innerHTML = `<span>${ultimateIcon}</span> <span class="skill-count">${db.skills.ultimate}</span>`;
             ultimateBtn.onclick = game.useUltimate;
-            ultimateBtn.title = isBossQuestion ? '필살기: 주관식에서는 사용 불가' : '필살기: 클릭하여 사용';
+            ultimateBtn.title = isBossQuestion
+                ? '필살기: 주관식에서는 사용 불가'
+                : '필살기: 클릭하여 사용';
             container.appendChild(ultimateBtn);
         }
 
@@ -787,11 +905,15 @@ const ui = {
             placeholder.innerText = 'Skill Bar';
             container.appendChild(placeholder);
         }
-    }
+    },
 };
 
 // expose for console/debugging and to avoid other scripts clobbering
-try { window.ui = window.ui || ui; } catch (e) { /* ignore */ }
+try {
+    window.ui = window.ui || ui;
+} catch (e) {
+    /* ignore */
+}
 
 // 3. STORY Logic
 
@@ -800,26 +922,33 @@ const monsterAssets = {
     normal: [
         'images/battle_mode/monster_1.webp',
         'images/battle_mode/monster_2.webp',
-        'images/battle_mode/monster_3.webp'
+        'images/battle_mode/monster_3.webp',
     ],
     boss: [
         'images/battle_mode/monster_1.webp',
         'images/battle_mode/monster_2.webp',
-        'images/battle_mode/monster_3.webp'
+        'images/battle_mode/monster_3.webp',
     ],
     byDay: {
         // Day-specific mapping — useful for testing and unique bosses
         // add more: '5': ['images/battle_mode/monster_1.webp', 'images/battle_mode/monster_2.webp']
     },
-    fallback: 'images/battle_mode/monster_1.webp'
+    fallback: 'images/battle_mode/monster_1.webp',
 };
 
-function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
 
 function pickMonsterSprite(q, isBoss) {
     try {
         // q may be a question object or a day string/number
-        const day = q && q.day ? String(q.day) : (typeof q === 'string' || typeof q === 'number' ? String(q) : null);
+        const day =
+            q && q.day
+                ? String(q.day)
+                : typeof q === 'string' || typeof q === 'number'
+                ? String(q)
+                : null;
 
         // day-specific sprites take precedence
         if (day && monsterAssets.byDay[day] && monsterAssets.byDay[day].length) {
@@ -828,7 +957,10 @@ function pickMonsterSprite(q, isBoss) {
 
         // boss vs normal
         if (isBoss) {
-            return pickRandom(monsterAssets.boss.length ? monsterAssets.boss : monsterAssets.normal) || monsterAssets.fallback;
+            return (
+                pickRandom(monsterAssets.boss.length ? monsterAssets.boss : monsterAssets.normal) ||
+                monsterAssets.fallback
+            );
         }
         return pickRandom(monsterAssets.normal) || monsterAssets.fallback;
     } catch (err) {
@@ -842,52 +974,96 @@ function pickMonsterSprite(q, isBoss) {
 // user's selection instead of always falling back to 'all'.
 function resolveStoryData(day) {
     // prefer canonical catalog
-    if (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].story) return dayCatalog[day].story;
-    if (day === 'boss') return (dayCatalog && dayCatalog['boss'] && dayCatalog['boss'].story) || null;
-    const s = (dayCatalog && dayCatalog[day] && dayCatalog[day].story) ? dayCatalog[day].story : null;
+    if (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].story)
+        return dayCatalog[day].story;
+    if (day === 'boss')
+        return (dayCatalog && dayCatalog['boss'] && dayCatalog['boss'].story) || null;
+    const s = dayCatalog && dayCatalog[day] && dayCatalog[day].story ? dayCatalog[day].story : null;
     if (s) return s;
 
     const opt = document.querySelector(`#day-select option[value="${day}"]`);
-    const optText = opt ? opt.textContent : (day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : `Day ${day}`);
+    const optText = opt
+        ? opt.textContent
+        : day === 'all'
+        ? dayCatalog && dayCatalog['all'] && dayCatalog['all'].label
+        : `Day ${day}`;
     return {
         title: optText,
         intro: `선택한 지역 — ${optText}`,
-        win: (dayCatalog && dayCatalog['all'] && dayCatalog['all'].story && dayCatalog['all'].story.win) || '',
-        lose: (dayCatalog && dayCatalog['all'] && dayCatalog['all'].story && dayCatalog['all'].story.lose) || ''
+        win:
+            (dayCatalog &&
+                dayCatalog['all'] &&
+                dayCatalog['all'].story &&
+                dayCatalog['all'].story.win) ||
+            '',
+        lose:
+            (dayCatalog &&
+                dayCatalog['all'] &&
+                dayCatalog['all'].story &&
+                dayCatalog['all'].story.lose) ||
+            '',
     };
 }
 
 const story = {
-    day: null, mode: null,
+    day: null,
+    mode: null,
     startIntro: (mode, dayArg) => {
         const daySel = dayArg || document.getElementById('day-select').value;
         console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
         db.save();
-        story.day = (mode === 'boss') ? 'boss' : daySel;
+        story.day = mode === 'boss' ? 'boss' : daySel;
         story.mode = mode;
         const data = resolveStoryData(story.day);
 
         // 모드에 따라 적절한 story-modal ID 결정 (practice 모드는 practice-mode-game을 사용함)
-        const storyScreenId = (mode === 'boss') ? 'boss-mode-story-modal' : 'battle-mode-story-modal';
-        const storyScreenPrefix = (mode === 'boss') ? 'boss-mode' : 'battle-mode';
+        const storyScreenId = mode === 'boss' ? 'boss-mode-story-modal' : 'battle-mode-story-modal';
+        const storyScreenPrefix = mode === 'boss' ? 'boss-mode' : 'battle-mode';
 
         // DEBUG: verify where title is coming from and ensure we're updating the visible element
         const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
         const optNode = document.querySelector(`#day-select option[value="${story.day}"]`);
-        console.log('[story.startIntro] dbg -> day=', story.day, 'hasEntry=', hasEntry, 'optText=', optNode && optNode.textContent);
+        console.log(
+            '[story.startIntro] dbg -> day=',
+            story.day,
+            'hasEntry=',
+            hasEntry,
+            'optText=',
+            optNode && optNode.textContent
+        );
         console.log('[story.startIntro] dbg -> data.title=', data.title);
 
         const titleElId = `${storyScreenPrefix}-title`;
         const titleEls = document.querySelectorAll(`#${titleElId}`);
-        if (titleEls.length > 1) console.warn(`[story.startIntro] multiple #${titleElId} elements found:`, titleEls.length);
+        if (titleEls.length > 1)
+            console.warn(
+                `[story.startIntro] multiple #${titleElId} elements found:`,
+                titleEls.length
+            );
         const titleEl = document.getElementById(titleElId);
-        console.log(`[story.startIntro] current #${titleElId} before=`, titleEl && titleEl.innerText);
+        console.log(
+            `[story.startIntro] current #${titleElId} before=`,
+            titleEl && titleEl.innerText
+        );
 
         // Prefer the Day label from the canonical catalog; fall back to legacy views
-        const dayLabel = (story.day && typeof dayCatalog !== 'undefined' && dayCatalog[story.day] && dayCatalog[story.day].label) ? dayCatalog[story.day].label : (story.day === 'all' ? (dayCatalog && dayCatalog['all'] && dayCatalog['all'].label) : (story.day === 'boss' ? '보스 모드' : `Day ${story.day}`));
+        const dayLabel =
+            story.day &&
+            typeof dayCatalog !== 'undefined' &&
+            dayCatalog[story.day] &&
+            dayCatalog[story.day].label
+                ? dayCatalog[story.day].label
+                : story.day === 'all'
+                ? dayCatalog && dayCatalog['all'] && dayCatalog['all'].label
+                : story.day === 'boss'
+                ? '보스 모드'
+                : `Day ${story.day}`;
         const titleText = data && data.title ? String(data.title).trim() : '';
-        const displayTitle = (titleText && dayLabel.indexOf(titleText) === -1) ? `${dayLabel} — ${titleText}` : dayLabel;
+        const displayTitle =
+            titleText && dayLabel.indexOf(titleText) === -1
+                ? `${dayLabel} — ${titleText}`
+                : dayLabel;
 
         // title-screen을 닫지 않고 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
         const startScreen = document.getElementById('title-screen');
@@ -895,7 +1071,7 @@ const story = {
             startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
             startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
         }
-        
+
         // 다른 story-modal 닫기
         const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
         const bossStoryScreen = document.getElementById('boss-mode-story-modal');
@@ -905,7 +1081,7 @@ const story = {
         if (bossStoryScreen && storyScreenId !== 'boss-mode-story-modal') {
             bossStoryScreen.style.display = 'none';
         }
-        
+
         // story-modal 스타일 초기화
         const storyScreen = document.getElementById(storyScreenId);
         if (storyScreen) {
@@ -915,17 +1091,17 @@ const story = {
             storyScreen.style.pointerEvents = '';
             storyScreen.classList.remove('closing');
         }
-        
+
         openScreenOverlay(storyScreenId, true);
-        
+
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: storyScreenId }, '', window.location.href);
-        
+
         // 타이틀 크기 먼저 동기화 (스토리 모달 크기가 타이틀 기준이므로)
         if (typeof syncTitleButtonOverlay === 'function') {
             syncTitleButtonOverlay();
         }
-        
+
         // 모든 모드에서 battle_mode_popup.webp 사용
         const storyImg = document.getElementById(`${storyScreenPrefix}-background-img`);
         const storyStartBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
@@ -936,34 +1112,40 @@ const story = {
                 storyStartBtn.classList.add('boss-mode-btn');
                 storyStartBtn.classList.remove('practice-btn');
             }
-            
+
             // 이미지 로드 후 버튼 오버레이 동기화
             if (storyImg.complete) {
                 setTimeout(() => {
                     syncStoryButtonOverlay(storyScreenId);
                 }, 100);
             } else {
-                storyImg.addEventListener('load', () => {
-                    setTimeout(() => {
-                        syncStoryButtonOverlay(storyScreenId);
-                    }, 100);
-                }, { once: true });
+                storyImg.addEventListener(
+                    'load',
+                    () => {
+                        setTimeout(() => {
+                            syncStoryButtonOverlay(storyScreenId);
+                        }, 100);
+                    },
+                    { once: true }
+                );
             }
         }
-        
+
         // write and verify immediately via centralized setter (protects against duplicate IDs / external overwrites)
         if (window.ui && typeof window.ui.setStoryTitle === 'function') {
             window.ui.setStoryTitle(displayTitle, storyScreenPrefix);
         } else {
-            const te = document.getElementById(titleElId); if (te) te.innerText = displayTitle; console.warn(`[story.startIntro] fallback title write used for ${titleElId}`);
+            const te = document.getElementById(titleElId);
+            if (te) te.innerText = displayTitle;
+            console.warn(`[story.startIntro] fallback title write used for ${titleElId}`);
         }
-        
+
         // Day 정보 표시
         const dayInfoEl = document.getElementById(`${storyScreenPrefix}-day-info`);
         if (dayInfoEl) {
             dayInfoEl.innerText = displayTitle;
         }
-        
+
         // 이야기 텍스트 표시
         const textEl = document.getElementById(`${storyScreenPrefix}-text`);
         if (textEl) {
@@ -972,8 +1154,8 @@ const story = {
         }
 
         // capture the resolved day at intro time so the button uses the same day even if user changes select afterwards
-        const resolvedAtIntro = (story.mode === 'boss') ? 'boss' : daySel;
-        
+        const resolvedAtIntro = story.mode === 'boss' ? 'boss' : daySel;
+
         // 이미지의 "모험시작" 버튼에 이벤트 연결
         if (storyStartBtn) {
             // 기존 이벤트 리스너 완전히 제거
@@ -982,28 +1164,37 @@ const story = {
             const newBtn = storyStartBtn.cloneNode(true);
             storyStartBtn.parentNode.replaceChild(newBtn, storyStartBtn);
             const freshBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
-            
+
             // 새 이벤트 리스너 추가
             if (freshBtn) {
-                freshBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Story start button clicked');
-                    // 게임 오버 처리 중이면 시작하지 않음
-                    if (game.isProcessing) {
-                        console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
-                        return;
-                    }
-                    const resolvedAtIntro = (story.mode === 'boss') ? 'boss' : daySel;
-                    console.log('[story-btn] introResolvedDay=', resolvedAtIntro, 'story.mode=', story.mode);
-                    
-                    // Practice 모드는 암기 모드로 시작, 다른 모드는 기존대로 게임 시작
-                    if (story.mode === 'practice') {
-                        practiceMemorization.start(resolvedAtIntro);
-                    } else {
-                        game.init(story.mode, resolvedAtIntro);
-                    }
-                }, { capture: true });
+                freshBtn.addEventListener(
+                    'click',
+                    (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Story start button clicked');
+                        // 게임 오버 처리 중이면 시작하지 않음
+                        if (game.isProcessing) {
+                            console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
+                            return;
+                        }
+                        const resolvedAtIntro = story.mode === 'boss' ? 'boss' : daySel;
+                        console.log(
+                            '[story-btn] introResolvedDay=',
+                            resolvedAtIntro,
+                            'story.mode=',
+                            story.mode
+                        );
+
+                        // Practice 모드는 암기 모드로 시작, 다른 모드는 기존대로 게임 시작
+                        if (story.mode === 'practice') {
+                            practiceMemorization.start(resolvedAtIntro);
+                        } else {
+                            game.init(story.mode, resolvedAtIntro);
+                        }
+                    },
+                    { capture: true }
+                );
                 freshBtn.style.pointerEvents = 'auto'; // 클릭 활성화
                 freshBtn.style.cursor = 'pointer';
                 freshBtn.style.zIndex = '25';
@@ -1018,18 +1209,18 @@ const story = {
             clearInterval(game.timer);
             game.timer = null;
         }
-        
+
         // 배경음악 정지
         const bgMusic = document.getElementById('background-music');
         if (bgMusic && !bgMusic.paused) {
             bgMusic.pause();
         }
-        
+
         // 게임 오버 상태로 설정 (게임이 자동으로 다시 시작되지 않도록)
         game.isProcessing = true;
-        
+
         document.getElementById('battle-mode-game').style.display = 'none';
-        
+
         // story-modal을 확실히 닫기
         const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
         const bossStoryScreen = document.getElementById('boss-mode-story-modal');
@@ -1049,7 +1240,7 @@ const story = {
             bossStoryScreen.style.pointerEvents = 'none';
             bossStoryScreen.classList.remove('closing');
         }
-        
+
         // practice-mode-modal과 battle-mode-modal 닫기
         const practiceModeModal = document.getElementById('practice-mode-modal');
         const battleModeModal = document.getElementById('battle-mode-modal');
@@ -1077,25 +1268,34 @@ const story = {
             battleModeModal.style.pointerEvents = 'none';
             battleModeModal.classList.remove('closing');
         }
-        
+
         // 모든 모드에서 story-modal을 건너뛰고 바로 결과 화면으로
         game.end(win);
-    }
+    },
 };
-
 
 // 4. GAME Logic
 const game = {
-    list: [], idx: 0, timer: null, timeLeft: 0, maxTime: 10,
-    stats: { gain: 0, lost: 0 }, currentQ: null, isProcessing: false, currentAns: "", mode: 'battle',
-    deck: [], currentDay: null, battleQuestionType: 'mixed',
+    list: [],
+    idx: 0,
+    timer: null,
+    timeLeft: 0,
+    maxTime: 10,
+    stats: { gain: 0, lost: 0 },
+    currentQ: null,
+    isProcessing: false,
+    currentAns: '',
+    mode: 'battle',
+    deck: [],
+    currentDay: null,
+    battleQuestionType: 'mixed',
     subjectiveTotal: 0, // 주관식 문제 총 개수
     subjectiveCorrect: 0, // 주관식 문제 정답 개수
 
     init: (mode, day) => {
         // boss 모드가 아닐 때만 count-select 참조
         const countSelect = document.getElementById('count-select');
-        const count = (mode === 'boss') ? 0 : (countSelect ? parseInt(countSelect.value) || 10 : 10);
+        const count = mode === 'boss' ? 0 : countSelect ? parseInt(countSelect.value) || 10 : 10;
         game.mode = mode;
         game.currentDay = day;
 
@@ -1105,16 +1305,21 @@ const game = {
 
         let pool;
         // 현재 데이터셋의 rawData 사용 (게임 데이터 변경 시 최신 데이터 반영)
-        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+        const currentRawData =
+            typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
         // normalize day and strictly match numeric day values to avoid cross-day leakage
         if (day === 'all' || day === 'boss') {
             pool = currentRawData;
         } else {
             const dayNum = Number(day);
-            pool = currentRawData.filter(i => Number(i.day) === dayNum);
+            pool = currentRawData.filter((i) => Number(i.day) === dayNum);
         }
-        console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', (pool && pool.length));
-        if (pool.length < 4) { alert("데이터 부족"); location.reload(); return; }
+        console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', pool && pool.length);
+        if (pool.length < 4) {
+            alert('데이터 부족');
+            location.reload();
+            return;
+        }
 
         game.maxTime = db.has('hourglass') ? 15 : 10;
         game.stats = { gain: 0, lost: 0 };
@@ -1125,37 +1330,47 @@ const game = {
 
         if (mode === 'boss') {
             // 현재 데이터셋의 rawData 사용
-            const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+            const currentRawData =
+                typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
             game.deck = game.shuffle([...currentRawData]);
             game.list = [];
         } else if (mode === 'battle') {
             // Battle Mode: Question type depends on user selection
             let shuffledPool = game.shuffle(pool);
             const questionType = game.battleQuestionType || 'mixed'; // default to 'mixed'
-            console.log('[game.init] battle mode - questionType:', questionType, 'battleQuestionType:', game.battleQuestionType);
-            
+            console.log(
+                '[game.init] battle mode - questionType:',
+                questionType,
+                'battleQuestionType:',
+                game.battleQuestionType
+            );
+
             if (questionType === 'objective') {
                 // 객관식만: 모든 문제를 객관식으로
                 console.log('[game.init] 객관식만 모드 - 모든 문제를 객관식으로 설정');
-                game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: false }));
+                game.list = shuffledPool.slice(0, count).map((q) => ({ ...q, isBoss: false }));
             } else if (questionType === 'subjective') {
                 // 주관식만: 모든 문제를 주관식으로
                 console.log('[game.init] 주관식만 모드 - 모든 문제를 주관식으로 설정');
-                game.list = shuffledPool.slice(0, count).map(q => ({ ...q, isBoss: true }));
+                game.list = shuffledPool.slice(0, count).map((q) => ({ ...q, isBoss: true }));
             } else {
                 // 혼합형: 객관식과 주관식이 번갈아 나오도록
                 console.log('[game.init] 혼합형 모드 - 객관식과 주관식 번갈아 표시');
                 const bossCount = Math.floor(count / 2); // 50%
                 const normalCount = count - bossCount; // 나머지
-                
+
                 // 주관식과 객관식 문제를 각각 준비
-                const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({ ...q, isBoss: true }));
-                const normalQuestions = shuffledPool.slice(bossCount, bossCount + normalCount).map(q => ({ ...q, isBoss: false }));
-                
+                const bossQuestions = shuffledPool
+                    .slice(0, bossCount)
+                    .map((q) => ({ ...q, isBoss: true }));
+                const normalQuestions = shuffledPool
+                    .slice(bossCount, bossCount + normalCount)
+                    .map((q) => ({ ...q, isBoss: false }));
+
                 // 각각 섞기
                 const shuffledBoss = game.shuffle([...bossQuestions]);
                 const shuffledNormal = game.shuffle([...normalQuestions]);
-                
+
                 // 번갈아 배치 (같은 타입이 연속으로 나오지 않도록)
                 game.list = [];
                 const maxLen = Math.max(shuffledBoss.length, shuffledNormal.length);
@@ -1168,7 +1383,7 @@ const game = {
                         game.list.push(shuffledBoss[i]);
                     }
                 }
-                
+
                 // 마지막으로 한 번 더 섞되, 같은 타입이 연속되지 않도록 보장
                 let attempts = 0;
                 while (attempts < 10) {
@@ -1185,24 +1400,35 @@ const game = {
                     attempts++;
                 }
             }
-            
+
             // 디버깅: 생성된 문제 타입 확인
-            const bossCount = game.list.filter(q => q.isBoss).length;
-            const normalCount = game.list.filter(q => !q.isBoss).length;
-            console.log('[game.init] 생성된 문제 - 주관식:', bossCount, '객관식:', normalCount, '총:', game.list.length);
+            const bossCount = game.list.filter((q) => q.isBoss).length;
+            const normalCount = game.list.filter((q) => !q.isBoss).length;
+            console.log(
+                '[game.init] 생성된 문제 - 주관식:',
+                bossCount,
+                '객관식:',
+                normalCount,
+                '총:',
+                game.list.length
+            );
         } else {
             let shuffledPool = game.shuffle(pool);
             const bossCount = Math.max(1, Math.floor(count * 0.2));
             const normalCount = count - bossCount;
 
-            const bossQuestions = shuffledPool.slice(0, bossCount).map(q => ({ ...q, isBoss: true }));
-            const normalQuestions = shuffledPool.slice(bossCount, count).map(q => ({ ...q, isBoss: false }));
+            const bossQuestions = shuffledPool
+                .slice(0, bossCount)
+                .map((q) => ({ ...q, isBoss: true }));
+            const normalQuestions = shuffledPool
+                .slice(bossCount, count)
+                .map((q) => ({ ...q, isBoss: false }));
 
             game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
         }
-        
+
         // 주관식 문제 총 개수 계산
-        game.subjectiveTotal = game.list.filter(q => q.isBoss).length;
+        game.subjectiveTotal = game.list.filter((q) => q.isBoss).length;
 
         // 애니메이션 완료 후 게임 화면 표시
         setTimeout(() => {
@@ -1213,11 +1439,11 @@ const game = {
                 gameScreen.style.opacity = '1';
                 gameScreen.style.zIndex = '250';
             }
-            
+
             // 배경음악 재생
             const bgMusic = document.getElementById('background-music');
             if (bgMusic) {
-                bgMusic.play().catch(err => {
+                bgMusic.play().catch((err) => {
                     console.log('Background music play failed:', err);
                 });
             }
@@ -1247,7 +1473,7 @@ const game = {
             story.showEnding(true);
             return;
         }
-        
+
         // Battle 모드 종료 조건 체크
         if (game.mode === 'battle' && game.idx >= game.list.length) {
             story.showEnding(true);
@@ -1258,15 +1484,18 @@ const game = {
         ui.updateGameInfo(game.mode, game.currentDay);
 
         // choose an appropriate monster sprite (day-specific > boss/normal > fallback)
-        const upcoming = (game.mode === 'boss') ? null : (game.list && game.list[game.idx]) || null;
-        const isBossPreview = (game.mode === 'boss') ? true : !!(upcoming && upcoming.isBoss);
+        const upcoming = game.mode === 'boss' ? null : (game.list && game.list[game.idx]) || null;
+        const isBossPreview = game.mode === 'boss' ? true : !!(upcoming && upcoming.isBoss);
         const sprite = pickMonsterSprite(upcoming || story.day, isBossPreview);
         document.getElementById('monster-img').src = sprite;
 
         if (game.mode === 'boss') {
-            if (game.deck.length === 0) { story.showEnding(true); return; }
+            if (game.deck.length === 0) {
+                story.showEnding(true);
+                return;
+            }
             game.currentQ = game.deck.pop();
-            document.getElementById('wave-badge').innerText = "Wave: " + (game.idx + 1);
+            document.getElementById('wave-badge').innerText = 'Wave: ' + (game.idx + 1);
             game.currentAns = game.currentQ.word;
             // boss 모드에서는 모든 문제가 주관식이므로, 첫 문제일 때 총 개수 초기화
             if (game.idx === 0) {
@@ -1277,14 +1506,16 @@ const game = {
             game.renderBoss(game.currentQ, true); // boss mode
         } else if (game.mode === 'battle') {
             // Battle Mode: Question type depends on user selection
-            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
+            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${
+                game.list.length
+            }`;
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
-            
+
             // 먼저 모든 문제 박스를 숨김
             document.getElementById('boss-box').style.display = 'none';
             document.getElementById('options-box').style.display = 'none';
-            
+
             // isBoss 속성에 따라 주관식/객관식 표시 (혼합형도 각 문제당 하나만 표시)
             if (game.currentQ.isBoss) {
                 game.renderBoss(game.currentQ, false);
@@ -1294,7 +1525,9 @@ const game = {
                 game.renderNormal(game.currentQ);
             }
         } else {
-            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${game.list.length}`;
+            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${
+                game.list.length
+            }`;
             game.currentQ = game.list[game.idx];
 
             document.getElementById('boss-box').style.display = 'none';
@@ -1320,7 +1553,7 @@ const game = {
             }
             const overlayBar = document.getElementById('overlay-timer');
             if (overlayBar) {
-                overlayBar.style.width = "100%";
+                overlayBar.style.width = '100%';
                 overlayBar.classList.remove('timer-danger');
             }
         }
@@ -1338,7 +1571,7 @@ const game = {
         document.getElementById('options-box').style.display = 'grid';
         document.getElementById('options-box').innerHTML = '';
         document.getElementById('skill-display').style.visibility = 'visible';
-        
+
         // 객관식 문제에서는 day 정보 보이기
         const gameInfoBadge = document.getElementById('game-info-badge');
         if (gameInfoBadge) {
@@ -1356,20 +1589,31 @@ const game = {
             document.getElementById('q-text').innerText = data.meaning;
             game.currentAns = data.word;
             const opts = game.getDistractors(data.word, 'word');
-            game.shuffle([data.word, ...opts]).forEach(opt => game.createBtn(opt, opt === data.word));
+            game.shuffle([data.word, ...opts]).forEach((opt) =>
+                game.createBtn(opt, opt === data.word)
+            );
         } else {
             document.getElementById('q-text').innerText = data.word;
             game.currentAns = data.meaning;
             const opts = game.getDistractors(data.meaning, 'meaning');
-            game.shuffle([data.meaning, ...opts]).forEach(opt => game.createBtn(opt, opt === data.meaning));
+            game.shuffle([data.meaning, ...opts]).forEach((opt) =>
+                game.createBtn(opt, opt === data.meaning)
+            );
         }
-        
+
         // 객관식에서는 스킬을 활성화 상태로 업데이트
         ui.updateSkills();
     },
 
     renderBoss: (data, isBoss) => {
-        console.log('[game.renderBoss] day=', data && data.day, 'word=', data && data.word, 'isBoss=', !!isBoss);
+        console.log(
+            '[game.renderBoss] day=',
+            data && data.day,
+            'word=',
+            data && data.word,
+            'isBoss=',
+            !!isBoss
+        );
         if (!data || !data.word || !data.meaning) {
             game.idx++;
             game.nextLevel();
@@ -1378,7 +1622,7 @@ const game = {
         document.getElementById('boss-box').style.display = 'flex';
         document.getElementById('options-box').style.display = 'none';
         document.getElementById('skill-display').style.visibility = 'visible'; // 주관식에서도 표시
-        
+
         // 주관식 문제에서도 day 정보 보이기
         const gameInfoBadge = document.getElementById('game-info-badge');
         if (gameInfoBadge) {
@@ -1386,7 +1630,11 @@ const game = {
         }
 
         const isFinalBoss = !isBoss && game.idx === game.list.length - 1;
-        document.getElementById('boss-title').innerText = isFinalBoss ? "⚠️ BOSS BATTLE" : (isBoss ? `🔥 WAVE ${game.idx + 1}` : "⚔️ ELITE");
+        document.getElementById('boss-title').innerText = isFinalBoss
+            ? '⚠️ BOSS BATTLE'
+            : isBoss
+            ? `🔥 WAVE ${game.idx + 1}`
+            : '⚔️ ELITE';
 
         const qLabel = document.getElementById('q-label');
         if (qLabel) {
@@ -1394,12 +1642,12 @@ const game = {
             qLabel.style.display = 'none';
         }
         document.getElementById('q-text').innerText = data.meaning;
-        
+
         // 띄어쓰기가 있는 단어는 _도 띄어쓰기 처리 (첫 글자는 보여주고 나머지는 _)
         const word = data.word;
         let hintText = '';
         let isFirstChar = true; // 첫 글자 여부 추적
-        
+
         for (let i = 0; i < word.length; i++) {
             if (word.charAt(i) === ' ') {
                 hintText += ' '; // 띄어쓰기는 그대로 유지
@@ -1414,22 +1662,22 @@ const game = {
             }
         }
         document.getElementById('boss-hint').innerText = hintText;
-        
+
         // 주관식 문제는 시간 제한 없음 (타이머 시작하지 않음)
 
         const input = document.getElementById('boss-input');
         if (input) {
-            input.value = ""; 
+            input.value = '';
             input.disabled = false; // 입력 활성화
-            input.focus(); 
-            input.style.borderColor = "var(--primary)";
-            input.onkeypress = (e) => { 
+            input.focus();
+            input.style.borderColor = 'var(--primary)';
+            input.onkeypress = (e) => {
                 if (e.key === 'Enter' && !game.isProcessing) {
                     game.checkBossAnswer();
                 }
             };
         }
-        
+
         // 공격하기 버튼 이벤트 리스너 설정
         const bossSubmitBtn = document.querySelector('.boss-submit');
         if (bossSubmitBtn) {
@@ -1441,7 +1689,7 @@ const game = {
             bossSubmitBtn.disabled = false;
             bossSubmitBtn.style.pointerEvents = 'auto';
         }
-        
+
         // 주관식에서는 스킬을 비활성화 상태로 업데이트
         ui.updateSkills();
     },
@@ -1458,11 +1706,11 @@ const game = {
         if (game.isProcessing) return;
         const input = document.getElementById('boss-input').value.trim().toLowerCase();
         const answer = game.currentQ.word.toLowerCase();
-        
+
         // 첫 글자가 힌트로 보이므로, 사용자가 첫 글자를 생략하고 입력해도 정답 처리
         const answerWithoutFirst = answer.slice(1); // 첫 글자 제외한 나머지
-        const isCorrect = (input === answer) || (input === answerWithoutFirst);
-        
+        const isCorrect = input === answer || input === answerWithoutFirst;
+
         game.handleAnswer(isCorrect, null, 'subjective');
     },
 
@@ -1473,12 +1721,12 @@ const game = {
 
         // Record Stats (문제 타입 포함)
         db.addStats(isCorrect, questionType);
-        
+
         // 주관식 문제 정답 추적
         if (questionType === 'subjective' && isCorrect) {
             game.subjectiveCorrect++;
         }
-        
+
         if (isCorrect) {
             game.animAttack();
 
@@ -1487,7 +1735,7 @@ const game = {
             if (game.mode === 'boss') {
                 baseGain = 80;
             } else if (game.currentQ.isBoss) {
-                baseGain = (game.list.length >= 20) ? 600 : (game.list.length >= 10 ? 200 : 100);
+                baseGain = game.list.length >= 20 ? 600 : game.list.length >= 10 ? 200 : 100;
             }
 
             // Time Factor
@@ -1495,7 +1743,7 @@ const game = {
             let gain = Math.floor(baseGain * (0.5 + timeRatio * 0.5));
 
             // 1. Weapon Multiplier
-            const wData = weapons.find(w => w.id === db.equippedWeapon);
+            const wData = weapons.find((w) => w.id === db.equippedWeapon);
             if (wData && wData.multiplier) {
                 gain = Math.floor(gain * wData.multiplier);
                 if (wData.multiplier > 1) game.animGoldAttack(); // Gold effect
@@ -1511,34 +1759,37 @@ const game = {
             db.addGold(gain);
             game.showFloatText(`+${gain} G`, 'gold');
 
-            if (btnElement) btnElement.style.background = "#66BB6A";
-            else document.getElementById('boss-input').style.borderColor = "#66BB6A";
+            if (btnElement) btnElement.style.background = '#66BB6A';
+            else document.getElementById('boss-input').style.borderColor = '#66BB6A';
 
-            setTimeout(() => { game.idx++; game.nextLevel(); }, 800);
+            setTimeout(() => {
+                game.idx++;
+                game.nextLevel();
+            }, 800);
         } else {
             // Wrong Answer
             if (game.mode === 'boss') {
                 // 게임 종료 처리 중이므로 더 이상 진행하지 않음
                 game.isProcessing = true;
-                
+
                 // 타이머 정지 (타이머가 계속 실행되어 handleAnswer를 호출하는 것을 방지)
                 if (game.timer) {
                     clearInterval(game.timer);
                     game.timer = null;
                 }
-                
+
                 // boss-input 비활성화
                 const bossInput = document.getElementById('boss-input');
                 if (bossInput) {
-                    bossInput.style.borderColor = "#FF5252";
+                    bossInput.style.borderColor = '#FF5252';
                     bossInput.disabled = true; // 입력 비활성화
                     bossInput.onkeypress = null; // 키 이벤트 제거
                 }
-                
+
                 // 오답일 때 정답 표시
                 game.showCorrectAnswer(game.currentAns, 'subjective');
-                game.showFloatText("GAME OVER", 'red');
-                
+                game.showFloatText('GAME OVER', 'red');
+
                 setTimeout(() => {
                     story.showEnding(false);
                     // game.isProcessing은 showEnding에서 true로 유지 (게임이 자동으로 다시 시작되지 않도록)
@@ -1570,17 +1821,23 @@ const game = {
             game.showFloatText(`-${penalty} G`, 'red');
 
             if (btnElement) {
-                btnElement.style.background = "#D32F2F";
+                btnElement.style.background = '#D32F2F';
             } else {
-                document.getElementById('boss-input').style.borderColor = "#D32F2F";
+                document.getElementById('boss-input').style.borderColor = '#D32F2F';
             }
 
             // 오답일 때 정답 표시 (문제 타입에 따라 다르게 처리)
-            const questionType = document.getElementById('boss-box').style.display === 'flex' ? 'subjective' : 'objective';
+            const questionType =
+                document.getElementById('boss-box').style.display === 'flex'
+                    ? 'subjective'
+                    : 'objective';
             game.showCorrectAnswer(game.currentAns, questionType);
 
             // IMPORTANT: Ensure timeout triggers next level even if animation fails
-            setTimeout(() => { game.idx++; game.nextLevel(); }, 2500);
+            setTimeout(() => {
+                game.idx++;
+                game.nextLevel();
+            }, 2500);
         }
     },
 
@@ -1594,8 +1851,13 @@ const game = {
         ui.updateSkills();
 
         const btns = Array.from(document.querySelectorAll('.option-btn:not(.disabled)'));
-        const wrongBtns = btns.filter(b => b.innerText !== game.currentAns);
-        game.shuffle(wrongBtns).slice(0, 2).forEach(b => { b.classList.add('disabled'); b.style.opacity = "0.2"; });
+        const wrongBtns = btns.filter((b) => b.innerText !== game.currentAns);
+        game.shuffle(wrongBtns)
+            .slice(0, 2)
+            .forEach((b) => {
+                b.classList.add('disabled');
+                b.style.opacity = '0.2';
+            });
     },
     useUltimate: () => {
         if (game.isProcessing || game.mode === 'boss' || db.skills.ultimate <= 0) return;
@@ -1606,14 +1868,16 @@ const game = {
         ui.updateSkills();
 
         const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(b => { if (b.innerText === game.currentAns) b.click(); });
+        btns.forEach((b) => {
+            if (b.innerText === game.currentAns) b.click();
+        });
     },
 
     // Visuals
     animAttack: () => {
         document.getElementById('hero-wrapper').classList.add('hero-active');
         const wId = db.equippedWeapon;
-        const wData = weapons.find(w => w.id === wId) || weapons[0];
+        const wData = weapons.find((w) => w.id === wId) || weapons[0];
         const effType = wData.effect;
         const effEl = document.getElementById('effect-slash');
         effEl.className = '';
@@ -1635,7 +1899,9 @@ const game = {
     },
     animGoldAttack: () => {
         const effEl = document.getElementById('effect-slash');
-        setTimeout(() => { effEl.classList.add('slash-gold', 'eff-gold'); }, 300);
+        setTimeout(() => {
+            effEl.classList.add('slash-gold', 'eff-gold');
+        }, 300);
     },
 
     showFloatText: (text, type) => {
@@ -1659,7 +1925,7 @@ const game = {
         } else {
             // 객관식: 보기 버튼 중 정답 버튼 강조
             const optionBtns = document.querySelectorAll('.option-btn');
-            optionBtns.forEach(btn => {
+            optionBtns.forEach((btn) => {
                 if (btn.innerText.trim() === answer.trim()) {
                     // 정답 버튼 강조
                     btn.style.background = '#4CAF50'; // 초록색 배경
@@ -1677,7 +1943,7 @@ const game = {
         game.timeLeft = game.maxTime;
         const overlayBar = document.getElementById('overlay-timer');
         if (overlayBar) {
-            overlayBar.style.width = "100%";
+            overlayBar.style.width = '100%';
             overlayBar.classList.remove('timer-danger');
         }
         clearInterval(game.timer);
@@ -1688,9 +1954,9 @@ const game = {
                 game.timer = null;
                 return;
             }
-            
+
             game.timeLeft -= 0.1;
-            const width = ((game.timeLeft / game.maxTime) * 100) + "%";
+            const width = (game.timeLeft / game.maxTime) * 100 + '%';
             if (overlayBar) overlayBar.style.width = width;
             if (game.timeLeft <= 3) {
                 if (overlayBar) overlayBar.classList.add('timer-danger');
@@ -1708,8 +1974,12 @@ const game = {
 
     getDistractors: (correct, key) => {
         // 현재 데이터셋의 rawData 사용
-        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
-        const source = (typeof decoyWords !== 'undefined' && decoyWords.length > 0) ? currentRawData.concat(decoyWords) : currentRawData;
+        const currentRawData =
+            typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
+        const source =
+            typeof decoyWords !== 'undefined' && decoyWords.length > 0
+                ? currentRawData.concat(decoyWords)
+                : currentRawData;
         const distractors = [];
         const shuffled = game.shuffle([...source]);
         for (let i = 0; i < shuffled.length; i++) {
@@ -1725,12 +1995,17 @@ const game = {
         // Ensure we have 3 distractors, even if we have to grab randomly
         while (distractors.length < 3) {
             // 현재 데이터셋의 rawData 사용
-            const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+            const currentRawData =
+                typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
             const emergencyDistractor = game.shuffle([...currentRawData])[0];
-            if (emergencyDistractor && emergencyDistractor[key] && emergencyDistractor[key] !== correct) {
-                 if (!distractors.includes(emergencyDistractor[key])) {
+            if (
+                emergencyDistractor &&
+                emergencyDistractor[key] &&
+                emergencyDistractor[key] !== correct
+            ) {
+                if (!distractors.includes(emergencyDistractor[key])) {
                     distractors.push(emergencyDistractor[key]);
-                 }
+                }
             }
         }
         return distractors.slice(0, 3);
@@ -1757,7 +2032,7 @@ const game = {
             bossStoryScreen.style.pointerEvents = 'none';
             bossStoryScreen.classList.remove('closing');
         }
-        
+
         // practice-mode-modal과 battle-mode-modal도 닫기
         const practiceModeModal = document.getElementById('practice-mode-modal');
         const battleModeModal = document.getElementById('battle-mode-modal');
@@ -1785,74 +2060,80 @@ const game = {
             battleModeModal.style.pointerEvents = 'none';
             battleModeModal.classList.remove('closing');
         }
-        
+
         // title-screen이 뒤에 있도록 보장 (backdrop-filter가 작동하도록)
         const startScreen = document.getElementById('title-screen');
         if (startScreen) {
             startScreen.style.display = 'flex';
             startScreen.style.zIndex = '100'; // result-panel(z-index: 300) 뒤에 위치
         }
-        
+
         // 결과 화면 표시 (z-index 300으로 설정되어 있어서 위에 표시됨)
         openScreenOverlay('result-panel', true);
 
         const gain = game.stats.gain;
         const lost = game.stats.lost;
 
-        document.getElementById('res-title').innerText = (win || game.mode === 'boss') ? "FINISHED!" : "FAILED";
+        document.getElementById('res-title').innerText =
+            win || game.mode === 'boss' ? 'FINISHED!' : 'FAILED';
 
         document.getElementById('res-gain').innerText = gain;
         document.getElementById('res-lost').innerText = lost;
 
         // Fix: Show Total Wallet explicitly
         // Clamp negative balance to 0 on game end
-        if (db.gold < 0) { db.gold = 0; db.save(); }
+        if (db.gold < 0) {
+            db.gold = 0;
+            db.save();
+        }
         document.getElementById('res-current-total').innerText = db.gold;
-        
+
         // 주관식 문제를 모두 맞췄는지 확인
         if (game.subjectiveTotal > 0 && game.subjectiveCorrect === game.subjectiveTotal) {
             const today = new Date();
-            const dateStr = today.toLocaleDateString('ko-KR', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            const dateStr = today.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
             });
-            
+
             // 기존 데이터와의 호환성
             if (!db.stats.subjective) {
                 db.stats.subjective = { solved: 0, correct: 0 };
             }
-            
+
             // 최근 날짜 기록 (배열로 저장하여 여러 번 기록 가능)
             if (!db.stats.subjective.perfectDays) {
                 db.stats.subjective.perfectDays = [];
             }
-            
+
             // 오늘 날짜가 이미 기록되어 있지 않으면 추가
             const todayISO = today.toISOString().split('T')[0];
-            const existingIndex = db.stats.subjective.perfectDays.findIndex(d => d.date === todayISO);
-            
+            const existingIndex = db.stats.subjective.perfectDays.findIndex(
+                (d) => d.date === todayISO
+            );
+
             if (existingIndex === -1) {
                 db.stats.subjective.perfectDays.push({
                     date: todayISO,
-                    displayDate: dateStr
+                    displayDate: dateStr,
                 });
             } else {
                 // 이미 있으면 업데이트 (최신 날짜로)
                 db.stats.subjective.perfectDays[existingIndex].displayDate = dateStr;
             }
-            
+
             // 날짜순으로 정렬 (최신이 마지막)
             db.stats.subjective.perfectDays.sort((a, b) => a.date.localeCompare(b.date));
-            
+
             db.save();
         }
-        
+
         // 게임 상태 완전히 리셋
         game.isProcessing = false;
         game.mode = 'battle';
         game.currentDay = null;
-    }
+    },
 };
 
 // Init
@@ -1863,15 +2144,18 @@ ui.updateMainStats();
 ui.updateSkills();
 
 const secret = {
-    password: "770458",
-    entered: "",
+    password: '770458',
+    entered: '',
     adjustGold: 0,
     previousModal: null, // 비밀번호 모달로 오기 전 모달 추적 (gold-adjuster-modal 또는 gold-edit-modal)
 
     init: () => {
         const h1 = document.querySelector('#title-screen .card h1');
         if (h1 && h1.innerText.includes('킹왕짱 RPG')) {
-            h1.innerHTML = h1.innerHTML.replace('킹', '<span id="secret-trigger" style="cursor:pointer;">킹</span>');
+            h1.innerHTML = h1.innerHTML.replace(
+                '킹',
+                '<span id="secret-trigger" style="cursor:pointer;">킹</span>'
+            );
             document.getElementById('secret-trigger').addEventListener('click', secret.open);
         }
 
@@ -1890,7 +2174,7 @@ const secret = {
         // 설정 화면을 바로 표시 (비밀번호 없이)
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('gold-adjuster-modal').style.display = 'block';
-        
+
         // 타이틀 컨테이너 크기를 CSS 변수로 설정 (다른 모달과 동일하게)
         const secretOverlay = document.getElementById('setting-panel');
         const titleContainer = document.querySelector('.title-container-wrapper');
@@ -1900,23 +2184,23 @@ const secret = {
             const titleHeight = computedStyle.getPropertyValue('--title-container-height');
             const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
             const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-            
-            let containerWidth = parseFloat(titleWidth) || (0.95 * vw);
-            let containerHeight = parseFloat(titleHeight) || (0.95 * vh);
-            
+
+            let containerWidth = parseFloat(titleWidth) || 0.95 * vw;
+            let containerHeight = parseFloat(titleHeight) || 0.95 * vh;
+
             if (!titleWidth || isNaN(containerWidth)) {
                 const rect = titleContainer.getBoundingClientRect();
-                containerWidth = rect.width || (0.95 * vw);
+                containerWidth = rect.width || 0.95 * vw;
             }
             if (!titleHeight || isNaN(containerHeight)) {
                 const rect = titleContainer.getBoundingClientRect();
-                containerHeight = rect.height || (0.95 * vh);
+                containerHeight = rect.height || 0.95 * vh;
             }
-            
+
             secretOverlay.style.setProperty('--title-container-width', containerWidth + 'px');
             secretOverlay.style.setProperty('--title-container-height', containerHeight + 'px');
         }
-        
+
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'setting' }, '', window.location.href);
     },
@@ -1932,7 +2216,7 @@ const secret = {
             } else {
                 document.getElementById('gold-adjuster-modal').style.display = 'block';
             }
-            secret.entered = "";
+            secret.entered = '';
             secret.pendingAction = null;
             secret.previousModal = null;
             return;
@@ -1975,7 +2259,7 @@ const secret = {
     check: () => {
         if (secret.entered === secret.password) {
             document.getElementById('password-modal').style.display = 'none';
-            
+
             // pendingAction이 있으면 실행 (applyGold, resetGold, resetStatistics 등)
             if (secret.pendingAction) {
                 secret.pendingAction();
@@ -1990,10 +2274,9 @@ const secret = {
                 document.getElementById('gold-up').onclick = () => secret.updateGold(500);
                 document.getElementById('gold-down').onclick = () => secret.updateGold(-500);
             }
-
         } else {
             document.getElementById('password-error').style.display = 'block';
-            secret.entered = "";
+            secret.entered = '';
             setTimeout(secret.updatePasswordDisplay, 500);
         }
     },
@@ -2005,14 +2288,14 @@ const secret = {
 
     applyGold: () => {
         // 비밀번호 확인
-        secret.entered = "";
+        secret.entered = '';
         secret.updatePasswordDisplay();
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
-        
+
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
             db.addGold(secret.adjustGold);
@@ -2024,20 +2307,20 @@ const secret = {
 
     resetGold: () => {
         // 비밀번호 확인
-        secret.entered = "";
+        secret.entered = '';
         secret.updatePasswordDisplay();
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
-        
+
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
-            if (confirm("정말 골드를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+            if (confirm('정말 골드를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
                 db.gold = 0;
                 db.save();
-                
+
                 ui.updateGold();
                 if (typeof shop !== 'undefined' && typeof shop.render === 'function') {
                     shop.render();
@@ -2048,8 +2331,8 @@ const secret = {
                 if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
                     statistics.render();
                 }
-                
-                alert("골드가 초기화되었습니다.");
+
+                alert('골드가 초기화되었습니다.');
                 secret.pendingAction = null;
                 secret.previousModal = null;
                 secret.close();
@@ -2065,26 +2348,31 @@ const secret = {
 
     resetStatistics: () => {
         // 비밀번호 확인
-        secret.entered = "";
+        secret.entered = '';
         secret.updatePasswordDisplay();
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
-        
+
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
-            if (confirm("정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
-                db.stats = { solved: 0, correct: 0, objective: { solved: 0, correct: 0 }, subjective: { solved: 0, correct: 0, perfectDays: [] } };
+            if (confirm('정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                db.stats = {
+                    solved: 0,
+                    correct: 0,
+                    objective: { solved: 0, correct: 0 },
+                    subjective: { solved: 0, correct: 0, perfectDays: [] },
+                };
                 db.save();
-                
+
                 ui.updateMainStats();
                 if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
                     statistics.render();
                 }
-                
-                alert("통계가 초기화되었습니다.");
+
+                alert('통계가 초기화되었습니다.');
                 secret.pendingAction = null;
                 secret.previousModal = null;
                 secret.close();
@@ -2110,7 +2398,7 @@ const secret = {
 
         document.getElementById('gold-edit-up').onclick = () => secret.updateGoldEdit(500);
         document.getElementById('gold-edit-down').onclick = () => secret.updateGoldEdit(-500);
-        
+
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'gold-edit-modal' }, '', window.location.href);
     },
@@ -2129,19 +2417,19 @@ const secret = {
 
     applyGoldEdit: () => {
         // 비밀번호 확인
-        secret.entered = "";
+        secret.entered = '';
         secret.updatePasswordDisplay();
         secret.previousModal = 'gold-edit-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-edit-modal').style.display = 'none';
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
-        
+
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
             db.gold = secret.editGold;
             db.save();
-            
+
             ui.updateGold();
             if (typeof shop !== 'undefined' && typeof shop.render === 'function') {
                 shop.render();
@@ -2152,8 +2440,8 @@ const secret = {
             if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
                 statistics.render();
             }
-            
-            alert("골드가 수정되었습니다.");
+
+            alert('골드가 수정되었습니다.');
             secret.pendingAction = null;
             secret.previousModal = null;
             secret.closeGoldEditModal();
@@ -2163,17 +2451,17 @@ const secret = {
 
     resetStats: () => {
         // 비밀번호 확인
-        secret.entered = "";
+        secret.entered = '';
         secret.updatePasswordDisplay();
         secret.previousModal = 'gold-adjuster-modal'; // 이전 모달 저장
         document.getElementById('password-modal').style.display = 'block';
         document.getElementById('gold-adjuster-modal').style.display = 'none';
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
-        
+
         // 비밀번호 확인 후 실행할 함수
         secret.pendingAction = () => {
-            if (confirm("정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+            if (confirm('정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
                 db.gold = 0;
                 db.owned = ['basic'];
                 db.equippedWeapon = 'basic';
@@ -2192,7 +2480,7 @@ const secret = {
                 ui.updateDurability();
                 inventory.render();
 
-                alert("모든 데이터가 초기화되었습니다.");
+                alert('모든 데이터가 초기화되었습니다.');
                 secret.previousModal = null;
                 secret.close();
                 location.reload();
@@ -2205,7 +2493,7 @@ const secret = {
             }
         };
     },
-    
+
     pendingAction: null, // 비밀번호 확인 후 실행할 함수
 
     openPrintDaySelect: () => {
@@ -2214,27 +2502,33 @@ const secret = {
         document.getElementById('print-day-select-modal').style.display = 'block';
         // 히스토리 상태 추가 (백버튼 처리용)
         history.pushState({ screen: 'print-day-select-modal' }, '', window.location.href);
-        
+
         // Day 선택 옵션 채우기
         const printDaySelect = document.getElementById('print-day-select');
         if (printDaySelect) {
             printDaySelect.innerHTML = '<option value="">Day 선택...</option>';
-            
+
             // 현재 데이터셋의 rawData 사용
-            const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+            const currentRawData =
+                typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
             const daysFromData = new Set();
             if (currentRawData && Array.isArray(currentRawData)) {
-                currentRawData.forEach(r => { 
+                currentRawData.forEach((r) => {
                     if (r && r.day && r.day !== 'all' && r.day !== 'boss') {
-                        daysFromData.add(Number(r.day)); 
+                        daysFromData.add(Number(r.day));
                     }
                 });
             }
-            
-            const sortedDays = Array.from(daysFromData).filter(d => !Number.isNaN(d) && d > 0).sort((a, b) => a - b);
-            
-            sortedDays.forEach(d => {
-                const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : `Day ${d}`;
+
+            const sortedDays = Array.from(daysFromData)
+                .filter((d) => !Number.isNaN(d) && d > 0)
+                .sort((a, b) => a - b);
+
+            sortedDays.forEach((d) => {
+                const label =
+                    dayCatalog && dayCatalog[d] && dayCatalog[d].label
+                        ? dayCatalog[d].label
+                        : `Day ${d}`;
                 printDaySelect.innerHTML += `<option value="${d}">${label}</option>`;
             });
         }
@@ -2249,28 +2543,29 @@ const secret = {
     generatePrintHTML: () => {
         const daySelect = document.getElementById('print-day-select');
         const selectedDay = daySelect ? daySelect.value : '';
-        
+
         if (!selectedDay) {
             alert('Day를 선택해주세요.');
             return;
         }
-        
+
         // 현재 데이터셋의 rawData 사용
-        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+        const currentRawData =
+            typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
         const dayNum = Number(selectedDay);
-        const dayWords = currentRawData.filter(i => Number(i.day) === dayNum);
-        
+        const dayWords = currentRawData.filter((i) => Number(i.day) === dayNum);
+
         if (dayWords.length === 0) {
             alert('선택한 Day에 단어가 없습니다.');
             return;
         }
-        
+
         // 단어를 섞고 한글→영문 50%, 영문→한글 50%로 나누기
         const shuffled = [...dayWords].sort(() => Math.random() - 0.5);
         const half = Math.ceil(shuffled.length / 2);
         const koreanToEnglish = shuffled.slice(0, half); // 한글→영문
         const englishToKorean = shuffled.slice(half); // 영문→한글
-        
+
         // 객관식 문제용 단어 선택 (정답과 오답용)
         const objectiveWords = [...dayWords].sort(() => Math.random() - 0.5);
 
@@ -2288,11 +2583,11 @@ const secret = {
             const pools = [
                 primaryPool,
                 currentRawData,
-                (typeof decoyWords !== 'undefined' ? decoyWords : [])
+                typeof decoyWords !== 'undefined' ? decoyWords : [],
             ];
 
             // 정답을 제외한 다른 선택지 찾기 (count - 1개만 필요)
-            pools.forEach(pool => {
+            pools.forEach((pool) => {
                 if (!Array.isArray(pool)) return;
                 const shuffledPool = shuffle([...pool]);
                 for (const item of shuffledPool) {
@@ -2304,12 +2599,12 @@ const secret = {
             });
 
             const options = Array.from(unique);
-            
+
             // 정답이 반드시 포함되어 있는지 확인
             if (!options.includes(correctValue)) {
                 options.push(correctValue);
             }
-            
+
             // 선택지가 부족하면 정답을 반복 추가 (최후의 수단)
             while (options.length < count) {
                 options.push(correctValue);
@@ -2317,14 +2612,17 @@ const secret = {
 
             // 정답을 포함한 상태로 섞기
             const shuffled = shuffle([...options]);
-            
+
             // 정답이 반드시 포함되도록 보장
             if (!shuffled.slice(0, count).includes(correctValue)) {
                 // 정답이 없으면 마지막 항목을 정답으로 교체
                 const correctIdx = shuffled.indexOf(correctValue);
                 if (correctIdx >= 0) {
                     // 정답이 count 범위 밖에 있으면 마지막 항목과 교체
-                    [shuffled[count - 1], shuffled[correctIdx]] = [shuffled[correctIdx], shuffled[count - 1]];
+                    [shuffled[count - 1], shuffled[correctIdx]] = [
+                        shuffled[correctIdx],
+                        shuffled[count - 1],
+                    ];
                 } else {
                     // 정답이 아예 없으면 마지막 항목을 정답으로 교체
                     shuffled[count - 1] = correctValue;
@@ -2333,7 +2631,7 @@ const secret = {
 
             return shuffled.slice(0, count);
         };
-        
+
         // 모든 문제를 하나의 배열로 합치기
         const allQuestions = [];
         koreanToEnglish.forEach((item, idx) => {
@@ -2342,7 +2640,7 @@ const secret = {
         englishToKorean.forEach((item, idx) => {
             allQuestions.push({ type: 'en-ko', item, num: koreanToEnglish.length + idx + 1 });
         });
-        
+
         // 객관식 문제 2개 추가
         // 1. 한글 뜻 → 영어 단어 객관식
         if (objectiveWords.length >= 4) {
@@ -2351,27 +2649,31 @@ const secret = {
             const correctIndex1 = allOptions1.indexOf(objItem1.word);
             // 정답이 선택지에 없으면 에러 처리
             if (correctIndex1 === -1) {
-                console.error('[generatePrintHTML] 정답이 선택지에 없습니다:', objItem1.word, allOptions1);
+                console.error(
+                    '[generatePrintHTML] 정답이 선택지에 없습니다:',
+                    objItem1.word,
+                    allOptions1
+                );
                 // 정답을 첫 번째 선택지로 강제 추가
                 allOptions1[0] = objItem1.word;
-                allQuestions.push({ 
-                    type: 'objective-ko-en', 
-                    item: objItem1, 
+                allQuestions.push({
+                    type: 'objective-ko-en',
+                    item: objItem1,
                     options: allOptions1,
                     correctIndex: 0,
-                    num: allQuestions.length + 1 
+                    num: allQuestions.length + 1,
                 });
             } else {
-                allQuestions.push({ 
-                    type: 'objective-ko-en', 
-                    item: objItem1, 
+                allQuestions.push({
+                    type: 'objective-ko-en',
+                    item: objItem1,
                     options: allOptions1,
                     correctIndex: correctIndex1,
-                    num: allQuestions.length + 1 
+                    num: allQuestions.length + 1,
                 });
             }
         }
-        
+
         // 2. 영어 단어 → 한글 뜻 객관식
         if (objectiveWords.length >= 8) {
             const objItem2 = objectiveWords[4];
@@ -2379,27 +2681,31 @@ const secret = {
             const correctIndex2 = allOptions2.indexOf(objItem2.meaning);
             // 정답이 선택지에 없으면 에러 처리
             if (correctIndex2 === -1) {
-                console.error('[generatePrintHTML] 정답이 선택지에 없습니다:', objItem2.meaning, allOptions2);
+                console.error(
+                    '[generatePrintHTML] 정답이 선택지에 없습니다:',
+                    objItem2.meaning,
+                    allOptions2
+                );
                 // 정답을 첫 번째 선택지로 강제 추가
                 allOptions2[0] = objItem2.meaning;
-                allQuestions.push({ 
-                    type: 'objective-en-ko', 
-                    item: objItem2, 
+                allQuestions.push({
+                    type: 'objective-en-ko',
+                    item: objItem2,
                     options: allOptions2,
                     correctIndex: 0,
-                    num: allQuestions.length + 1 
+                    num: allQuestions.length + 1,
                 });
             } else {
-                allQuestions.push({ 
-                    type: 'objective-en-ko', 
-                    item: objItem2, 
+                allQuestions.push({
+                    type: 'objective-en-ko',
+                    item: objItem2,
                     options: allOptions2,
                     correctIndex: correctIndex2,
-                    num: allQuestions.length + 1 
+                    num: allQuestions.length + 1,
                 });
             }
         }
-        
+
         // 문제를 좌우로 나누기 (절반씩)
         // A4 1페이지에 맞추기 위해 문제 수 제한 (각 컬럼당 최대 15개)
         const maxQuestionsPerPage = 30; // 전체 최대 30개 (좌우 각 15개)
@@ -2407,20 +2713,21 @@ const secret = {
         const questionsPerColumn = Math.ceil(limitedQuestions.length / 2);
         const leftQuestions = limitedQuestions.slice(0, questionsPerColumn);
         const rightQuestions = limitedQuestions.slice(questionsPerColumn);
-        
+
         // Day 정보 가져오기 (중복 제거)
-        const dayLabel = (dayCatalog && dayCatalog[selectedDay] && dayCatalog[selectedDay].label) 
-            ? dayCatalog[selectedDay].label 
-            : `Day ${selectedDay}`;
-        
+        const dayLabel =
+            dayCatalog && dayCatalog[selectedDay] && dayCatalog[selectedDay].label
+                ? dayCatalog[selectedDay].label
+                : `Day ${selectedDay}`;
+
         // 문제 페이지 HTML 생성 (좌우 2열)
         let questionsHTML = '<div class="print-columns">';
         let answersHTML = '<div class="print-columns">';
-        
+
         // 좌측 컬럼
         questionsHTML += '<div class="print-column">';
         answersHTML += '<div class="print-column">';
-        
+
         leftQuestions.forEach((q) => {
             if (q.type === 'ko-en') {
                 questionsHTML += `
@@ -2469,7 +2776,12 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                                ${q.options
+                                    .map(
+                                        (opt, idx) =>
+                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
+                                    )
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -2480,10 +2792,16 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => {
-                                    const isCorrect = idx === q.correctIndex;
-                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
-                                }).join('')}
+                                ${q.options
+                                    .map((opt, idx) => {
+                                        const isCorrect = idx === q.correctIndex;
+                                        return `<div class="option-item ${
+                                            isCorrect ? 'correct' : ''
+                                        }">${optionLabels[idx]} ${opt}${
+                                            isCorrect ? ' ✓' : ''
+                                        }</div>`;
+                                    })
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -2497,7 +2815,12 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                                ${q.options
+                                    .map(
+                                        (opt, idx) =>
+                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
+                                    )
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -2508,24 +2831,30 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => {
-                                    const isCorrect = idx === q.correctIndex;
-                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
-                                }).join('')}
+                                ${q.options
+                                    .map((opt, idx) => {
+                                        const isCorrect = idx === q.correctIndex;
+                                        return `<div class="option-item ${
+                                            isCorrect ? 'correct' : ''
+                                        }">${optionLabels[idx]} ${opt}${
+                                            isCorrect ? ' ✓' : ''
+                                        }</div>`;
+                                    })
+                                    .join('')}
                             </div>
                         </div>
                     </div>
                 `;
             }
         });
-        
+
         questionsHTML += '</div>';
         answersHTML += '</div>';
-        
+
         // 우측 컬럼
         questionsHTML += '<div class="print-column">';
         answersHTML += '<div class="print-column">';
-        
+
         rightQuestions.forEach((q) => {
             if (q.type === 'ko-en') {
                 questionsHTML += `
@@ -2574,7 +2903,12 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                                ${q.options
+                                    .map(
+                                        (opt, idx) =>
+                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
+                                    )
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -2585,10 +2919,16 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => {
-                                    const isCorrect = idx === q.correctIndex;
-                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
-                                }).join('')}
+                                ${q.options
+                                    .map((opt, idx) => {
+                                        const isCorrect = idx === q.correctIndex;
+                                        return `<div class="option-item ${
+                                            isCorrect ? 'correct' : ''
+                                        }">${optionLabels[idx]} ${opt}${
+                                            isCorrect ? ' ✓' : ''
+                                        }</div>`;
+                                    })
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -2602,7 +2942,12 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => `<div class="option-item">${optionLabels[idx]} ${opt}</div>`).join('')}
+                                ${q.options
+                                    .map(
+                                        (opt, idx) =>
+                                            `<div class="option-item">${optionLabels[idx]} ${opt}</div>`
+                                    )
+                                    .join('')}
                             </div>
                         </div>
                     </div>
@@ -2613,20 +2958,26 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
-                                ${q.options.map((opt, idx) => {
-                                    const isCorrect = idx === q.correctIndex;
-                                    return `<div class="option-item ${isCorrect ? 'correct' : ''}">${optionLabels[idx]} ${opt}${isCorrect ? ' ✓' : ''}</div>`;
-                                }).join('')}
+                                ${q.options
+                                    .map((opt, idx) => {
+                                        const isCorrect = idx === q.correctIndex;
+                                        return `<div class="option-item ${
+                                            isCorrect ? 'correct' : ''
+                                        }">${optionLabels[idx]} ${opt}${
+                                            isCorrect ? ' ✓' : ''
+                                        }</div>`;
+                                    })
+                                    .join('')}
                             </div>
                         </div>
                     </div>
                 `;
             }
         });
-        
+
         questionsHTML += '</div></div>';
         answersHTML += '</div></div>';
-        
+
         // 전체 HTML 생성
         const printHTML = `
 <!DOCTYPE html>
@@ -2777,12 +3128,12 @@ const secret = {
 </body>
 </html>
         `;
-        
+
         // 새 창에서 HTML 열기
         const printWindow = window.open('', '_blank');
         printWindow.document.write(printHTML);
         printWindow.document.close();
-        
+
         // 모달 닫기
         secret.closePrintDaySelect();
     },
@@ -2791,20 +3142,32 @@ function initSelections() {
     const daySelect = document.getElementById('day-select');
     const practiceDaySelect = document.getElementById('practice-mode-modal-day-select');
     const battleDaySelect = document.getElementById('battle-mode-modal-day-select');
-    
+
     // Gather days from canonical `dayCatalog` and rawData (avoid referencing legacy `dayInfo`)
     const daysFromData = new Set();
-    if (typeof rawData !== 'undefined' && Array.isArray(rawData)) rawData.forEach(r => { if (r && r.day) daysFromData.add(Number(r.day)); });
+    if (typeof rawData !== 'undefined' && Array.isArray(rawData))
+        rawData.forEach((r) => {
+            if (r && r.day) daysFromData.add(Number(r.day));
+        });
 
-    const infoDays = (typeof dayCatalog !== 'undefined') ? Object.keys(dayCatalog).filter(k => !isNaN(Number(k))).map(Number) : [];
+    const infoDays =
+        typeof dayCatalog !== 'undefined'
+            ? Object.keys(dayCatalog)
+                  .filter((k) => !isNaN(Number(k)))
+                  .map(Number)
+            : [];
     const allDays = new Set([...infoDays, ...Array.from(daysFromData)]);
 
-    const sortedDays = Array.from(allDays).filter(d => !Number.isNaN(d) && d > 0).sort((a, b) => a - b).filter(d => d <= 60);
+    const sortedDays = Array.from(allDays)
+        .filter((d) => !Number.isNaN(d) && d > 0)
+        .sort((a, b) => a - b)
+        .filter((d) => d <= 60);
 
     // Build options
     let html = '';
-    sortedDays.forEach(d => {
-        const label = (dayCatalog && dayCatalog[d] && dayCatalog[d].label) ? dayCatalog[d].label : `Day ${d}`;
+    sortedDays.forEach((d) => {
+        const label =
+            dayCatalog && dayCatalog[d] && dayCatalog[d].label ? dayCatalog[d].label : `Day ${d}`;
         html += `<option value="${d}">${label}</option>`;
     });
     html += `<option value="all">전체 (배틀 모드)</option>`;
@@ -2813,7 +3176,7 @@ function initSelections() {
     if (daySelect) {
         daySelect.innerHTML = html;
         const last = db.lastSelectedDay || 'all';
-        if (Array.from(daySelect.options).some(o => o.value === String(last))) {
+        if (Array.from(daySelect.options).some((o) => o.value === String(last))) {
             daySelect.value = last;
         } else {
             daySelect.value = 'all';
@@ -2821,21 +3184,21 @@ function initSelections() {
             db.save();
         }
     }
-    
+
     if (practiceDaySelect) {
         practiceDaySelect.innerHTML = html;
         const last = db.lastSelectedDay || 'all';
-        if (Array.from(practiceDaySelect.options).some(o => o.value === String(last))) {
+        if (Array.from(practiceDaySelect.options).some((o) => o.value === String(last))) {
             practiceDaySelect.value = last;
         } else {
             practiceDaySelect.value = 'all';
         }
     }
-    
+
     if (battleDaySelect) {
         battleDaySelect.innerHTML = html;
         const last = db.lastSelectedDay || 'all';
-        if (Array.from(battleDaySelect.options).some(o => o.value === String(last))) {
+        if (Array.from(battleDaySelect.options).some((o) => o.value === String(last))) {
             battleDaySelect.value = last;
         } else {
             battleDaySelect.value = 'all';
@@ -2848,33 +3211,34 @@ const practiceMemorization = {
     words: [],
     currentIndex: 0,
     currentDay: null,
-    
+
     start: (day) => {
         console.log('[practiceMemorization.start] day=', day);
         practiceMemorization.currentDay = day;
         practiceMemorization.currentIndex = 0;
-        
+
         // story-modal 닫기 (practice-mode-game을 사용함)
-        
+
         // 단어 목록 로드
         let pool;
         // 현재 데이터셋의 rawData 사용
-        const currentRawData = (typeof window !== 'undefined' && window.rawDataData) ? window.rawDataData : rawData;
+        const currentRawData =
+            typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
         if (day === 'all') {
             pool = currentRawData;
         } else {
             const dayNum = Number(day);
-            pool = currentRawData.filter(i => Number(i.day) === dayNum);
+            pool = currentRawData.filter((i) => Number(i.day) === dayNum);
         }
-        
+
         if (pool.length === 0) {
-            alert("데이터가 없습니다.");
+            alert('데이터가 없습니다.');
             return;
         }
-        
+
         // 단어 목록 저장
         practiceMemorization.words = [...pool];
-        
+
         // 암기 화면 표시
         setTimeout(() => {
             const memorizationScreen = document.getElementById('practice-mode-game');
@@ -2884,78 +3248,84 @@ const practiceMemorization = {
                 if (startScreen) {
                     startScreen.style.zIndex = '100'; // practice-mode-game(z-index: 200) 뒤에 위치
                 }
-                
+
                 // openScreenOverlay를 사용하여 화면 표시
                 openScreenOverlay('practice-mode-game', true);
-                
+
                 // 타이틀 이미지 크기에 맞춰 연습 모드 크기 동기화
                 syncGameScreenSizeToTitle();
-                
+
                 // 히스토리 상태 추가 (백버튼 처리용)
                 history.pushState({ screen: 'practice-memorization' }, '', window.location.href);
-                
+
                 // 첫 번째 단어 표시
                 practiceMemorization.showWord(0);
             }
         }, 400);
     },
-    
+
     showWord: (index) => {
         if (index < 0 || index >= practiceMemorization.words.length) {
             return;
         }
-        
+
         practiceMemorization.currentIndex = index;
         const word = practiceMemorization.words[index];
-        
+
         // Day 정보 표시 (연습모드 - Day 제목 형식)
         const dayInfoEl = document.getElementById('practice-memorization-day-info');
         if (dayInfoEl) {
             let dayLabel;
             if (practiceMemorization.currentDay === 'all') {
                 // dayCatalog에서 'all'의 label 사용
-                const allLabel = (typeof dayCatalog !== 'undefined' && dayCatalog['all'] && dayCatalog['all'].label) 
-                    ? dayCatalog['all'].label 
-                    : '전체';
+                const allLabel =
+                    typeof dayCatalog !== 'undefined' &&
+                    dayCatalog['all'] &&
+                    dayCatalog['all'].label
+                        ? dayCatalog['all'].label
+                        : '전체';
                 dayLabel = `연습모드 - ${allLabel}`;
             } else {
                 // dayCatalog에서 해당 day의 label 사용 (제목 포함)
-                const dayCatalogLabel = (typeof dayCatalog !== 'undefined' && dayCatalog[practiceMemorization.currentDay] && dayCatalog[practiceMemorization.currentDay].label) 
-                    ? dayCatalog[practiceMemorization.currentDay].label 
-                    : `Day ${practiceMemorization.currentDay}`;
+                const dayCatalogLabel =
+                    typeof dayCatalog !== 'undefined' &&
+                    dayCatalog[practiceMemorization.currentDay] &&
+                    dayCatalog[practiceMemorization.currentDay].label
+                        ? dayCatalog[practiceMemorization.currentDay].label
+                        : `Day ${practiceMemorization.currentDay}`;
                 dayLabel = `연습모드 - ${dayCatalogLabel}`;
             }
             dayInfoEl.textContent = dayLabel;
         }
-        
+
         // 단어 번호 표시
         const counterEl = document.getElementById('practice-word-counter');
         if (counterEl) {
             counterEl.textContent = `${index + 1} / ${practiceMemorization.words.length}`;
         }
-        
+
         // 영어 단어 표시
         const wordTextEl = document.getElementById('practice-word-text');
         if (wordTextEl) {
             wordTextEl.textContent = word.word || 'N/A';
         }
-        
+
         // 한글 뜻 표시
         const meaningTextEl = document.getElementById('practice-meaning-text');
         if (meaningTextEl) {
             meaningTextEl.textContent = word.meaning || 'N/A';
         }
-        
+
         // 영문 설명 표시
         const explanationTextEl = document.getElementById('practice-explanation-text');
         if (explanationTextEl) {
             explanationTextEl.textContent = word.englishExplanation || 'N/A';
         }
-        
+
         // 버튼 상태 업데이트
         const prevBtn = document.getElementById('practice-prev-btn');
         const nextBtn = document.getElementById('practice-next-btn');
-        
+
         if (prevBtn) {
             prevBtn.disabled = index === 0;
         }
@@ -2963,19 +3333,19 @@ const practiceMemorization = {
             nextBtn.disabled = index === practiceMemorization.words.length - 1;
         }
     },
-    
+
     prevWord: () => {
         if (practiceMemorization.currentIndex > 0) {
             practiceMemorization.showWord(practiceMemorization.currentIndex - 1);
         }
     },
-    
+
     nextWord: () => {
         if (practiceMemorization.currentIndex < practiceMemorization.words.length - 1) {
             practiceMemorization.showWord(practiceMemorization.currentIndex + 1);
         }
     },
-    
+
     exit: () => {
         const memorizationScreen = document.getElementById('practice-mode-game');
         if (memorizationScreen) {
@@ -2990,26 +3360,26 @@ const practiceMemorization = {
                 'boss-mode-story-modal',
                 'result-panel',
                 'practice-mode-modal',
-                'battle-mode-modal'
+                'battle-mode-modal',
             ];
-            
-            otherScreens.forEach(screenId => {
+
+            otherScreens.forEach((screenId) => {
                 const screen = document.getElementById(screenId);
                 if (screen && screen.style.display !== 'none') {
                     closeScreenOverlay(screenId, false);
                 }
             });
-            
+
             // practice-mode-game 닫기
             closeScreenOverlay('practice-mode-game', true);
-            
+
             // title-screen 표시
             setTimeout(() => {
                 const startScreen = document.getElementById('title-screen');
                 if (startScreen) {
                     startScreen.style.display = 'flex';
                     startScreen.classList.remove('closing');
-                    
+
                     // 버튼 오버레이 동기화
                     setTimeout(() => {
                         if (typeof syncTitleButtonOverlay === 'function') {
@@ -3020,7 +3390,7 @@ const practiceMemorization = {
                 history.pushState(null, '', window.location.href);
             }, 400);
         }
-    }
+    },
 };
 
 // Open practice mode selection modal
@@ -3029,36 +3399,39 @@ function openPracticeModal() {
     const modalDaySelect = document.getElementById('practice-mode-modal-day-select');
     const modalCountSelect = document.getElementById('practice-mode-modal-count-select');
     const modalImg = document.getElementById('practice-mode-modal-background-img');
-    
+
     if (!modal) return;
-    
+
     // Enable day selection for practice mode
     if (modalDaySelect) {
         modalDaySelect.disabled = false;
         modalDaySelect.style.display = ''; // Show day selection for practice mode
     }
-    
+
     // Practice 모드는 암기 모드이므로 난이도 선택 숨기기
     if (modalCountSelect) {
         modalCountSelect.style.display = 'none';
     }
-    
+
     // Restore last selected values
     const lastDay = db.lastSelectedDay || 'all';
-    if (modalDaySelect && Array.from(modalDaySelect.options).some(o => o.value === String(lastDay))) {
+    if (
+        modalDaySelect &&
+        Array.from(modalDaySelect.options).some((o) => o.value === String(lastDay))
+    ) {
         modalDaySelect.value = lastDay;
     }
-    
+
     modal.style.display = 'flex';
-    
+
     // 히스토리 상태 추가 (백버튼 처리용)
     history.pushState({ screen: 'practice-mode-modal' }, '', window.location.href);
-    
+
     // 타이틀 크기 먼저 동기화 (모달 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
         syncTitleButtonOverlay();
     }
-    
+
     // 이미지 로드 후 버튼 오버레이 동기화
     if (modalImg) {
         if (modalImg.complete) {
@@ -3066,14 +3439,18 @@ function openPracticeModal() {
                 syncModalButtonOverlay('practice-mode-modal');
             }, 100);
         } else {
-            modalImg.addEventListener('load', () => {
-                setTimeout(() => {
-                    syncModalButtonOverlay('practice-mode-modal');
-                }, 100);
-            }, { once: true });
+            modalImg.addEventListener(
+                'load',
+                () => {
+                    setTimeout(() => {
+                        syncModalButtonOverlay('practice-mode-modal');
+                    }, 100);
+                },
+                { once: true }
+            );
         }
     }
-    
+
     // 드롭박스 값 변경 시 폰트 크기 재조정
     setupSelectFontSizeAdjustment('practice-mode-modal');
 }
@@ -3085,14 +3462,14 @@ function openBattleModeModal() {
     const modalCountSelect = document.getElementById('battle-mode-modal-count-select');
     const modalImg = document.getElementById('battle-mode-modal-background-img');
     const questionTypeGroup = document.getElementById('battle-mode-modal-question-type-group');
-    
+
     if (!modal) return;
-    
+
     // For battle mode, allow day selection
     if (modalDaySelect) {
         // 기본값을 'all'로 설정하되 사용자가 변경 가능
         const lastDay = db.lastSelectedDay || 'all';
-        if (Array.from(modalDaySelect.options).some(o => o.value === String(lastDay))) {
+        if (Array.from(modalDaySelect.options).some((o) => o.value === String(lastDay))) {
             modalDaySelect.value = lastDay;
         } else {
             modalDaySelect.value = 'all';
@@ -3100,12 +3477,12 @@ function openBattleModeModal() {
         modalDaySelect.style.display = ''; // Show day selection
         modalDaySelect.disabled = false; // Enable day selection for battle mode
     }
-    
+
     const lastCount = parseInt(localStorage.getItem('v7_last_count')) || 10;
     if (modalCountSelect) {
         modalCountSelect.value = String(lastCount);
     }
-    
+
     // Show question type radio buttons for battle mode
     if (questionTypeGroup) {
         questionTypeGroup.style.display = 'flex';
@@ -3119,46 +3496,48 @@ function openBattleModeModal() {
             const mixedRadio = questionTypeGroup.querySelector('input[value="mixed"]');
             if (mixedRadio) mixedRadio.checked = true;
         }
-        
+
         // Update checked class for all radio labels
         const allRadios = questionTypeGroup.querySelectorAll('input[name="battle-question-type"]');
         const allLabels = questionTypeGroup.querySelectorAll('.modal-radio-label');
-        allLabels.forEach(label => label.classList.remove('checked'));
-        allRadios.forEach(radio => {
+        allLabels.forEach((label) => label.classList.remove('checked'));
+        allRadios.forEach((radio) => {
             if (radio.checked) {
                 radio.closest('.modal-radio-label')?.classList.add('checked');
             }
         });
-        
+
         // Add event listeners for radio button changes
-        allRadios.forEach(radio => {
+        allRadios.forEach((radio) => {
             radio.addEventListener('change', () => {
-                allLabels.forEach(label => label.classList.remove('checked'));
-                const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
+                allLabels.forEach((label) => label.classList.remove('checked'));
+                const checkedRadio = questionTypeGroup.querySelector(
+                    'input[name="battle-question-type"]:checked'
+                );
                 if (checkedRadio) {
                     checkedRadio.closest('.modal-radio-label')?.classList.add('checked');
                 }
             });
         });
     }
-    
+
     // title-screen의 z-index와 display 조정하여 backdrop-filter가 작동하도록 함
     const startScreen = document.getElementById('title-screen');
     if (startScreen) {
         startScreen.style.zIndex = '100'; // 모달(z-index: 200) 뒤에 위치
         startScreen.style.display = 'flex'; // 표시되어 있어야 backdrop-filter가 작동
     }
-    
+
     modal.style.display = 'flex';
-    
+
     // 히스토리 상태 추가 (백버튼 처리용)
     history.pushState({ screen: 'battle-mode-modal' }, '', window.location.href);
-    
+
     // 타이틀 크기 먼저 동기화 (모달 크기가 타이틀 기준이므로)
     if (typeof syncTitleButtonOverlay === 'function') {
         syncTitleButtonOverlay();
     }
-    
+
     // 이미지 로드 후 버튼 오버레이 동기화
     if (modalImg) {
         if (modalImg.complete) {
@@ -3166,14 +3545,18 @@ function openBattleModeModal() {
                 syncModalButtonOverlay('battle-mode-modal');
             }, 100);
         } else {
-            modalImg.addEventListener('load', () => {
-                setTimeout(() => {
-                    syncModalButtonOverlay('battle-mode-modal');
-                }, 100);
-            }, { once: true });
+            modalImg.addEventListener(
+                'load',
+                () => {
+                    setTimeout(() => {
+                        syncModalButtonOverlay('battle-mode-modal');
+                    }, 100);
+                },
+                { once: true }
+            );
         }
     }
-    
+
     // 드롭박스 값 변경 시 폰트 크기 재조정
     setupSelectFontSizeAdjustment('battle-mode-modal');
 }
@@ -3188,7 +3571,7 @@ function closeScreenOverlay(elementId, animated = true) {
             game.timer = null;
             game.isProcessing = true; // 게임 진행 중지
         }
-        
+
         if (animated && element.classList.contains('screen-overlay')) {
             // closing 클래스가 이미 있으면 제거 (재시도 방지)
             if (element.classList.contains('closing')) {
@@ -3245,19 +3628,19 @@ function closePracticeModal(animated = true) {
 // 드롭박스 폰트 크기를 동적으로 조정 (텍스트가 박스보다 크지 않도록)
 function adjustSelectFontSize(selectElement, width, height) {
     if (!selectElement) return;
-    
+
     // 패딩을 고려한 실제 텍스트 영역
     const padding = 20; // 좌우 패딩 합계
     const textWidth = width - padding;
     const textHeight = height - 10; // 상하 패딩 고려
-    
+
     // 높이 기준 최대 폰트 크기 (박스 높이보다 작게)
     const maxFontSizeByHeight = textHeight * 0.6; // 0.7에서 0.6으로 줄여서 여유 공간 확보
-    
+
     // 현재 선택된 옵션의 텍스트 길이 확인
     const selectedOption = selectElement.options[selectElement.selectedIndex];
     const text = selectedOption ? selectedOption.text : '';
-    
+
     // 텍스트 길이에 따른 폰트 크기 계산
     // 한글 기준으로 대략적인 계산 (폰트 크기 * 0.6 정도가 한 글자 너비)
     let fontSize = maxFontSizeByHeight;
@@ -3265,23 +3648,23 @@ function adjustSelectFontSize(selectElement, width, height) {
         // 텍스트가 너비에 맞는지 확인
         const estimatedCharWidth = fontSize * 0.6; // 한 글자당 대략적인 너비
         const requiredWidth = text.length * estimatedCharWidth;
-        
+
         if (requiredWidth > textWidth) {
             // 텍스트가 너비를 초과하면 폰트 크기 조정
-            fontSize = (textWidth / text.length) / 0.6;
+            fontSize = textWidth / text.length / 0.6;
         }
     }
-    
+
     // 높이 제한도 다시 확인 (박스보다 작게)
     fontSize = Math.min(fontSize, maxFontSizeByHeight);
-    
+
     // 최소/최대 폰트 크기 제한
     fontSize = Math.max(12, Math.min(fontSize, 32)); // 최대값 32px
-    
+
     selectElement.style.fontSize = fontSize + 'px';
-    
+
     // 옵션들도 같은 폰트 크기 적용
-    Array.from(selectElement.options).forEach(option => {
+    Array.from(selectElement.options).forEach((option) => {
         option.style.fontSize = fontSize + 'px';
     });
 }
@@ -3289,14 +3672,14 @@ function adjustSelectFontSize(selectElement, width, height) {
 // 드롭박스 값 변경 시 폰트 크기 재조정 설정
 function setupSelectFontSizeAdjustment(modalId) {
     if (!modalId) return;
-    
+
     const modal = document.getElementById(modalId);
     if (!modal) return;
-    
+
     const modalImg = modal.querySelector('.modal-background');
     const modalDaySelect = modal.querySelector('.modal-day-select');
     const modalCountSelect = modal.querySelector('.modal-count-select');
-    
+
     // 드롭박스 값 변경 시 폰트 크기 재조정
     if (modalDaySelect && !modalDaySelect.dataset.fontAdjustmentSetup) {
         modalDaySelect.dataset.fontAdjustmentSetup = 'true';
@@ -3313,14 +3696,18 @@ function setupSelectFontSizeAdjustment(modalId) {
             }, 50);
         });
     }
-    
+
     if (modalCountSelect && !modalCountSelect.dataset.fontAdjustmentSetup) {
         modalCountSelect.dataset.fontAdjustmentSetup = 'true';
         modalCountSelect.addEventListener('change', () => {
             setTimeout(() => {
                 if (modalImg && modalImg.complete) {
                     const imgRect = modalImg.getBoundingClientRect();
-                    adjustSelectFontSize(modalCountSelect, imgRect.width * 0.6, imgRect.height * 0.11);
+                    adjustSelectFontSize(
+                        modalCountSelect,
+                        imgRect.width * 0.6,
+                        imgRect.height * 0.11
+                    );
                 }
             }, 50);
         });
@@ -3330,49 +3717,49 @@ function setupSelectFontSizeAdjustment(modalId) {
 // Modal 이미지 크기에 맞춰 CSS 변수 설정 (타이틀 이미지 크기에 맞춰 스케일)
 function syncModalButtonOverlay(modalId) {
     if (!modalId) return;
-    
+
     const modal = document.getElementById(modalId);
     // modal이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!modal || modal.style.display === 'none' || modal.style.display === '') {
         return;
     }
-    
+
     const modalImg = modal.querySelector('.modal-background');
     const overlay = modal.querySelector('.modal-buttons-overlay');
     const container = modal.querySelector('.modal-container-wrapper');
-    
+
     if (!modalImg || !overlay || !container) return;
-    
+
     // 모바일 기준 크기 계산 (타이틀 이미지의 자연 크기를 기준으로 모바일 화면에서의 크기 계산)
     const titleImg = document.querySelector('.title-background');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    
+
     // 모바일 기준 화면 크기 (일반적인 모바일 화면: 375px 너비)
     const mobileBaseWidth = 375;
     const mobileBaseHeight = 667; // 9:16 비율 기준
-    
+
     let titleWidth = mobileBaseWidth * 0.95;
     let titleHeight = mobileBaseHeight * 0.95;
-    
+
     // 타이틀 이미지의 자연 크기를 기준으로 모바일 크기 계산
     if (titleImg && titleImg.complete && titleImg.naturalWidth > 0 && titleImg.naturalHeight > 0) {
         const naturalW = titleImg.naturalWidth;
         const naturalH = titleImg.naturalHeight;
-        
+
         // 모바일 화면에서 타이틀 이미지가 차지할 크기 계산 (비율 유지)
         const mobileScale = Math.min(mobileBaseWidth / naturalW, mobileBaseHeight / naturalH);
         titleWidth = naturalW * mobileScale * 0.95;
         titleHeight = naturalH * mobileScale * 0.95;
     }
-    
+
     // 모달 이미지의 자연 비율 계산 및 설정
     let modalAspectRatio = null;
     if (modalImg.complete && modalImg.naturalWidth > 0 && modalImg.naturalHeight > 0) {
         modalAspectRatio = modalImg.naturalWidth / modalImg.naturalHeight;
         modalImg.style.setProperty('--modal-aspect-ratio', modalAspectRatio);
     }
-    
+
     // 배틀 모드 모달 폭을 전역 CSS 변수로 저장 (설정 레이아웃 폭 맞춤용)
     if (modalId === 'battle-mode-modal' && modalAspectRatio) {
         const modalWidth = Math.min(titleWidth, titleHeight * modalAspectRatio);
@@ -3385,23 +3772,23 @@ function syncModalButtonOverlay(modalId) {
     // 전역 CSS 변수로도 설정 (다른 모달들이 참조할 수 있도록)
     document.documentElement.style.setProperty('--title-container-width', titleWidth + 'px');
     document.documentElement.style.setProperty('--title-container-height', titleHeight + 'px');
-    
+
     // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
     if (modalImg.complete) {
         // 잠시 후 다시 계산하여 브라우저 크기 변경 반영
         setTimeout(() => {
             const imgRect = modalImg.getBoundingClientRect();
             const containerRect = container.getBoundingClientRect();
-            
+
             const left = imgRect.left - containerRect.left;
             const top = imgRect.top - containerRect.top;
-            
+
             // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
             overlay.style.setProperty('--modal-img-width', imgRect.width + 'px');
             overlay.style.setProperty('--modal-img-height', imgRect.height + 'px');
             overlay.style.setProperty('--modal-img-left', left + 'px');
             overlay.style.setProperty('--modal-img-top', top + 'px');
-            
+
             // 드롭박스 폰트 크기 동적 조정 (크기는 CSS에서 제어)
             // practice-mode-modal과 battle-mode-modal의 day-select 폰트 크기를 동일하게 맞추기
             const daySelect = modal.querySelector('.modal-day-select');
@@ -3411,16 +3798,16 @@ function syncModalButtonOverlay(modalId) {
                 const height = imgRect.height * 0.095;
                 adjustSelectFontSize(daySelect, width, height);
             }
-            
+
             const countSelect = modal.querySelector('.modal-count-select');
             if (countSelect) {
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.095;
                 adjustSelectFontSize(countSelect, width, height);
             }
-            
+
             // 버튼 위치와 크기는 CSS에서 제어 (CSS 변수는 이미 설정됨)
-            
+
             // 라디오 버튼 그룹 크기와 위치는 CSS에서 제어 (CSS 변수는 이미 설정됨)
         }, 0);
     }
@@ -3432,39 +3819,47 @@ function syncStoryButtonOverlay(storyScreenId) {
         // 모두 확인
         const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
         const bossStoryScreen = document.getElementById('boss-mode-story-modal');
-        if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
+        if (
+            battleModeStoryScreen &&
+            battleModeStoryScreen.style.display !== 'none' &&
+            battleModeStoryScreen.style.display !== ''
+        ) {
             syncStoryButtonOverlay('battle-mode-story-modal');
-        } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
+        } else if (
+            bossStoryScreen &&
+            bossStoryScreen.style.display !== 'none' &&
+            bossStoryScreen.style.display !== ''
+        ) {
             syncStoryButtonOverlay('boss-mode-story-modal');
         }
         return;
     }
-    
+
     const storyScreen = document.getElementById(storyScreenId);
     // story-modal이 숨겨져 있으면 CSS 변수 설정하지 않음
     if (!storyScreen || storyScreen.style.display === 'none' || storyScreen.style.display === '') {
         return;
     }
-    
+
     const storyImg = storyScreen.querySelector('.story-background');
     const overlay = storyScreen.querySelector('.story-buttons-overlay');
     const container = storyScreen.querySelector('.story-container-wrapper');
-    
+
     if (!storyImg || !overlay || !container) return;
-    
+
     // 타이틀 컨테이너 크기 가져오기 (modal과 동일한 방식)
     const titleContainer = document.querySelector('.title-container-wrapper');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
     let titleWidth = vw; // 기본값 (화면 너비)
     let titleHeight = vh; // 기본값 (화면 높이)
-    
+
     if (titleContainer) {
         // CSS 변수에서 크기 가져오기
         const computedStyle = window.getComputedStyle(titleContainer);
         const containerWidth = computedStyle.getPropertyValue('--title-container-width');
         const containerHeight = computedStyle.getPropertyValue('--title-container-height');
-        
+
         if (containerWidth && containerWidth !== '100vw') {
             titleWidth = parseFloat(containerWidth) || vw;
         }
@@ -3481,7 +3876,7 @@ function syncStoryButtonOverlay(storyScreenId) {
             }
         }
     }
-    
+
     // 스토리 이미지의 자연 비율 계산 및 설정 (배틀 모드 설정 팝업과 동일한 방식)
     if (storyImg.complete && storyImg.naturalWidth > 0 && storyImg.naturalHeight > 0) {
         const aspectRatio = storyImg.naturalWidth / storyImg.naturalHeight;
@@ -3493,30 +3888,30 @@ function syncStoryButtonOverlay(storyScreenId) {
         document.documentElement.style.setProperty('--title-container-width', titleWidth + 'px');
         document.documentElement.style.setProperty('--title-container-height', titleHeight + 'px');
     }
-    
+
     // 이미지가 로드된 후 크기 확인 (브라우저 크기 변경 시 자동으로 재계산됨)
     if (storyImg.complete) {
         // 잠시 후 다시 계산하여 브라우저 크기 변경 반영
         setTimeout(() => {
             const imgRect = storyImg.getBoundingClientRect();
             const containerRect = container.getBoundingClientRect();
-            
+
             const left = imgRect.left - containerRect.left;
             const top = imgRect.top - containerRect.top;
-            
+
             // CSS 변수로 이미지 크기와 위치 설정 (CSS에서 모든 크기와 위치 제어)
             overlay.style.setProperty('--story-img-width', imgRect.width + 'px');
             overlay.style.setProperty('--story-img-height', imgRect.height + 'px');
             overlay.style.setProperty('--story-img-left', left + 'px');
             overlay.style.setProperty('--story-img-top', top + 'px');
-            
+
             // 모험 시작 버튼 위치와 크기 설정 (CSS 변수 사용)
             const storyStartBtn = document.getElementById('story-start-btn');
             if (storyStartBtn) {
                 storyStartBtn.style.setProperty('--story-img-width', imgRect.width + 'px');
                 storyStartBtn.style.setProperty('--story-img-height', imgRect.height + 'px');
             }
-            
+
             // 컨테이너에 CSS 변수 설정 (Day 정보와 이야기 텍스트 영역이 사용)
             if (container) {
                 container.style.setProperty('--story-img-width', imgRect.width + 'px');
@@ -3535,16 +3930,16 @@ function loadRandomTitleHeader() {
         console.warn('title-header-img element not found');
         return;
     }
-    
+
     // 1~4 사이의 랜덤 숫자 생성 (title_header_5, 6 제거됨)
     const randomNum = Math.floor(Math.random() * 4) + 1;
     const imagePath = `images/title/title_header_${randomNum}.webp`;
-    
+
     console.log('Loading random title header:', imagePath);
-    
+
     // 이미지 소스 설정
     titleHeaderImg.src = imagePath;
-    
+
     // 이미지가 보이도록 명시적으로 설정
     titleHeaderImg.style.display = 'block';
     titleHeaderImg.style.visibility = 'visible';
@@ -3557,9 +3952,9 @@ function syncTitleButtonOverlay() {
     const overlay = document.querySelector('.title-buttons-overlay');
     const container = document.querySelector('.title-container-wrapper');
     const titleHeader = document.querySelector('.title-header');
-    
+
     if (!titleImg || !overlay || !container) return;
-    
+
     // 이미지 자연 크기 기준으로 화면에 보이는 렌더링 크기 계산
     let imgWidth = 0;
     let imgHeight = 0;
@@ -3585,7 +3980,7 @@ function syncTitleButtonOverlay() {
     container.style.setProperty('--title-container-height', imgHeight + 'px');
     container.style.width = imgWidth + 'px';
     container.style.height = imgHeight + 'px';
-    
+
     // 전역 CSS 변수로도 설정 (다른 팝업들이 참조할 수 있도록)
     document.documentElement.style.setProperty('--title-container-width', imgWidth + 'px');
     document.documentElement.style.setProperty('--title-container-height', imgHeight + 'px');
@@ -3599,7 +3994,7 @@ function syncTitleButtonOverlay() {
 
     // Keep game screen size in sync with the title image size
     syncGameScreenSizeToTitle();
-    
+
     // 팝업도 타이틀 크기에 맞춰 동기화
     syncModalButtonOverlay('practice-mode-modal');
     syncModalButtonOverlay('battle-mode-modal');
@@ -3626,7 +4021,7 @@ function syncGameScreenSizeToTitle() {
         gameScreen.style.width = w + 'px';
         gameScreen.style.height = h + 'px';
     }
-    
+
     if (practiceScreen) {
         practiceScreen.style.width = w + 'px';
         practiceScreen.style.height = h + 'px';
@@ -3641,7 +4036,7 @@ window.onload = () => {
     secret.init();
     inventory.render();
     initSelections();
-    
+
     // Sync button overlay to image size (먼저 CSS 변수 설정)
     const titleImg = document.querySelector('.title-background');
     if (titleImg) {
@@ -3649,17 +4044,21 @@ window.onload = () => {
         if (titleImg.complete) {
             syncTitleButtonOverlay();
         } else {
-            titleImg.addEventListener('load', () => {
-                syncTitleButtonOverlay();
-            }, { once: true });
+            titleImg.addEventListener(
+                'load',
+                () => {
+                    syncTitleButtonOverlay();
+                },
+                { once: true }
+            );
         }
     }
-    
+
     // 랜덤 타이틀 헤더 로딩 (CSS 변수 설정 후)
     setTimeout(() => {
         loadRandomTitleHeader();
     }, 100);
-    
+
     // Sync on window resize (컨테이너 크기를 화면에 맞춰 동적으로 조정)
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -3682,7 +4081,7 @@ window.onload = () => {
     } catch (e) {
         console.error('Error setting up start-battle-btn:', e);
     }
-    
+
     try {
         const bossModeBtn = document.getElementById('boss-mode-btn');
         if (bossModeBtn) {
@@ -3691,20 +4090,20 @@ window.onload = () => {
     } catch (e) {
         console.error('Error setting up boss-mode-btn:', e);
     }
-    
+
     // Connect title image button areas to actual buttons
     const titlePracticeBtn = document.getElementById('title-practice-btn'); // PRACTICE MODE
     const titleBattleModeBtn = document.getElementById('title-battle-mode-btn'); // BATTLE MODE
-    const titleBossModeBtn = document.getElementById('title-boss-mode-btn');   // BOSS MODE
-    const titleShopBtn = document.getElementById('title-shop-btn');           // SHOP
-    const titleInventoryBtn = document.getElementById('title-inventory-btn');     // INVENTORY
+    const titleBossModeBtn = document.getElementById('title-boss-mode-btn'); // BOSS MODE
+    const titleShopBtn = document.getElementById('title-shop-btn'); // SHOP
+    const titleInventoryBtn = document.getElementById('title-inventory-btn'); // INVENTORY
     const titleStatisticsBtn = document.getElementById('title-statistics-btn'); // STATISTICS
-    const titleSettingBtn = document.getElementById('title-setting-btn');     // SETTING (일반설정)
-    
+    const titleSettingBtn = document.getElementById('title-setting-btn'); // SETTING (일반설정)
+
     console.log('[Button Setup] titlePracticeBtn:', titlePracticeBtn);
     console.log('[Button Setup] titleBattleModeBtn:', titleBattleModeBtn);
     console.log('[Button Setup] titleBossModeBtn:', titleBossModeBtn);
-    
+
     // Practice 버튼 설정
     if (titlePracticeBtn) {
         try {
@@ -3714,7 +4113,7 @@ window.onload = () => {
             const newBtn = titlePracticeBtn.cloneNode(true);
             titlePracticeBtn.parentNode.replaceChild(newBtn, titlePracticeBtn);
             const freshPracticeBtn = document.getElementById('title-practice-btn');
-            
+
             if (freshPracticeBtn) {
                 freshPracticeBtn.style.pointerEvents = 'auto';
                 freshPracticeBtn.style.zIndex = '25';
@@ -3725,16 +4124,20 @@ window.onload = () => {
                     btnImage.style.pointerEvents = 'none';
                 }
                 // 버튼 자체와 모든 자식 요소에 클릭 이벤트 추가
-                freshPracticeBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Practice Mode button clicked');
-                    if (typeof openPracticeModal === 'function') {
-                        openPracticeModal();
-                    } else {
-                        console.error('openPracticeModal function not found');
-                    }
-                }, { capture: true });
+                freshPracticeBtn.addEventListener(
+                    'click',
+                    (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Practice Mode button clicked');
+                        if (typeof openPracticeModal === 'function') {
+                            openPracticeModal();
+                        } else {
+                            console.error('openPracticeModal function not found');
+                        }
+                    },
+                    { capture: true }
+                );
                 console.log('[Button Setup] Practice button event listener added');
             }
         } catch (e) {
@@ -3743,127 +4146,131 @@ window.onload = () => {
     } else {
         console.warn('title-practice-btn not found');
     }
-    
+
     // Practice Setting Modal event listeners
     const practiceStartBtn = document.getElementById('practice-mode-modal-start-btn');
     const practiceCancelBtn = document.getElementById('practice-mode-modal-cancel-btn');
     const practiceDaySelect = document.getElementById('practice-mode-modal-day-select');
     const practiceCountSelect = document.getElementById('practice-mode-modal-count-select');
-    
+
     if (practiceStartBtn) {
         practiceStartBtn.addEventListener('click', () => {
             const selectedDay = practiceDaySelect ? practiceDaySelect.value : 'all';
             const selectedCount = practiceCountSelect ? parseInt(practiceCountSelect.value) : 10;
-            
+
             // Save selections
             db.lastSelectedDay = selectedDay;
             localStorage.setItem('v7_last_count', selectedCount);
             db.save();
-            
+
             // Update hidden selects for compatibility
             const daySelect = document.getElementById('day-select');
             const countSelect = document.getElementById('count-select');
             if (daySelect) daySelect.value = selectedDay;
             if (countSelect) countSelect.value = String(selectedCount);
-            
+
             // 시작화면 숨기기 (검정 배경만 보이도록)
             const startScreen = document.getElementById('title-screen');
             if (startScreen) {
                 startScreen.style.display = 'none';
             }
-            
+
             // Close modal with animation and start memorization mode directly
             closePracticeModal(true);
-            
+
             // 애니메이션이 완료된 후 암기 모드로 바로 시작 (practice-mode-game으로 바로 이동)
             setTimeout(() => {
                 practiceMemorization.start(selectedDay);
             }, 400); // 애니메이션 시간과 일치
         });
     }
-    
+
     if (practiceCancelBtn) {
         practiceCancelBtn.addEventListener('click', () => {
             closePracticeModal();
         });
     }
-    
+
     // Practice Memorization Mode button event listeners
     const practicePrevBtn = document.getElementById('practice-prev-btn');
     const practiceNextBtn = document.getElementById('practice-next-btn');
     const practiceExitBtn = document.getElementById('practice-exit-btn');
-    
+
     if (practicePrevBtn) {
         practicePrevBtn.addEventListener('click', () => {
             practiceMemorization.prevWord();
         });
     }
-    
+
     if (practiceNextBtn) {
         practiceNextBtn.addEventListener('click', () => {
             practiceMemorization.nextWord();
         });
     }
-    
+
     if (practiceExitBtn) {
         practiceExitBtn.addEventListener('click', () => {
             practiceMemorization.exit();
         });
     }
-    
+
     // Battle Setting Modal event listeners
     const battleStartBtn = document.getElementById('battle-mode-modal-start-btn');
     const battleCancelBtn = document.getElementById('battle-mode-modal-cancel-btn');
     const battleDaySelect = document.getElementById('battle-mode-modal-day-select');
     const battleCountSelect = document.getElementById('battle-mode-modal-count-select');
-    
+
     if (battleStartBtn) {
         battleStartBtn.addEventListener('click', () => {
             const selectedDay = battleDaySelect ? battleDaySelect.value : 'all';
             const selectedCount = battleCountSelect ? parseInt(battleCountSelect.value) : 10;
-            
+
             // Get selected question type for battle mode
             let selectedQuestionType = 'mixed'; // default
-            const questionTypeGroup = document.getElementById('battle-mode-modal-question-type-group');
+            const questionTypeGroup = document.getElementById(
+                'battle-mode-modal-question-type-group'
+            );
             if (questionTypeGroup) {
-                const checkedRadio = questionTypeGroup.querySelector('input[name="battle-question-type"]:checked');
+                const checkedRadio = questionTypeGroup.querySelector(
+                    'input[name="battle-question-type"]:checked'
+                );
                 if (checkedRadio) {
                     selectedQuestionType = checkedRadio.value;
                 }
             }
             // Save question type preference
             localStorage.setItem('v7_last_question_type', selectedQuestionType);
-            
+
             // Save selections
             db.lastSelectedDay = selectedDay;
             localStorage.setItem('v7_last_count', selectedCount);
             db.save();
-            
+
             // Store question type for game.init to use
             game.battleQuestionType = selectedQuestionType;
-            
+
             // Update hidden selects for compatibility
             const daySelect = document.getElementById('day-select');
             const countSelect = document.getElementById('count-select');
             if (daySelect) daySelect.value = selectedDay;
             if (countSelect) countSelect.value = String(selectedCount);
-            
+
             // 시작화면 숨기기 (검정 배경만 보이도록)
             const startScreen = document.getElementById('title-screen');
             if (startScreen) {
                 startScreen.style.display = 'none';
             }
-            
+
             // Close modal with animation and start game
             closePracticeModal(true);
-            
+
             // 애니메이션이 완료된 후 게임 시작
             setTimeout(() => {
                 story.startIntro('battle', selectedDay);
             }, 400); // 애니메이션 시간과 일치
         });
     }
-    
+
     if (battleCancelBtn) {
         battleCancelBtn.addEventListener('click', () => {
             closePracticeModal();
@@ -3877,7 +4284,7 @@ window.onload = () => {
             const newBtn = titleBattleModeBtn.cloneNode(true);
             titleBattleModeBtn.parentNode.replaceChild(newBtn, titleBattleModeBtn);
             const freshBattleBtn = document.getElementById('title-battle-mode-btn');
-            
+
             if (freshBattleBtn) {
                 freshBattleBtn.style.pointerEvents = 'auto';
                 freshBattleBtn.style.zIndex = '25';
@@ -3887,16 +4294,20 @@ window.onload = () => {
                 if (btnImage) {
                     btnImage.style.pointerEvents = 'none';
                 }
-                freshBattleBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Battle Mode button clicked');
-                    if (typeof openBattleModeModal === 'function') {
-                        openBattleModeModal();
-                    } else {
-                        console.error('openBattleModeModal function not found');
-                    }
-                }, { capture: true });
+                freshBattleBtn.addEventListener(
+                    'click',
+                    (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Battle Mode button clicked');
+                        if (typeof openBattleModeModal === 'function') {
+                            openBattleModeModal();
+                        } else {
+                            console.error('openBattleModeModal function not found');
+                        }
+                    },
+                    { capture: true }
+                );
                 console.log('[Button Setup] Battle Mode button event listener added');
             }
         } catch (e) {
@@ -3905,7 +4316,7 @@ window.onload = () => {
     } else {
         console.warn('title-battle-mode-btn not found');
     }
-    
+
     // Boss Mode 버튼 설정
     if (titleBossModeBtn) {
         try {
@@ -3914,7 +4325,7 @@ window.onload = () => {
             const newBtn = titleBossModeBtn.cloneNode(true);
             titleBossModeBtn.parentNode.replaceChild(newBtn, titleBossModeBtn);
             const freshBossBtn = document.getElementById('title-boss-mode-btn');
-            
+
             if (freshBossBtn) {
                 freshBossBtn.style.pointerEvents = 'auto';
                 freshBossBtn.style.zIndex = '25';
@@ -3924,16 +4335,23 @@ window.onload = () => {
                 if (btnImage) {
                     btnImage.style.pointerEvents = 'none';
                 }
-                freshBossBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Boss Mode button clicked');
-                    if (typeof story !== 'undefined' && typeof story.startIntro === 'function') {
-                        story.startIntro('boss');
-                    } else {
-                        console.error('story.startIntro function not found');
-                    }
-                }, { capture: true });
+                freshBossBtn.addEventListener(
+                    'click',
+                    (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Boss Mode button clicked');
+                        if (
+                            typeof story !== 'undefined' &&
+                            typeof story.startIntro === 'function'
+                        ) {
+                            story.startIntro('boss');
+                        } else {
+                            console.error('story.startIntro function not found');
+                        }
+                    },
+                    { capture: true }
+                );
                 console.log('[Button Setup] Boss Mode button event listener added');
             }
         } catch (e) {
@@ -3944,96 +4362,124 @@ window.onload = () => {
     }
     if (titleShopBtn) {
         titleShopBtn.onclick = null;
-        titleShopBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Shop button clicked');
-            if (typeof shop !== 'undefined' && typeof shop.open === 'function') {
-                shop.open();
-            } else {
-                console.error('shop.open function not found');
-            }
-        }, { capture: true });
+        titleShopBtn.addEventListener(
+            'click',
+            (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Shop button clicked');
+                if (typeof shop !== 'undefined' && typeof shop.open === 'function') {
+                    shop.open();
+                } else {
+                    console.error('shop.open function not found');
+                }
+            },
+            { capture: true }
+        );
     } else {
         console.warn('title-shop-btn not found');
     }
     if (titleInventoryBtn) {
         titleInventoryBtn.onclick = null;
-        titleInventoryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Inventory button clicked');
-            if (typeof inventory !== 'undefined' && typeof inventory.open === 'function') {
-                inventory.open();
-            } else {
-                console.error('inventory.open function not found');
-            }
-        }, { capture: true });
+        titleInventoryBtn.addEventListener(
+            'click',
+            (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Inventory button clicked');
+                if (typeof inventory !== 'undefined' && typeof inventory.open === 'function') {
+                    inventory.open();
+                } else {
+                    console.error('inventory.open function not found');
+                }
+            },
+            { capture: true }
+        );
     } else {
         console.warn('title-inventory-btn not found');
     }
     if (titleStatisticsBtn) {
         titleStatisticsBtn.onclick = null;
-        titleStatisticsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Statistics button clicked');
-            if (typeof statistics !== 'undefined' && typeof statistics.open === 'function') {
-                statistics.open();
-            } else {
-                console.error('statistics.open function not found');
-            }
-        }, { capture: true });
+        titleStatisticsBtn.addEventListener(
+            'click',
+            (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Statistics button clicked');
+                if (typeof statistics !== 'undefined' && typeof statistics.open === 'function') {
+                    statistics.open();
+                } else {
+                    console.error('statistics.open function not found');
+                }
+            },
+            { capture: true }
+        );
     } else {
         console.warn('title-statistics-btn not found');
     }
     if (titleSettingBtn) {
         titleSettingBtn.onclick = null;
-        titleSettingBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Setting button clicked');
-            if (typeof secret !== 'undefined' && typeof secret.open === 'function') {
-                secret.open();
-            } else {
-                console.error('secret.open function not found');
-            }
-        }, { capture: true });
+        titleSettingBtn.addEventListener(
+            'click',
+            (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Setting button clicked');
+                if (typeof secret !== 'undefined' && typeof secret.open === 'function') {
+                    secret.open();
+                } else {
+                    console.error('secret.open function not found');
+                }
+            },
+            { capture: true }
+        );
     } else {
         console.warn('title-setting-btn not found');
     }
-    
+
     // Modal 이미지 로드 후 버튼 오버레이 동기화
     const practiceModeModalImg = document.getElementById('practice-mode-modal-background-img');
     const battleModeModalImg = document.getElementById('battle-mode-modal-background-img');
-    
+
     if (practiceModeModalImg) {
         if (practiceModeModalImg.complete) {
             syncModalButtonOverlay('practice-mode-modal');
         } else {
-            practiceModeModalImg.addEventListener('load', () => syncModalButtonOverlay('practice-mode-modal'));
+            practiceModeModalImg.addEventListener('load', () =>
+                syncModalButtonOverlay('practice-mode-modal')
+            );
         }
     }
-    
+
     if (battleModeModalImg) {
         if (battleModeModalImg.complete) {
             syncModalButtonOverlay('battle-mode-modal');
         } else {
-            battleModeModalImg.addEventListener('load', () => syncModalButtonOverlay('battle-mode-modal'));
+            battleModeModalImg.addEventListener('load', () =>
+                syncModalButtonOverlay('battle-mode-modal')
+            );
         }
     }
-    
+
     // 팝업이 열려있을 때만 resize 이벤트 처리
     let modalResizeTimeout;
     const modalResizeHandler = () => {
         const practiceModeModal = document.getElementById('practice-mode-modal');
         const battleModeModal = document.getElementById('battle-mode-modal');
-        if (practiceModeModal && practiceModeModal.style.display !== 'none' && practiceModeModal.style.display !== '') {
+        if (
+            practiceModeModal &&
+            practiceModeModal.style.display !== 'none' &&
+            practiceModeModal.style.display !== ''
+        ) {
             clearTimeout(modalResizeTimeout);
             modalResizeTimeout = setTimeout(() => {
                 syncModalButtonOverlay('practice-mode-modal');
             }, 100);
-        } else if (battleModeModal && battleModeModal.style.display !== 'none' && battleModeModal.style.display !== '') {
+        } else if (
+            battleModeModal &&
+            battleModeModal.style.display !== 'none' &&
+            battleModeModal.style.display !== ''
+        ) {
             clearTimeout(modalResizeTimeout);
             modalResizeTimeout = setTimeout(() => {
                 syncModalButtonOverlay('battle-mode-modal');
@@ -4041,18 +4487,26 @@ window.onload = () => {
         }
     };
     window.addEventListener('resize', modalResizeHandler);
-    
+
     // Story screen resize handler
     let storyResizeTimeout;
     const storyResizeHandler = () => {
         const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
         const bossStoryScreen = document.getElementById('boss-mode-story-modal');
-        if (battleModeStoryScreen && battleModeStoryScreen.style.display !== 'none' && battleModeStoryScreen.style.display !== '') {
+        if (
+            battleModeStoryScreen &&
+            battleModeStoryScreen.style.display !== 'none' &&
+            battleModeStoryScreen.style.display !== ''
+        ) {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
                 syncStoryButtonOverlay('battle-mode-story-modal');
             }, 100);
-        } else if (bossStoryScreen && bossStoryScreen.style.display !== 'none' && bossStoryScreen.style.display !== '') {
+        } else if (
+            bossStoryScreen &&
+            bossStoryScreen.style.display !== 'none' &&
+            bossStoryScreen.style.display !== ''
+        ) {
             clearTimeout(storyResizeTimeout);
             storyResizeTimeout = setTimeout(() => {
                 syncStoryButtonOverlay('boss-mode-story-modal');
@@ -4060,11 +4514,11 @@ window.onload = () => {
         }
     };
     window.addEventListener('resize', storyResizeHandler);
-    
+
     // 결과 화면 닫기 함수
-    window.closeResultScreen = function() {
+    window.closeResultScreen = function () {
         closeScreenOverlay('result-panel', true);
-        
+
         // story-modal 완전히 초기화
         const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
         const bossStoryScreen = document.getElementById('boss-mode-story-modal');
@@ -4075,13 +4529,13 @@ window.onload = () => {
             battleModeStoryScreen.style.zIndex = '';
             battleModeStoryScreen.style.pointerEvents = '';
             battleModeStoryScreen.classList.remove('closing');
-            
+
             // 배경 이미지 초기화
             const storyImg = document.getElementById('battle-mode-background-img');
             if (storyImg) {
                 storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
             }
-            
+
             // 버튼 초기화
             const storyStartBtn = document.getElementById('battle-mode-start-btn');
             if (storyStartBtn) {
@@ -4098,13 +4552,13 @@ window.onload = () => {
             bossStoryScreen.style.zIndex = '';
             bossStoryScreen.style.pointerEvents = '';
             bossStoryScreen.classList.remove('closing');
-            
+
             // 배경 이미지 초기화
             const storyImg = document.getElementById('boss-mode-background-img');
             if (storyImg) {
                 storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
             }
-            
+
             // 버튼 초기화
             const storyStartBtn = document.getElementById('boss-mode-start-btn');
             if (storyStartBtn) {
@@ -4114,7 +4568,7 @@ window.onload = () => {
                 storyStartBtn.onclick = null;
             }
         }
-        
+
         // practice-mode-modal과 battle-mode-modal 초기화
         const practiceModeModal = document.getElementById('practice-mode-modal');
         const battleModeModal = document.getElementById('battle-mode-modal');
@@ -4134,13 +4588,13 @@ window.onload = () => {
             battleModeModal.style.pointerEvents = '';
             battleModeModal.classList.remove('closing');
         }
-        
+
         // battle-mode-game도 확실히 닫기
         const gameScreen = document.getElementById('battle-mode-game');
         if (gameScreen) {
             gameScreen.style.display = 'none';
         }
-        
+
         setTimeout(() => {
             openScreenOverlay('title-screen', false);
             // 랜덤 타이틀 헤더 다시 로딩
