@@ -844,15 +844,14 @@
         </div>
 
         <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
-        <script src="data/game-data-1.js"></script>
-        <script src="data/game-data-2.js"></script>
+
+        <script src="data/game-data-1.js" defer></script>
+        <script src="data/game-data-2.js" defer></script>
         <script src="data/items-data.js"></script>
         <script src="scripts/data-loader.js"></script>
         <script src="scripts/words.js"></script>
-
         <script src="scripts/items.js"></script>
-
-        <script src="scripts/app.js"></script>
+        <script src="scripts/app.js" defer></script>
 
         <!-- Background Music -->
         <audio id="background-music" loop>
