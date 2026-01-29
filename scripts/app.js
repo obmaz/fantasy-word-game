@@ -642,17 +642,6 @@ const statistics = {
             if (item) equippedItems.push({ slot: '발', name: item.name, icon: item.icon });
         }
 
-        // 보유 스킬
-        const skills = [];
-        if (db.skills.hint > 0) {
-            const skill = relics.find((r) => r.id === 'hint');
-            if (skill) skills.push({ name: skill.name, count: db.skills.hint });
-        }
-        if (db.skills.ultimate > 0) {
-            const skill = relics.find((r) => r.id === 'ultimate');
-            if (skill) skills.push({ name: skill.name, count: db.skills.ultimate });
-        }
-
         let html = '';
 
         // 게임 통계
@@ -678,10 +667,10 @@ const statistics = {
         html += '<div class="shop-section" style="margin-top:20px;">📝 문제 타입별 통계</div>';
 
         // 객관식 통계
+        html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">📋 객관식</div>';
         html +=
             '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
-        html += '<div style="font-size:15px;"><b>📋 객관식</b></div>';
-        html += `<div style="margin-top:8px;">
+        html += `<div style="margin-top:0;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span style="font-size:15px;">해결: ${objectiveSolved}개</span>
                 <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${objectiveCorrect}개</span>
@@ -691,10 +680,10 @@ const statistics = {
         html += '</div>';
 
         // 주관식 통계 (객관식과 동일한 형식)
+        html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
         html +=
             '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
-        html += '<div style="font-size:15px;"><b>✍️ 주관식</b></div>';
-        html += `<div style="margin-top:8px;">
+        html += `<div style="margin-top:0;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span style="font-size:15px;">해결: ${subjectiveSolved}개</span>
                 <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
@@ -712,6 +701,15 @@ const statistics = {
                     latestPerfect.displayDate || latestPerfect.date
                 }</div>
                 ${
+                    latestPerfect.book || latestPerfect.dayLabel
+                        ? `<div style="font-size:9px; color:#aaa; margin-top:4px;">
+                            ${latestPerfect.book ? `단어장: ${latestPerfect.book}` : ''}
+                            ${latestPerfect.book && latestPerfect.dayLabel ? ' | ' : ''}
+                            ${latestPerfect.dayLabel ? `Day: ${latestPerfect.dayLabel}` : ''}
+                        </div>`
+                        : ''
+                }
+                ${
                     perfectDays.length > 1
                         ? `<div style="font-size:7px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>`
                         : ''
@@ -728,26 +726,15 @@ const statistics = {
         const bestWaveDate = bossModeStats.bestWaveDate ? bossModeStats.bestWaveDate.displayDate : '기록 없음';
         
         html += '<div class="shop-section" style="margin-top:20px;">👑 보스 모드 기록</div>';
+        html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">🔥 최고 Wave</div>';
         html += '<div class="shop-item" style="background:rgba(224, 64, 251, 0.1); border-left:3px solid #E040FB; padding-left:12px;">';
-        html += '<div style="font-size:15px;"><b>🔥 최고 Wave</b></div>';
-        html += `<div style="margin-top:8px;">
+        html += `<div style="margin-top:0;">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span style="font-size:15px;">Wave: <span style="color:#E040FB; font-weight:bold;">${bestWave}</span></span>
             </div>
             <div style="font-size:15px; color:#E040FB; font-weight:bold; text-align:right;">날짜: ${bestWaveDate}</div>
         </div>`;
         html += '</div>';
-
-        // 보유 스킬
-        if (skills.length > 0) {
-            html += '<div class="shop-section" style="margin-top:20px;">✨ 보유 스킬</div>';
-            skills.forEach((skill) => {
-                html += `<div class="shop-item">
-                    <div style="font-size:9px;"><b>${skill.name}</b></div>
-                    <div style="font-size:15px; color:var(--primary); font-weight:bold;">${skill.count}개</div>
-                </div>`;
-            });
-        }
 
         container.innerHTML = html;
     },
@@ -1341,7 +1328,10 @@ const game = {
             return;
         }
 
-        game.maxTime = db.has('hourglass') ? 15 : 10;
+        // 보스 모드가 아닐 때만 maxTime 설정
+        if (mode !== 'boss') {
+            game.maxTime = db.has('hourglass') ? 15 : 10;
+        }
         game.stats = { gain: 0, lost: 0 };
         game.idx = 0;
         game.isProcessing = false;
@@ -1562,11 +1552,9 @@ const game = {
                 game.renderNormal(game.currentQ);
             }
         }
-        // 주관식 문제일 때는 타이머를 시작하지 않음
-        if (!game.currentQ.isBoss) {
-            game.startTimer();
-        } else {
-            // 주관식 문제일 때는 타이머 정지 및 타이머 바 숨김
+        // 보스 모드이거나 주관식 문제일 때는 타이머를 시작하지 않음
+        if (game.mode === 'boss' || game.currentQ.isBoss) {
+            // 보스 모드 또는 주관식 문제일 때는 타이머 정지 및 타이머 바 숨김
             if (game.timer) {
                 clearInterval(game.timer);
                 game.timer = null;
@@ -1576,6 +1564,8 @@ const game = {
                 overlayBar.style.width = '100%';
                 overlayBar.classList.remove('timer-danger');
             }
+        } else {
+            game.startTimer();
         }
     },
 
@@ -2181,14 +2171,33 @@ const game = {
                 (d) => d.date === todayISO
             );
 
+            // 단어장과 day 정보 가져오기
+            const bookName = typeof window !== 'undefined' && window.currentGameDataName 
+                ? window.currentGameDataName 
+                : '기본 단어장';
+            const day = game.currentDay || 'all';
+            const dayLabel = day === 'all' 
+                ? '전체' 
+                : day === 'boss' 
+                    ? '보스 모드'
+                    : (dayCatalog[day] && dayCatalog[day].label) 
+                        ? dayCatalog[day].label 
+                        : `Day ${day}`;
+
             if (existingIndex === -1) {
                 db.stats.subjective.perfectDays.push({
                     date: todayISO,
                     displayDate: dateStr,
+                    book: bookName,
+                    day: day,
+                    dayLabel: dayLabel,
                 });
             } else {
                 // 이미 있으면 업데이트 (최신 날짜로)
                 db.stats.subjective.perfectDays[existingIndex].displayDate = dateStr;
+                db.stats.subjective.perfectDays[existingIndex].book = bookName;
+                db.stats.subjective.perfectDays[existingIndex].day = day;
+                db.stats.subjective.perfectDays[existingIndex].dayLabel = dayLabel;
             }
 
             // 날짜순으로 정렬 (최신이 마지막)
@@ -2901,7 +2910,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning} <strong>${q.item.word}</strong></div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="subjective-answer">정답: <strong>${q.item.word}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2918,7 +2928,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word} <strong>${q.item.meaning}</strong></div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="subjective-answer">정답: <strong>${q.item.meaning}</strong></div>
                         </div>
                     </div>
                 `;
@@ -2950,12 +2961,12 @@ const secret = {
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -2989,12 +3000,12 @@ const secret = {
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3024,7 +3035,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning} <strong>${q.item.word}</strong></div>
+                            <div class="question-text">${q.item.meaning}</div>
+                            <div class="subjective-answer">정답: <strong>${q.item.word}</strong></div>
                         </div>
                     </div>
                 `;
@@ -3041,7 +3053,8 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word} <strong>${q.item.meaning}</strong></div>
+                            <div class="question-text">${q.item.word}</div>
+                            <div class="subjective-answer">정답: <strong>${q.item.meaning}</strong></div>
                         </div>
                     </div>
                 `;
@@ -3073,12 +3086,12 @@ const secret = {
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3112,12 +3125,12 @@ const secret = {
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} ${q.options[0]}${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} ${q.options[1]}${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} ${q.options[2]}${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} ${q.options[3]}${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3298,6 +3311,21 @@ const secret = {
         }
         .option-item.correct {
             color: #2196F3;
+            font-weight: bold;
+        }
+        .correct-underline {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 2px;
+        }
+        .subjective-answer {
+            margin-top: 6px;
+            font-size: 10pt;
+            color: #333;
+            padding-left: 8px;
+        }
+        .subjective-answer strong {
+            color: #d32f2f;
             font-weight: bold;
         }
         @media print {
