@@ -2893,7 +2893,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning} <span class="answer-underline"></span></div>
+                            <div class="question-text">${q.item.meaning}</div>
                         </div>
                     </div>
                 `;
@@ -2910,7 +2910,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word} <span class="answer-underline"></span></div>
+                            <div class="question-text">${q.item.word}</div>
                         </div>
                     </div>
                 `;
@@ -3016,7 +3016,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.meaning} <span class="answer-underline"></span></div>
+                            <div class="question-text">${q.item.meaning}</div>
                         </div>
                     </div>
                 `;
@@ -3033,7 +3033,7 @@ const secret = {
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
-                            <div class="question-text">${q.item.word} <span class="answer-underline"></span></div>
+                            <div class="question-text">${q.item.word}</div>
                         </div>
                     </div>
                 `;
@@ -3234,10 +3234,9 @@ const secret = {
             page-break-inside: avoid;
             flex-shrink: 0;
         }
-        /* 객관식과 주관식 print-question 높이 통일 */
-        .print-question:has(.objective-options),
-        .print-question:has(.answer-underline) {
-            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
+        /* 객관식·주관식 print-question 높이 통일 (객관식 기준 89.31px) */
+        .print-question {
+            min-height: 89.31px;
         }
         .question-number {
             font-weight: bold;
@@ -3250,6 +3249,11 @@ const secret = {
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
+        }
+        /* 주관식: 객관식과 동일 높이 (objective-options 영역만큼 보정) */
+        .question-content:not(:has(.objective-options)) {
+            min-height: 89.31px;
         }
         .question-label {
             font-size: 9pt;
@@ -3259,7 +3263,7 @@ const secret = {
         .question-text {
             font-size: 11pt;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             color: #333;
             text-decoration: none;
             line-height: 1.5;
@@ -3277,38 +3281,9 @@ const secret = {
         .answer-line.answer strong {
             color: #1976D2;
         }
-        /* 주관식 밑줄 - 간결하게 */
-        .answer-underline {
-            display: inline-block;
-            min-width: 120px;
-            margin-left: 4px;
-            text-decoration: none;
-            vertical-align: baseline;
-        }
-        .answer-underline.answer {
-            border-bottom: none;
-        }
-        .answer-underline.answer strong {
-            color: #d32f2f;
-            font-weight: bold;
-        }
-        /* 주관식 문제 높이를 객관식과 동일하게 */
-        .question-text:has(.answer-underline) {
-            margin-bottom: 0;
-            line-height: 1.5;
-            display: flex;
-            align-items: center;
-        }
         .objective-options {
-            margin-top: 6px;
+            margin-top: 2px;
             min-height: 2.5em;
-        }
-        /* 객관식과 주관식 question-content 높이 통일 */
-        .question-content:has(.objective-options) {
-            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
-        }
-        .question-content:has(.answer-underline) {
-            min-height: calc(1.5em + 4px + 6px + 2.5em + 1.2em + 4px);
         }
         .option-row {
             display: flex;
