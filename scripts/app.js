@@ -514,7 +514,7 @@ const shop = {
         let btn = `<button class="buy-btn" onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">${item.cost} G</button>`;
 
         if (type === 'skill') {
-            return `<div class="shop-item"><div style="font-size:15px;"><b>${item.name} (현재 ${
+            return `<div class="shop-item shop-item-skill"><div style="font-size:15px;"><b>${item.name} (현재 ${
                 db.skills[item.id]
             }개)</b><br><span style="font-size:15px;color:#aaa;">${
                 item.desc
@@ -663,19 +663,16 @@ const statistics = {
             <div style="font-size:15px; color:var(--primary); font-weight:bold; text-align:right;">${rate}%</div>
         </div>`;
 
-        // 문제 타입별 통계
-        html += '<div class="shop-section" style="margin-top:20px;">📝 문제 타입별 통계</div>';
-
         // 객관식 통계
-        html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">📋 객관식</div>';
+        html += '<div class="shop-section" style="margin-top:20px; margin-bottom:8px;">📋 객관식</div>';
         html +=
             '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
-        html += `<div style="margin-top:0;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        html += `<div style="margin-top:0; text-align:right;">
+            <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px;">
                 <span style="font-size:15px;">해결: ${objectiveSolved}개</span>
-                <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${objectiveCorrect}개</span>
+                <span style="font-size:15px; color:#4CAF50;">정답: ${objectiveCorrect}개</span>
             </div>
-            <div style="font-size:15px; color:#2196F3; font-weight:bold; text-align:right;">정답률: ${objectiveRate}%</div>
+            <div style="font-size:15px; color:#2196F3; font-weight:bold;">정답률: ${objectiveRate}%</div>
         </div>`;
         html += '</div>';
 
@@ -683,12 +680,12 @@ const statistics = {
         html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
         html +=
             '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
-        html += `<div style="margin-top:0;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        html += `<div style="margin-top:0; text-align:right;">
+            <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px;">
                 <span style="font-size:15px;">해결: ${subjectiveSolved}개</span>
-                <span style="font-size:15px; color:#4CAF50; margin-left:12px;">정답: ${subjectiveCorrect}개</span>
+                <span style="font-size:15px; color:#4CAF50;">정답: ${subjectiveCorrect}개</span>
             </div>
-            <div style="font-size:15px; color:#9C27B0; font-weight:bold; text-align:right;">정답률: ${subjectiveRate}%</div>`;
+            <div style="font-size:15px; color:#9C27B0; font-weight:bold;">정답률: ${subjectiveRate}%</div>`;
 
         // 주관식을 전부 맞춘 날 표시
         const perfectDays = db.stats.subjective?.perfectDays || [];
