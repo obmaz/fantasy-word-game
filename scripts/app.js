@@ -8,6 +8,26 @@ const db = {
     durability: JSON.parse(localStorage.getItem('v7_dura')) || {},
     stats: (() => {
         const saved = JSON.parse(localStorage.getItem('v7_stats')) || { solved: 0, correct: 0 };
+        
+        // 단어장별 통계 구조로 마이그레이션
+        if (!saved.books) {
+            saved.books = {};
+        }
+        
+        // 기존 전역 통계를 기본 단어장으로 마이그레이션 (호환성)
+        if (saved.solved > 0 || saved.correct > 0) {
+            const defaultBook = '기본 단어장';
+            if (!saved.books[defaultBook]) {
+                saved.books[defaultBook] = {
+                    solved: saved.solved || 0,
+                    correct: saved.correct || 0,
+                    objective: saved.objective || { solved: 0, correct: 0 },
+                    subjective: saved.subjective || { solved: 0, correct: 0, perfectDays: [] },
+                    bossMode: saved.bossMode || { bestWave: 0, bestWaveDate: null }
+                };
+            }
+        }
+        
         // 기존 데이터와의 호환성: objective/subjective 필드가 없으면 추가
         if (!saved.objective) {
             saved.objective = { solved: 0, correct: 0 };
@@ -80,10 +100,42 @@ const db = {
         ui.updateVisuals();
     },
     addStats: (isCorrect, questionType = 'objective') => {
-        db.stats.solved++;
-        if (isCorrect) db.stats.correct++;
+        // 현재 단어장 정보 가져오기
+        const bookName = typeof window !== 'undefined' && window.currentGameDataName 
+            ? window.currentGameDataName 
+            : '기본 단어장';
+        
+        // 단어장별 통계 초기화
+        if (!db.stats.books) {
+            db.stats.books = {};
+        }
+        if (!db.stats.books[bookName]) {
+            db.stats.books[bookName] = {
+                solved: 0,
+                correct: 0,
+                objective: { solved: 0, correct: 0 },
+                subjective: { solved: 0, correct: 0, perfectDays: [] },
+                bossMode: { bestWave: 0, bestWaveDate: null }
+            };
+        }
+        
+        // 단어장별 통계 업데이트
+        const bookStats = db.stats.books[bookName];
+        bookStats.solved++;
+        if (isCorrect) bookStats.correct++;
 
         // 문제 타입별 통계 추가
+        if (!bookStats[questionType]) {
+            bookStats[questionType] = { solved: 0, correct: 0 };
+        }
+        bookStats[questionType].solved++;
+        if (isCorrect) {
+            bookStats[questionType].correct++;
+        }
+
+        // 기존 전역 통계도 유지 (호환성)
+        db.stats.solved++;
+        if (isCorrect) db.stats.correct++;
         if (!db.stats[questionType]) {
             db.stats[questionType] = { solved: 0, correct: 0 };
         }
@@ -593,16 +645,45 @@ const statistics = {
         container.innerHTML = '';
         // 골드 표시 제거됨 (통계에서는 골드 표시 안 함)
         // document.getElementById('statistics-gold').innerText = db.gold;
-
+        
+        // 현재 단어장 정보를 타이틀 영역에 표시
+        const currentBookName = typeof window !== 'undefined' && window.currentGameDataName 
+            ? window.currentGameDataName 
+            : '기본 단어장';
+        const modalHeader = document.querySelector('#statistics-modal .modal-header');
+        if (modalHeader) {
+            const existingBookInfo = modalHeader.querySelector('.statistics-book-info');
+            if (existingBookInfo) {
+                existingBookInfo.remove();
+            }
+            const bookInfo = document.createElement('div');
+            bookInfo.className = 'statistics-book-info';
+            bookInfo.style.cssText = 'font-size: 12px; color: var(--primary); margin-top: 4px; text-align: center;';
+            bookInfo.textContent = `📚 ${currentBookName}`;
+            modalHeader.appendChild(bookInfo);
+        }
+        
+        // 단어장별 통계 가져오기
+        if (!db.stats.books) {
+            db.stats.books = {};
+        }
+        const bookStats = db.stats.books[currentBookName] || {
+            solved: 0,
+            correct: 0,
+            objective: { solved: 0, correct: 0 },
+            subjective: { solved: 0, correct: 0, perfectDays: [] },
+            bossMode: { bestWave: 0, bestWaveDate: null }
+        };
+        
         // 통계 데이터 계산
-        const solved = db.stats.solved || 0;
-        const correct = db.stats.correct || 0;
+        const solved = bookStats.solved || 0;
+        const correct = bookStats.correct || 0;
         const rate = solved > 0 ? Math.round((correct / solved) * 100) : 0;
         const wrong = solved - correct;
 
         // 객관식/주관식 통계
-        const objectiveStats = db.stats.objective || { solved: 0, correct: 0 };
-        const subjectiveStats = db.stats.subjective || { solved: 0, correct: 0 };
+        const objectiveStats = bookStats.objective || { solved: 0, correct: 0 };
+        const subjectiveStats = bookStats.subjective || { solved: 0, correct: 0 };
         const objectiveSolved = objectiveStats.solved || 0;
         const objectiveCorrect = objectiveStats.correct || 0;
         const objectiveRate =
@@ -645,93 +726,76 @@ const statistics = {
         let html = '';
 
         // 게임 통계
-        html += '<div class="shop-section">📊 게임 통계</div>';
-        html += `<div class="shop-item">
-            <div style="font-size:15px;"><b>총 해결한 문제</b></div>
-            <div style="font-size:15px; color:var(--primary); font-weight:bold;">${solved}개</div>
-        </div>`;
-        html += `<div class="shop-item">
-            <div style="font-size:15px;"><b>정답 수</b></div>
-            <div style="font-size:15px; color:#4CAF50; font-weight:bold;">${correct}개</div>
-        </div>`;
-        html += `<div class="shop-item">
-            <div style="font-size:15px;"><b>오답 수</b></div>
-            <div style="font-size:15px; color:#FF5252; font-weight:bold;">${wrong}개</div>
-        </div>`;
-        html += `<div class="shop-item">
-            <div style="font-size:15px;"><b>정답률</b></div>
-            <div style="font-size:15px; color:var(--primary); font-weight:bold; text-align:right;">${rate}%</div>
+        html += '<div class="statistics-section" style="margin-top:20px;">📊 게임 통계</div>';
+        html += `<div class="statistics-item">
+            <div style="text-align:right; width:100%;">
+                <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${solved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${rate}%</span></div>
+                <div style="font-size:15px;"><b>정답: </b><span style="color:#4CAF50; font-weight:bold;">${correct}개</span> <b style="margin-left:12px;">오답: </b><span style="color:#FF5252; font-weight:bold;">${wrong}개</span></div>
+            </div>
         </div>`;
 
         // 객관식 통계
-        html += '<div class="shop-section" style="margin-top:20px; margin-bottom:8px;">📋 객관식</div>';
-        html +=
-            '<div class="shop-item" style="background:rgba(33, 150, 243, 0.1); border-left:3px solid #2196F3; padding-left:12px;">';
-        html += `<div style="margin-top:0; text-align:right;">
-            <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px;">
-                <span style="font-size:15px;">해결: ${objectiveSolved}개</span>
-                <span style="font-size:15px; color:#4CAF50;">정답: ${objectiveCorrect}개</span>
+        const objectiveWrong = objectiveSolved - objectiveCorrect;
+        html += '<div class="statistics-section" style="margin-top:20px; margin-bottom:8px;">📋 객관식</div>';
+        html += `<div class="statistics-item">
+            <div style="text-align:right; width:100%;">
+                <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${objectiveSolved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${objectiveRate}%</span></div>
+                <div style="font-size:15px;"><b>정답: </b><span style="color:#4CAF50; font-weight:bold;">${objectiveCorrect}개</span> <b style="margin-left:12px;">오답: </b><span style="color:#FF5252; font-weight:bold;">${objectiveWrong}개</span></div>
             </div>
-            <div style="font-size:15px; color:#2196F3; font-weight:bold;">정답률: ${objectiveRate}%</div>
         </div>`;
-        html += '</div>';
 
         // 주관식 통계 (객관식과 동일한 형식)
-        html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
-        html +=
-            '<div class="shop-item" style="background:rgba(156, 39, 176, 0.1); border-left:3px solid #9C27B0; padding-left:12px;">';
-        html += `<div style="margin-top:0; text-align:right;">
-            <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px;">
-                <span style="font-size:15px;">해결: ${subjectiveSolved}개</span>
-                <span style="font-size:15px; color:#4CAF50;">정답: ${subjectiveCorrect}개</span>
+        const subjectiveWrong = subjectiveSolved - subjectiveCorrect;
+        html += '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
+        html += `<div class="statistics-item">
+            <div style="text-align:right; width:100%;">
+                <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${subjectiveSolved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${subjectiveRate}%</span></div>
+                <div style="font-size:15px;"><b>정답: </b><span style="color:#4CAF50; font-weight:bold;">${subjectiveCorrect}개</span> <b style="margin-left:12px;">오답: </b><span style="color:#FF5252; font-weight:bold;">${subjectiveWrong}개</span></div>
             </div>
-            <div style="font-size:15px; color:#9C27B0; font-weight:bold;">정답률: ${subjectiveRate}%</div>`;
+        </div>`;
 
-        // 주관식을 전부 맞춘 날 표시
-        const perfectDays = db.stats.subjective?.perfectDays || [];
-        if (perfectDays.length > 0) {
-            // 가장 최근 날짜 (배열의 마지막 요소)
-            const latestPerfect = perfectDays[perfectDays.length - 1];
-            html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(156, 39, 176, 0.3);">
-                <div style="font-size:9px; color:#9C27B0; font-weight:bold; margin-bottom:4px;">✨ 주관식 전부 맞춘 날</div>
-                <div style="font-size:11px; color:var(--gold);">${
-                    latestPerfect.displayDate || latestPerfect.date
-                }</div>
-                ${
-                    latestPerfect.book || latestPerfect.dayLabel
-                        ? `<div style="font-size:9px; color:#aaa; margin-top:4px;">
-                            ${latestPerfect.book ? `단어장: ${latestPerfect.book}` : ''}
-                            ${latestPerfect.book && latestPerfect.dayLabel ? ' | ' : ''}
-                            ${latestPerfect.dayLabel ? `Day: ${latestPerfect.dayLabel}` : ''}
-                        </div>`
-                        : ''
-                }
-                ${
-                    perfectDays.length > 1
-                        ? `<div style="font-size:7px; color:#aaa; margin-top:4px;">총 ${perfectDays.length}회 달성</div>`
-                        : ''
-                }
+        // 주관식을 전부 맞춘 날 표시 (현재 단어장만)
+        const perfectDays = subjectiveStats.perfectDays || [];
+        
+        if (perfectDays.length === 0) {
+            html += '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
+            html += `<div class="statistics-item">
+                <div style="text-align:right; width:100%;">
+                    <div style="font-size:15px;"><span style="color:var(--primary); font-weight:bold;">없음</span></div>
+                </div>
             </div>`;
+        } else {
+            // 날짜순으로 정렬 (최신이 마지막)
+            const sortedPerfectDays = [...perfectDays].sort((a, b) => a.date.localeCompare(b.date));
+            
+            html += '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
+            sortedPerfectDays.forEach((perfect, index) => {
+                const perfectDate = perfect.displayDate || perfect.date;
+                const perfectDayLabel = perfect.dayLabel || '';
+                
+                html += `<div class="statistics-item">
+                    <div style="text-align:right; width:100%;">
+                        <div style="font-size:15px; margin-bottom:4px;"><span style="color:var(--primary); font-weight:bold;">${perfectDate}</span></div>
+                        ${perfectDayLabel ? `<div style="font-size:15px;"><b>${perfectDayLabel}</b></div>` : ''}
+                    </div>
+                </div>`;
+            });
         }
 
         html += '</div>';
         html += '</div>';
 
-        // 보스 모드 최고 wave 기록
-        const bossModeStats = db.stats.bossMode || { bestWave: 0, bestWaveDate: null };
+        // 보스 모드 최고 wave 기록 (현재 단어장)
+        const bossModeStats = bookStats.bossMode || { bestWave: 0, bestWaveDate: null };
         const bestWave = bossModeStats.bestWave || 0;
         const bestWaveDate = bossModeStats.bestWaveDate ? bossModeStats.bestWaveDate.displayDate : '기록 없음';
         
-        html += '<div class="shop-section" style="margin-top:20px;">👑 보스 모드 기록</div>';
-        html += '<div class="shop-section" style="margin-top:15px; margin-bottom:8px;">🔥 최고 Wave</div>';
-        html += '<div class="shop-item" style="background:rgba(224, 64, 251, 0.1); border-left:3px solid #E040FB; padding-left:12px;">';
-        html += `<div style="margin-top:0;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span style="font-size:15px;">Wave: <span style="color:#E040FB; font-weight:bold;">${bestWave}</span></span>
+        html += '<div class="statistics-section" style="margin-top:20px;">👑 보스 모드 기록</div>';
+        html += `<div class="statistics-item">
+            <div style="text-align:right; width:100%;">
+                <div style="font-size:15px;"><b>Wave: </b><span style="color:#E040FB; font-weight:bold;">${bestWave}</span> <b style="margin-left:12px;">날짜: </b><span style="color:var(--primary); font-weight:bold;">${bestWaveDate}</span></div>
             </div>
-            <div style="font-size:15px; color:#E040FB; font-weight:bold; text-align:right;">날짜: ${bestWaveDate}</div>
         </div>`;
-        html += '</div>';
 
         container.innerHTML = html;
     },
@@ -2128,19 +2192,52 @@ const game = {
             const todayISO = today.toISOString().split('T')[0];
 
             // 기존 데이터와의 호환성
+            // 현재 단어장 정보 가져오기
+            const bookName = typeof window !== 'undefined' && window.currentGameDataName 
+                ? window.currentGameDataName 
+                : '기본 단어장';
+            
+            // 단어장별 통계 초기화
+            if (!db.stats.books) {
+                db.stats.books = {};
+            }
+            if (!db.stats.books[bookName]) {
+                db.stats.books[bookName] = {
+                    solved: 0,
+                    correct: 0,
+                    objective: { solved: 0, correct: 0 },
+                    subjective: { solved: 0, correct: 0, perfectDays: [] },
+                    bossMode: { bestWave: 0, bestWaveDate: null }
+                };
+            }
+            
+            const bookStats = db.stats.books[bookName];
+            if (!bookStats.bossMode) {
+                bookStats.bossMode = { bestWave: 0, bestWaveDate: null };
+            }
+
+            // 최고 기록 갱신 (단어장별)
+            if (currentWave > bookStats.bossMode.bestWave) {
+                bookStats.bossMode.bestWave = currentWave;
+                bookStats.bossMode.bestWaveDate = {
+                    date: todayISO,
+                    displayDate: dateStr,
+                };
+                db.save();
+            }
+            
+            // 기존 전역 통계도 유지 (호환성)
             if (!db.stats.bossMode) {
                 db.stats.bossMode = { bestWave: 0, bestWaveDate: null };
             }
-
-            // 최고 기록 갱신
             if (currentWave > db.stats.bossMode.bestWave) {
                 db.stats.bossMode.bestWave = currentWave;
                 db.stats.bossMode.bestWaveDate = {
                     date: todayISO,
                     displayDate: dateStr,
                 };
-                db.save();
             }
+            db.save();
         }
 
         // 주관식 문제를 모두 맞췄는지 확인
@@ -2152,26 +2249,33 @@ const game = {
                 day: 'numeric',
             });
 
-            // 기존 데이터와의 호환성
-            if (!db.stats.subjective) {
-                db.stats.subjective = { solved: 0, correct: 0 };
-            }
-
-            // 최근 날짜 기록 (배열로 저장하여 여러 번 기록 가능)
-            if (!db.stats.subjective.perfectDays) {
-                db.stats.subjective.perfectDays = [];
-            }
-
-            // 오늘 날짜가 이미 기록되어 있지 않으면 추가
-            const todayISO = today.toISOString().split('T')[0];
-            const existingIndex = db.stats.subjective.perfectDays.findIndex(
-                (d) => d.date === todayISO
-            );
-
-            // 단어장과 day 정보 가져오기
+            // 현재 단어장 정보 가져오기
             const bookName = typeof window !== 'undefined' && window.currentGameDataName 
                 ? window.currentGameDataName 
                 : '기본 단어장';
+            
+            // 단어장별 통계 초기화
+            if (!db.stats.books) {
+                db.stats.books = {};
+            }
+            if (!db.stats.books[bookName]) {
+                db.stats.books[bookName] = {
+                    solved: 0,
+                    correct: 0,
+                    objective: { solved: 0, correct: 0 },
+                    subjective: { solved: 0, correct: 0, perfectDays: [] },
+                    bossMode: { bestWave: 0, bestWaveDate: null }
+                };
+            }
+            
+            const bookStats = db.stats.books[bookName];
+            if (!bookStats.subjective) {
+                bookStats.subjective = { solved: 0, correct: 0, perfectDays: [] };
+            }
+            if (!bookStats.subjective.perfectDays) {
+                bookStats.subjective.perfectDays = [];
+            }
+
             const day = game.currentDay || 'all';
             const dayLabel = day === 'all' 
                 ? '전체' 
@@ -2181,7 +2285,40 @@ const game = {
                         ? dayCatalog[day].label 
                         : `Day ${day}`;
 
+            // 같은 day와 book 조합이 이미 기록되어 있는지 확인 (현재 단어장 내에서)
+            const todayISO = today.toISOString().split('T')[0];
+            const existingIndex = bookStats.subjective.perfectDays.findIndex(
+                (d) => d.day === day
+            );
+
             if (existingIndex === -1) {
+                // 같은 day 조합이 없으면 새로 추가
+                bookStats.subjective.perfectDays.push({
+                    date: todayISO,
+                    displayDate: dateStr,
+                    day: day,
+                    dayLabel: dayLabel,
+                });
+            } else {
+                // 같은 day 조합이 있으면 최신 날짜로 업데이트
+                bookStats.subjective.perfectDays[existingIndex].date = todayISO;
+                bookStats.subjective.perfectDays[existingIndex].displayDate = dateStr;
+            }
+
+            // 날짜순으로 정렬 (최신이 마지막)
+            bookStats.subjective.perfectDays.sort((a, b) => a.date.localeCompare(b.date));
+            
+            // 기존 전역 통계도 유지 (호환성)
+            if (!db.stats.subjective) {
+                db.stats.subjective = { solved: 0, correct: 0 };
+            }
+            if (!db.stats.subjective.perfectDays) {
+                db.stats.subjective.perfectDays = [];
+            }
+            const globalExistingIndex = db.stats.subjective.perfectDays.findIndex(
+                (d) => d.day === day && d.book === bookName
+            );
+            if (globalExistingIndex === -1) {
                 db.stats.subjective.perfectDays.push({
                     date: todayISO,
                     displayDate: dateStr,
@@ -2190,14 +2327,9 @@ const game = {
                     dayLabel: dayLabel,
                 });
             } else {
-                // 이미 있으면 업데이트 (최신 날짜로)
-                db.stats.subjective.perfectDays[existingIndex].displayDate = dateStr;
-                db.stats.subjective.perfectDays[existingIndex].book = bookName;
-                db.stats.subjective.perfectDays[existingIndex].day = day;
-                db.stats.subjective.perfectDays[existingIndex].dayLabel = dayLabel;
+                db.stats.subjective.perfectDays[globalExistingIndex].date = todayISO;
+                db.stats.subjective.perfectDays[globalExistingIndex].displayDate = dateStr;
             }
-
-            // 날짜순으로 정렬 (최신이 마지막)
             db.stats.subjective.perfectDays.sort((a, b) => a.date.localeCompare(b.date));
 
             db.save();
@@ -3307,7 +3439,7 @@ const secret = {
             flex: 1;
         }
         .option-item.correct {
-            color: #2196F3;
+            color: #d32f2f;
             font-weight: bold;
         }
         .correct-underline {

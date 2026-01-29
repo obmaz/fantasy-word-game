@@ -54,3 +54,26 @@
     ) !important;
     color: #fff !important;
 }
+
+/* Statistics Item & Section Styles */
+.statistics-section {
+    text-align: left;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    margin-top: 15px;
+}
+
+.statistics-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #252525;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
