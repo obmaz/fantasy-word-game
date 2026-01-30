@@ -22,8 +22,13 @@ fantasy-word-game/
 │   ├── modal-common.css              # Common modal and overlay styles
 │   ├── practice-mode-modal.css       # Practice mode modal styles
 │   ├── battle-mode-modal.css         # Battle mode modal styles
-│   ├── battle-mode-story-modal.css   # Battle mode story modal styles
-│   └── boss-mode-story-modal.css     # Boss mode story modal styles
+│   └── battle-mode-story-modal.css   # Battle mode story modal styles
+├── backup/                            # Unused files (moved from project)
+│   ├── styles/
+│   │   └── boss-mode-story-modal.css # Boss story modal (no longer used)
+│   └── images/
+│       ├── title copy.webp
+│       └── factory_reset_btn.webp
 ├── scripts/
 │   ├── app.js                        # Main game logic and UI management
 │   ├── words.js                      # Word data and word-related functions
@@ -41,8 +46,8 @@ fantasy-word-game/
 │   │   ├── monster_1.webp            # Monster sprite 1
 │   │   ├── monster_2.webp            # Monster sprite 2
 │   │   ├── monster_3.webp            # Monster sprite 3
-│   │   ├── battle_mode_popup.webp      # Story screen background (used for all modes: practice, battle, boss)
-│   │   ├── battle_mode_select_popup.webp    # Battle mode settings popup
+│   │   ├── battle_mode_story_modal.webp # Battle mode story modal background
+│   │   ├── battle-mode-modal.webp           # Battle mode modal background
 │   │   └── practice_mode_select_popup .webp # Practice mode settings popup
 │   ├── title/                        # Title screen images
 │   │   ├── title.webp                # Title screen background
@@ -58,9 +63,8 @@ fantasy-word-game/
 │   │   ├── statistics_btn.webp       # Statistics button
 │   │   ├── settings_btn.webp         # Settings button
 │   │   ├── exit_btn.webp            # Exit button
-│   │   ├── apply_btn.webp           # Apply button
-│   │   └── factory_reset_btn.webp   # Factory reset button
-│   └── backup/                       # Backup images
+│   │   └── apply_btn.webp           # Apply button
+│   └── backup/                       # Backup images (in images/backup/)
 │       └── battle_start_btn.webp
 ├── .gitignore
 ├── package.json

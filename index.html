@@ -16,7 +16,6 @@
         <link rel="stylesheet" href="styles/battle-mode-modal.css" />
         <link rel="stylesheet" href="styles/practice-mode-game.css" />
         <link rel="stylesheet" href="styles/battle-mode-story-modal.css" />
-        <link rel="stylesheet" href="styles/boss-mode-story-modal.css" />
         <link rel="stylesheet" href="styles/buttons.css" />
         <link rel="stylesheet" href="styles/shop-modal.css" />
         <link rel="stylesheet" href="styles/inventory-modal.css" />
@@ -387,7 +386,7 @@
         <div id="battle-mode-modal" class="screen-overlay" style="display: none">
             <div class="modal-container-wrapper">
                 <img
-                    src="images/battle_mode/battle_mode_select_popup.webp"
+                    src="images/battle_mode/battle-mode-modal.webp"
                     alt="Battle Mode Settings"
                     class="modal-background"
                     id="battle-mode-modal-background-img"
@@ -512,11 +511,11 @@
             </div>
         </div>
 
-        <!-- Battle Mode Story Modal (battle 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
+        <!-- Battle Mode Story Modal (battle 모드용) - battle_mode_story_modal.webp를 스토리 모달 배경으로 사용 -->
         <div id="battle-mode-story-modal" class="screen-overlay" style="display: none">
             <div class="story-container-wrapper">
                 <img
-                    src="images/battle_mode/battle_mode_popup.webp"
+                    src="images/battle_mode/battle_mode_story_modal.webp"
                     alt="Adventure Start"
                     class="story-background"
                     id="battle-mode-background-img"
@@ -538,11 +537,11 @@
             </div>
         </div>
 
-        <!-- Boss Mode Story Modal (boss 모드용) - battle_mode_popup.webp를 모든 모드의 스토리 모달 배경으로 사용 -->
+        <!-- Boss Mode Story Modal (미사용: 보스는 스토리 없이 바로 게임) -->
         <div id="boss-mode-story-modal" class="screen-overlay" style="display: none">
             <div class="story-container-wrapper">
                 <img
-                    src="images/battle_mode/battle_mode_popup.webp"
+                    src="images/battle_mode/battle_mode_story_modal.webp"
                     alt="Adventure Start"
                     class="story-background"
                     id="boss-mode-background-img"
@@ -633,6 +632,8 @@
                     <div class="result-modal-total">
                         내 지갑 총액: <span id="res-current-total">0</span> G
                     </div>
+                    <div id="res-record" class="result-record-container"></div>
+                    <div id="res-wrong-words" class="result-wrong-words-container"></div>
                 </div>
 
                 <div class="result-modal-actions">
@@ -887,6 +888,7 @@
 
         <script src="data/game-data-1.js"></script>
         <script src="data/game-data-2.js"></script>
+        <script src="data/game-data-3.js"></script>
         <!-- decoy words set (유사 단어 집합) -->
         <script src="data/decoy-words-set.js"></script>
         <script src="data/items-data.js"></script>

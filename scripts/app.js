@@ -1076,6 +1076,20 @@ function resolveStoryData(day) {
 const story = {
     day: null,
     mode: null,
+    /** 보스 모드: 스토리 모달 없이 바로 게임 시작 */
+    startBossDirectly: () => {
+        if (game.isProcessing) return;
+        story.mode = 'boss';
+        story.day = 'boss';
+        db.lastSelectedDay = 'boss';
+        db.save();
+        const startScreen = document.getElementById('title-screen');
+        if (startScreen) {
+            startScreen.style.zIndex = '100';
+            startScreen.style.display = 'flex';
+        }
+        game.init('boss', 'boss');
+    },
     startIntro: (mode, dayArg) => {
         const daySel = dayArg || document.getElementById('day-select').value;
         console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
@@ -1170,11 +1184,11 @@ const story = {
             syncTitleButtonOverlay();
         }
 
-        // 모든 모드에서 battle_mode_popup.webp 사용
+        // 배틀 스토리 모달에서 battle_mode_story_modal.webp 사용
         const storyImg = document.getElementById(`${storyScreenPrefix}-background-img`);
         const storyStartBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
         if (storyImg) {
-            storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
+            storyImg.src = 'images/battle_mode/battle_mode_story_modal.webp';
             // 보스 모드 클래스 추가
             if (storyStartBtn) {
                 storyStartBtn.classList.add('boss-mode-btn');
@@ -1359,6 +1373,9 @@ const game = {
     battleQuestionType: 'mixed',
     subjectiveTotal: 0, // 주관식 문제 총 개수
     subjectiveCorrect: 0, // 주관식 문제 정답 개수
+    sessionCorrectObjective: 0, // 이번 게임 객관식 정답 수
+    sessionWrongWords: [], // 이번 게임 틀린 단어 목록 { word, meaning }
+    bossTotalWaves: 0, // 보스 모드 총 웨이브 수 (초기 덱 크기)
 
     init: (mode, day) => {
         // boss 모드가 아닐 때만 count-select 참조
@@ -1398,12 +1415,15 @@ const game = {
         game.isProcessing = false;
         game.subjectiveTotal = 0;
         game.subjectiveCorrect = 0;
+        game.sessionCorrectObjective = 0;
+        game.sessionWrongWords = [];
 
         if (mode === 'boss') {
             // 현재 데이터셋의 rawData 사용
             const currentRawData =
                 typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
             game.deck = game.shuffle([...currentRawData]);
+            game.bossTotalWaves = game.deck.length;
             game.list = [];
         } else if (mode === 'battle') {
             // Battle Mode: Question type depends on user selection
@@ -1793,9 +1813,19 @@ const game = {
         // Record Stats (문제 타입 포함)
         db.addStats(isCorrect, questionType);
 
-        // 주관식 문제 정답 추적
+        // 이번 게임 객관식/주관식 정답 추적
+        if (isCorrect && questionType === 'objective') {
+            game.sessionCorrectObjective++;
+        }
         if (questionType === 'subjective' && isCorrect) {
             game.subjectiveCorrect++;
+        }
+        // 틀린 단어 기록 (현재 문제의 word, meaning)
+        if (!isCorrect && game.currentQ) {
+            game.sessionWrongWords.push({
+                word: game.currentQ.word || '',
+                meaning: game.currentQ.meaning || '',
+            });
         }
 
         if (isCorrect) {
@@ -2035,9 +2065,13 @@ const game = {
             if (game.timeLeft <= 0) {
                 clearInterval(game.timer);
                 game.timer = null;
-                // 게임 오버 처리 중이 아니면 handleAnswer 호출
+                // 게임 오버 처리 중이 아니면 handleAnswer 호출 (현재 문제 타입 전달)
                 if (!game.isProcessing) {
-                    game.handleAnswer(false, null);
+                    const questionType =
+                        document.getElementById('boss-box').style.display === 'flex'
+                            ? 'subjective'
+                            : 'objective';
+                    game.handleAnswer(false, null, questionType);
                 }
             }
         }, 100);
@@ -2179,6 +2213,58 @@ const game = {
             db.save();
         }
         document.getElementById('res-current-total').innerText = db.gold;
+
+        // 이번 게임 기록: 객관식/주관식 맞힌 개수, 정답률
+        const resRecordEl = document.getElementById('res-record');
+        const resWrongEl = document.getElementById('res-wrong-words');
+        if (resRecordEl) {
+            let recordHtml = '';
+            const qt = game.battleQuestionType || 'mixed';
+            if (game.mode === 'boss') {
+                const total = win ? game.bossTotalWaves : game.idx + 1;
+                const correct = game.subjectiveCorrect || 0;
+                const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
+                recordHtml += '<div class="result-modal-section">✍️ 주관식</div>';
+                recordHtml += `<div class="result-modal-item"><div style="text-align:right; width:100%;"><div style="font-size:15px; margin-bottom:4px;"><b>맞힌 개수: </b><span style="color:var(--primary); font-weight:bold;">${correct}/${total}</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${rate}%</span></div></div></div>`;
+            } else if (game.list && game.list.length) {
+                const totalObj = game.list.filter((q) => !q.isBoss).length;
+                const totalSub = game.list.filter((q) => q.isBoss).length;
+                const correctObj = game.sessionCorrectObjective || 0;
+                const correctSub = game.subjectiveCorrect || 0;
+                const total = game.list.length;
+                const totalCorrect = correctObj + correctSub;
+                const rate = total > 0 ? Math.round((totalCorrect / total) * 100) : 0;
+                if (qt === 'objective' || (qt === 'mixed' && totalObj > 0)) {
+                    const objRate = totalObj > 0 ? Math.round((correctObj / totalObj) * 100) : 0;
+                    recordHtml += '<div class="result-modal-section">📋 객관식</div>';
+                    recordHtml += `<div class="result-modal-item"><div style="text-align:right; width:100%;"><div style="font-size:15px; margin-bottom:4px;"><b>맞힌 개수: </b><span style="color:var(--primary); font-weight:bold;">${correctObj}/${totalObj}</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${objRate}%</span></div></div></div>`;
+                }
+                if (qt === 'subjective' || (qt === 'mixed' && totalSub > 0)) {
+                    const subRate = totalSub > 0 ? Math.round((correctSub / totalSub) * 100) : 0;
+                    recordHtml += '<div class="result-modal-section">✍️ 주관식</div>';
+                    recordHtml += `<div class="result-modal-item"><div style="text-align:right; width:100%;"><div style="font-size:15px; margin-bottom:4px;"><b>맞힌 개수: </b><span style="color:var(--primary); font-weight:bold;">${correctSub}/${totalSub}</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${subRate}%</span></div></div></div>`;
+                }
+                if (qt === 'mixed' && total > 0) {
+                    recordHtml += '<div class="result-modal-section">📊 전체</div>';
+                    recordHtml += `<div class="result-modal-item"><div style="text-align:right; width:100%;"><div style="font-size:15px;"><b>맞힌 개수: </b><span style="color:var(--primary); font-weight:bold;">${totalCorrect}/${total}</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${rate}%</span></div></div></div>`;
+                }
+            }
+            resRecordEl.innerHTML = recordHtml;
+        }
+        if (resWrongEl) {
+            const wrongList = game.sessionWrongWords || [];
+            if (wrongList.length === 0) {
+                resWrongEl.innerHTML = '<div class="result-modal-section">❌ 틀린 단어</div><div class="result-modal-item result-modal-item-empty">없음</div>';
+            } else {
+                let wrongHtml = '<div class="result-modal-section">❌ 틀린 단어</div>';
+                wrongList.forEach((w) => {
+                    const word = (w.word || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const meaning = (w.meaning || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    wrongHtml += `<div class="result-wrong-word-item"><span class="wrong-word">${word}</span><span class="wrong-meaning">${meaning}</span></div>`;
+                });
+                resWrongEl.innerHTML = wrongHtml;
+            }
+        }
 
         // 보스 모드 최고 wave 기록 저장
         if (game.mode === 'boss' && game.idx > 0) {
@@ -3682,6 +3768,15 @@ const practiceMemorization = {
             wordTextEl.textContent = word.word || 'N/A';
         }
 
+        // 연습 모드: 영어 단어 음성 읽기 (SpeechSynthesisUtterance)
+        if (word.word && typeof window.speechSynthesis !== 'undefined') {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word.word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
         // 한글 뜻 표시
         const meaningTextEl = document.getElementById('practice-meaning-text');
         if (meaningTextEl) {
@@ -3719,6 +3814,9 @@ const practiceMemorization = {
     },
 
     exit: () => {
+        if (typeof window.speechSynthesis !== 'undefined') {
+            window.speechSynthesis.cancel();
+        }
         const memorizationScreen = document.getElementById('practice-mode-game');
         if (memorizationScreen) {
             // 다른 화면들도 모두 닫기
@@ -4457,7 +4555,7 @@ window.onload = () => {
     try {
         const bossModeBtn = document.getElementById('boss-mode-btn');
         if (bossModeBtn) {
-            bossModeBtn.addEventListener('click', () => story.startIntro('boss'));
+            bossModeBtn.addEventListener('click', () => story.startBossDirectly());
         }
     } catch (e) {
         console.error('Error setting up boss-mode-btn:', e);
@@ -4715,11 +4813,11 @@ window.onload = () => {
                         console.log('Boss Mode button clicked');
                         if (
                             typeof story !== 'undefined' &&
-                            typeof story.startIntro === 'function'
+                            typeof story.startBossDirectly === 'function'
                         ) {
-                            story.startIntro('boss');
+                            story.startBossDirectly();
                         } else {
-                            console.error('story.startIntro function not found');
+                            console.error('story.startBossDirectly function not found');
                         }
                     },
                     { capture: true }
@@ -4905,7 +5003,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('battle-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/battle_mode_story_modal.webp';
             }
 
             // 버튼 초기화
@@ -4928,7 +5026,7 @@ window.onload = () => {
             // 배경 이미지 초기화
             const storyImg = document.getElementById('boss-mode-background-img');
             if (storyImg) {
-                storyImg.src = 'images/battle_mode/battle_mode_popup.webp';
+                storyImg.src = 'images/battle_mode/battle_mode_story_modal.webp';
             }
 
             // 버튼 초기화

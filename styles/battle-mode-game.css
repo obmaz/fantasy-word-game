@@ -2,7 +2,10 @@
    Battle Mode Game 스타일
    ============================================ */
 
+/* 컨테이너 쿼리: 레이아웃이 줄어들면 글자도 같이 줄어들게 (cqmin 기준) */
 #battle-mode-game {
+    container-type: size;
+    container-name: battle-game;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -69,9 +72,9 @@
 
 .equipped-weapon {
     position: absolute;
-    right: -1.5vw;
-    bottom: 6vh;
-    font-size: clamp(30px, 6vh, 60px);
+    right: -1.5cqmin;
+    bottom: 6cqmin;
+    font-size: clamp(12px, 5cqmin, 36px);
     z-index: 6;
     filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
     transform-origin: bottom left;
@@ -97,25 +100,24 @@
     align-items: center;
     justify-content: center;
 }
+/* 레이아웃 비율: cqmin — 줄어들면 글자도 같이 축소 */
 #wave-badge {
     left: auto;
     right: 10px;
     top: 10px;
     transform: none;
-    /* overlay-gold와 같은 상하 크기로 맞춤 */
-    padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1vw, 14px);
-    line-height: clamp(12px, 1.2vw, 18px);
-    font-size: clamp(12px, 1.2vw, 18px);
+    padding: clamp(2px, 1cqmin, 10px) clamp(4px, 1.5cqmin, 14px);
+    line-height: clamp(8px, 2cqmin, 14px);
+    font-size: clamp(8px, 2cqmin, 14px);
     min-height: auto;
 }
-/* game-info-badge는 골드 자리(상단 왼쪽)로 이동 */
 #game-info-badge {
     left: 10px;
     top: 10px;
     transform: none;
-    padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1vw, 14px);
-    line-height: clamp(12px, 1.2vw, 18px);
-    font-size: clamp(12px, 1.2vw, 18px);
+    padding: clamp(2px, 1cqmin, 10px) clamp(4px, 1.5cqmin, 14px);
+    line-height: clamp(8px, 2cqmin, 14px);
+    font-size: clamp(8px, 2cqmin, 14px);
     min-height: auto;
 }
 .durability-badge {
@@ -123,20 +125,18 @@
     display: none !important;
 }
 
-/* 배경 위에 표시되는 골드와 시간 UI */
 .overlay-gold {
     position: absolute;
-    /* Day 정보 아래에 위치 (Day 정보 높이 + 간격) */
-    top: calc(clamp(6px, 0.6vw, 10px) * 2 + clamp(12px, 1.2vw, 18px) + 20px);
+    top: calc(clamp(2px, 1cqmin, 10px) * 2 + clamp(8px, 2cqmin, 14px) + 20px);
     left: 10px;
     background: rgba(0, 0, 0, 0.7);
-    padding: clamp(6px, 0.6vw, 10px) clamp(10px, 1vw, 14px);
+    padding: clamp(2px, 1cqmin, 10px) clamp(4px, 1.5cqmin, 14px);
     border-radius: 10px;
     border: 1px solid rgba(255, 213, 79, 0.4);
     color: var(--gold);
-    font-size: clamp(12px, 1.2vw, 18px);
+    font-size: clamp(8px, 2cqmin, 14px);
     font-weight: bold;
-    line-height: clamp(12px, 1.2vw, 18px);
+    line-height: clamp(8px, 2cqmin, 14px);
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     z-index: 15;
@@ -145,9 +145,7 @@
     align-items: center;
     gap: 4px;
     box-sizing: border-box;
-    height: calc(
-        clamp(12px, 1.2vw, 18px) + clamp(6px, 0.6vw, 10px) * 2 + 2px
-    ); /* 폰트 크기 + 상하 패딩 + 보더 */
+    height: calc(clamp(8px, 2cqmin, 14px) + clamp(2px, 1cqmin, 10px) * 2 + 2px);
 }
 
 .overlay-timer {
@@ -173,7 +171,7 @@
 
 .gold-display {
     color: var(--gold);
-    font-size: clamp(14px, 1.5vw, 20px);
+    font-size: clamp(8px, 2cqmin, 15px);
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -225,7 +223,7 @@
     display: none;
 }
 .q-text {
-    font-size: clamp(22px, 2.5vw, 36px);
+    font-size: clamp(8px, 4cqmin, 24px);
     font-weight: bold;
     color: var(--primary);
     word-break: keep-all;
@@ -432,7 +430,7 @@
     position: absolute;
     top: 40%;
     right: 20%;
-    font-size: 28px;
+    font-size: clamp(12px, 4cqmin, 24px);
     font-weight: 900;
     text-shadow: 2px 2px 0 #000;
     opacity: 0;
@@ -453,21 +451,21 @@
     position: absolute;
     right: 40px;
     bottom: 10px;
-    font-size: 40px;
+    font-size: clamp(14px, 5cqmin, 32px);
     transform-origin: bottom right;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
 }
 
-/* Hero Equipment Slots */
+/* Hero Equipment Slots (보스 모드) — cqmin */
 .hero-equip-slot {
     position: absolute;
     z-index: 6;
-    font-size: clamp(24px, 3vh, 48px);
+    font-size: clamp(10px, 4cqmin, 28px);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: clamp(32px, 4vh, 64px);
-    height: clamp(32px, 4vh, 64px);
+    width: clamp(16px, 4cqmin, 44px);
+    height: clamp(16px, 4cqmin, 44px);
     filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.7));
 }
 

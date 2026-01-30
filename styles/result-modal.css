@@ -3,14 +3,18 @@
    ============================================ */
 
 /* Result Screen — 이미지 없이 day_select.webp 느낌을 CSS로 재현 */
+/* 통계 모달과 동일: 헤더/푸터 고정, 본문만 스크롤 */
 #result-modal .result-modal {
     position: relative;
+    display: flex;
+    flex-direction: column;
     /* 타이틀 컨테이너 크기를 기준으로 설정 (다른 modal들과 동일) */
     width: 90%;
     max-width: min(90%, var(--title-container-width, 95vw));
     max-height: min(var(--title-container-height, 95vh), 85vh);
     padding: 22px 22px 18px;
     border-radius: 18px;
+    overflow: hidden;
     background: radial-gradient(
             120% 120% at 50% 0%,
             rgba(255, 215, 130, 0.06) 0%,
@@ -19,7 +23,6 @@
         radial-gradient(140% 120% at 50% 110%, rgba(255, 120, 50, 0.08) 0%, rgba(0, 0, 0, 0) 55%),
         linear-gradient(180deg, rgba(22, 24, 33, 0.98) 0%, rgba(12, 13, 18, 0.98) 100%);
     box-shadow: 0 18px 55px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    overflow: hidden;
     box-sizing: border-box;
 }
 
@@ -45,6 +48,7 @@
 }
 
 .result-modal-title {
+    flex-shrink: 0;
     text-align: center;
     font-weight: 900;
     letter-spacing: 1px;
@@ -54,9 +58,14 @@
     margin: 10px 0 18px;
 }
 
+/* 통계 모달 .modal-body와 동일: 스크롤 영역 */
 .result-modal-body {
     position: relative;
     z-index: 1;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px 16px 14px;
     border-radius: 14px;
     background: rgba(0, 0, 0, 0.28);
@@ -99,7 +108,75 @@
     color: rgba(170, 225, 255, 0.95);
 }
 
+/* 이번 게임 기록 / 틀린 단어 (statistics 스타일 참조) */
+.result-record-container {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.result-wrong-words-container {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#result-modal .result-modal-section {
+    text-align: left;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: bold;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 5px;
+    margin-top: 14px;
+}
+
+#result-modal .result-modal-section:first-child {
+    margin-top: 0;
+}
+
+#result-modal .result-modal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* 틀린 단어 없음 — 통계 모달 참조: 우측 정렬, 14px, primary 색 */
+#result-modal .result-modal-item.result-modal-item-empty {
+    justify-content: flex-end;
+    font-size: 14px;
+    color: var(--primary);
+}
+
+#result-modal .result-wrong-word-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 120, 80, 0.25);
+}
+
+#result-modal .result-wrong-word-item .wrong-word {
+    font-weight: bold;
+    color: rgba(255, 200, 150, 0.95);
+}
+
+#result-modal .result-wrong-word-item .wrong-meaning {
+    font-size: 14px;
+    color: rgba(235, 235, 245, 0.85);
+}
+
 .result-modal-actions {
+    flex-shrink: 0;
     position: relative;
     z-index: 1;
     display: flex;
