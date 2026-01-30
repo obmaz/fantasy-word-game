@@ -11,6 +11,7 @@
     max-height: min(var(--title-container-height, 95vh), 85vh);
     padding: 22px 22px 18px;
     border-radius: 18px;
+    overflow-y: auto;
     background: radial-gradient(
             120% 120% at 50% 0%,
             rgba(255, 215, 130, 0.06) 0%,
@@ -19,7 +20,7 @@
         radial-gradient(140% 120% at 50% 110%, rgba(255, 120, 50, 0.08) 0%, rgba(0, 0, 0, 0) 55%),
         linear-gradient(180deg, rgba(22, 24, 33, 0.98) 0%, rgba(12, 13, 18, 0.98) 100%);
     box-shadow: 0 18px 55px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    overflow: hidden;
+    overflow-x: hidden;
     box-sizing: border-box;
 }
 
@@ -97,6 +98,66 @@
     font-weight: 900;
     font-size: 15px;
     color: rgba(170, 225, 255, 0.95);
+}
+
+/* 이번 게임 기록 / 틀린 단어 (statistics 스타일 참조) */
+.result-record-container {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.result-wrong-words-container {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#result-modal .result-modal-section {
+    text-align: left;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: bold;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 5px;
+    margin-top: 14px;
+}
+
+#result-modal .result-modal-section:first-child {
+    margin-top: 0;
+}
+
+#result-modal .result-modal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#result-modal .result-wrong-word-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 120, 80, 0.25);
+}
+
+#result-modal .result-wrong-word-item .wrong-word {
+    font-weight: bold;
+    color: rgba(255, 200, 150, 0.95);
+}
+
+#result-modal .result-wrong-word-item .wrong-meaning {
+    font-size: 14px;
+    color: rgba(235, 235, 245, 0.85);
 }
 
 .result-modal-actions {
