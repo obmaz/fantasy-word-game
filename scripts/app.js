@@ -3939,11 +3939,7 @@ const practiceMemorization = {
             wordTextEl.textContent = word.word || 'N/A';
         }
 
-<<<<<<< HEAD
-        // 연습 모드: 영어 단어 음성 읽기 (설정에서 단어 읽기 체크 시에만)
-=======
         // 연습 모드: 영어 단어 음성 읽기 (설정에서 단어 읽기 체크 시에만, Google 음성 우선)
->>>>>>> 4e4a784 (ss)
         if (
             db.settings &&
             db.settings.wordRead !== false &&
