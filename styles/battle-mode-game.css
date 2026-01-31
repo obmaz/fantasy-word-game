@@ -74,7 +74,7 @@
     position: absolute;
     right: -1.5cqmin;
     bottom: 6cqmin;
-    font-size: clamp(12px, 5cqmin, 36px);
+    font-size: clamp(16px, 6cqmin, 42px);
     z-index: 6;
     filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
     transform-origin: bottom left;
@@ -87,10 +87,10 @@
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.6);
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 12px;
     border: 1px solid #555;
-    font-size: 12px;
+    font-size: 15px;
     color: #ddd;
     z-index: 15;
     line-height: 1.2;
@@ -106,18 +106,18 @@
     right: 10px;
     top: 10px;
     transform: none;
-    padding: clamp(2px, 1cqmin, 10px) clamp(4px, 1.5cqmin, 14px);
-    line-height: clamp(8px, 2cqmin, 14px);
-    font-size: clamp(8px, 2cqmin, 14px);
+    padding: clamp(4px, 1.2cqmin, 12px) clamp(6px, 2cqmin, 16px);
+    line-height: clamp(12px, 2.8cqmin, 18px);
+    font-size: clamp(12px, 2.8cqmin, 18px);
     min-height: auto;
 }
 #game-info-badge {
     left: 10px;
     top: 10px;
     transform: none;
-    padding: clamp(2px, 1cqmin, 10px) clamp(4px, 1.5cqmin, 14px);
-    line-height: clamp(8px, 2cqmin, 14px);
-    font-size: clamp(8px, 2cqmin, 14px);
+    padding: clamp(4px, 1.2cqmin, 12px) clamp(6px, 2cqmin, 16px);
+    line-height: clamp(12px, 2.8cqmin, 18px);
+    font-size: clamp(12px, 2.8cqmin, 18px);
     min-height: auto;
 }
 .durability-badge {
@@ -127,16 +127,16 @@
 
 .overlay-gold {
     position: absolute;
-    top: calc(clamp(2px, 1cqmin, 10px) * 2 + clamp(8px, 2cqmin, 14px) + 20px);
+    top: calc(clamp(4px, 1.2cqmin, 12px) * 2 + clamp(12px, 2.8cqmin, 18px) + 20px);
     left: 10px;
     background: rgba(0, 0, 0, 0.7);
-    padding: clamp(2px, 1cqmin, 10px) clamp(4px, 1.5cqmin, 14px);
+    padding: clamp(4px, 1.2cqmin, 12px) clamp(6px, 2cqmin, 16px);
     border-radius: 10px;
     border: 1px solid rgba(255, 213, 79, 0.4);
     color: var(--gold);
-    font-size: clamp(8px, 2cqmin, 14px);
+    font-size: clamp(12px, 2.8cqmin, 18px);
     font-weight: bold;
-    line-height: clamp(8px, 2cqmin, 14px);
+    line-height: clamp(12px, 2.8cqmin, 18px);
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     z-index: 15;
@@ -145,7 +145,7 @@
     align-items: center;
     gap: 4px;
     box-sizing: border-box;
-    height: calc(clamp(8px, 2cqmin, 14px) + clamp(2px, 1cqmin, 10px) * 2 + 2px);
+    height: calc(clamp(12px, 2.8cqmin, 18px) + clamp(4px, 1.2cqmin, 12px) * 2 + 2px);
 }
 
 .overlay-timer {
@@ -171,7 +171,7 @@
 
 .gold-display {
     color: var(--gold);
-    font-size: clamp(8px, 2cqmin, 15px);
+    font-size: clamp(12px, 2.8cqmin, 18px);
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -216,14 +216,14 @@
     flex-shrink: 0;
 }
 .q-label {
-    font-size: 11px;
+    font-size: 14px;
     color: #888;
     margin-bottom: 3px;
     letter-spacing: 2px;
     display: none;
 }
 .q-text {
-    font-size: clamp(8px, 4cqmin, 24px);
+    font-size: clamp(14px, 5cqmin, 30px);
     font-weight: bold;
     color: var(--primary);
     word-break: keep-all;
@@ -247,9 +247,9 @@
 .skill-btn {
     border: 2px solid transparent;
     color: #fff;
-    padding: 8px 14px;
+    padding: 10px 16px;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -296,7 +296,7 @@
 }
 
 .skill-count {
-    font-size: 12px;
+    font-size: 15px;
     color: #fff;
     font-weight: bold;
     background: rgba(0, 0, 0, 0.35);
@@ -308,7 +308,7 @@
 /* Skill Bar Placeholder */
 .skill-placeholder {
     color: rgba(255, 255, 255, 0.25);
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.5px;
     padding: 8px 14px;
@@ -430,7 +430,7 @@
     position: absolute;
     top: 40%;
     right: 20%;
-    font-size: clamp(12px, 4cqmin, 24px);
+    font-size: clamp(16px, 5cqmin, 30px);
     font-weight: 900;
     text-shadow: 2px 2px 0 #000;
     opacity: 0;
@@ -451,7 +451,7 @@
     position: absolute;
     right: 40px;
     bottom: 10px;
-    font-size: clamp(14px, 5cqmin, 32px);
+    font-size: clamp(18px, 6cqmin, 38px);
     transform-origin: bottom right;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
 }
@@ -460,12 +460,12 @@
 .hero-equip-slot {
     position: absolute;
     z-index: 6;
-    font-size: clamp(10px, 4cqmin, 28px);
+    font-size: clamp(14px, 5cqmin, 32px);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: clamp(16px, 4cqmin, 44px);
-    height: clamp(16px, 4cqmin, 44px);
+    width: clamp(20px, 5cqmin, 50px);
+    height: clamp(20px, 5cqmin, 50px);
     filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.7));
 }
 

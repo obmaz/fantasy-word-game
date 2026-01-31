@@ -469,6 +469,13 @@
                     </div>
                 </div>
 
+                <!-- 초이스 칩 (배틀 모드 스킬바 위치와 동일) -->
+                <div id="practice-filter-chips" class="practice-filter-chips">
+                    <button type="button" class="practice-chip practice-chip-active" data-filter="all">전체보기</button>
+                    <button type="button" class="practice-chip" data-filter="memorized">외운단어</button>
+                    <button type="button" class="practice-chip" data-filter="not-memorized">못외운단어</button>
+                </div>
+
                 <!-- 중앙: 단어 표시 영역 (배틀 모드의 quiz-area와 유사) -->
                 <div class="practice-memorization-content">
                     <!-- 영어 단어 -->
@@ -490,6 +497,13 @@
                             Loading...
                         </div>
                     </div>
+                </div>
+
+                <!-- 외웠어요 버튼 (네비게이션 바로 위) -->
+                <div class="practice-memorized-row">
+                    <button type="button" class="practice-memorized-btn" id="practice-memorized-btn" title="외웠어요">
+                        ✓ 외웠어요
+                    </button>
                 </div>
 
                 <!-- 하단: 네비게이션 버튼 -->
@@ -712,6 +726,18 @@
                     <h2 class="modal-title">설정</h2>
                 </div>
                 <div class="modal-body">
+                    <div class="setting-option-row">
+                        <label class="setting-checkbox-label">
+                            <input type="checkbox" id="setting-music-play" checked />
+                            <span>음악 재생</span>
+                        </label>
+                    </div>
+                    <div class="setting-option-row">
+                        <label class="setting-checkbox-label">
+                            <input type="checkbox" id="setting-word-read" checked />
+                            <span>단어 읽기 (연습 모드)</span>
+                        </label>
+                    </div>
                     <div style="text-align: center; width: 100%; margin-top: 20px">
                         <button
                             class="btn-main"

@@ -49,6 +49,18 @@ const db = {
     inventoryCapacity: parseInt(localStorage.getItem('v7_inventory_capacity')) || 3,
     skills: JSON.parse(localStorage.getItem('v7_skills')) || { hint: 0, ultimate: 0 },
     lastSelectedDay: localStorage.getItem('v7_last_day') || 'all',
+    /** 연습 모드 외운 단어 (단어장별) { bookName: ['word|meaning', ...] } */
+    practiceMemorized: JSON.parse(localStorage.getItem('v7_practice_memorized')) || {},
+    /** 설정: 음악 재생, 단어 읽기 (연습 모드 TTS) — 기본 true */
+    settings: (() => {
+        const raw = localStorage.getItem('v7_settings');
+        if (!raw) return { musicPlay: true, wordRead: true };
+        const o = JSON.parse(raw);
+        return {
+            musicPlay: o.musicPlay !== false,
+            wordRead: o.wordRead !== false,
+        };
+    })(),
 
     save: () => {
         localStorage.setItem('v7_gold', db.gold);
@@ -61,6 +73,12 @@ const db = {
         localStorage.setItem('v7_inventory_capacity', db.inventoryCapacity);
         localStorage.setItem('v7_skills', JSON.stringify(db.skills));
         localStorage.setItem('v7_last_day', db.lastSelectedDay);
+        if (db.practiceMemorized !== undefined) {
+            localStorage.setItem('v7_practice_memorized', JSON.stringify(db.practiceMemorized));
+        }
+        if (db.settings !== undefined) {
+            localStorage.setItem('v7_settings', JSON.stringify(db.settings));
+        }
         ui.updateGold();
     },
     addGold: (n) => {
@@ -1531,9 +1549,9 @@ const game = {
                 gameScreen.style.zIndex = '250';
             }
 
-            // 배경음악 재생
+            // 배경음악 재생 (설정에서 음악 재생 체크 시에만)
             const bgMusic = document.getElementById('background-music');
-            if (bgMusic) {
+            if (bgMusic && db.settings && db.settings.musicPlay) {
                 bgMusic.play().catch((err) => {
                     console.log('Background music play failed:', err);
                 });
@@ -2458,6 +2476,25 @@ const secret = {
             box.id = `passbox-${i}`;
             passwordBox.appendChild(box);
         }
+
+        // 설정: 음악 재생 / 단어 읽기 체크박스
+        if (!db.settings) db.settings = { musicPlay: true, wordRead: true };
+        const musicCheck = document.getElementById('setting-music-play');
+        const wordCheck = document.getElementById('setting-word-read');
+        if (musicCheck) {
+            musicCheck.checked = db.settings.musicPlay !== false;
+            musicCheck.addEventListener('change', () => {
+                db.settings.musicPlay = musicCheck.checked;
+                db.save();
+            });
+        }
+        if (wordCheck) {
+            wordCheck.checked = db.settings.wordRead !== false;
+            wordCheck.addEventListener('change', () => {
+                db.settings.wordRead = wordCheck.checked;
+                db.save();
+            });
+        }
     },
 
     open: () => {
@@ -2491,6 +2528,14 @@ const secret = {
 
             secretOverlay.style.setProperty('--title-container-width', containerWidth + 'px');
             secretOverlay.style.setProperty('--title-container-height', containerHeight + 'px');
+        }
+
+        // 설정 모달 열 때 체크박스 상태를 db와 동기화
+        if (db.settings) {
+            const musicCheck = document.getElementById('setting-music-play');
+            const wordCheck = document.getElementById('setting-word-read');
+            if (musicCheck) musicCheck.checked = db.settings.musicPlay !== false;
+            if (wordCheck) wordCheck.checked = db.settings.wordRead !== false;
         }
 
         // 히스토리 상태 추가 (백버튼 처리용)
@@ -3667,13 +3712,124 @@ function initSelections() {
 // Practice Memorization Mode - 단어 암기 모드
 const practiceMemorization = {
     words: [],
+    fullPool: [], // 필터 적용 전 전체 단어 (칩 전환 시 재필터용)
     currentIndex: 0,
     currentDay: null,
+    /** 필터: 'all' | 'memorized' | 'not-memorized' */
+    currentFilter: 'all',
+
+    getBookName: () => {
+        return typeof window !== 'undefined' && window.currentGameDataName
+            ? window.currentGameDataName
+            : '기본 단어장';
+    },
+
+    /** 현재 단어장의 외운 단어 키 Set (word|meaning) */
+    getMemorizedSet: () => {
+        const bookName = practiceMemorization.getBookName();
+        if (!db.practiceMemorized || !db.practiceMemorized[bookName]) return new Set();
+        return new Set(db.practiceMemorized[bookName]);
+    },
+
+    /** fullPool을 currentFilter에 맞게 필터링하여 words 설정 */
+    applyFilter: (filter) => {
+        practiceMemorization.currentFilter = filter || practiceMemorization.currentFilter;
+        const set = practiceMemorization.getMemorizedSet();
+        const pool = practiceMemorization.fullPool;
+
+        if (practiceMemorization.currentFilter === 'memorized') {
+            practiceMemorization.words = pool.filter(
+                (w) => set.has(`${w.word}|${w.meaning}`)
+            );
+        } else if (practiceMemorization.currentFilter === 'not-memorized') {
+            practiceMemorization.words = pool.filter(
+                (w) => !set.has(`${w.word}|${w.meaning}`)
+            );
+        } else {
+            practiceMemorization.words = [...pool];
+        }
+
+        // 칩 활성 상태 업데이트
+        const chips = document.querySelectorAll('#practice-filter-chips .practice-chip');
+        chips.forEach((chip) => {
+            const dataFilter = chip.getAttribute('data-filter');
+            chip.classList.toggle(
+                'practice-chip-active',
+                dataFilter === practiceMemorization.currentFilter
+            );
+        });
+
+        practiceMemorization.currentIndex = 0;
+        if (practiceMemorization.words.length > 0) {
+            practiceMemorization.showWord(0);
+        } else {
+            // 표시할 단어 없음 시 UI만 갱신
+            const counterEl = document.getElementById('practice-word-counter');
+            if (counterEl) counterEl.textContent = '0 / 0';
+            const wordTextEl = document.getElementById('practice-word-text');
+            if (wordTextEl) wordTextEl.textContent = '—';
+            const meaningTextEl = document.getElementById('practice-meaning-text');
+            if (meaningTextEl) meaningTextEl.textContent = '—';
+            const explanationTextEl = document.getElementById('practice-explanation-text');
+            if (explanationTextEl) explanationTextEl.textContent = '—';
+            const prevBtn = document.getElementById('practice-prev-btn');
+            const nextBtn = document.getElementById('practice-next-btn');
+            if (prevBtn) prevBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+        }
+    },
+
+    /** 현재 단어를 외웠어요 토글 (저장 후 버튼 상태 갱신) */
+    toggleMemorized: () => {
+        if (
+            practiceMemorization.words.length === 0 ||
+            practiceMemorization.currentIndex < 0 ||
+            practiceMemorization.currentIndex >= practiceMemorization.words.length
+        )
+            return;
+        const word = practiceMemorization.words[practiceMemorization.currentIndex];
+        const key = `${word.word}|${word.meaning}`;
+        const bookName = practiceMemorization.getBookName();
+        if (!db.practiceMemorized) db.practiceMemorized = {};
+        if (!db.practiceMemorized[bookName]) db.practiceMemorized[bookName] = [];
+        const arr = db.practiceMemorized[bookName];
+        const idx = arr.indexOf(key);
+        if (idx === -1) {
+            arr.push(key);
+        } else {
+            arr.splice(idx, 1);
+        }
+        db.save();
+
+        // 필터가 전체가 아니면 목록을 다시 계산하고, 현재 인덱스 유지(또는 조정)
+        if (practiceMemorization.currentFilter !== 'all') {
+            const set = practiceMemorization.getMemorizedSet();
+            const pool = practiceMemorization.fullPool;
+            if (practiceMemorization.currentFilter === 'memorized') {
+                practiceMemorization.words = pool.filter((w) =>
+                    set.has(`${w.word}|${w.meaning}`)
+                );
+            } else {
+                practiceMemorization.words = pool.filter(
+                    (w) => !set.has(`${w.word}|${w.meaning}`)
+                );
+            }
+            if (practiceMemorization.currentIndex >= practiceMemorization.words.length) {
+                practiceMemorization.currentIndex = Math.max(
+                    0,
+                    practiceMemorization.words.length - 1
+                );
+            }
+        }
+
+        practiceMemorization.showWord(practiceMemorization.currentIndex);
+    },
 
     start: (day) => {
         console.log('[practiceMemorization.start] day=', day);
         practiceMemorization.currentDay = day;
         practiceMemorization.currentIndex = 0;
+        practiceMemorization.currentFilter = 'all';
 
         // story-modal 닫기 (practice-mode-game을 사용함)
 
@@ -3694,8 +3850,8 @@ const practiceMemorization = {
             return;
         }
 
-        // 단어 목록 저장
-        practiceMemorization.words = [...pool];
+        practiceMemorization.fullPool = [...pool];
+        practiceMemorization.applyFilter('all');
 
         // 암기 화면 표시
         setTimeout(() => {
@@ -3768,8 +3924,13 @@ const practiceMemorization = {
             wordTextEl.textContent = word.word || 'N/A';
         }
 
-        // 연습 모드: 영어 단어 음성 읽기 (SpeechSynthesisUtterance)
-        if (word.word && typeof window.speechSynthesis !== 'undefined') {
+        // 연습 모드: 영어 단어 음성 읽기 (설정에서 단어 읽기 체크 시에만)
+        if (
+            db.settings &&
+            db.settings.wordRead !== false &&
+            word.word &&
+            typeof window.speechSynthesis !== 'undefined'
+        ) {
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(word.word);
             utterance.lang = 'en-US';
@@ -3787,6 +3948,16 @@ const practiceMemorization = {
         const explanationTextEl = document.getElementById('practice-explanation-text');
         if (explanationTextEl) {
             explanationTextEl.textContent = word.englishExplanation || 'N/A';
+        }
+
+        // 외웠어요 버튼 상태 (현재 단어가 외운 목록에 있으면 활성 표시)
+        const memorizedBtn = document.getElementById('practice-memorized-btn');
+        if (memorizedBtn) {
+            const set = practiceMemorization.getMemorizedSet();
+            const key = `${word.word}|${word.meaning}`;
+            const isMemorized = set.has(key);
+            memorizedBtn.classList.toggle('practice-memorized-active', isMemorized);
+            memorizedBtn.textContent = isMemorized ? '✓ 외웠어요' : '외웠어요';
         }
 
         // 버튼 상태 업데이트
@@ -4681,6 +4852,25 @@ window.onload = () => {
     if (practiceExitBtn) {
         practiceExitBtn.addEventListener('click', () => {
             practiceMemorization.exit();
+        });
+    }
+
+    // 연습 모드: 초이스 칩 (전체보기 / 외운단어 / 못외운단어)
+    const practiceFilterChips = document.getElementById('practice-filter-chips');
+    if (practiceFilterChips) {
+        practiceFilterChips.addEventListener('click', (e) => {
+            const chip = e.target.closest('.practice-chip');
+            if (!chip || practiceMemorization.fullPool.length === 0) return;
+            const filter = chip.getAttribute('data-filter');
+            if (filter) practiceMemorization.applyFilter(filter);
+        });
+    }
+
+    // 연습 모드: 외웠어요 버튼
+    const practiceMemorizedBtn = document.getElementById('practice-memorized-btn');
+    if (practiceMemorizedBtn) {
+        practiceMemorizedBtn.addEventListener('click', () => {
+            practiceMemorization.toggleMemorized();
         });
     }
 

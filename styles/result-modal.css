@@ -52,7 +52,7 @@
     text-align: center;
     font-weight: 900;
     letter-spacing: 1px;
-    font-size: 20px;
+    font-size: 24px;
     color: rgba(255, 214, 120, 0.98);
     text-shadow: 0 2px 0 rgba(60, 40, 10, 0.9), 0 10px 24px rgba(0, 0, 0, 0.6);
     margin: 10px 0 18px;
@@ -79,7 +79,7 @@
     align-items: center;
     gap: 14px;
     padding: 10px 4px;
-    font-size: 15px;
+    font-size: 17px;
     color: rgba(235, 235, 245, 0.95);
 }
 
@@ -104,7 +104,7 @@
     padding-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.18);
     font-weight: 900;
-    font-size: 15px;
+    font-size: 17px;
     color: rgba(170, 225, 255, 0.95);
 }
 
@@ -124,7 +124,7 @@
 #result-modal .result-modal-section {
     text-align: left;
     margin-bottom: 8px;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--primary);
     font-weight: bold;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -147,10 +147,10 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* 틀린 단어 없음 — 통계 모달 참조: 우측 정렬, 14px, primary 색 */
+/* 틀린 단어 없음 — 통계 모달 참조: 우측 정렬, primary 색 */
 #result-modal .result-modal-item.result-modal-item-empty {
     justify-content: flex-end;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--primary);
 }
 
@@ -171,7 +171,7 @@
 }
 
 #result-modal .result-wrong-word-item .wrong-meaning {
-    font-size: 14px;
+    font-size: 16px;
     color: rgba(235, 235, 245, 0.85);
 }
 
@@ -191,7 +191,7 @@
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
     font-weight: 900;
-    font-size: clamp(14px, 3.5vw, 16px);
+    font-size: clamp(16px, 4vw, 20px);
     letter-spacing: 0.5px;
     cursor: pointer;
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
