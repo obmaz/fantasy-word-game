@@ -172,7 +172,6 @@
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     box-sizing: border-box;
->>>>>>> 4e4a784 (ss)
 }
 
 .practice-memorized-btn:hover {
@@ -259,17 +258,10 @@
     font-style: normal;
 }
 
-<<<<<<< HEAD
-/* 네비게이션 버튼 — 레이아웃 상하에 맞춰 cqmin으로 스케일 (글자/레이아웃 깨짐 방지) */
-.practice-memorization-navigation {
-    display: grid;
-    grid-template-columns: 1fr 0.8fr 1fr;
-=======
 /* 네비게이션 버튼 — 레이아웃 너비 꽉 차게, 3개 동일 크기 */
 .practice-memorization-navigation {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
->>>>>>> 4e4a784 (ss)
     gap: clamp(6px, 1.5cqmin, 10px);
     padding: clamp(6px, 1.5cqmin, 12px) 0 0;
     margin-top: auto;
@@ -282,13 +274,9 @@
 }
 
 .practice-nav-btn {
-<<<<<<< HEAD
-    padding: clamp(10px, 2.5cqmin, 16px) clamp(14px, 3cqmin, 26px);
-=======
     width: 100%;
     min-width: 0;
     padding: clamp(10px, 2.5cqmin, 16px) clamp(8px, 2cqmin, 14px);
->>>>>>> 4e4a784 (ss)
     font-size: clamp(14px, 3cqmin, 20px);
     font-weight: bold;
     color: #ffffff;
