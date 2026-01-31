@@ -469,13 +469,6 @@
                     </div>
                 </div>
 
-                <!-- 초이스 칩 (배틀 모드 스킬바 위치와 동일) -->
-                <div id="practice-filter-chips" class="practice-filter-chips">
-                    <button type="button" class="practice-chip practice-chip-active" data-filter="all">전체보기</button>
-                    <button type="button" class="practice-chip" data-filter="memorized">외운단어</button>
-                    <button type="button" class="practice-chip" data-filter="not-memorized">못외운단어</button>
-                </div>
-
                 <!-- 중앙: 단어 표시 영역 (배틀 모드의 quiz-area와 유사) -->
                 <div class="practice-memorization-content">
                     <!-- 영어 단어 -->
@@ -492,15 +485,17 @@
 
                     <!-- 영문 문장 (English Explanation) -->
                     <div class="practice-explanation-section">
-                        <div class="practice-label">영문 설명</div>
                         <div class="practice-explanation-text" id="practice-explanation-text">
                             Loading...
                         </div>
                     </div>
                 </div>
 
-                <!-- 외웠어요 버튼 (네비게이션 바로 위) -->
-                <div class="practice-memorized-row">
+                <!-- 초이스 칩 + 외웠어요 (한 줄) -->
+                <div id="practice-filter-chips" class="practice-memorized-row">
+                    <button type="button" class="practice-chip practice-chip-active" data-filter="all">전체보기</button>
+                    <button type="button" class="practice-chip" data-filter="memorized">외운단어</button>
+                    <button type="button" class="practice-chip" data-filter="not-memorized">못외운단어</button>
                     <button type="button" class="practice-memorized-btn" id="practice-memorized-btn" title="외웠어요">
                         ✓ 외웠어요
                     </button>

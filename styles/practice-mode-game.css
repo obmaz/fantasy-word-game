@@ -16,7 +16,7 @@
     max-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #000;
+    background: var(--game-bg);
     z-index: 200;
 }
 
@@ -57,106 +57,104 @@
     pointer-events: none;
 }
 
-/* 레이아웃 비율: 컨테이너(cqmin) 기준 — 줄어들면 글자도 같이 축소, 커질 때는 캡 */
+/* 레이아웃 비율: 컨테이너(cqmin) 기준 — 밝은 톤 */
 .practice-day-info {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(255, 255, 255, 0.95);
     padding: clamp(4px, 1.2cqmin, 12px) clamp(6px, 2cqmin, 16px);
     border-radius: 12px;
-    border: 1px solid #555;
-    font-size: clamp(12px, 2.8cqmin, 18px);
-    color: #ddd;
-    line-height: clamp(12px, 2.8cqmin, 18px);
+    border: 1px solid var(--game-card-border);
+    font-size: clamp(14px, 3cqmin, 20px);
+    color: var(--game-text);
+    line-height: clamp(14px, 3cqmin, 20px);
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .practice-word-counter {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(255, 255, 255, 0.95);
     padding: clamp(4px, 1.2cqmin, 12px) clamp(6px, 2cqmin, 16px);
     border-radius: 12px;
-    border: 1px solid #555;
-    font-size: clamp(12px, 2.8cqmin, 18px);
-    color: #ddd;
-    line-height: clamp(12px, 2.8cqmin, 18px);
+    border: 1px solid var(--game-card-border);
+    font-size: clamp(14px, 3cqmin, 20px);
+    color: var(--game-text);
+    line-height: clamp(14px, 3cqmin, 20px);
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* 초이스 칩: 좌우 폭 꽉 차게, 3개 동일 너비 */
-.practice-filter-chips {
-    display: flex;
-    gap: clamp(4px, 1cqmin, 8px);
-    justify-content: stretch;
-    align-items: stretch;
-    padding: clamp(6px, 1.5cqmin, 10px);
-    background: rgba(0, 0, 0, 0.4);
-    border-bottom: 1px solid #444;
-    flex-shrink: 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-
+/* 초이스 칩 — 외웠어요 행 안에서 한 줄 */
 .practice-chip {
     flex: 1;
     min-width: 0;
-    padding: clamp(8px, 2cqmin, 12px) clamp(6px, 1.5cqmin, 12px);
-    font-size: clamp(13px, 2.8cqmin, 18px);
+    padding: clamp(6px, 1.5cqmin, 10px) clamp(4px, 1cqmin, 8px);
+    font-size: clamp(12px, 2.5cqmin, 16px);
     font-weight: bold;
-    color: #ddd;
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid #555;
+    color: var(--game-text);
+    background: var(--game-card);
+    border: 2px solid var(--game-card-border);
     border-radius: clamp(6px, 1.5cqmin, 10px);
     cursor: pointer;
     transition: all 0.2s ease;
     box-sizing: border-box;
     text-align: center;
+    white-space: nowrap;
 }
 
 .practice-chip:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: #f0f0f0;
     border-color: var(--primary, #ffd700);
-    color: #fff;
+    color: var(--game-text);
 }
 
+/* 선택된 칩: 배경·테두리로 강조, 글자는 진하게 해서 잘 보이게 */
 .practice-chip-active {
-    background: rgba(255, 215, 0, 0.25);
-    border-color: var(--primary, #ffd700);
-    color: var(--primary, #ffd700);
+    background: rgba(255, 193, 7, 0.35);
+    border-color: #c9a227;
+    color: #1a1a1a;
+    font-weight: 800;
 }
 
-/* 외웠어요 버튼 행 (네비게이션 바로 위, 우측 정렬, 다음 버튼과 동일 크기) */
+/* 초이스 칩 + 외웠어요 한 줄 행 */
 .practice-memorized-row {
     flex-shrink: 0;
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: nowrap;
     align-items: center;
-    padding: clamp(4px, 1cqmin, 8px) 0;
+    gap: clamp(4px, 1cqmin, 8px);
+    margin-top: clamp(12px, 3cqmin, 24px);
+    padding: clamp(4px, 1cqmin, 8px) clamp(6px, 1.5cqmin, 10px);
     background: transparent;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.practice-memorized-row .practice-memorized-btn {
+    flex-shrink: 0;
 }
 
 .practice-memorized-btn {
-    padding: clamp(10px, 2.5cqmin, 16px) clamp(14px, 3cqmin, 26px);
-    font-size: clamp(14px, 3cqmin, 20px);
+    padding: clamp(8px, 2cqmin, 12px) clamp(10px, 2.5cqmin, 18px);
+    font-size: clamp(14px, 2.8cqmin, 18px);
     font-weight: bold;
     line-height: 1.2;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.4);
-    border: 2px solid #555;
+    color: var(--game-text);
+    background: var(--game-card);
+    border: 2px solid var(--game-card-border);
     border-radius: clamp(8px, 2cqmin, 12px);
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
 }
 
 .practice-memorized-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: #f0f0f0;
     border-color: var(--primary, #ffd700);
 }
 
@@ -166,11 +164,11 @@
     color: #c8e6c9;
 }
 
-/* 콘텐츠 영역 (단어·뜻·예문 거의 붙도록) */
+/* 콘텐츠 영역 — 초이스칩과 동일한 좌우 간격 */
 .practice-memorization-content {
     flex: 1;
-    background: var(--card-bg, rgba(20, 20, 30, 0.95));
-    padding: 12px 15px;
+    background: var(--game-bg);
+    padding: 12px clamp(6px, 1.5cqmin, 10px);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -181,49 +179,50 @@
 .practice-word-section,
 .practice-meaning-section,
 .practice-explanation-section {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--game-card);
     border-radius: 4px;
-    padding: 8px 12px;
-    border: 1px solid #444;
+    padding: 4px 12px;
+    border: 1px solid var(--game-card-border);
     flex-shrink: 0;
-    margin-bottom: 2px;
+    margin-bottom: 0;
     width: 100%;
     box-sizing: border-box;
 }
 
 .practice-word-section {
-    border-radius: 6px 6px 2px 2px;
+    border-radius: 6px 6px 1px 1px;
+    margin-bottom: 0;
 }
 .practice-meaning-section {
-    border-radius: 2px;
-    margin-bottom: 2px;
+    border-radius: 1px;
+    margin-bottom: 0;
 }
 .practice-explanation-section {
-    border-radius: 2px 2px 6px 6px;
+    border-radius: 1px 1px 6px 6px;
     margin-bottom: 0;
 }
 
 .practice-label {
-    font-size: 14px;
-    color: #888;
+    font-size: 16px;
+    color: var(--game-text-muted);
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
-/* 단어·설명 크기 */
+/* 단어·설명 크기 — 밝은 톤 */
 .practice-word-text {
-    font-size: clamp(16px, 6cqmin, 34px);
+    font-size: clamp(18px, 6.5cqmin, 38px);
     font-weight: bold;
-    color: var(--primary, #ffd700);
+    color: var(--game-text);
     text-align: center;
     word-break: keep-all;
     line-height: 1.4;
 }
 
 .practice-meaning-text {
-    font-size: clamp(14px, 5cqmin, 30px);
-    color: var(--primary, #ffd700);
+    font-size: clamp(16px, 5.5cqmin, 34px);
+    color: var(--game-text);
     text-align: center;
     word-break: keep-all;
     line-height: 1.5;
@@ -231,20 +230,20 @@
 }
 
 .practice-explanation-text {
-    font-size: clamp(13px, 3.8cqmin, 24px);
-    color: #ddd;
+    font-size: clamp(15px, 4cqmin, 28px);
+    color: var(--game-text-muted);
     text-align: left;
     word-break: break-word;
     line-height: 1.6;
     font-style: normal;
 }
 
-/* 네비게이션 버튼 — 레이아웃 너비 꽉 차게, 3개 동일 크기 */
+/* 네비게이션 버튼 — 초이스칩과 동일한 좌우 간격, 3개 동일 크기 */
 .practice-memorization-navigation {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: clamp(6px, 1.5cqmin, 10px);
-    padding: clamp(6px, 1.5cqmin, 12px) 0 0;
+    padding: clamp(6px, 1.5cqmin, 12px) clamp(6px, 1.5cqmin, 10px);
     margin-top: auto;
     width: 100%;
     box-sizing: border-box;
@@ -257,23 +256,23 @@
 .practice-nav-btn {
     width: 100%;
     min-width: 0;
-    padding: clamp(10px, 2.5cqmin, 16px) clamp(8px, 2cqmin, 14px);
-    font-size: clamp(14px, 3cqmin, 20px);
+    padding: clamp(10px, 2.5cqmin, 16px) clamp(6px, 1.5cqmin, 10px);
+    font-size: clamp(16px, 3.2cqmin, 22px);
     font-weight: bold;
-    color: #ffffff;
-    background: rgba(0, 0, 0, 0.4);
-    border: 2px solid #555;
+    color: var(--game-text);
+    background: var(--game-card);
+    border: 2px solid var(--game-card-border);
     border-radius: clamp(8px, 2cqmin, 12px);
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
     min-height: 0;
     line-height: 1.2;
 }
 
 .practice-nav-btn:hover {
-    background: rgba(0, 0, 0, 0.6);
+    background: #f0f0f0;
     border-color: var(--primary, #ffd700);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
@@ -291,14 +290,15 @@
 }
 
 .practice-nav-exit {
-    background: rgba(211, 47, 47, 0.3);
-    border-color: #d32f2f;
+    background: rgba(255, 82, 82, 0.15);
+    border-color: #e57373;
+    color: #c62828;
 }
 
 .practice-nav-exit:hover {
-    background: rgba(211, 47, 47, 0.5);
+    background: rgba(255, 82, 82, 0.25);
     border-color: #f44336;
-    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
 
 /* 모바일 반응형 */
@@ -308,8 +308,9 @@
         padding: 15px 20px;
     }
 
+    /* 초이스칩과 동일한 좌우 간격 유지 */
     .practice-memorization-content {
-        padding: 12px;
+        padding: 12px clamp(6px, 1.5cqmin, 10px);
         gap: 12px;
     }
 
@@ -320,7 +321,7 @@
     }
 
     .practice-memorization-navigation {
-        padding: 12px;
+        padding: 12px clamp(6px, 1.5cqmin, 10px);
         gap: 6px;
     }
 }
