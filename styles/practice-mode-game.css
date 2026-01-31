@@ -130,36 +130,17 @@
     color: var(--primary, #ffd700);
 }
 
-<<<<<<< HEAD
-/* 외웠어요 버튼 행 (네비게이션 바로 위) */
-.practice-memorized-row {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-=======
 /* 외웠어요 버튼 행 (네비게이션 바로 위, 우측 정렬, 다음 버튼과 동일 크기) */
 .practice-memorized-row {
     flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
->>>>>>> 4e4a784 (ss)
     align-items: center;
     padding: clamp(4px, 1cqmin, 8px) 0;
     background: transparent;
 }
 
 .practice-memorized-btn {
-<<<<<<< HEAD
-    padding: clamp(8px, 2cqmin, 12px) clamp(16px, 3cqmin, 24px);
-    font-size: clamp(14px, 2.8cqmin, 18px);
-    font-weight: bold;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid #555;
-    border-radius: clamp(6px, 1.5cqmin, 10px);
-    cursor: pointer;
-    transition: all 0.2s ease;
-=======
     padding: clamp(10px, 2.5cqmin, 16px) clamp(14px, 3cqmin, 26px);
     font-size: clamp(14px, 3cqmin, 20px);
     font-weight: bold;
