@@ -130,17 +130,26 @@
     color: var(--primary, #ffd700);
 }
 
+<<<<<<< HEAD
 /* 외웠어요 버튼 행 (네비게이션 바로 위) */
 .practice-memorized-row {
     flex-shrink: 0;
     display: flex;
     justify-content: center;
+=======
+/* 외웠어요 버튼 행 (네비게이션 바로 위, 우측 정렬, 다음 버튼과 동일 크기) */
+.practice-memorized-row {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+>>>>>>> 4e4a784 (ss)
     align-items: center;
     padding: clamp(4px, 1cqmin, 8px) 0;
     background: transparent;
 }
 
 .practice-memorized-btn {
+<<<<<<< HEAD
     padding: clamp(8px, 2cqmin, 12px) clamp(16px, 3cqmin, 24px);
     font-size: clamp(14px, 2.8cqmin, 18px);
     font-weight: bold;
@@ -150,6 +159,20 @@
     border-radius: clamp(6px, 1.5cqmin, 10px);
     cursor: pointer;
     transition: all 0.2s ease;
+=======
+    padding: clamp(10px, 2.5cqmin, 16px) clamp(14px, 3cqmin, 26px);
+    font-size: clamp(14px, 3cqmin, 20px);
+    font-weight: bold;
+    line-height: 1.2;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #555;
+    border-radius: clamp(8px, 2cqmin, 12px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+>>>>>>> 4e4a784 (ss)
 }
 
 .practice-memorized-btn:hover {
@@ -236,13 +259,22 @@
     font-style: normal;
 }
 
+<<<<<<< HEAD
 /* 네비게이션 버튼 — 레이아웃 상하에 맞춰 cqmin으로 스케일 (글자/레이아웃 깨짐 방지) */
 .practice-memorization-navigation {
     display: grid;
     grid-template-columns: 1fr 0.8fr 1fr;
+=======
+/* 네비게이션 버튼 — 레이아웃 너비 꽉 차게, 3개 동일 크기 */
+.practice-memorization-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+>>>>>>> 4e4a784 (ss)
     gap: clamp(6px, 1.5cqmin, 10px);
     padding: clamp(6px, 1.5cqmin, 12px) 0 0;
     margin-top: auto;
+    width: 100%;
+    box-sizing: border-box;
     background: transparent;
     border-top: none;
     flex-shrink: 0;
@@ -250,7 +282,13 @@
 }
 
 .practice-nav-btn {
+<<<<<<< HEAD
     padding: clamp(10px, 2.5cqmin, 16px) clamp(14px, 3cqmin, 26px);
+=======
+    width: 100%;
+    min-width: 0;
+    padding: clamp(10px, 2.5cqmin, 16px) clamp(8px, 2cqmin, 14px);
+>>>>>>> 4e4a784 (ss)
     font-size: clamp(14px, 3cqmin, 20px);
     font-weight: bold;
     color: #ffffff;
