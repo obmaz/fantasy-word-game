@@ -237,28 +237,29 @@
     flex: 1;
 }
 
-/* Skills */
+/* Skills — 상하 폭 대폭 축소 */
 .skill-bar {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 4px;
     justify-content: flex-end;
 }
 
-/* 기본 스킬 버튼 — 밝은 톤 */
+/* 기본 스킬 버튼 — 밝은 톤, 상하 패딩 축소 */
 .skill-btn {
     border: 2px solid var(--game-card-border);
     color: var(--game-text);
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 15px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     background: var(--game-card);
+    line-height: 1.2;
 }
 
 /* 클릭 가능한 액티브 스킬 (힌트, 필살기) - 파란/보라 계열 */
@@ -299,24 +300,25 @@
 }
 
 .skill-count {
-    font-size: 13px;
+    font-size: 11px;
     color: var(--game-text);
     font-weight: bold;
     background: rgba(0, 0, 0, 0.06);
-    padding: 3px 7px;
-    border-radius: 6px;
+    padding: 2px 5px;
+    border-radius: 4px;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 /* Skill Bar Placeholder */
 .skill-placeholder {
     color: var(--game-text-muted);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    padding: 8px 14px;
+    padding: 4px 10px;
     text-transform: uppercase;
     font-style: italic;
+    line-height: 1.2;
 }
 
 /* Effects */

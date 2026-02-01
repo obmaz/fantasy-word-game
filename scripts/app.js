@@ -51,7 +51,7 @@ const db = {
     lastSelectedDay: localStorage.getItem('v7_last_day') || 'all',
     /** 연습 모드 외운 단어 (단어장별) { bookName: ['word|meaning', ...] } */
     practiceMemorized: JSON.parse(localStorage.getItem('v7_practice_memorized')) || {},
-    /** 설정: 음악 재생, 단어 읽기 (연습 모드 TTS) — 기본 true */
+    /** 설정: 음악 재생, 단어 바로 읽기 (연습 모드 단어 바뀔 때 TTS) — 기본 true */
     settings: (() => {
         const raw = localStorage.getItem('v7_settings');
         if (!raw) return { musicPlay: true, wordRead: true };
@@ -2477,7 +2477,7 @@ const secret = {
             passwordBox.appendChild(box);
         }
 
-        // 설정: 음악 재생 / 단어 읽기 체크박스
+        // 설정: 음악 재생 / 단어 바로 읽기 체크박스
         if (!db.settings) db.settings = { musicPlay: true, wordRead: true };
         const musicCheck = document.getElementById('setting-music-play');
         const wordCheck = document.getElementById('setting-word-read');
@@ -3673,7 +3673,11 @@ function initSelections() {
             dayCatalog && dayCatalog[d] && dayCatalog[d].label ? dayCatalog[d].label : `Day ${d}`;
         html += `<option value="${d}">${label}</option>`;
     });
-    html += `<option value="all">전체 (배틀 모드)</option>`;
+    const allLabel =
+        typeof dayCatalog !== 'undefined' && dayCatalog.all && dayCatalog.all.label
+            ? dayCatalog.all.label
+            : '전체';
+    html += `<option value="all">${allLabel}</option>`;
 
     // Initialize both selects
     if (daySelect) {
@@ -3732,6 +3736,8 @@ const practiceMemorization = {
     currentDay: null,
     /** 필터: 'all' | 'memorized' | 'not-memorized' */
     currentFilter: 'all',
+    /** 설명 영역: false = 영문(englishExplanation), true = 한글(koreanExplanation) */
+    showKoreanExplanation: false,
 
     getBookName: () => {
         return typeof window !== 'undefined' && window.currentGameDataName
@@ -3939,7 +3945,7 @@ const practiceMemorization = {
             wordTextEl.textContent = word.word || 'N/A';
         }
 
-        // 연습 모드: 영어 단어 음성 읽기 (설정에서 단어 읽기 체크 시에만, Google 음성 우선)
+        // 연습 모드: 옵션 켜져 있으면 단어가 바뀔 때마다 바로 재생, 꺼져 있으면 재생 안 함
         if (
             db.settings &&
             db.settings.wordRead !== false &&
@@ -3961,7 +3967,8 @@ const practiceMemorization = {
             meaningTextEl.textContent = word.meaning || 'N/A';
         }
 
-        // 영문 설명 표시
+        // 설명 표시 (기본: 영문, 탭 시 한/영 전환)
+        practiceMemorization.showKoreanExplanation = false;
         const explanationTextEl = document.getElementById('practice-explanation-text');
         if (explanationTextEl) {
             explanationTextEl.textContent = word.englishExplanation || 'N/A';
@@ -3974,7 +3981,7 @@ const practiceMemorization = {
             const key = `${word.word}|${word.meaning}`;
             const isMemorized = set.has(key);
             memorizedBtn.classList.toggle('practice-memorized-active', isMemorized);
-            memorizedBtn.textContent = isMemorized ? '✓ 외웠어요' : '외웠어요';
+            memorizedBtn.textContent = '외웠어요';
         }
 
         // 버튼 상태 업데이트
@@ -3987,6 +3994,43 @@ const practiceMemorization = {
         if (nextBtn) {
             nextBtn.disabled = index === practiceMemorization.words.length - 1;
         }
+    },
+
+    /** 설명 영역 탭: 영문(englishExplanation) ↔ 한글(koreanExplanation) 전환 */
+    toggleExplanation: () => {
+        if (
+            practiceMemorization.words.length === 0 ||
+            practiceMemorization.currentIndex < 0 ||
+            practiceMemorization.currentIndex >= practiceMemorization.words.length
+        )
+            return;
+        const word = practiceMemorization.words[practiceMemorization.currentIndex];
+        practiceMemorization.showKoreanExplanation = !practiceMemorization.showKoreanExplanation;
+        const explanationTextEl = document.getElementById('practice-explanation-text');
+        if (explanationTextEl) {
+            explanationTextEl.textContent = practiceMemorization.showKoreanExplanation
+                ? (word.koreanExplanation || 'N/A')
+                : (word.englishExplanation || 'N/A');
+        }
+    },
+
+    /** 현재 단어 음성 재생 (아이콘 클릭 시) */
+    playCurrentWord: () => {
+        if (
+            practiceMemorization.words.length === 0 ||
+            practiceMemorization.currentIndex < 0 ||
+            practiceMemorization.currentIndex >= practiceMemorization.words.length
+        )
+            return;
+        const word = practiceMemorization.words[practiceMemorization.currentIndex];
+        if (!word.word || typeof window.speechSynthesis === 'undefined') return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word.word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        const preferredVoice = getPreferredTTSVoice();
+        if (preferredVoice) utterance.voice = preferredVoice;
+        window.speechSynthesis.speak(utterance);
     },
 
     prevWord: () => {
@@ -4888,6 +4932,21 @@ window.onload = () => {
     if (practiceMemorizedBtn) {
         practiceMemorizedBtn.addEventListener('click', () => {
             practiceMemorization.toggleMemorized();
+        });
+    }
+
+    const practiceSpeakBtn = document.getElementById('practice-speak-btn');
+    if (practiceSpeakBtn) {
+        practiceSpeakBtn.addEventListener('click', () => {
+            practiceMemorization.playCurrentWord();
+        });
+    }
+
+    // 연습 모드: 설명 영역 클릭/터치 시 한/영 전환
+    const practiceExplanationSection = document.getElementById('practice-explanation-section');
+    if (practiceExplanationSection) {
+        practiceExplanationSection.addEventListener('click', () => {
+            practiceMemorization.toggleExplanation();
         });
     }
 

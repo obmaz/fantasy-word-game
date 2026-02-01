@@ -88,6 +88,21 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* 나가기: 아레나(이미지) 우하단 고정 */
+.practice-arena-exit-wrap {
+    position: absolute;
+    bottom: clamp(10px, 2.5cqmin, 20px);
+    right: clamp(10px, 2.5cqmin, 24px);
+    z-index: 20;
+    pointer-events: auto;
+}
+
+.practice-arena-exit-wrap .practice-nav-btn {
+    min-width: auto;
+    padding: clamp(8px, 2cqmin, 12px) clamp(14px, 3cqmin, 22px);
+    font-size: clamp(14px, 2.8cqmin, 18px);
+}
+
 /* 초이스 칩 — 외웠어요 행 안에서 한 줄 */
 .practice-chip {
     flex: 1;
@@ -134,8 +149,16 @@
     box-sizing: border-box;
 }
 
-.practice-memorized-row .practice-memorized-btn {
+.practice-memorized-row .practice-memorized-btn,
+.practice-memorized-row .practice-speak-btn {
     flex-shrink: 0;
+}
+
+/* 초이스 칩 행 안의 음성 버튼 — 칩과 비슷한 높이 */
+.practice-memorized-row .practice-speak-btn {
+    width: clamp(40px, 9cqmin, 56px);
+    height: clamp(40px, 9cqmin, 56px);
+    font-size: clamp(20px, 4.5cqmin, 28px);
 }
 
 .practice-memorized-btn {
@@ -159,47 +182,68 @@
 }
 
 .practice-memorized-btn.practice-memorized-active {
-    background: rgba(76, 175, 80, 0.4);
-    border-color: #4caf50;
-    color: #c8e6c9;
+    background: #2e7d32;
+    border-color: #1b5e20;
+    color: #fff;
 }
 
-/* 콘텐츠 영역 — 초이스칩과 동일한 좌우 간격 */
+/* 체크된 상태에서 호버 시 다음 버튼과 동일 스타일 (글자·배경 대비 확보) */
+.practice-memorized-btn.practice-memorized-active:hover {
+    background: #f0f0f0;
+    border-color: var(--primary, #ffd700);
+    color: var(--game-text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+}
+
+/* 콘텐츠 영역 — 배틀 모드 quiz-area처럼 섹션 간 간격 */
 .practice-memorization-content {
     flex: 1;
     background: var(--game-bg);
-    padding: 12px clamp(6px, 1.5cqmin, 10px);
+    padding: 15px clamp(6px, 1.5cqmin, 15px);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    gap: 0;
+    gap: 12px;
 }
 
+/* 단어·뜻·영문 해석 — 각각 독립 박스 (배틀 모드 question-box와 동일 스타일) */
 .practice-word-section,
 .practice-meaning-section,
 .practice-explanation-section {
     background: var(--game-card);
-    border-radius: 4px;
-    padding: 4px 12px;
+    border-radius: 12px;
+    padding: 10px 12px;
     border: 1px solid var(--game-card-border);
     flex-shrink: 0;
-    margin-bottom: 0;
     width: 100%;
     box-sizing: border-box;
 }
 
-.practice-word-section {
-    border-radius: 6px 6px 1px 1px;
-    margin-bottom: 0;
-}
+/* 단어·뜻 — 배틀 모드 question-box와 동일 레이아웃 */
+.practice-word-section,
 .practice-meaning-section {
-    border-radius: 1px;
-    margin-bottom: 0;
+    text-align: center;
 }
+
 .practice-explanation-section {
-    border-radius: 1px 1px 6px 6px;
-    margin-bottom: 0;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.practice-explanation-section:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+.practice-explanation-hint {
+    margin-top: 6px;
+    font-size: clamp(11px, 2.2cqmin, 14px);
+    color: var(--game-text-muted);
+    opacity: 0.85;
+}
+.practice-explanation-text {
+    display: block;
 }
 
 .practice-label {
@@ -210,14 +254,54 @@
     letter-spacing: 2px;
 }
 
-/* 단어·설명 크기 — 밝은 톤 */
+/* 단어 + 음성 재생 아이콘 한 줄 (아이콘 우측 배치) */
+.practice-word-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(8px, 2cqmin, 14px);
+    flex-wrap: nowrap;
+}
+
+.practice-speak-btn {
+    flex-shrink: 0;
+    width: clamp(36px, 8cqmin, 52px);
+    height: clamp(36px, 8cqmin, 52px);
+    padding: 0;
+    border: 2px solid var(--game-card-border);
+    border-radius: 50%;
+    background: var(--game-card);
+    color: var(--game-text);
+    font-size: clamp(18px, 4cqmin, 26px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+}
+
+.practice-speak-btn:hover {
+    background: #f0f0f0;
+    border-color: var(--primary, #ffd700);
+    transform: scale(1.05);
+}
+
+.practice-speak-btn:active {
+    transform: scale(0.98);
+}
+
+/* 단어·설명 크기 — 밝은 톤 (아이콘 우측이므로 단어는 남은 공간에서 중앙) */
 .practice-word-text {
+    flex: 1;
     font-size: clamp(18px, 6.5cqmin, 38px);
     font-weight: bold;
     color: var(--game-text);
     text-align: center;
     word-break: keep-all;
     line-height: 1.4;
+    min-width: 0;
 }
 
 .practice-meaning-text {
@@ -290,15 +374,16 @@
 }
 
 .practice-nav-exit {
-    background: rgba(255, 82, 82, 0.15);
-    border-color: #e57373;
-    color: #c62828;
+    background: rgba(229, 115, 115, 0.9);
+    border-color: rgba(239, 83, 80, 0.85);
+    color: #fff;
 }
 
 .practice-nav-exit:hover {
-    background: rgba(255, 82, 82, 0.25);
-    border-color: #f44336;
-    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+    background: rgba(239, 83, 80, 0.92);
+    border-color: rgba(229, 115, 115, 0.9);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.35);
 }
 
 /* 모바일 반응형 */

@@ -153,8 +153,11 @@
     flex: 1;
     justify-content: center;
 }
+#boss-title {
+    font-size: 14px;
+}
 .boss-hint {
-    font-size: 28px;
+    font-size: 24px;
     letter-spacing: 4px;
     text-align: center;
     font-family: monospace;

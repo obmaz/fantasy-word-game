@@ -467,13 +467,19 @@
                         <div class="practice-day-info" id="practice-memorization-day-info"></div>
                         <div class="practice-word-counter" id="practice-word-counter">1 / 1</div>
                     </div>
+                    <!-- 나가기: 아레나 우하단 -->
+                    <div class="practice-arena-exit-wrap">
+                        <button type="button" class="practice-nav-btn practice-nav-exit" id="practice-exit-btn" title="나가기">나가기</button>
+                    </div>
                 </div>
 
                 <!-- 중앙: 단어 표시 영역 (배틀 모드의 quiz-area와 유사) -->
                 <div class="practice-memorization-content">
-                    <!-- 영어 단어 -->
+                    <!-- 영어 단어 + 음성 재생 -->
                     <div class="practice-word-section">
-                        <div class="practice-word-text" id="practice-word-text">Loading...</div>
+                        <div class="practice-word-row">
+                            <div class="practice-word-text" id="practice-word-text">Loading...</div>
+                        </div>
                     </div>
 
                     <!-- 한글 뜻 -->
@@ -483,35 +489,30 @@
                         </div>
                     </div>
 
-                    <!-- 영문 문장 (English Explanation) -->
-                    <div class="practice-explanation-section">
+                    <!-- 영문/한글 설명 (탭하여 전환) -->
+                    <div class="practice-explanation-section" id="practice-explanation-section" title="탭하면 한글/영문 설명으로 전환됩니다">
                         <div class="practice-explanation-text" id="practice-explanation-text">
                             Loading...
                         </div>
+                        <div class="practice-explanation-hint" aria-hidden="true">E ↔ 한</div>
                     </div>
                 </div>
 
-                <!-- 초이스 칩 + 외웠어요 (한 줄) -->
+                <!-- 초이스 칩 + 음성 아이콘 (한 줄) -->
                 <div id="practice-filter-chips" class="practice-memorized-row">
                     <button type="button" class="practice-chip practice-chip-active" data-filter="all">전체보기</button>
                     <button type="button" class="practice-chip" data-filter="memorized">외운단어</button>
                     <button type="button" class="practice-chip" data-filter="not-memorized">못외운단어</button>
-                    <button type="button" class="practice-memorized-btn" id="practice-memorized-btn" title="외웠어요">
-                        ✓ 외웠어요
-                    </button>
+                    <button type="button" class="practice-speak-btn" id="practice-speak-btn" title="음성 재생" aria-label="음성 재생">🗣️</button>
                 </div>
 
-                <!-- 하단: 네비게이션 버튼 -->
+                <!-- 하단: 네비게이션 버튼 (중앙: 외웠어요) -->
                 <div class="practice-memorization-navigation">
                     <button class="practice-nav-btn" id="practice-prev-btn" title="이전 단어">
                         ◀ 이전
                     </button>
-                    <button
-                        class="practice-nav-btn practice-nav-exit"
-                        id="practice-exit-btn"
-                        title="나가기"
-                    >
-                        나가기
+                    <button type="button" class="practice-nav-btn practice-memorized-btn" id="practice-memorized-btn" title="외웠어요">
+                        외웠어요
                     </button>
                     <button class="practice-nav-btn" id="practice-next-btn" title="다음 단어">
                         다음 ▶
@@ -730,7 +731,7 @@
                     <div class="setting-option-row">
                         <label class="setting-checkbox-label">
                             <input type="checkbox" id="setting-word-read" checked />
-                            <span>단어 읽기 (연습 모드)</span>
+                            <span>단어 바로 읽기</span>
                         </label>
                     </div>
                     <div style="text-align: center; width: 100%; margin-top: 20px">
