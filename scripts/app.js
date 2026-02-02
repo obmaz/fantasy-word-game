@@ -2317,7 +2317,7 @@ const game = {
                 wrongList.forEach((w) => {
                     const word = (w.word || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     const meaning = (w.meaning || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    wrongHtml += `<div class="result-wrong-word-item"><span class="wrong-word">${word}</span><span class="wrong-meaning">${meaning}</span></div>`;
+                    wrongHtml += `<div class="result-wrong-word-item"><span class="wrong-word">${word}</span> <span class="wrong-meaning">${meaning}</span></div>`;
                 });
                 resWrongEl.innerHTML = wrongHtml;
             }
@@ -4855,7 +4855,8 @@ window.onload = () => {
     if (practiceStartBtn) {
         practiceStartBtn.addEventListener('click', () => {
             const selectedDay = practiceDaySelect ? practiceDaySelect.value : 'all';
-            const selectedCount = practiceCountSelect ? parseInt(practiceCountSelect.value) : 10;
+            const countValue = practiceCountSelect ? practiceCountSelect.value : '10';
+            const selectedCount = countValue === 'all' ? 'all' : parseInt(countValue) || 10;
 
             // Save selections
             db.lastSelectedDay = selectedDay;
@@ -4963,7 +4964,8 @@ window.onload = () => {
     if (battleStartBtn) {
         battleStartBtn.addEventListener('click', () => {
             const selectedDay = battleDaySelect ? battleDaySelect.value : 'all';
-            const selectedCount = battleCountSelect ? parseInt(battleCountSelect.value) : 10;
+            const countValue = battleCountSelect ? battleCountSelect.value : '10';
+            const selectedCount = countValue === 'all' ? 'all' : parseInt(countValue) || 10;
 
             // Get selected question type for battle mode
             let selectedQuestionType = 'mixed'; // default

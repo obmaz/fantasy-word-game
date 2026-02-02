@@ -134,13 +134,13 @@
 #result-modal .result-wrong-word-item .wrong-word {
     font-weight: bold;
     color: rgba(255, 200, 150, 0.95);
-    font-size: 17px; /* Adjusted to match '이번 획득' text */
-    margin-bottom: 4px;
+    font-size: 17px;
 }
 
 #result-modal .result-wrong-word-item .wrong-meaning {
-    font-size: 17px; /* Adjusted to match '이번 획득' text */
+    font-size: 17px;
     color: rgba(235, 235, 245, 0.85);
+    margin-left: 8px;
 }
 
 .result-modal-actions {
