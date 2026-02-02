@@ -57,6 +57,59 @@
     pointer-events: none;
 }
 
+.music-info-overlay {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 12px;
+    z-index: 20;
+    pointer-events: auto; /* Enable clicks */
+    cursor: pointer;
+    border: 1px solid rgba(255, 213, 79, 0.3);
+    backdrop-filter: blur(4px);
+    max-width: 150px;
+    overflow: hidden;
+}
+
+.music-select-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 5;
+    -webkit-appearance: menulist-button;
+}
+
+.music-info-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.music-icon {
+    flex-shrink: 0;
+}
+
+.music-text-container {
+    overflow: hidden;
+    flex: 1;
+}
+
+.music-filename {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 10s linear infinite;
+}
+
 /* 레이아웃 비율: 컨테이너(cqmin) 기준 — 밝은 톤 */
 .practice-day-info {
     background: rgba(255, 255, 255, 0.95);

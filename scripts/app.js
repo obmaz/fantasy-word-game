@@ -827,48 +827,20 @@ const ui = {
         if (overlayGold) overlayGold.innerText = db.gold;
     },
     updateGameInfo: (mode, day) => {
-        const modeText =
-            mode === 'boss' ? '보스 모드' : mode === 'battle' ? '배틀 모드' : '연습모드';
         let dayText;
         if (mode === 'boss') {
             dayText = '무한';
         } else {
-            // battle 모드와 practice 모드 모두 day에 따라 표시 (제목 포함)
             if (day === 'all') {
-                // dayCatalog에서 'all'의 label 사용
-                const allLabel =
-                    typeof dayCatalog !== 'undefined' &&
-                    dayCatalog['all'] &&
-                    dayCatalog['all'].label
-                        ? dayCatalog['all'].label
-                        : '전체';
-                dayText = allLabel;
+                dayText = '전체';
             } else if (day && !isNaN(Number(day))) {
-                // dayCatalog에서 해당 day의 label 사용 (제목 포함)
-                const dayLabel =
-                    typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].label
-                        ? dayCatalog[day].label
-                        : `Day ${day}`;
-                dayText = dayLabel;
+                dayText = `Day ${day}`;
             } else {
-                // game.currentDay를 확인
                 const currentDay = game.currentDay;
                 if (currentDay === 'all') {
-                    const allLabel =
-                        typeof dayCatalog !== 'undefined' &&
-                        dayCatalog['all'] &&
-                        dayCatalog['all'].label
-                            ? dayCatalog['all'].label
-                            : '전체';
-                    dayText = allLabel;
+                    dayText = '전체';
                 } else if (currentDay && !isNaN(Number(currentDay))) {
-                    const dayLabel =
-                        typeof dayCatalog !== 'undefined' &&
-                        dayCatalog[currentDay] &&
-                        dayCatalog[currentDay].label
-                            ? dayCatalog[currentDay].label
-                            : `Day ${currentDay}`;
-                    dayText = dayLabel;
+                    dayText = `Day ${currentDay}`;
                 } else {
                     dayText = '전체';
                 }
@@ -876,7 +848,7 @@ const ui = {
         }
         const gameInfoEl = document.getElementById('game-info-badge');
         if (gameInfoEl) {
-            gameInfoEl.innerText = `${modeText} - ${dayText}`;
+            gameInfoEl.innerText = dayText;
         }
     },
     updateVisuals: () => {
@@ -1148,22 +1120,16 @@ const story = {
         );
 
         // Prefer the Day label from the canonical catalog; fall back to legacy views
-        const dayLabel =
-            story.day &&
-            typeof dayCatalog !== 'undefined' &&
-            dayCatalog[story.day] &&
-            dayCatalog[story.day].label
-                ? dayCatalog[story.day].label
-                : story.day === 'all'
-                ? dayCatalog && dayCatalog['all'] && dayCatalog['all'].label
-                : story.day === 'boss'
-                ? '보스 모드'
-                : `Day ${story.day}`;
-        const titleText = data && data.title ? String(data.title).trim() : '';
-        const displayTitle =
-            titleText && dayLabel.indexOf(titleText) === -1
-                ? `${dayLabel} — ${titleText}`
-                : dayLabel;
+        let displayTitle;
+        if (story.day === 'all') {
+            displayTitle = '전체';
+        } else if (story.day === 'boss') {
+            displayTitle = '보스 모드';
+        } else if (!isNaN(Number(story.day))) {
+            displayTitle = `Day ${story.day}`;
+        } else {
+            displayTitle = story.day;
+        }
 
         // title-screen을 닫지 않고 z-index와 display를 조정하여 backdrop-filter가 작동하도록 함
         const startScreen = document.getElementById('title-screen');
@@ -1408,6 +1374,9 @@ const game = {
             bgMusic.currentTime = 0;
         }
 
+        const musicInfoOverlay = document.getElementById('music-info-overlay');
+        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
+
         closeScreenOverlay('battle-mode-game', true);
 
         const startScreen = document.getElementById('title-screen');
@@ -1589,12 +1558,7 @@ const game = {
             }
 
             // 배경음악 재생 (설정에서 음악 재생 체크 시에만)
-            const bgMusic = document.getElementById('background-music');
-            if (bgMusic && db.settings && db.settings.musicPlay) {
-                bgMusic.play().catch((err) => {
-                    console.log('Background music play failed:', err);
-                });
-            }
+            playRandomMusic('battle');
 
             // 히스토리 상태 추가 (백버튼 처리용)
             history.pushState({ screen: 'game' }, '', window.location.href);
@@ -3934,6 +3898,9 @@ const practiceMemorization = {
 
                 // 첫 번째 단어 표시
                 practiceMemorization.showWord(0);
+
+                // 배경음악 재생
+                playRandomMusic('practice');
             }
         }, 400);
     },
@@ -3946,28 +3913,14 @@ const practiceMemorization = {
         practiceMemorization.currentIndex = index;
         const word = practiceMemorization.words[index];
 
-        // Day 정보 표시 (연습모드 - Day 제목 형식)
+        // Day 정보 표시
         const dayInfoEl = document.getElementById('practice-memorization-day-info');
         if (dayInfoEl) {
             let dayLabel;
             if (practiceMemorization.currentDay === 'all') {
-                // dayCatalog에서 'all'의 label 사용
-                const allLabel =
-                    typeof dayCatalog !== 'undefined' &&
-                    dayCatalog['all'] &&
-                    dayCatalog['all'].label
-                        ? dayCatalog['all'].label
-                        : '전체';
-                dayLabel = `연습모드 - ${allLabel}`;
+                dayLabel = '전체';
             } else {
-                // dayCatalog에서 해당 day의 label 사용 (제목 포함)
-                const dayCatalogLabel =
-                    typeof dayCatalog !== 'undefined' &&
-                    dayCatalog[practiceMemorization.currentDay] &&
-                    dayCatalog[practiceMemorization.currentDay].label
-                        ? dayCatalog[practiceMemorization.currentDay].label
-                        : `Day ${practiceMemorization.currentDay}`;
-                dayLabel = `연습모드 - ${dayCatalogLabel}`;
+                dayLabel = `Day ${practiceMemorization.currentDay}`;
             }
             dayInfoEl.textContent = dayLabel;
         }
@@ -4114,8 +4067,16 @@ const practiceMemorization = {
             // practice-mode-game 닫기
             closeScreenOverlay('practice-mode-game', true);
 
-            // title-screen 표시
+            // 음악 정지 및 오버레이 숨기기
             setTimeout(() => {
+                const bgMusic = document.getElementById('background-music');
+                if (bgMusic && !bgMusic.paused) {
+                    bgMusic.pause();
+                    bgMusic.currentTime = 0;
+                }
+                const musicInfoOverlay = document.getElementById('practice-music-info-overlay');
+                if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
+
                 const startScreen = document.getElementById('title-screen');
                 if (startScreen) {
                     startScreen.style.display = 'flex';
@@ -4727,12 +4688,80 @@ function syncGameScreenSizeToTitle() {
     }
 }
 
+/**
+ * 8가지 배경음악 중 하나를 무작위로 선택하여 재생하고 화면에 표시합니다.
+ * @param {string} mode 'battle' | 'practice'
+ */
+function playRandomMusic(mode) {
+    const bgMusic = document.getElementById('background-music');
+    const overlayId = mode === 'practice' ? 'practice-music-info-overlay' : 'music-info-overlay';
+    const filenameId = mode === 'practice' ? 'practice-music-filename' : 'music-filename';
+    const selectId = mode === 'practice' ? 'practice-music-select' : 'music-select';
+    const musicInfoOverlay = document.getElementById(overlayId);
+    const musicFilenameEl = document.getElementById(filenameId);
+    const musicSelectEl = document.getElementById(selectId);
+
+    if (bgMusic && db.settings && db.settings.musicPlay) {
+        const musicNum = Math.floor(Math.random() * 11) + 1;
+        const filename = `background_music_${musicNum}.mp3`;
+        bgMusic.src = `data/${filename}`;
+        bgMusic.load();
+
+        if (musicSelectEl) {
+            musicSelectEl.value = String(musicNum);
+        }
+
+        if (musicInfoOverlay && musicFilenameEl) {
+            musicFilenameEl.innerText = filename;
+            musicInfoOverlay.style.display = 'block';
+        }
+
+        bgMusic.play().catch((err) => {
+            console.log('Background music play failed:', err);
+        });
+    } else if (musicInfoOverlay) {
+        musicInfoOverlay.style.display = 'none';
+    }
+}
+
+// 음악 직접 선택 이벤트 리스너
+function setupMusicSelectListeners() {
+    const selects = ['music-select', 'practice-music-select'];
+    selects.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', (e) => {
+                const musicNum = e.target.value;
+                const bgMusic = document.getElementById('background-music');
+                const filename = `background_music_${musicNum}.mp3`;
+                
+                if (bgMusic) {
+                    bgMusic.src = `data/${filename}`;
+                    bgMusic.load();
+                    
+                    // 텍스트 업데이트
+                    const filenameId = id === 'practice-music-select' ? 'practice-music-filename' : 'music-filename';
+                    const musicFilenameEl = document.getElementById(filenameId);
+                    if (musicFilenameEl) {
+                        musicFilenameEl.innerText = filename;
+                    }
+                    
+                    if (db.settings && db.settings.musicPlay) {
+                        bgMusic.play().catch((err) => console.log('Music play failed:', err));
+                    }
+                }
+            });
+        }
+    });
+}
+
 window.onload = () => {
     // Validate dayCatalog coverage after all data is loaded
     if (typeof dayCatalog !== 'undefined' && typeof dayCatalog.validateCoverage === 'function') {
         dayCatalog.validateCoverage();
     }
     secret.init();
+    setupMusicSelectListeners();
     inventory.render();
     initSelections();
 

@@ -38,6 +38,29 @@
                     </div>
                 </div>
 
+                <!-- 현재 재생 중인 음악 정보 -->
+                <div class="music-info-overlay" id="music-info-overlay" style="display: none">
+                    <div class="music-info-content">
+                        <span class="music-icon">🎵</span>
+                        <div class="music-text-container">
+                            <span id="music-filename" class="music-filename"></span>
+                        </div>
+                    </div>
+                    <select id="music-select" class="music-select-hidden" title="음악 선택">
+                        <option value="1">background_music_1.mp3</option>
+                        <option value="2">background_music_2.mp3</option>
+                        <option value="3">background_music_3.mp3</option>
+                        <option value="4">background_music_4.mp3</option>
+                        <option value="5">background_music_5.mp3</option>
+                        <option value="6">background_music_6.mp3</option>
+                        <option value="7">background_music_7.mp3</option>
+                        <option value="8">background_music_8.mp3</option>
+                        <option value="9">background_music_9.mp3</option>
+                        <option value="10">background_music_10.mp3</option>
+                        <option value="11">background_music_11.mp3</option>
+                    </select>
+                </div>
+
                 <div class="char-wrapper" id="hero-wrapper">
                     <div id="hero-head" class="hero-equip-slot"></div>
                     <div id="hero-hand-1" class="hero-equip-slot"></div>
@@ -469,6 +492,28 @@
             <div class="practice-memorization-container">
                 <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
                 <div class="practice-memorization-arena">
+                    <!-- 현재 재생 중인 음악 정보 -->
+                    <div class="music-info-overlay" id="practice-music-info-overlay" style="display: none">
+                        <div class="music-info-content">
+                            <span class="music-icon">🎵</span>
+                            <div class="music-text-container">
+                                <span id="practice-music-filename" class="music-filename"></span>
+                            </div>
+                        </div>
+                        <select id="practice-music-select" class="music-select-hidden" title="음악 선택">
+                            <option value="1">background_music_1.mp3</option>
+                            <option value="2">background_music_2.mp3</option>
+                            <option value="3">background_music_3.mp3</option>
+                            <option value="4">background_music_4.mp3</option>
+                            <option value="5">background_music_5.mp3</option>
+                            <option value="6">background_music_6.mp3</option>
+                            <option value="7">background_music_7.mp3</option>
+                            <option value="8">background_music_8.mp3</option>
+                            <option value="9">background_music_9.mp3</option>
+                            <option value="10">background_music_10.mp3</option>
+                            <option value="11">background_music_11.mp3</option>
+                        </select>
+                    </div>
                     <!-- 상단: Day 정보 및 단어 번호 -->
                     <div class="practice-memorization-header">
                         <div class="practice-day-info" id="practice-memorization-day-info"></div>
@@ -928,7 +973,7 @@
 
         <!-- Background Music -->
         <audio id="background-music" loop>
-            <source src="data/background_music.mp3" type="audio/mpeg" />
+            <source src="data/background_music_1.mp3" type="audio/mpeg" />
         </audio>
 
         <script>
@@ -1177,6 +1222,8 @@
                             bgMusic.pause();
                             bgMusic.currentTime = 0; // 처음부터 다시 재생되도록 리셋
                         }
+                        const musicInfoOverlay = document.getElementById('music-info-overlay');
+                        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
                     }
 
                     // 게임 화면만 닫기
@@ -1221,6 +1268,15 @@
                     if (practiceMemorizationScreen) {
                         practiceMemorizationScreen.style.display = 'none';
                         practiceMemorizationScreen.classList.remove('closing');
+                        
+                        // 음악 정지 및 오버레이 숨기기
+                        const bgMusic = document.getElementById('background-music');
+                        if (bgMusic && !bgMusic.paused) {
+                            bgMusic.pause();
+                            bgMusic.currentTime = 0;
+                        }
+                        const musicInfoOverlay = document.getElementById('practice-music-info-overlay');
+                        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
                     }
 
                     // 보스 스토리 모달에서 백버튼을 누르면 타이틀 화면으로 돌아가기
