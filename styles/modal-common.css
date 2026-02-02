@@ -569,3 +569,10 @@
     padding-top: 15px;
     border-top: 1px solid #333;
 }
+
+/* Style for locked music options in select dropdowns */
+option.locked-music {
+    color: #888 !important;
+    background-color: #333 !important;
+    font-style: italic;
+}

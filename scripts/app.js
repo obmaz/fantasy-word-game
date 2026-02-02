@@ -117,6 +117,41 @@ const db = {
         db.save();
         ui.updateVisuals();
     },
+
+    /**
+     * Checks if new music tracks should be unlocked based on subjective correct answers.
+     * @param {string} bookName The name of the current word book.
+     */
+    checkAndUnlockMusic: (bookName) => {
+        if (!db.settings || !db.settings.musicUnlockThresholds || !db.settings.unlockedMusicTracks) {
+            return; // Guard against uninitialized settings
+        }
+
+        const currentPerfectDaysCount = db.stats.books[bookName]?.subjective?.perfectDays?.length || 0;
+        const thresholds = db.settings.musicUnlockThresholds;
+        let newlyUnlocked = false;
+
+        for (const musicNumStr in thresholds) {
+            const musicNum = parseInt(musicNumStr, 10);
+            const threshold = thresholds[musicNumStr];
+
+            if (
+                currentPerfectDaysCount >= threshold &&
+                !db.settings.unlockedMusicTracks.includes(musicNum)
+            ) {
+                db.settings.unlockedMusicTracks.push(musicNum);
+                newlyUnlocked = true;
+                // Optional: Notify user
+                // ui.showNotification(`New music track ${musicNum} unlocked!`);
+                console.log(`Music track ${musicNum} unlocked!`);
+            }
+        }
+
+        if (newlyUnlocked) {
+            db.settings.unlockedMusicTracks.sort((a, b) => a - b);
+            db.save(); // Save settings with new unlocked tracks
+        }
+    },
     addStats: (isCorrect, questionType = 'objective') => {
         // 현재 단어장 정보 가져오기
         const bookName = typeof window !== 'undefined' && window.currentGameDataName 
@@ -149,6 +184,9 @@ const db = {
         bookStats[questionType].solved++;
         if (isCorrect) {
             bookStats[questionType].correct++;
+            if (questionType === 'subjective') {
+                db.checkAndUnlockMusic(bookName);
+            }
         }
 
         // 기존 전역 통계도 유지 (호환성)
@@ -176,6 +214,17 @@ const db = {
             ui.updateSkills(); // 황금장갑이 skill bar에 표시되므로
         }
     },
+};
+
+let currentMusicIndices = {
+    practice: 1,
+    battle: 1,
+    max: 10 // Assuming 10 background music tracks: background_music_1.mp3 to background_music_10.mp3
+};
+
+let lastValidMusicSelection = {
+    'music-select': '1', // Default to track 1
+    'practice-music-select': '1' // Default to track 1
 };
 const inventory = {
     open: () => {
@@ -964,6 +1013,35 @@ const ui = {
             container.appendChild(placeholder);
         }
     },
+
+    /**
+     * Dynamically renders options for music select dropdowns, enabling/disabling based on unlocked tracks.
+     * @param {string} selectId The ID of the select element (e.g., 'music-select', 'practice-music-select').
+     * @param {number} currentMusicNum The currently selected music number.
+     */
+    renderMusicSelectOptions: (selectId, currentMusicNum) => {
+        const selectEl = document.getElementById(selectId);
+        if (!selectEl) return;
+
+        selectEl.innerHTML = ''; // Clear existing options
+
+        for (let i = 1; i <= currentMusicIndices.max; i++) {
+            const option = document.createElement('option');
+            option.value = String(i);
+            option.innerText = `background_music_${i}.mp3`;
+
+            // Check if music track is unlocked
+            const isUnlocked = db.settings.unlockedMusicTracks.includes(i);
+            if (!isUnlocked) {
+                option.disabled = true;
+                option.classList.add('locked-music'); // For graying out via CSS
+            }
+            if (i === currentMusicNum) {
+                option.selected = true;
+            }
+            selectEl.appendChild(option);
+        }
+    },
 };
 
 // expose for console/debugging and to avoid other scripts clobbering
@@ -1558,7 +1636,7 @@ const game = {
             }
 
             // 배경음악 재생 (설정에서 음악 재생 체크 시에만)
-            playRandomMusic('battle');
+            playMusic('battle');
 
             // 히스토리 상태 추가 (백버튼 처리용)
             history.pushState({ screen: 'game' }, '', window.location.href);
@@ -1618,7 +1696,7 @@ const game = {
             game.renderBoss(game.currentQ, true); // boss mode
         } else if (game.mode === 'battle') {
             // Battle Mode: Question type depends on user selection
-            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${
+            document.getElementById('wave-badge').innerText = `${game.idx + 1}/${
                 game.list.length
             }`;
             game.currentQ = game.list[game.idx];
@@ -1637,7 +1715,7 @@ const game = {
                 game.renderNormal(game.currentQ);
             }
         } else {
-            document.getElementById('wave-badge').innerText = `Enemy: ${game.idx + 1}/${
+            document.getElementById('wave-badge').innerText = `${game.idx + 1}/${
                 game.list.length
             }`;
             game.currentQ = game.list[game.idx];
@@ -2481,7 +2559,38 @@ const secret = {
         }
 
         // 설정: 음악 재생 / 단어 바로 읽기 체크박스
-        if (!db.settings) db.settings = { musicPlay: true, wordRead: true };
+        if (!db.settings) {
+            db.settings = { 
+                musicPlay: true, 
+                wordRead: true,
+                unlockedMusicTracks: [1, 2, 3], // Initially unlock tracks 1, 2, 3
+                musicUnlockThresholds: { // Thresholds based on number of unique perfect subjective days
+                    4: 1,  // Unlock song 4 after 1 perfect subjective day
+                    5: 2,
+                    6: 3,
+                    7: 4,
+                    8: 5,
+                    9: 6,
+                    10: 7
+                }
+            };
+        } else {
+            // Ensure new properties are added if they don't exist in existing settings
+            if (!db.settings.unlockedMusicTracks || !Array.isArray(db.settings.unlockedMusicTracks)) {
+                db.settings.unlockedMusicTracks = [1, 2, 3];
+            }
+            if (!db.settings.musicUnlockThresholds) {
+                db.settings.musicUnlockThresholds = {
+                    4: 10,
+                    5: 20,
+                    6: 30,
+                    7: 40,
+                    8: 50,
+                    9: 60,
+                    10: 70
+                };
+            }
+        }
         const musicCheck = document.getElementById('setting-music-play');
         const wordCheck = document.getElementById('setting-word-read');
         if (musicCheck) {
@@ -3900,7 +4009,11 @@ const practiceMemorization = {
                 practiceMemorization.showWord(0);
 
                 // 배경음악 재생
+<<<<<<< HEAD
                 playRandomMusic('practice');
+=======
+                playMusic('practice');
+>>>>>>> 3e02316 (ㄴㄴ)
             }
         }, 400);
     },
@@ -4689,10 +4802,19 @@ function syncGameScreenSizeToTitle() {
 }
 
 /**
+<<<<<<< HEAD
  * 8가지 배경음악 중 하나를 무작위로 선택하여 재생하고 화면에 표시합니다.
  * @param {string} mode 'battle' | 'practice'
  */
 function playRandomMusic(mode) {
+=======
+ * Plays a specific background music track and sets up the ended event listener.
+ * This is an internal helper function.
+ * @param {number} musicNum The number of the music track (1-indexed).
+ * @param {string} mode 'battle' | 'practice'
+ */
+function _playMusic(musicNum, mode) {
+>>>>>>> 3e02316 (ㄴㄴ)
     const bgMusic = document.getElementById('background-music');
     const overlayId = mode === 'practice' ? 'practice-music-info-overlay' : 'music-info-overlay';
     const filenameId = mode === 'practice' ? 'practice-music-filename' : 'music-filename';
@@ -4701,6 +4823,7 @@ function playRandomMusic(mode) {
     const musicFilenameEl = document.getElementById(filenameId);
     const musicSelectEl = document.getElementById(selectId);
 
+<<<<<<< HEAD
     if (bgMusic && db.settings && db.settings.musicPlay) {
         const musicNum = Math.floor(Math.random() * 11) + 1;
         const filename = `background_music_${musicNum}.mp3`;
@@ -4722,6 +4845,98 @@ function playRandomMusic(mode) {
     } else if (musicInfoOverlay) {
         musicInfoOverlay.style.display = 'none';
     }
+=======
+    if (!bgMusic || !db.settings || !db.settings.musicPlay) {
+        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
+        return;
+    }
+
+    const filename = `background_music_${musicNum}.mp3`;
+    bgMusic.src = `data/${filename}`;
+    bgMusic.load();
+
+    if (musicSelectEl) {
+        musicSelectEl.value = String(musicNum);
+    }
+
+    // Render music select options every time a song is played or changed
+    ui.renderMusicSelectOptions(selectId, musicNum);
+
+    if (musicInfoOverlay && musicFilenameEl) {
+        musicFilenameEl.innerText = filename;
+        musicInfoOverlay.style.display = 'block';
+    }
+
+    bgMusic.play().catch((err) => {
+        console.log('Background music play failed:', err);
+        // If autoplay fails, hide the overlay as no music is playing
+        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
+    });
+
+    // Set up onended event listener to play the next music in sequence
+    bgMusic.onended = () => {
+        playNextMusic(mode);
+    };
+}
+
+/**
+ * Initiates background music playback for a given mode, starting from the current index.
+ * If the music is already playing, it will continue.
+ * @param {string} mode 'battle' | 'practice'
+ */
+function playMusic(mode) {
+    if (!currentMusicIndices[mode]) {
+        currentMusicIndices[mode] = 1; // Default to first track if not set
+    }
+
+    // Ensure the current track is unlocked. If not, find the first unlocked track.
+    // This handles cases where the last played track might have become locked (shouldn't happen with current logic)
+    // or if `currentMusicIndices[mode]` was manually set to a locked track.
+    if (!db.settings.unlockedMusicTracks.includes(currentMusicIndices[mode])) {
+        // Find the first unlocked track, fallback to 1 if no tracks are unlocked (which means basic tracks 1-3 are missing)
+        currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1; 
+    }
+
+    _playMusic(currentMusicIndices[mode], mode);
+}
+
+/**
+ * Plays the next background music track in sequence for a given mode.
+ * @param {string} mode 'battle' | 'practice'
+ */
+function playNextMusic(mode) {
+    let nextMusicNumCandidate = currentMusicIndices[mode];
+    let originalMusicNum = currentMusicIndices[mode];
+    let foundNextUnlocked = false;
+
+    // Iterate through all possible music numbers to find the next unlocked one
+    for (let i = 0; i < currentMusicIndices.max; i++) { // Max iterations to prevent infinite loop
+        nextMusicNumCandidate++;
+        if (nextMusicNumCandidate > currentMusicIndices.max) {
+            nextMusicNumCandidate = 1; // Loop back to the beginning
+        }
+
+        if (db.settings.unlockedMusicTracks.includes(nextMusicNumCandidate)) {
+            foundNextUnlocked = true;
+            break;
+        }
+
+        if (nextMusicNumCandidate === originalMusicNum) {
+            // We've cycled through all tracks and returned to the starting point.
+            // This means only the current track is unlocked (or no others are).
+            // Stop to avoid infinite loop.
+            break;
+        }
+    }
+
+    // If no other unlocked track was found, stick with the current one (it must be unlocked)
+    if (foundNextUnlocked) {
+        currentMusicIndices[mode] = nextMusicNumCandidate;
+    }
+    // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
+
+    _playMusic(currentMusicIndices[mode], mode);
+>>>>>>> 3e02316 (ㄴㄴ)
 }
 
 // 음악 직접 선택 이벤트 리스너
@@ -4730,9 +4945,30 @@ function setupMusicSelectListeners() {
     selects.forEach((id) => {
         const el = document.getElementById(id);
         if (el) {
+<<<<<<< HEAD
             el.addEventListener('change', (e) => {
                 const musicNum = e.target.value;
                 const bgMusic = document.getElementById('background-music');
+=======
+            // Initialize lastValidMusicSelection for this dropdown based on current selected value
+            lastValidMusicSelection[id] = el.value;
+
+            el.addEventListener('change', (e) => {
+                const musicNum = parseInt(e.target.value, 10);
+                const bgMusic = document.getElementById('background-music');
+
+                // Check if the selected music is unlocked
+                if (!db.settings.unlockedMusicTracks.includes(musicNum)) {
+                    alert('서로다른 Day의 주관식을 다 맞으면 하나씩 풀립니다.');
+                    // Revert to the last valid selection
+                    e.target.value = lastValidMusicSelection[id];
+                    return; // Prevent further action
+                }
+
+                // If unlocked, update last valid selection and proceed
+                lastValidMusicSelection[id] = String(musicNum);
+
+>>>>>>> 3e02316 (ㄴㄴ)
                 const filename = `background_music_${musicNum}.mp3`;
                 
                 if (bgMusic) {
@@ -4745,7 +4981,11 @@ function setupMusicSelectListeners() {
                     if (musicFilenameEl) {
                         musicFilenameEl.innerText = filename;
                     }
+<<<<<<< HEAD
                     
+=======
+                    // 플레이 (자동 재생 방지 예외 처리)
+>>>>>>> 3e02316 (ㄴㄴ)
                     if (db.settings && db.settings.musicPlay) {
                         bgMusic.play().catch((err) => console.log('Music play failed:', err));
                     }
