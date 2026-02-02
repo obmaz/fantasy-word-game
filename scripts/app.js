@@ -4902,7 +4902,7 @@ function playNextMusic(mode) {
     // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
 
     _playMusic(currentMusicIndices[mode], mode);
-}
+
     bgMusic.play().catch((err) => {
         console.log('Background music play failed:', err);
         // If autoplay fails, hide the overlay as no music is playing
@@ -4914,7 +4914,6 @@ function playNextMusic(mode) {
         playNextMusic(mode);
     };
 }
-
 /**
  * Initiates background music playback for a given mode, starting from the current index.
  * If the music is already playing, it will continue.
@@ -4972,7 +4971,6 @@ function playNextMusic(mode) {
     // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
 
     _playMusic(currentMusicIndices[mode], mode);
->>>>>>> 3e02316 (ㄴㄴ)
 }
 
 // 음악 직접 선택 이벤트 리스너
