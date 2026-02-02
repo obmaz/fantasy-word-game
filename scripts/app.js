@@ -4009,11 +4009,7 @@ const practiceMemorization = {
                 practiceMemorization.showWord(0);
 
                 // 배경음악 재생
-<<<<<<< HEAD
-                playRandomMusic('practice');
-=======
                 playMusic('practice');
->>>>>>> 3e02316 (ㄴㄴ)
             }
         }, 400);
     },
@@ -4802,19 +4798,12 @@ function syncGameScreenSizeToTitle() {
 }
 
 /**
-<<<<<<< HEAD
- * 8가지 배경음악 중 하나를 무작위로 선택하여 재생하고 화면에 표시합니다.
- * @param {string} mode 'battle' | 'practice'
- */
-function playRandomMusic(mode) {
-=======
  * Plays a specific background music track and sets up the ended event listener.
  * This is an internal helper function.
  * @param {number} musicNum The number of the music track (1-indexed).
  * @param {string} mode 'battle' | 'practice'
  */
 function _playMusic(musicNum, mode) {
->>>>>>> 3e02316 (ㄴㄴ)
     const bgMusic = document.getElementById('background-music');
     const overlayId = mode === 'practice' ? 'practice-music-info-overlay' : 'music-info-overlay';
     const filenameId = mode === 'practice' ? 'practice-music-filename' : 'music-filename';
@@ -4823,29 +4812,6 @@ function _playMusic(musicNum, mode) {
     const musicFilenameEl = document.getElementById(filenameId);
     const musicSelectEl = document.getElementById(selectId);
 
-<<<<<<< HEAD
-    if (bgMusic && db.settings && db.settings.musicPlay) {
-        const musicNum = Math.floor(Math.random() * 11) + 1;
-        const filename = `background_music_${musicNum}.mp3`;
-        bgMusic.src = `data/${filename}`;
-        bgMusic.load();
-
-        if (musicSelectEl) {
-            musicSelectEl.value = String(musicNum);
-        }
-
-        if (musicInfoOverlay && musicFilenameEl) {
-            musicFilenameEl.innerText = filename;
-            musicInfoOverlay.style.display = 'block';
-        }
-
-        bgMusic.play().catch((err) => {
-            console.log('Background music play failed:', err);
-        });
-    } else if (musicInfoOverlay) {
-        musicInfoOverlay.style.display = 'none';
-    }
-=======
     if (!bgMusic || !db.settings || !db.settings.musicPlay) {
         if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
         return;
@@ -4936,6 +4902,76 @@ function playNextMusic(mode) {
     // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
 
     _playMusic(currentMusicIndices[mode], mode);
+}
+    bgMusic.play().catch((err) => {
+        console.log('Background music play failed:', err);
+        // If autoplay fails, hide the overlay as no music is playing
+        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
+    });
+
+    // Set up onended event listener to play the next music in sequence
+    bgMusic.onended = () => {
+        playNextMusic(mode);
+    };
+}
+
+/**
+ * Initiates background music playback for a given mode, starting from the current index.
+ * If the music is already playing, it will continue.
+ * @param {string} mode 'battle' | 'practice'
+ */
+function playMusic(mode) {
+    if (!currentMusicIndices[mode]) {
+        currentMusicIndices[mode] = 1; // Default to first track if not set
+    }
+
+    // Ensure the current track is unlocked. If not, find the first unlocked track.
+    // This handles cases where the last played track might have become locked (shouldn't happen with current logic)
+    // or if `currentMusicIndices[mode]` was manually set to a locked track.
+    if (!db.settings.unlockedMusicTracks.includes(currentMusicIndices[mode])) {
+        // Find the first unlocked track, fallback to 1 if no tracks are unlocked (which means basic tracks 1-3 are missing)
+        currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1; 
+    }
+
+    _playMusic(currentMusicIndices[mode], mode);
+}
+
+/**
+ * Plays the next background music track in sequence for a given mode.
+ * @param {string} mode 'battle' | 'practice'
+ */
+function playNextMusic(mode) {
+    let nextMusicNumCandidate = currentMusicIndices[mode];
+    let originalMusicNum = currentMusicIndices[mode];
+    let foundNextUnlocked = false;
+
+    // Iterate through all possible music numbers to find the next unlocked one
+    for (let i = 0; i < currentMusicIndices.max; i++) { // Max iterations to prevent infinite loop
+        nextMusicNumCandidate++;
+        if (nextMusicNumCandidate > currentMusicIndices.max) {
+            nextMusicNumCandidate = 1; // Loop back to the beginning
+        }
+
+        if (db.settings.unlockedMusicTracks.includes(nextMusicNumCandidate)) {
+            foundNextUnlocked = true;
+            break;
+        }
+
+        if (nextMusicNumCandidate === originalMusicNum) {
+            // We've cycled through all tracks and returned to the starting point.
+            // This means only the current track is unlocked (or no others are).
+            // Stop to avoid infinite loop.
+            break;
+        }
+    }
+
+    // If no other unlocked track was found, stick with the current one (it must be unlocked)
+    if (foundNextUnlocked) {
+        currentMusicIndices[mode] = nextMusicNumCandidate;
+    }
+    // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
+
+    _playMusic(currentMusicIndices[mode], mode);
 >>>>>>> 3e02316 (ㄴㄴ)
 }
 
@@ -4945,11 +4981,6 @@ function setupMusicSelectListeners() {
     selects.forEach((id) => {
         const el = document.getElementById(id);
         if (el) {
-<<<<<<< HEAD
-            el.addEventListener('change', (e) => {
-                const musicNum = e.target.value;
-                const bgMusic = document.getElementById('background-music');
-=======
             // Initialize lastValidMusicSelection for this dropdown based on current selected value
             lastValidMusicSelection[id] = el.value;
 
@@ -4968,7 +4999,6 @@ function setupMusicSelectListeners() {
                 // If unlocked, update last valid selection and proceed
                 lastValidMusicSelection[id] = String(musicNum);
 
->>>>>>> 3e02316 (ㄴㄴ)
                 const filename = `background_music_${musicNum}.mp3`;
                 
                 if (bgMusic) {
@@ -4981,11 +5011,7 @@ function setupMusicSelectListeners() {
                     if (musicFilenameEl) {
                         musicFilenameEl.innerText = filename;
                     }
-<<<<<<< HEAD
-                    
-=======
                     // 플레이 (자동 재생 방지 예외 처리)
->>>>>>> 3e02316 (ㄴㄴ)
                     if (db.settings && db.settings.musicPlay) {
                         bgMusic.play().catch((err) => console.log('Music play failed:', err));
                     }
