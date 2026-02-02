@@ -119,12 +119,15 @@
     box-sizing: border-box;
     text-align: center;
     white-space: nowrap;
+    outline: none;
 }
 
-.practice-chip:hover {
-    background: #f0f0f0;
-    border-color: var(--primary, #ffd700);
-    color: var(--game-text);
+@media (hover: hover) {
+    .practice-chip:hover {
+        background: #f0f0f0;
+        border-color: var(--primary, #ffd700);
+        color: var(--game-text);
+    }
 }
 
 /* 선택된 칩: 배경·테두리로 강조, 글자는 진하게 해서 잘 보이게 */
@@ -174,6 +177,7 @@
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
+    outline: none;
 }
 
 @media (hover: hover) {
@@ -236,6 +240,7 @@
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 @media (hover: hover) {
     .practice-explanation-section:hover {
@@ -287,12 +292,15 @@
     transition: all 0.2s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
+    outline: none;
 }
 
-.practice-speak-btn:hover {
-    background: #f0f0f0;
-    border-color: var(--primary, #ffd700);
-    transform: scale(1.05);
+@media (hover: hover) {
+    .practice-speak-btn:hover {
+        background: #f0f0f0;
+        border-color: var(--primary, #ffd700);
+        transform: scale(1.05);
+    }
 }
 
 .practice-speak-btn:active {
@@ -360,13 +368,16 @@
     box-sizing: border-box;
     min-height: 0;
     line-height: 1.2;
+    outline: none;
 }
 
-.practice-nav-btn:hover {
-    background: #f0f0f0;
-    border-color: var(--primary, #ffd700);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+@media (hover: hover) {
+    .practice-nav-btn:hover {
+        background: #f0f0f0;
+        border-color: var(--primary, #ffd700);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+    }
 }
 
 .practice-nav-btn:active {
@@ -386,11 +397,13 @@
     color: #fff;
 }
 
-.practice-nav-exit:hover {
-    background: rgba(239, 83, 80, 0.92);
-    border-color: rgba(229, 115, 115, 0.9);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.35);
+@media (hover: hover) {
+    .practice-nav-exit:hover {
+        background: rgba(239, 83, 80, 0.92);
+        border-color: rgba(229, 115, 115, 0.9);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.35);
+    }
 }
 
 /* 모바일 반응형 */
