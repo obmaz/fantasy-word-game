@@ -187,18 +187,20 @@
     }
 }
 
-.practice-memorized-btn.practice-memorized-active {
-    background: #2e7d32;
-    border-color: #1b5e20;
-    color: #fff;
+.practice-memorized-btn.practice-memorized-active,
+.practice-memorized-btn.practice-memorized-active:focus,
+.practice-memorized-btn.practice-memorized-active:active {
+    background: #2e7d32 !important;
+    border-color: #1b5e20 !important;
+    color: #fff !important;
 }
 
 @media (hover: hover) {
-    /* 체크된 상태에서 호버 시 다음 버튼과 동일 스타일 (글자·배경 대비 확보) */
+    /* 체크된 상태에서 호버 시 다음 버튼과 동일 스타일 (글자·배경 대비 확보) - Rollover Effect restored */
     .practice-memorized-btn.practice-memorized-active:hover {
-        background: #f0f0f0;
-        border-color: var(--primary, #ffd700);
-        color: var(--game-text);
+        background: #f0f0f0 !important;
+        border-color: var(--primary, #ffd700) !important;
+        color: var(--game-text) !important;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
     }
@@ -220,13 +222,18 @@
 .practice-word-section,
 .practice-meaning-section,
 .practice-explanation-section {
-    background: var(--game-card);
+    background: #ffffff;
     border-radius: 12px;
     padding: 10px 12px;
     border: 1px solid var(--game-card-border);
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
+    outline: none;
+}
+
+.practice-explanation-section:active {
+    background: #ffffff;
 }
 
 /* 단어·뜻 — 배틀 모드 question-box와 동일 레이아웃 */

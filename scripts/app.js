@@ -1444,6 +1444,9 @@ const game = {
             pool = currentRawData.filter((i) => Number(i.day) === dayNum);
         }
         
+        const countSelect = document.getElementById('count-select');
+        const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
+
         let count;
         if (countValue === 'all') {
             count = pool.length;
@@ -1452,14 +1455,7 @@ const game = {
         }
         console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', pool && pool.length);
 
-        const countSelect = document.getElementById('count-select');
-        const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
-        let count;
-        if (countValue === 'all') {
-            count = pool.length;
-        } else {
-            count = parseInt(countValue) || 10;
-        }
+        // 중복 선언 및 로직 제거됨
 
         if (pool.length < 4) {
             alert('데이터 부족');
