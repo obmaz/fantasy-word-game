@@ -5019,37 +5019,39 @@ window.onload = () => {
     // Battle Mode 버튼 설정
     if (titleBattleModeBtn) {
         try {
-            titleBattleModeBtn.onclick = null;
-            // 모든 이벤트 리스너 제거
-            const newBtn = titleBattleModeBtn.cloneNode(true);
-            titleBattleModeBtn.parentNode.replaceChild(newBtn, titleBattleModeBtn);
-            const freshBattleBtn = document.getElementById('title-battle-mode-btn');
-
-            if (freshBattleBtn) {
-                freshBattleBtn.style.pointerEvents = 'auto';
-                freshBattleBtn.style.zIndex = '25';
-                freshBattleBtn.style.cursor = 'pointer';
-                // 버튼 내부 이미지도 클릭 가능하도록 설정
-                const btnImage = freshBattleBtn.querySelector('.btn-image');
-                if (btnImage) {
-                    btnImage.style.pointerEvents = 'none';
-                }
-                freshBattleBtn.addEventListener(
-                    'click',
-                    (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Battle Mode button clicked');
-                        if (typeof openBattleModeModal === 'function') {
-                            openBattleModeModal();
-                        } else {
-                            console.error('openBattleModeModal function not found');
-                        }
-                    },
-                    { capture: true }
-                );
-                console.log('[Button Setup] Battle Mode button event listener added');
+            titleBattleModeBtn.style.pointerEvents = 'auto';
+            titleBattleModeBtn.style.zIndex = '25';
+            titleBattleModeBtn.style.cursor = 'pointer';
+            
+            // 버튼 내부 이미지도 클릭 가능하도록 설정 (이벤트 버블링 허용)
+            const btnImage = titleBattleModeBtn.querySelector('.btn-image');
+            if (btnImage) {
+                btnImage.style.pointerEvents = 'none';
             }
+
+            // 기존 리스너 제거 방식 대신, onclick 프로퍼티를 사용하여 단일 리스너 보장하거나
+            // 모듈 패턴 내에서 초기화 함수가 한 번만 호출되도록 보장하는 것이 좋음.
+            // 여기서는 안전하게 onclick을 재정의하는 방식으로 변경 (클론 노드 방식 제거)
+            titleBattleModeBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Battle Mode button clicked');
+                if (typeof openBattleModeModal === 'function') {
+                    openBattleModeModal();
+                } else {
+                    console.error('openBattleModeModal function not found');
+                }
+            };
+            
+            // 터치 이벤트에 대한 명시적 처리 추가 (Android 호환성)
+            titleBattleModeBtn.ontouchstart = (e) => {
+                // 터치 시 스크롤 등 기본 동작 방지하고 클릭으로 처리될 수 있게 함
+                // 단, 스크롤이 필요한 영역이 아니므로 preventDefault 무방
+                // e.preventDefault(); // 일부 기기에서 클릭 이벤트 발생을 막을 수 있으므로 주의
+                e.stopPropagation();
+            };
+
+            console.log('[Button Setup] Battle Mode button event listener added');
         } catch (e) {
             console.error('Error setting up battle mode button:', e);
         }
@@ -5060,40 +5062,34 @@ window.onload = () => {
     // Boss Mode 버튼 설정
     if (titleBossModeBtn) {
         try {
-            titleBossModeBtn.onclick = null;
-            // 모든 이벤트 리스너 제거
-            const newBtn = titleBossModeBtn.cloneNode(true);
-            titleBossModeBtn.parentNode.replaceChild(newBtn, titleBossModeBtn);
-            const freshBossBtn = document.getElementById('title-boss-mode-btn');
-
-            if (freshBossBtn) {
-                freshBossBtn.style.pointerEvents = 'auto';
-                freshBossBtn.style.zIndex = '25';
-                freshBossBtn.style.cursor = 'pointer';
-                // 버튼 내부 이미지도 클릭 가능하도록 설정
-                const btnImage = freshBossBtn.querySelector('.btn-image');
-                if (btnImage) {
-                    btnImage.style.pointerEvents = 'none';
-                }
-                freshBossBtn.addEventListener(
-                    'click',
-                    (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Boss Mode button clicked');
-                        if (
-                            typeof story !== 'undefined' &&
-                            typeof story.startBossDirectly === 'function'
-                        ) {
-                            story.startBossDirectly();
-                        } else {
-                            console.error('story.startBossDirectly function not found');
-                        }
-                    },
-                    { capture: true }
-                );
-                console.log('[Button Setup] Boss Mode button event listener added');
+            titleBossModeBtn.style.pointerEvents = 'auto';
+            titleBossModeBtn.style.zIndex = '25';
+            titleBossModeBtn.style.cursor = 'pointer';
+            
+            const btnImage = titleBossModeBtn.querySelector('.btn-image');
+            if (btnImage) {
+                btnImage.style.pointerEvents = 'none';
             }
+
+            titleBossModeBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Boss Mode button clicked');
+                if (
+                    typeof story !== 'undefined' &&
+                    typeof story.startBossDirectly === 'function'
+                ) {
+                    story.startBossDirectly();
+                } else {
+                    console.error('story.startBossDirectly function not found');
+                }
+            };
+            
+            titleBossModeBtn.ontouchstart = (e) => {
+                e.stopPropagation();
+            };
+
+            console.log('[Button Setup] Boss Mode button event listener added');
         } catch (e) {
             console.error('Error setting up boss mode button:', e);
         }
