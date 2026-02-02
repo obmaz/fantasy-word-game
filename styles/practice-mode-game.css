@@ -176,9 +176,11 @@
     box-sizing: border-box;
 }
 
-.practice-memorized-btn:hover {
-    background: #f0f0f0;
-    border-color: var(--primary, #ffd700);
+@media (hover: hover) {
+    .practice-memorized-btn:hover {
+        background: #f0f0f0;
+        border-color: var(--primary, #ffd700);
+    }
 }
 
 .practice-memorized-btn.practice-memorized-active {
@@ -187,13 +189,15 @@
     color: #fff;
 }
 
-/* 체크된 상태에서 호버 시 다음 버튼과 동일 스타일 (글자·배경 대비 확보) */
-.practice-memorized-btn.practice-memorized-active:hover {
-    background: #f0f0f0;
-    border-color: var(--primary, #ffd700);
-    color: var(--game-text);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+@media (hover: hover) {
+    /* 체크된 상태에서 호버 시 다음 버튼과 동일 스타일 (글자·배경 대비 확보) */
+    .practice-memorized-btn.practice-memorized-active:hover {
+        background: #f0f0f0;
+        border-color: var(--primary, #ffd700);
+        color: var(--game-text);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+    }
 }
 
 /* 콘텐츠 영역 — 배틀 모드 quiz-area처럼 섹션 간 간격 */

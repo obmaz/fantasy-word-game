@@ -1424,9 +1424,6 @@ const game = {
     },
 
     init: (mode, day) => {
-        // boss 모드가 아닐 때만 count-select 참조
-        const countSelect = document.getElementById('count-select');
-        const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
         
         game.mode = mode;
         game.currentDay = day;
@@ -1454,6 +1451,16 @@ const game = {
             count = parseInt(countValue) || 10;
         }
         console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', pool && pool.length);
+
+        const countSelect = document.getElementById('count-select');
+        const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
+        let count;
+        if (countValue === 'all') {
+            count = pool.length;
+        } else {
+            count = parseInt(countValue) || 10;
+        }
+
         if (pool.length < 4) {
             alert('데이터 부족');
             location.reload();
@@ -4190,7 +4197,7 @@ function openPracticeModal() {
     }
 
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment('practice-mode-modal');
+    // setupSelectFontSizeAdjustment('practice-mode-modal');
 }
 
 // Open battle mode selection modal
@@ -4296,7 +4303,7 @@ function openBattleModeModal() {
     }
 
     // 드롭박스 값 변경 시 폰트 크기 재조정
-    setupSelectFontSizeAdjustment('battle-mode-modal');
+    // setupSelectFontSizeAdjustment('battle-mode-modal');
 }
 
 // 공통 모달 애니메이션 함수
@@ -4364,48 +4371,6 @@ function closePracticeModal(animated = true) {
 }
 
 // 드롭박스 폰트 크기를 동적으로 조정 (텍스트가 박스보다 크지 않도록)
-function adjustSelectFontSize(selectElement, width, height) {
-    if (!selectElement) return;
-
-    // 패딩을 고려한 실제 텍스트 영역
-    const padding = 20; // 좌우 패딩 합계
-    const textWidth = width - padding;
-    const textHeight = height - 10; // 상하 패딩 고려
-
-    // 높이 기준 최대 폰트 크기 (박스 높이보다 작게)
-    const maxFontSizeByHeight = textHeight * 0.6; // 0.7에서 0.6으로 줄여서 여유 공간 확보
-
-    // 현재 선택된 옵션의 텍스트 길이 확인
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    const text = selectedOption ? selectedOption.text : '';
-
-    // 텍스트 길이에 따른 폰트 크기 계산
-    // 한글 기준으로 대략적인 계산 (폰트 크기 * 0.6 정도가 한 글자 너비)
-    let fontSize = maxFontSizeByHeight;
-    if (text.length > 0) {
-        // 텍스트가 너비에 맞는지 확인
-        const estimatedCharWidth = fontSize * 0.6; // 한 글자당 대략적인 너비
-        const requiredWidth = text.length * estimatedCharWidth;
-
-        if (requiredWidth > textWidth) {
-            // 텍스트가 너비를 초과하면 폰트 크기 조정
-            fontSize = textWidth / text.length / 0.6;
-        }
-    }
-
-    // 높이 제한도 다시 확인 (박스보다 작게)
-    fontSize = Math.min(fontSize, maxFontSizeByHeight);
-
-    // 최소/최대 폰트 크기 제한
-    fontSize = Math.max(12, Math.min(fontSize, 32)); // 최대값 32px
-
-    selectElement.style.fontSize = fontSize + 'px';
-
-    // 옵션들도 같은 폰트 크기 적용
-    Array.from(selectElement.options).forEach((option) => {
-        option.style.fontSize = fontSize + 'px';
-    });
-}
 
 // 드롭박스 값 변경 시 폰트 크기 재조정 설정
 function setupSelectFontSizeAdjustment(modalId) {
@@ -4534,14 +4499,14 @@ function syncModalButtonOverlay(modalId) {
                 // 모든 모달에서 battle-mode-modal과 동일한 크기 파라미터 사용 (0.65, 0.095)
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.15;
-                adjustSelectFontSize(daySelect, width, height);
+                // adjustSelectFontSize(daySelect, width, height);
             }
 
             const countSelect = modal.querySelector('.modal-count-select');
             if (countSelect) {
                 const width = imgRect.width * 0.65;
                 const height = imgRect.height * 0.15;
-                adjustSelectFontSize(countSelect, width, height);
+                // adjustSelectFontSize(countSelect, width, height);
             }
 
             // 버튼 위치와 크기는 CSS에서 제어 (CSS 변수는 이미 설정됨)
