@@ -104,6 +104,23 @@
     touch-action: manipulation;
 }
 
+.title-btn-area .button-text {
+    position: absolute;
+    color: #fff; /* White text */
+    font-size: clamp(10px, calc(var(--title-container-height) * 0.035), 18px); /* Responsive font size */
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Text shadow for readability */
+    pointer-events: none; /* Make sure text doesn't block button clicks */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-align: center;
+    line-height: 1;    /* Reset line-height to prevent vertical offsets */
+    /* Center the text */
+    top: 50%;
+    left: calc(50% + 2vmin); /* Move slightly to the right */
+    transform: translate(-50%, -50%);
+    z-index: 26; /* Ensure text is above the image */
+}
+
 .title-btn-area.content-visible {
     background: transparent;
     border: none;

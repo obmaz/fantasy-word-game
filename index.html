@@ -58,6 +58,10 @@
                     <img id="monster-img" class="char-img" src="" alt="Monster" />
                 </div>
                 <div id="dmg-txt" class="damage-txt"></div>
+                <!-- 나가기: 아레나 우하단 -->
+                <div class="practice-arena-exit-wrap">
+                    <button type="button" class="practice-nav-btn practice-nav-exit" id="battle-exit-btn" title="나가기">나가기</button>
+                </div>
             </div>
 
             <div class="quiz-area">
@@ -128,6 +132,7 @@
                             alt="Practice Mode"
                             class="btn-image"
                         />
+                        <span class="button-text">연습모드</span>
                     </button>
                     <!-- BATTLE MODE = 배틀 모드 -->
                     <button
@@ -140,6 +145,7 @@
                             alt="Battle Mode"
                             class="btn-image"
                         />
+                        <span class="button-text">배틀모드</span>
                     </button>
                     <!-- BOSS MODE = 무한의 전장 -->
                     <button
@@ -152,6 +158,7 @@
                             alt="Boss Mode"
                             class="btn-image"
                         />
+                        <span class="button-text">보스모드</span>
                     </button>
 
                     <!-- shop = 상점 -->
@@ -209,9 +216,9 @@
                 <div id="equipped-summary" class="equipped-summary"></div>
                 <select id="day-select"></select>
                 <select id="count-select">
-                    <option value="5">5 마리 (쉬움)</option>
                     <option value="10" selected>10 마리 (보통)</option>
                     <option value="20">20 마리 (어려움)</option>
+                    <option value="all">모든 문제</option>
                 </select>
             </div>
 
@@ -360,9 +367,9 @@
                         id="practice-mode-modal-count-select"
                         class="modal-select modal-count-select"
                     >
-                        <option value="5">5 마리 (쉬움)</option>
                         <option value="10" selected>10 마리 (보통)</option>
                         <option value="20">20 마리 (어려움)</option>
+                        <option value="all">모든 문제</option>
                     </select>
 
                     <!-- 시작하기 버튼 영역 -->
@@ -403,9 +410,9 @@
                         id="battle-mode-modal-count-select"
                         class="modal-select modal-count-select"
                     >
-                        <option value="5">5 마리 (쉬움)</option>
                         <option value="10" selected>10 마리 (보통)</option>
                         <option value="20">20 마리 (어려움)</option>
+                        <option value="all">모든 문제</option>
                     </select>
 
                     <!-- 문제 타입 라디오 버튼 (Battle Mode 전용) -->

@@ -1395,10 +1395,39 @@ const game = {
     sessionWrongWords: [], // 이번 게임 틀린 단어 목록 { word, meaning }
     bossTotalWaves: 0, // 보스 모드 총 웨이브 수 (초기 덱 크기)
 
+    exit: () => {
+        if (game.timer) {
+            clearInterval(game.timer);
+            game.timer = null;
+        }
+        game.isProcessing = false;
+
+        const bgMusic = document.getElementById('background-music');
+        if (bgMusic && !bgMusic.paused) {
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+        }
+
+        closeScreenOverlay('battle-mode-game', true);
+
+        const startScreen = document.getElementById('title-screen');
+        if (startScreen) {
+            startScreen.style.display = 'flex';
+            startScreen.style.zIndex = ''; // Restore z-index
+            setTimeout(() => {
+                if (typeof syncTitleButtonOverlay === 'function') {
+                    syncTitleButtonOverlay();
+                }
+            }, 100);
+        }
+        history.pushState(null, '', window.location.href);
+    },
+
     init: (mode, day) => {
         // boss 모드가 아닐 때만 count-select 참조
         const countSelect = document.getElementById('count-select');
-        const count = mode === 'boss' ? 0 : countSelect ? parseInt(countSelect.value) || 10 : 10;
+        const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
+        
         game.mode = mode;
         game.currentDay = day;
 
@@ -1416,6 +1445,13 @@ const game = {
         } else {
             const dayNum = Number(day);
             pool = currentRawData.filter((i) => Number(i.day) === dayNum);
+        }
+        
+        let count;
+        if (countValue === 'all') {
+            count = pool.length;
+        } else {
+            count = parseInt(countValue) || 10;
         }
         console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', pool && pool.length);
         if (pool.length < 4) {
@@ -3788,11 +3824,11 @@ const practiceMemorization = {
             const counterEl = document.getElementById('practice-word-counter');
             if (counterEl) counterEl.textContent = '0 / 0';
             const wordTextEl = document.getElementById('practice-word-text');
-            if (wordTextEl) wordTextEl.textContent = '—';
+            if (wordTextEl) wordTextEl.textContent = '없음';
             const meaningTextEl = document.getElementById('practice-meaning-text');
-            if (meaningTextEl) meaningTextEl.textContent = '—';
+            if (meaningTextEl) meaningTextEl.textContent = '없음';
             const explanationTextEl = document.getElementById('practice-explanation-text');
-            if (explanationTextEl) explanationTextEl.textContent = '—';
+            if (explanationTextEl) explanationTextEl.textContent = '없음';
             const prevBtn = document.getElementById('practice-prev-btn');
             const nextBtn = document.getElementById('practice-next-btn');
             if (prevBtn) prevBtn.disabled = true;
@@ -4497,14 +4533,14 @@ function syncModalButtonOverlay(modalId) {
             if (daySelect) {
                 // 모든 모달에서 battle-mode-modal과 동일한 크기 파라미터 사용 (0.65, 0.095)
                 const width = imgRect.width * 0.65;
-                const height = imgRect.height * 0.095;
+                const height = imgRect.height * 0.15;
                 adjustSelectFontSize(daySelect, width, height);
             }
 
             const countSelect = modal.querySelector('.modal-count-select');
             if (countSelect) {
                 const width = imgRect.width * 0.65;
-                const height = imgRect.height * 0.095;
+                const height = imgRect.height * 0.15;
                 adjustSelectFontSize(countSelect, width, height);
             }
 
@@ -4913,6 +4949,13 @@ window.onload = () => {
     if (practiceExitBtn) {
         practiceExitBtn.addEventListener('click', () => {
             practiceMemorization.exit();
+        });
+    }
+
+    const battleExitBtn = document.getElementById('battle-exit-btn');
+    if (battleExitBtn) {
+        battleExitBtn.addEventListener('click', () => {
+            game.exit();
         });
     }
 

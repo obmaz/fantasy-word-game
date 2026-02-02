@@ -230,6 +230,11 @@
     color: var(--game-text);
     word-break: keep-all;
 }
+
+#boss-title {
+    font-size: clamp(16px, 5.5cqmin, 34px);
+}
+
 .options-grid {
     width: 100%;
     display: grid;
@@ -508,10 +513,11 @@
 #battle-mode-game .boss-hint {
     color: var(--success);
 }
-#battle-mode-game .boss-input {
+.boss-input {
     background: var(--game-card);
     border: 2px solid var(--game-card-border);
     color: var(--game-text);
+    font-size: clamp(16px, 5.5cqmin, 34px);
 }
 #battle-mode-game .boss-input::placeholder {
     color: var(--game-text-muted);

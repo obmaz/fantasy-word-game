@@ -233,14 +233,17 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
-.practice-explanation-section:hover {
-    background: rgba(0, 0, 0, 0.03);
+@media (hover: hover) {
+    .practice-explanation-section:hover {
+        background: rgba(0, 0, 0, 0.03);
+    }
 }
 .practice-explanation-hint {
     margin-top: 6px;
     font-size: clamp(11px, 2.2cqmin, 14px);
     color: var(--game-text-muted);
     opacity: 0.85;
+    text-align: right;
 }
 .practice-explanation-text {
     display: block;

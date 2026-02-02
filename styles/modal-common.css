@@ -291,6 +291,8 @@
     overflow: visible !important;
     text-overflow: clip !important;
     white-space: normal !important;
+    box-sizing: border-box;
+    line-height: 1.2;
 }
 
 /* 드롭다운 옵션들이 잘 보이도록 설정 */
@@ -424,7 +426,7 @@
     background: rgba(30, 30, 30, 0.7);
     border: 2px solid rgba(255, 213, 79, 0.4);
     color: var(--primary);
-    font-size: clamp(14px, 3.5vw, 14px);
+    font-size: clamp(10px, 3.0vw, 11px);
     font-weight: bold;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     white-space: nowrap;

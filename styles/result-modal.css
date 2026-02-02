@@ -121,57 +121,25 @@
     border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-#result-modal .result-modal-section {
-    text-align: left;
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: var(--primary);
-    font-weight: bold;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 5px;
-    margin-top: 14px;
-}
-
-#result-modal .result-modal-section:first-child {
-    margin-top: 0;
-}
-
-#result-modal .result-modal-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.25);
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* 틀린 단어 없음 — 통계 모달 참조: 우측 정렬, primary 색 */
-#result-modal .result-modal-item.result-modal-item-empty {
-    justify-content: flex-end;
-    font-size: 16px;
-    color: var(--primary);
-}
-
 #result-modal .result-wrong-word-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     background: rgba(0, 0, 0, 0.25);
     padding: 10px;
     margin-bottom: 8px;
     border-radius: 8px;
     border: 1px solid rgba(255, 120, 80, 0.25);
+    text-align: center;
+    width: 100%; /* Ensure it takes full width */
 }
 
 #result-modal .result-wrong-word-item .wrong-word {
     font-weight: bold;
     color: rgba(255, 200, 150, 0.95);
+    font-size: 17px; /* Adjusted to match '이번 획득' text */
+    margin-bottom: 4px;
 }
 
 #result-modal .result-wrong-word-item .wrong-meaning {
-    font-size: 16px;
+    font-size: 17px; /* Adjusted to match '이번 획득' text */
     color: rgba(235, 235, 245, 0.85);
 }
 
