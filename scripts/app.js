@@ -1033,7 +1033,6 @@ const ui = {
             // Check if music track is unlocked
             const isUnlocked = db.settings.unlockedMusicTracks.includes(i);
             if (!isUnlocked) {
-                option.disabled = true;
                 option.classList.add('locked-music'); // For graying out via CSS
             }
             if (i === currentMusicNum) {
@@ -4856,10 +4855,8 @@ function playMusic(mode) {
     }
 
     // Ensure the current track is unlocked. If not, find the first unlocked track.
-    // This handles cases where the last played track might have become locked (shouldn't happen with current logic)
-    // or if `currentMusicIndices[mode]` was manually set to a locked track.
     if (!db.settings.unlockedMusicTracks.includes(currentMusicIndices[mode])) {
-        // Find the first unlocked track, fallback to 1 if no tracks are unlocked (which means basic tracks 1-3 are missing)
+        // Find the first unlocked track, fallback to 1 if no tracks are unlocked
         currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1; 
     }
 
@@ -4876,7 +4873,7 @@ function playNextMusic(mode) {
     let foundNextUnlocked = false;
 
     // Iterate through all possible music numbers to find the next unlocked one
-    for (let i = 0; i < currentMusicIndices.max; i++) { // Max iterations to prevent infinite loop
+    for (let i = 0; i < currentMusicIndices.max; i++) {
         nextMusicNumCandidate++;
         if (nextMusicNumCandidate > currentMusicIndices.max) {
             nextMusicNumCandidate = 1; // Loop back to the beginning
@@ -4888,86 +4885,13 @@ function playNextMusic(mode) {
         }
 
         if (nextMusicNumCandidate === originalMusicNum) {
-            // We've cycled through all tracks and returned to the starting point.
-            // This means only the current track is unlocked (or no others are).
-            // Stop to avoid infinite loop.
             break;
         }
     }
 
-    // If no other unlocked track was found, stick with the current one (it must be unlocked)
     if (foundNextUnlocked) {
         currentMusicIndices[mode] = nextMusicNumCandidate;
     }
-    // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
-
-    _playMusic(currentMusicIndices[mode], mode);
-    bgMusic.play().catch((err) => {
-        console.log('Background music play failed:', err);
-        // If autoplay fails, hide the overlay as no music is playing
-        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
-    });
-
-    // Set up onended event listener to play the next music in sequence
-    bgMusic.onended = () => {
-        playNextMusic(mode);
-    };
-}
-/**
- * Initiates background music playback for a given mode, starting from the current index.
- * If the music is already playing, it will continue.
- * @param {string} mode 'battle' | 'practice'
- */
-function playMusic(mode) {
-    if (!currentMusicIndices[mode]) {
-        currentMusicIndices[mode] = 1; // Default to first track if not set
-    }
-
-    // Ensure the current track is unlocked. If not, find the first unlocked track.
-    // This handles cases where the last played track might have become locked (shouldn't happen with current logic)
-    // or if `currentMusicIndices[mode]` was manually set to a locked track.
-    if (!db.settings.unlockedMusicTracks.includes(currentMusicIndices[mode])) {
-        // Find the first unlocked track, fallback to 1 if no tracks are unlocked (which means basic tracks 1-3 are missing)
-        currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1; 
-    }
-
-    _playMusic(currentMusicIndices[mode], mode);
-}
-
-/**
- * Plays the next background music track in sequence for a given mode.
- * @param {string} mode 'battle' | 'practice'
- */
-function playNextMusic(mode) {
-    let nextMusicNumCandidate = currentMusicIndices[mode];
-    let originalMusicNum = currentMusicIndices[mode];
-    let foundNextUnlocked = false;
-
-    // Iterate through all possible music numbers to find the next unlocked one
-    for (let i = 0; i < currentMusicIndices.max; i++) { // Max iterations to prevent infinite loop
-        nextMusicNumCandidate++;
-        if (nextMusicNumCandidate > currentMusicIndices.max) {
-            nextMusicNumCandidate = 1; // Loop back to the beginning
-        }
-
-        if (db.settings.unlockedMusicTracks.includes(nextMusicNumCandidate)) {
-            foundNextUnlocked = true;
-            break;
-        }
-
-        if (nextMusicNumCandidate === originalMusicNum) {
-            // We've cycled through all tracks and returned to the starting point.
-            // This means only the current track is unlocked (or no others are).
-            // Stop to avoid infinite loop.
-            break;
-        }
-    }
-
-    // If no other unlocked track was found, stick with the current one (it must be unlocked)
-    if (foundNextUnlocked) {
-        currentMusicIndices[mode] = nextMusicNumCandidate;
-    }
-    // If foundNextUnlocked is false, it means currentMusicIndices[mode] (originalMusicNum) is the only unlocked track, so we play it again.
 
     _playMusic(currentMusicIndices[mode], mode);
 }
