@@ -144,10 +144,7 @@
     top: calc(var(--story-img-height, 100%) * 0.71); /* 위쪽 위치 (이미지 높이의 71%) */
 }
 
-.story-btn-area:hover {
-    opacity: 0.8;
-    transform: scale(1.05) !important;
-}
+
 
 /* 보스 모드 버튼 위치 (battle_mode_story_modal.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.boss-mode-btn {
@@ -217,9 +214,7 @@
     border-radius: 4px;
 }
 
-.story-text-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 213, 79, 0.8);
-}
+
 
 /* 이야기 텍스트 내용 */
 .story-text-content {
@@ -305,23 +300,7 @@
     text-overflow: clip !important;
 }
 
-.modal-select:hover {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
 
-.modal-select:focus {
-    outline: none !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-.modal-select:active {
-    border: none !important;
-    outline: none !important;
-}
 
 .modal-select:disabled {
     opacity: 0.5;
@@ -349,10 +328,7 @@
     transition: all 0.2s ease;
 }
 
-.modal-btn-area:hover {
-    opacity: 0.8 !important;
-    transform: scale(1.05) !important;
-}
+
 
 /* 모험 지역 드롭박스 기본 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
 .modal-day-select {
@@ -438,15 +414,7 @@
     flex: 0 0 calc((var(--modal-img-width, 100%) * 0.8 - 20px) / 3);
 }
 
-@media (hover: hover) {
-    @media (hover: hover) {
-        .modal-radio-label:hover {
-            background: rgba(255, 213, 79, 0.15);
-            border-color: rgba(255, 213, 79, 0.6);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
-        }
-    }}
+
 
 .modal-radio {
     position: absolute;

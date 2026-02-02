@@ -226,12 +226,7 @@
     max-width: calc((100% - 20px) / 3);
 }
 
-.print-radio-label:hover {
-    background: rgba(255, 213, 79, 0.15);
-    border-color: rgba(255, 213, 79, 0.6);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
-}
+
 
 .print-radio {
     position: absolute;

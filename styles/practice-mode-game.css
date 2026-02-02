@@ -122,13 +122,7 @@
     outline: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .practice-chip:hover {
-        background: #f0f0f0;
-        border-color: var(--primary, #ffd700);
-        color: var(--game-text);
-    }
-}
+
 
 /* 선택된 칩: 배경·테두리로 강조, 글자는 진하게 해서 잘 보이게 */
 .practice-chip-active {
@@ -180,31 +174,15 @@
     outline: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .practice-memorized-btn:hover {
-        background: #f0f0f0;
-        border-color: var(--primary, #ffd700);
-    }
-}
 
-.practice-memorized-btn.practice-memorized-active,
-.practice-memorized-btn.practice-memorized-active:focus,
-.practice-memorized-btn.practice-memorized-active:active {
+
+.practice-memorized-btn.practice-memorized-active {
     background: #2e7d32 !important;
     border-color: #1b5e20 !important;
     color: #fff !important;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    /* 체크된 상태에서 호버 시 다음 버튼과 동일 스타일 (글자·배경 대비 확보) - Rollover Effect restored */
-    .practice-memorized-btn.practice-memorized-active:hover {
-        background: #f0f0f0 !important;
-        border-color: var(--primary, #ffd700) !important;
-        color: var(--game-text) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
-    }
-}
+
 
 /* 콘텐츠 영역 — 배틀 모드 quiz-area처럼 섹션 간 간격 */
 .practice-memorization-content {
@@ -232,20 +210,9 @@
     outline: none;
 }
 
-/* 설명 영역 기본 상태 (모바일 포함): 탭/포커스 시에도 배경색 유지 */
-.practice-explanation-section:active,
-.practice-explanation-section:focus {
-    background: #ffffff;
-}
 
-@media (hover: hover) and (pointer: fine) {
-    /* PC 환경: 호버, 포커스, 액티브 시 색상 변경 피드백 제공 */
-    .practice-explanation-section:hover,
-    .practice-explanation-section:focus,
-    .practice-explanation-section:active {
-        background: rgba(0, 0, 0, 0.04);
-    }
-}
+
+
 
 /* 단어·뜻 — 배틀 모드 question-box와 동일 레이아웃 */
 .practice-word-section,
@@ -307,13 +274,7 @@
     outline: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .practice-speak-btn:hover {
-        background: #f0f0f0;
-        border-color: var(--primary, #ffd700);
-        transform: scale(1.05);
-    }
-}
+
 
 .practice-speak-btn:active {
     transform: scale(0.98);
@@ -383,14 +344,7 @@
     outline: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .practice-nav-btn:hover {
-        background: #f0f0f0;
-        border-color: var(--primary, #ffd700);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
-    }
-}
+
 
 .practice-nav-btn:active {
     transform: translateY(0);
@@ -409,14 +363,7 @@
     color: #fff;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .practice-nav-exit:hover {
-        background: rgba(239, 83, 80, 0.92);
-        border-color: rgba(229, 115, 115, 0.9);
-        color: #fff;
-        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.35);
-    }
-}
+
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {

@@ -179,9 +179,7 @@
     cursor: pointer;
 }
 
-.inv-item:hover {
-    background: #444;
-}
+
 
 #inv-item-detail {
     position: absolute;
