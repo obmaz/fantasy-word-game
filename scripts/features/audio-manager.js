@@ -1,4 +1,4 @@
-const currentMusicIndices = { battle: 1, practice: 1, max: 2 };
+const currentMusicIndices = { battle: null, practice: null, max: 18 };
 const lastValidMusicSelection = { 'music-select': '1', 'practice-music-select': '1' };
 
 /**
@@ -56,7 +56,14 @@ function _playMusic(musicNum, mode) {
  */
 function playMusic(mode) {
     if (!currentMusicIndices[mode]) {
-        currentMusicIndices[mode] = 1; // 설정되지 않은 경우 첫 번째 트랙 기본값
+        // 랜덤 선택: 잠금 해제된 트랙 중에서 선택
+        if (db.settings.unlockedMusicTracks && db.settings.unlockedMusicTracks.length > 0) {
+            const unlocked = db.settings.unlockedMusicTracks;
+            currentMusicIndices[mode] = unlocked[Math.floor(Math.random() * unlocked.length)];
+        } else {
+            // 잠금 해제 정보가 없으면 1~max 중 랜덤
+            currentMusicIndices[mode] = Math.floor(Math.random() * currentMusicIndices.max) + 1;
+        }
     }
 
     // 현재 트랙이 잠금 해제되었는지 확인. 그렇지 않으면 첫 번째 잠금 해제된 트랙 찾기.
@@ -143,6 +150,9 @@ function setupMusicSelectListeners() {
                     // 플레이 (자동 재생 방지 예외 처리)
                     if (db.settings && db.settings.musicPlay) {
                         bgMusic.play().catch((err) => console.log('Music play failed:', err));
+                        updateMusicToggleButtons(true);
+                    } else {
+                        updateMusicToggleButtons(false);
                     }
 
                     // 모드 감지 (ID에 따라)
@@ -161,5 +171,46 @@ function setupMusicSelectListeners() {
                 }
             });
         }
+    });
+
+    // 음악 일시정지/재생 버튼 리스너
+    const toggleBtns = ['battle-music-toggle-btn', 'practice-music-toggle-btn'];
+    toggleBtns.forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                toggleMusic();
+            });
+        }
+    });
+}
+/**
+ * 배경 음악 일시정지/재생 토글
+ */
+function toggleMusic() {
+    const bgMusic = document.getElementById('background-music');
+    if (!bgMusic) return;
+
+    if (bgMusic.paused) {
+        bgMusic.play().catch((err) => console.log('Music resume failed:', err));
+        db.settings.musicPlay = true; // 설정 동기화
+        updateMusicToggleButtons(true);
+    } else {
+        bgMusic.pause();
+        db.settings.musicPlay = false; // 일시정지 시 설정도 off로 간주 (또는 별도 상태 관리)
+        // 여기서는 사용자가 껐으므로 musicPlay를 false로 하여 다른 로직(자동 재생 등)에서도 묵음 처리되도록 함이 자연스러움
+        updateMusicToggleButtons(false);
+    }
+    db.save(); // 설정 저장
+}
+
+/**
+ * 음악 토글 버튼 상태 업데이트 (UI)
+ * @param {boolean} isPlaying
+ */
+function updateMusicToggleButtons(isPlaying) {
+    const toggleBtns = document.querySelectorAll('.music-toggle-btn');
+    toggleBtns.forEach((btn) => {
+        btn.innerText = isPlaying ? '⏸️' : '▶️';
     });
 }
