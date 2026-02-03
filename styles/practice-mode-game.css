@@ -175,8 +175,6 @@
     outline: none;
 }
 
-
-
 /* 선택된 칩: 배경·테두리로 강조, 글자는 진하게 해서 잘 보이게 */
 .practice-chip-active {
     background: rgba(255, 193, 7, 0.35);
@@ -227,15 +225,11 @@
     outline: none;
 }
 
-
-
 .practice-memorized-btn.practice-memorized-active {
     background: #2e7d32 !important;
     border-color: #1b5e20 !important;
     color: #fff !important;
 }
-
-
 
 /* 콘텐츠 영역 — 배틀 모드 quiz-area처럼 섹션 간 간격 */
 .practice-memorization-content {
@@ -262,10 +256,6 @@
     box-sizing: border-box;
     outline: none;
 }
-
-
-
-
 
 /* 단어·뜻 — 배틀 모드 question-box와 동일 레이아웃 */
 .practice-word-section,
@@ -326,8 +316,6 @@
     box-sizing: border-box;
     outline: none;
 }
-
-
 
 .practice-speak-btn:active {
     transform: scale(0.98);
@@ -397,8 +385,6 @@
     outline: none;
 }
 
-
-
 .practice-nav-btn:active {
     transform: translateY(0);
 }
@@ -415,8 +401,6 @@
     border-color: rgba(239, 83, 80, 0.85);
     color: #fff;
 }
-
-
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {

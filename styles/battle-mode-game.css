@@ -328,8 +328,6 @@
     animation: activeSkillPulse 2s ease-in-out infinite;
 }
 
-
-
 .skill-btn.skill-active:active {
     transform: translateY(0px);
 }

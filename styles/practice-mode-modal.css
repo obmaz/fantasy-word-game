@@ -21,12 +21,8 @@
 #practice-mode-modal .modal-day-select {
     /* practice_mode_select_modal .webp 이미지에 맞춰 조정 가능 (파일명에 공백 포함) */
     width: calc(var(--modal-img-width, 100%) * 0.65); /* 너비 (이미지 너비의 65%) */
-    height: calc(
-        var(--modal-img-height, 100%) * 0.18
-    ); /* 높이 (이미지 높이의 15%) */
-    left: calc(
-        var(--modal-img-width, 100%) * 0.145
-    ); /* 왼쪽 위치 (이미지 너비의 14.5%) */
+    height: calc(var(--modal-img-height, 100%) * 0.18); /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--modal-img-width, 100%) * 0.145); /* 왼쪽 위치 (이미지 너비의 14.5%) */
     top: calc(var(--modal-img-height, 100%) * 0.45); /* 위쪽 위치 (이미지 높이의 46%) */
     /* 폰트 크기 조정 - 브라우저 크기에 따라 동적으로 변함 (최대 32px) */
     /* JavaScript의 adjustSelectFontSize 함수가 동적으로 조정합니다 */

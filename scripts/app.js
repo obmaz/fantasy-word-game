@@ -8,12 +8,12 @@ const db = {
     durability: JSON.parse(localStorage.getItem('v7_dura')) || {},
     stats: (() => {
         const saved = JSON.parse(localStorage.getItem('v7_stats')) || { solved: 0, correct: 0 };
-        
+
         // 단어장별 통계 구조로 마이그레이션
         if (!saved.books) {
             saved.books = {};
         }
-        
+
         // 기존 전역 통계를 기본 단어장으로 마이그레이션 (호환성)
         if (saved.solved > 0 || saved.correct > 0) {
             const defaultBook = '기본 단어장';
@@ -23,11 +23,11 @@ const db = {
                     correct: saved.correct || 0,
                     objective: saved.objective || { solved: 0, correct: 0 },
                     subjective: saved.subjective || { solved: 0, correct: 0, perfectDays: [] },
-                    bossMode: saved.bossMode || { bestWave: 0, bestWaveDate: null }
+                    bossMode: saved.bossMode || { bestWave: 0, bestWaveDate: null },
                 };
             }
         }
-        
+
         // 기존 데이터와의 호환성: objective/subjective 필드가 없으면 추가
         if (!saved.objective) {
             saved.objective = { solved: 0, correct: 0 };
@@ -123,11 +123,16 @@ const db = {
      * @param {string} bookName The name of the current word book.
      */
     checkAndUnlockMusic: (bookName) => {
-        if (!db.settings || !db.settings.musicUnlockThresholds || !db.settings.unlockedMusicTracks) {
+        if (
+            !db.settings ||
+            !db.settings.musicUnlockThresholds ||
+            !db.settings.unlockedMusicTracks
+        ) {
             return; // Guard against uninitialized settings
         }
 
-        const currentPerfectDaysCount = db.stats.books[bookName]?.subjective?.perfectDays?.length || 0;
+        const currentPerfectDaysCount =
+            db.stats.books[bookName]?.subjective?.perfectDays?.length || 0;
         const thresholds = db.settings.musicUnlockThresholds;
         let newlyUnlocked = false;
 
@@ -154,10 +159,11 @@ const db = {
     },
     addStats: (isCorrect, questionType = 'objective') => {
         // 현재 단어장 정보 가져오기
-        const bookName = typeof window !== 'undefined' && window.currentGameDataName 
-            ? window.currentGameDataName 
-            : '기본 단어장';
-        
+        const bookName =
+            typeof window !== 'undefined' && window.currentGameDataName
+                ? window.currentGameDataName
+                : '기본 단어장';
+
         // 단어장별 통계 초기화
         if (!db.stats.books) {
             db.stats.books = {};
@@ -168,10 +174,10 @@ const db = {
                 correct: 0,
                 objective: { solved: 0, correct: 0 },
                 subjective: { solved: 0, correct: 0, perfectDays: [] },
-                bossMode: { bestWave: 0, bestWaveDate: null }
+                bossMode: { bestWave: 0, bestWaveDate: null },
             };
         }
-        
+
         // 단어장별 통계 업데이트
         const bookStats = db.stats.books[bookName];
         bookStats.solved++;
@@ -219,12 +225,12 @@ const db = {
 let currentMusicIndices = {
     practice: 1,
     battle: 1,
-    max: 10 // Assuming 10 background music tracks: background_music_1.mp3 to background_music_10.mp3
+    max: 10, // Assuming 10 background music tracks: background_music_1.mp3 to background_music_10.mp3
 };
 
 let lastValidMusicSelection = {
     'music-select': '1', // Default to track 1
-    'practice-music-select': '1' // Default to track 1
+    'practice-music-select': '1', // Default to track 1
 };
 const inventory = {
     open: () => {
@@ -633,9 +639,9 @@ const shop = {
         let btn = `<button class="buy-btn" onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">${item.cost} G</button>`;
 
         if (type === 'skill') {
-            return `<div class="shop-item shop-item-skill"><div style="font-size:15px;"><b>${item.name} (현재 ${
-                db.skills[item.id]
-            }개)</b><br><span style="font-size:15px;color:#aaa;">${
+            return `<div class="shop-item shop-item-skill"><div style="font-size:15px;"><b>${
+                item.name
+            } (현재 ${db.skills[item.id]}개)</b><br><span style="font-size:15px;color:#aaa;">${
                 item.desc
             }</span></div>${btn}</div>`;
         }
@@ -712,11 +718,12 @@ const statistics = {
         container.innerHTML = '';
         // 골드 표시 제거됨 (통계에서는 골드 표시 안 함)
         // document.getElementById('statistics-gold').innerText = db.gold;
-        
+
         // 현재 단어장 정보를 타이틀 영역에 표시
-        const currentBookName = typeof window !== 'undefined' && window.currentGameDataName 
-            ? window.currentGameDataName 
-            : '기본 단어장';
+        const currentBookName =
+            typeof window !== 'undefined' && window.currentGameDataName
+                ? window.currentGameDataName
+                : '기본 단어장';
         const modalHeader = document.querySelector('#statistics-modal .modal-header');
         if (modalHeader) {
             const existingBookInfo = modalHeader.querySelector('.statistics-book-info');
@@ -725,11 +732,12 @@ const statistics = {
             }
             const bookInfo = document.createElement('div');
             bookInfo.className = 'statistics-book-info';
-            bookInfo.style.cssText = 'font-size: 12px; color: var(--primary); margin-top: 4px; text-align: center;';
+            bookInfo.style.cssText =
+                'font-size: 12px; color: var(--primary); margin-top: 4px; text-align: center;';
             bookInfo.textContent = `📚 ${currentBookName}`;
             modalHeader.appendChild(bookInfo);
         }
-        
+
         // 단어장별 통계 가져오기
         if (!db.stats.books) {
             db.stats.books = {};
@@ -739,9 +747,9 @@ const statistics = {
             correct: 0,
             objective: { solved: 0, correct: 0 },
             subjective: { solved: 0, correct: 0, perfectDays: [] },
-            bossMode: { bestWave: 0, bestWaveDate: null }
+            bossMode: { bestWave: 0, bestWaveDate: null },
         };
-        
+
         // 통계 데이터 계산
         const solved = bookStats.solved || 0;
         const correct = bookStats.correct || 0;
@@ -803,7 +811,8 @@ const statistics = {
 
         // 객관식 통계
         const objectiveWrong = objectiveSolved - objectiveCorrect;
-        html += '<div class="statistics-section" style="margin-top:20px; margin-bottom:8px;">📋 객관식</div>';
+        html +=
+            '<div class="statistics-section" style="margin-top:20px; margin-bottom:8px;">📋 객관식</div>';
         html += `<div class="statistics-item">
             <div style="text-align:right; width:100%;">
                 <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${objectiveSolved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${objectiveRate}%</span></div>
@@ -813,7 +822,8 @@ const statistics = {
 
         // 주관식 통계 (객관식과 동일한 형식)
         const subjectiveWrong = subjectiveSolved - subjectiveCorrect;
-        html += '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
+        html +=
+            '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
         html += `<div class="statistics-item">
             <div style="text-align:right; width:100%;">
                 <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${subjectiveSolved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${subjectiveRate}%</span></div>
@@ -823,9 +833,10 @@ const statistics = {
 
         // 주관식을 전부 맞춘 날 표시 (현재 단어장만)
         const perfectDays = subjectiveStats.perfectDays || [];
-        
+
         if (perfectDays.length === 0) {
-            html += '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
+            html +=
+                '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
             html += `<div class="statistics-item">
                 <div style="text-align:right; width:100%;">
                     <div style="font-size:15px;"><span style="color:var(--primary); font-weight:bold;">없음</span></div>
@@ -834,16 +845,21 @@ const statistics = {
         } else {
             // 날짜순으로 정렬 (최신이 마지막)
             const sortedPerfectDays = [...perfectDays].sort((a, b) => a.date.localeCompare(b.date));
-            
-            html += '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
+
+            html +=
+                '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
             sortedPerfectDays.forEach((perfect, index) => {
                 const perfectDate = perfect.displayDate || perfect.date;
                 const perfectDayLabel = perfect.dayLabel || '';
-                
+
                 html += `<div class="statistics-item">
                     <div style="text-align:right; width:100%;">
                         <div style="font-size:15px; margin-bottom:4px;"><span style="color:var(--primary); font-weight:bold;">${perfectDate}</span></div>
-                        ${perfectDayLabel ? `<div style="font-size:15px;"><b>${perfectDayLabel}</b></div>` : ''}
+                        ${
+                            perfectDayLabel
+                                ? `<div style="font-size:15px;"><b>${perfectDayLabel}</b></div>`
+                                : ''
+                        }
                     </div>
                 </div>`;
             });
@@ -855,8 +871,10 @@ const statistics = {
         // 보스 모드 최고 wave 기록 (현재 단어장)
         const bossModeStats = bookStats.bossMode || { bestWave: 0, bestWaveDate: null };
         const bestWave = bossModeStats.bestWave || 0;
-        const bestWaveDate = bossModeStats.bestWaveDate ? bossModeStats.bestWaveDate.displayDate : '기록 없음';
-        
+        const bestWaveDate = bossModeStats.bestWaveDate
+            ? bossModeStats.bestWaveDate.displayDate
+            : '기록 없음';
+
         html += '<div class="statistics-section" style="margin-top:20px;">👑 보스 모드 기록</div>';
         html += `<div class="statistics-item">
             <div style="text-align:right; width:100%;">
@@ -1470,7 +1488,6 @@ const game = {
     },
 
     init: (mode, day) => {
-        
         game.mode = mode;
         game.currentDay = day;
 
@@ -1489,7 +1506,7 @@ const game = {
             const dayNum = Number(day);
             pool = currentRawData.filter((i) => Number(i.day) === dayNum);
         }
-        
+
         const countSelect = document.getElementById('count-select');
         const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
 
@@ -1695,9 +1712,7 @@ const game = {
             game.renderBoss(game.currentQ, true); // boss mode
         } else if (game.mode === 'battle') {
             // Battle Mode: Question type depends on user selection
-            document.getElementById('wave-badge').innerText = `${game.idx + 1}/${
-                game.list.length
-            }`;
+            document.getElementById('wave-badge').innerText = `${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
 
@@ -1714,9 +1729,7 @@ const game = {
                 game.renderNormal(game.currentQ);
             }
         } else {
-            document.getElementById('wave-badge').innerText = `${game.idx + 1}/${
-                game.list.length
-            }`;
+            document.getElementById('wave-badge').innerText = `${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
 
             document.getElementById('boss-box').style.display = 'none';
@@ -2352,7 +2365,8 @@ const game = {
         if (resWrongEl) {
             const wrongList = game.sessionWrongWords || [];
             if (wrongList.length === 0) {
-                resWrongEl.innerHTML = '<div class="result-modal-section">❌ 틀린 단어</div><div class="result-modal-item result-modal-item-empty">없음</div>';
+                resWrongEl.innerHTML =
+                    '<div class="result-modal-section">❌ 틀린 단어</div><div class="result-modal-item result-modal-item-empty">없음</div>';
             } else {
                 let wrongHtml = '<div class="result-modal-section">❌ 틀린 단어</div>';
                 wrongList.forEach((w) => {
@@ -2377,10 +2391,11 @@ const game = {
 
             // 기존 데이터와의 호환성
             // 현재 단어장 정보 가져오기
-            const bookName = typeof window !== 'undefined' && window.currentGameDataName 
-                ? window.currentGameDataName 
-                : '기본 단어장';
-            
+            const bookName =
+                typeof window !== 'undefined' && window.currentGameDataName
+                    ? window.currentGameDataName
+                    : '기본 단어장';
+
             // 단어장별 통계 초기화
             if (!db.stats.books) {
                 db.stats.books = {};
@@ -2391,10 +2406,10 @@ const game = {
                     correct: 0,
                     objective: { solved: 0, correct: 0 },
                     subjective: { solved: 0, correct: 0, perfectDays: [] },
-                    bossMode: { bestWave: 0, bestWaveDate: null }
+                    bossMode: { bestWave: 0, bestWaveDate: null },
                 };
             }
-            
+
             const bookStats = db.stats.books[bookName];
             if (!bookStats.bossMode) {
                 bookStats.bossMode = { bestWave: 0, bestWaveDate: null };
@@ -2409,7 +2424,7 @@ const game = {
                 };
                 db.save();
             }
-            
+
             // 기존 전역 통계도 유지 (호환성)
             if (!db.stats.bossMode) {
                 db.stats.bossMode = { bestWave: 0, bestWaveDate: null };
@@ -2434,10 +2449,11 @@ const game = {
             });
 
             // 현재 단어장 정보 가져오기
-            const bookName = typeof window !== 'undefined' && window.currentGameDataName 
-                ? window.currentGameDataName 
-                : '기본 단어장';
-            
+            const bookName =
+                typeof window !== 'undefined' && window.currentGameDataName
+                    ? window.currentGameDataName
+                    : '기본 단어장';
+
             // 단어장별 통계 초기화
             if (!db.stats.books) {
                 db.stats.books = {};
@@ -2448,10 +2464,10 @@ const game = {
                     correct: 0,
                     objective: { solved: 0, correct: 0 },
                     subjective: { solved: 0, correct: 0, perfectDays: [] },
-                    bossMode: { bestWave: 0, bestWaveDate: null }
+                    bossMode: { bestWave: 0, bestWaveDate: null },
                 };
             }
-            
+
             const bookStats = db.stats.books[bookName];
             if (!bookStats.subjective) {
                 bookStats.subjective = { solved: 0, correct: 0, perfectDays: [] };
@@ -2461,19 +2477,18 @@ const game = {
             }
 
             const day = game.currentDay || 'all';
-            const dayLabel = day === 'all' 
-                ? '전체' 
-                : day === 'boss' 
+            const dayLabel =
+                day === 'all'
+                    ? '전체'
+                    : day === 'boss'
                     ? '보스 모드'
-                    : (dayCatalog[day] && dayCatalog[day].label) 
-                        ? dayCatalog[day].label 
-                        : `Day ${day}`;
+                    : dayCatalog[day] && dayCatalog[day].label
+                    ? dayCatalog[day].label
+                    : `Day ${day}`;
 
             // 같은 day와 book 조합이 이미 기록되어 있는지 확인 (현재 단어장 내에서)
             const todayISO = today.toISOString().split('T')[0];
-            const existingIndex = bookStats.subjective.perfectDays.findIndex(
-                (d) => d.day === day
-            );
+            const existingIndex = bookStats.subjective.perfectDays.findIndex((d) => d.day === day);
 
             if (existingIndex === -1) {
                 // 같은 day 조합이 없으면 새로 추가
@@ -2491,7 +2506,7 @@ const game = {
 
             // 날짜순으로 정렬 (최신이 마지막)
             bookStats.subjective.perfectDays.sort((a, b) => a.date.localeCompare(b.date));
-            
+
             // 기존 전역 통계도 유지 (호환성)
             if (!db.stats.subjective) {
                 db.stats.subjective = { solved: 0, correct: 0 };
@@ -2559,23 +2574,27 @@ const secret = {
 
         // 설정: 음악 재생 / 단어 바로 읽기 체크박스
         if (!db.settings) {
-            db.settings = { 
-                musicPlay: true, 
+            db.settings = {
+                musicPlay: true,
                 wordRead: true,
                 unlockedMusicTracks: [1, 2, 3], // Initially unlock tracks 1, 2, 3
-                musicUnlockThresholds: { // Thresholds based on number of unique perfect subjective days
-                    4: 1,  // Unlock song 4 after 1 perfect subjective day
+                musicUnlockThresholds: {
+                    // Thresholds based on number of unique perfect subjective days
+                    4: 1, // Unlock song 4 after 1 perfect subjective day
                     5: 2,
                     6: 3,
                     7: 4,
                     8: 5,
                     9: 6,
-                    10: 7
-                }
+                    10: 7,
+                },
             };
         } else {
             // Ensure new properties are added if they don't exist in existing settings
-            if (!db.settings.unlockedMusicTracks || !Array.isArray(db.settings.unlockedMusicTracks)) {
+            if (
+                !db.settings.unlockedMusicTracks ||
+                !Array.isArray(db.settings.unlockedMusicTracks)
+            ) {
                 db.settings.unlockedMusicTracks = [1, 2, 3];
             }
             if (!db.settings.musicUnlockThresholds) {
@@ -2586,7 +2605,7 @@ const secret = {
                     7: 40,
                     8: 50,
                     9: 60,
-                    10: 70
+                    10: 70,
                 };
             }
         }
@@ -2980,7 +2999,6 @@ const secret = {
                 printDaySelect.innerHTML += `<option value="${d}">${label}</option>`;
             });
         }
-
     },
 
     closePrintDaySelect: () => {
@@ -2999,7 +3017,9 @@ const secret = {
         }
 
         // 라디오 버튼에서 선택된 문제 타입 확인
-        const questionTypeRadio = document.querySelector('input[name="print-question-type"]:checked');
+        const questionTypeRadio = document.querySelector(
+            'input[name="print-question-type"]:checked'
+        );
         const questionType = questionTypeRadio ? questionTypeRadio.value : 'mixed';
 
         // 현재 데이터셋의 rawData 사용
@@ -3088,7 +3108,7 @@ const secret = {
         const maxQuestions = Math.min(dayWords.length, 30);
         let leftQuestions = [];
         let rightQuestions = [];
-        
+
         // 사용된 단어 추적 (중복 방지용)
         const usedWords = new Set(); // word와 meaning을 모두 추적
 
@@ -3110,7 +3130,7 @@ const secret = {
             const options = buildObjectiveOptions(correctValue, key, dayWords);
             const correctIndex = options.indexOf(correctValue);
             const type = isKoEn ? 'objective-ko-en' : 'objective-en-ko';
-            
+
             if (correctIndex === -1) {
                 options[0] = correctValue;
                 return { type, item, options, correctIndex: 0 };
@@ -3124,7 +3144,7 @@ const secret = {
 
         // 사용 가능한 단어 필터링
         const getAvailableWords = (words) => {
-            return words.filter(item => !isWordUsed(item));
+            return words.filter((item) => !isWordUsed(item));
         };
 
         if (questionType === 'mixed') {
@@ -3135,38 +3155,47 @@ const secret = {
             // 좌측: 객관식 문제
             let availableWords = getAvailableWords(shuffle([...dayWords]));
             const objectiveWords = availableWords.slice(0, objectiveCount);
-            objectiveWords.forEach(item => markWordAsUsed(item));
-            
+            objectiveWords.forEach((item) => markWordAsUsed(item));
+
             const objHalf = Math.ceil(objectiveWords.length / 2);
             objectiveWords.slice(0, objHalf).forEach((item, idx) => {
                 leftQuestions.push({ ...createObjectiveQuestion(item, true), num: idx + 1 });
             });
             objectiveWords.slice(objHalf).forEach((item, idx) => {
-                leftQuestions.push({ ...createObjectiveQuestion(item, false), num: objHalf + idx + 1 });
+                leftQuestions.push({
+                    ...createObjectiveQuestion(item, false),
+                    num: objHalf + idx + 1,
+                });
             });
 
             // 우측: 주관식 문제 (이미 사용된 단어 제외)
             availableWords = getAvailableWords(shuffle([...dayWords]));
             const subjectiveWords = availableWords.slice(0, subjectiveCount);
-            subjectiveWords.forEach(item => markWordAsUsed(item));
-            
+            subjectiveWords.forEach((item) => markWordAsUsed(item));
+
             const subHalf = Math.ceil(subjectiveWords.length / 2);
             const rightStartNum = leftQuestions.length + 1;
             subjectiveWords.slice(0, subHalf).forEach((item, idx) => {
-                rightQuestions.push({ ...createSubjectiveQuestion(item, true), num: rightStartNum + idx });
+                rightQuestions.push({
+                    ...createSubjectiveQuestion(item, true),
+                    num: rightStartNum + idx,
+                });
             });
             subjectiveWords.slice(subHalf).forEach((item, idx) => {
-                rightQuestions.push({ ...createSubjectiveQuestion(item, false), num: rightStartNum + subHalf + idx });
+                rightQuestions.push({
+                    ...createSubjectiveQuestion(item, false),
+                    num: rightStartNum + subHalf + idx,
+                });
             });
         } else if (questionType === 'objective') {
             // 객관식만: 좌우 모두 객관식
             let availableWords = getAvailableWords(shuffle([...dayWords]));
             const words = availableWords.slice(0, maxQuestions);
-            words.forEach(item => markWordAsUsed(item));
-            
+            words.forEach((item) => markWordAsUsed(item));
+
             const leftHalf = Math.floor(words.length / 2);
             const rightHalf = words.length - leftHalf;
-            
+
             // 좌측: words의 절반
             const leftWords = words.slice(0, leftHalf);
             const leftKoEnCount = Math.ceil(leftWords.length / 2);
@@ -3174,7 +3203,10 @@ const secret = {
                 leftQuestions.push({ ...createObjectiveQuestion(item, true), num: idx + 1 });
             });
             leftWords.slice(leftKoEnCount).forEach((item, idx) => {
-                leftQuestions.push({ ...createObjectiveQuestion(item, false), num: leftKoEnCount + idx + 1 });
+                leftQuestions.push({
+                    ...createObjectiveQuestion(item, false),
+                    num: leftKoEnCount + idx + 1,
+                });
             });
 
             // 우측: words의 나머지 절반
@@ -3182,36 +3214,48 @@ const secret = {
             const rightKoEnCount = Math.ceil(rightWordsFromLeft.length / 2);
             const rightStartNum = leftQuestions.length + 1;
             rightWordsFromLeft.slice(0, rightKoEnCount).forEach((item, idx) => {
-                rightQuestions.push({ ...createObjectiveQuestion(item, true), num: rightStartNum + idx });
+                rightQuestions.push({
+                    ...createObjectiveQuestion(item, true),
+                    num: rightStartNum + idx,
+                });
             });
             rightWordsFromLeft.slice(rightKoEnCount).forEach((item, idx) => {
-                rightQuestions.push({ ...createObjectiveQuestion(item, false), num: rightStartNum + rightKoEnCount + idx });
+                rightQuestions.push({
+                    ...createObjectiveQuestion(item, false),
+                    num: rightStartNum + rightKoEnCount + idx,
+                });
             });
 
             // 우측에 추가 단어가 필요하면 새로운 단어 추가
             if (rightQuestions.length < rightHalf) {
                 availableWords = getAvailableWords(shuffle([...dayWords]));
                 const additionalWords = availableWords.slice(0, rightHalf - rightQuestions.length);
-                additionalWords.forEach(item => markWordAsUsed(item));
-                
+                additionalWords.forEach((item) => markWordAsUsed(item));
+
                 const addKoEnCount = Math.ceil(additionalWords.length / 2);
                 const addStartNum = leftQuestions.length + rightQuestions.length + 1;
                 additionalWords.slice(0, addKoEnCount).forEach((item, idx) => {
-                    rightQuestions.push({ ...createObjectiveQuestion(item, true), num: addStartNum + idx });
+                    rightQuestions.push({
+                        ...createObjectiveQuestion(item, true),
+                        num: addStartNum + idx,
+                    });
                 });
                 additionalWords.slice(addKoEnCount).forEach((item, idx) => {
-                    rightQuestions.push({ ...createObjectiveQuestion(item, false), num: addStartNum + addKoEnCount + idx });
+                    rightQuestions.push({
+                        ...createObjectiveQuestion(item, false),
+                        num: addStartNum + addKoEnCount + idx,
+                    });
                 });
             }
         } else if (questionType === 'subjective') {
             // 주관식만: 좌우 모두 주관식
             let availableWords = getAvailableWords(shuffle([...dayWords]));
             const words = availableWords.slice(0, maxQuestions);
-            words.forEach(item => markWordAsUsed(item));
-            
+            words.forEach((item) => markWordAsUsed(item));
+
             const leftHalf = Math.floor(words.length / 2);
             const rightHalf = words.length - leftHalf;
-            
+
             // 좌측: words의 절반
             const leftWords = words.slice(0, leftHalf);
             const leftKoEnCount = Math.ceil(leftWords.length / 2);
@@ -3219,7 +3263,10 @@ const secret = {
                 leftQuestions.push({ ...createSubjectiveQuestion(item, true), num: idx + 1 });
             });
             leftWords.slice(leftKoEnCount).forEach((item, idx) => {
-                leftQuestions.push({ ...createSubjectiveQuestion(item, false), num: leftKoEnCount + idx + 1 });
+                leftQuestions.push({
+                    ...createSubjectiveQuestion(item, false),
+                    num: leftKoEnCount + idx + 1,
+                });
             });
 
             // 우측: words의 나머지 절반
@@ -3227,25 +3274,37 @@ const secret = {
             const rightKoEnCount = Math.ceil(rightWordsFromLeft.length / 2);
             const rightStartNum = leftQuestions.length + 1;
             rightWordsFromLeft.slice(0, rightKoEnCount).forEach((item, idx) => {
-                rightQuestions.push({ ...createSubjectiveQuestion(item, true), num: rightStartNum + idx });
+                rightQuestions.push({
+                    ...createSubjectiveQuestion(item, true),
+                    num: rightStartNum + idx,
+                });
             });
             rightWordsFromLeft.slice(rightKoEnCount).forEach((item, idx) => {
-                rightQuestions.push({ ...createSubjectiveQuestion(item, false), num: rightStartNum + rightKoEnCount + idx });
+                rightQuestions.push({
+                    ...createSubjectiveQuestion(item, false),
+                    num: rightStartNum + rightKoEnCount + idx,
+                });
             });
 
             // 우측에 추가 단어가 필요하면 새로운 단어 추가
             if (rightQuestions.length < rightHalf) {
                 availableWords = getAvailableWords(shuffle([...dayWords]));
                 const additionalWords = availableWords.slice(0, rightHalf - rightQuestions.length);
-                additionalWords.forEach(item => markWordAsUsed(item));
-                
+                additionalWords.forEach((item) => markWordAsUsed(item));
+
                 const addKoEnCount = Math.ceil(additionalWords.length / 2);
                 const addStartNum = leftQuestions.length + rightQuestions.length + 1;
                 additionalWords.slice(0, addKoEnCount).forEach((item, idx) => {
-                    rightQuestions.push({ ...createSubjectiveQuestion(item, true), num: addStartNum + idx });
+                    rightQuestions.push({
+                        ...createSubjectiveQuestion(item, true),
+                        num: addStartNum + idx,
+                    });
                 });
                 additionalWords.slice(addKoEnCount).forEach((item, idx) => {
-                    rightQuestions.push({ ...createSubjectiveQuestion(item, false), num: addStartNum + addKoEnCount + idx });
+                    rightQuestions.push({
+                        ...createSubjectiveQuestion(item, false),
+                        num: addStartNum + addKoEnCount + idx,
+                    });
                 });
             }
         }
@@ -3332,12 +3391,28 @@ const secret = {
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 0 ? 'correct' : ''
+                                    }">${optionLabels[0]} <span class="${
+                    q.correctIndex === 0 ? 'correct-underline' : ''
+                }">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 1 ? 'correct' : ''
+                                    }">${optionLabels[1]} <span class="${
+                    q.correctIndex === 1 ? 'correct-underline' : ''
+                }">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 2 ? 'correct' : ''
+                                    }">${optionLabels[2]} <span class="${
+                    q.correctIndex === 2 ? 'correct-underline' : ''
+                }">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 3 ? 'correct' : ''
+                                    }">${optionLabels[3]} <span class="${
+                    q.correctIndex === 3 ? 'correct-underline' : ''
+                }">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3371,12 +3446,28 @@ const secret = {
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 0 ? 'correct' : ''
+                                    }">${optionLabels[0]} <span class="${
+                    q.correctIndex === 0 ? 'correct-underline' : ''
+                }">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 1 ? 'correct' : ''
+                                    }">${optionLabels[1]} <span class="${
+                    q.correctIndex === 1 ? 'correct-underline' : ''
+                }">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 2 ? 'correct' : ''
+                                    }">${optionLabels[2]} <span class="${
+                    q.correctIndex === 2 ? 'correct-underline' : ''
+                }">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 3 ? 'correct' : ''
+                                    }">${optionLabels[3]} <span class="${
+                    q.correctIndex === 3 ? 'correct-underline' : ''
+                }">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3457,12 +3548,28 @@ const secret = {
                             <div class="question-text">${q.item.meaning}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 0 ? 'correct' : ''
+                                    }">${optionLabels[0]} <span class="${
+                    q.correctIndex === 0 ? 'correct-underline' : ''
+                }">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 1 ? 'correct' : ''
+                                    }">${optionLabels[1]} <span class="${
+                    q.correctIndex === 1 ? 'correct-underline' : ''
+                }">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 2 ? 'correct' : ''
+                                    }">${optionLabels[2]} <span class="${
+                    q.correctIndex === 2 ? 'correct-underline' : ''
+                }">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 3 ? 'correct' : ''
+                                    }">${optionLabels[3]} <span class="${
+                    q.correctIndex === 3 ? 'correct-underline' : ''
+                }">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3496,12 +3603,28 @@ const secret = {
                             <div class="question-text">${q.item.word}</div>
                             <div class="objective-options">
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 0 ? 'correct' : ''}">${optionLabels[0]} <span class="${q.correctIndex === 0 ? 'correct-underline' : ''}">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 1 ? 'correct' : ''}">${optionLabels[1]} <span class="${q.correctIndex === 1 ? 'correct-underline' : ''}">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 0 ? 'correct' : ''
+                                    }">${optionLabels[0]} <span class="${
+                    q.correctIndex === 0 ? 'correct-underline' : ''
+                }">${q.options[0]}</span>${q.correctIndex === 0 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 1 ? 'correct' : ''
+                                    }">${optionLabels[1]} <span class="${
+                    q.correctIndex === 1 ? 'correct-underline' : ''
+                }">${q.options[1]}</span>${q.correctIndex === 1 ? ' ✓' : ''}</div>
                                 </div>
                                 <div class="option-row">
-                                    <div class="option-item ${q.correctIndex === 2 ? 'correct' : ''}">${optionLabels[2]} <span class="${q.correctIndex === 2 ? 'correct-underline' : ''}">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
-                                    <div class="option-item ${q.correctIndex === 3 ? 'correct' : ''}">${optionLabels[3]} <span class="${q.correctIndex === 3 ? 'correct-underline' : ''}">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 2 ? 'correct' : ''
+                                    }">${optionLabels[2]} <span class="${
+                    q.correctIndex === 2 ? 'correct-underline' : ''
+                }">${q.options[2]}</span>${q.correctIndex === 2 ? ' ✓' : ''}</div>
+                                    <div class="option-item ${
+                                        q.correctIndex === 3 ? 'correct' : ''
+                                    }">${optionLabels[3]} <span class="${
+                    q.correctIndex === 3 ? 'correct-underline' : ''
+                }">${q.options[3]}</span>${q.correctIndex === 3 ? ' ✓' : ''}</div>
                                 </div>
                             </div>
                         </div>
@@ -3870,13 +3993,9 @@ const practiceMemorization = {
         const pool = practiceMemorization.fullPool;
 
         if (practiceMemorization.currentFilter === 'memorized') {
-            practiceMemorization.words = pool.filter(
-                (w) => set.has(`${w.word}|${w.meaning}`)
-            );
+            practiceMemorization.words = pool.filter((w) => set.has(`${w.word}|${w.meaning}`));
         } else if (practiceMemorization.currentFilter === 'not-memorized') {
-            practiceMemorization.words = pool.filter(
-                (w) => !set.has(`${w.word}|${w.meaning}`)
-            );
+            practiceMemorization.words = pool.filter((w) => !set.has(`${w.word}|${w.meaning}`));
         } else {
             practiceMemorization.words = [...pool];
         }
@@ -3938,13 +4057,9 @@ const practiceMemorization = {
             const set = practiceMemorization.getMemorizedSet();
             const pool = practiceMemorization.fullPool;
             if (practiceMemorization.currentFilter === 'memorized') {
-                practiceMemorization.words = pool.filter((w) =>
-                    set.has(`${w.word}|${w.meaning}`)
-                );
+                practiceMemorization.words = pool.filter((w) => set.has(`${w.word}|${w.meaning}`));
             } else {
-                practiceMemorization.words = pool.filter(
-                    (w) => !set.has(`${w.word}|${w.meaning}`)
-                );
+                practiceMemorization.words = pool.filter((w) => !set.has(`${w.word}|${w.meaning}`));
             }
             if (practiceMemorization.currentIndex >= practiceMemorization.words.length) {
                 practiceMemorization.currentIndex = Math.max(
@@ -4109,8 +4224,8 @@ const practiceMemorization = {
         const explanationTextEl = document.getElementById('practice-explanation-text');
         if (explanationTextEl) {
             explanationTextEl.textContent = practiceMemorization.showKoreanExplanation
-                ? (word.koreanExplanation || 'N/A')
-                : (word.englishExplanation || 'N/A');
+                ? word.koreanExplanation || 'N/A'
+                : word.englishExplanation || 'N/A';
         }
     },
 
@@ -4857,7 +4972,7 @@ function playMusic(mode) {
     // Ensure the current track is unlocked. If not, find the first unlocked track.
     if (!db.settings.unlockedMusicTracks.includes(currentMusicIndices[mode])) {
         // Find the first unlocked track, fallback to 1 if no tracks are unlocked
-        currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1; 
+        currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1;
     }
 
     _playMusic(currentMusicIndices[mode], mode);
@@ -4921,13 +5036,16 @@ function setupMusicSelectListeners() {
                 lastValidMusicSelection[id] = String(musicNum);
 
                 const filename = `background_music_${musicNum}.mp3`;
-                
+
                 if (bgMusic) {
                     bgMusic.src = `data/${filename}`;
                     bgMusic.load();
-                    
+
                     // 텍스트 업데이트
-                    const filenameId = id === 'practice-music-select' ? 'practice-music-filename' : 'music-filename';
+                    const filenameId =
+                        id === 'practice-music-select'
+                            ? 'practice-music-filename'
+                            : 'music-filename';
                     const musicFilenameEl = document.getElementById(filenameId);
                     if (musicFilenameEl) {
                         musicFilenameEl.innerText = filename;
@@ -5240,7 +5358,7 @@ window.onload = () => {
             titleBattleModeBtn.style.pointerEvents = 'auto';
             titleBattleModeBtn.style.zIndex = '25';
             titleBattleModeBtn.style.cursor = 'pointer';
-            
+
             // 버튼 내부 이미지도 클릭 가능하도록 설정 (이벤트 버블링 허용)
             const btnImage = titleBattleModeBtn.querySelector('.btn-image');
             if (btnImage) {
@@ -5260,7 +5378,7 @@ window.onload = () => {
                     console.error('openBattleModeModal function not found');
                 }
             };
-            
+
             // 터치 이벤트에 대한 명시적 처리 추가 (Android 호환성)
             titleBattleModeBtn.ontouchstart = (e) => {
                 // 터치 시 스크롤 등 기본 동작 방지하고 클릭으로 처리될 수 있게 함
@@ -5283,7 +5401,7 @@ window.onload = () => {
             titleBossModeBtn.style.pointerEvents = 'auto';
             titleBossModeBtn.style.zIndex = '25';
             titleBossModeBtn.style.cursor = 'pointer';
-            
+
             const btnImage = titleBossModeBtn.querySelector('.btn-image');
             if (btnImage) {
                 btnImage.style.pointerEvents = 'none';
@@ -5293,16 +5411,13 @@ window.onload = () => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Boss Mode button clicked');
-                if (
-                    typeof story !== 'undefined' &&
-                    typeof story.startBossDirectly === 'function'
-                ) {
+                if (typeof story !== 'undefined' && typeof story.startBossDirectly === 'function') {
                     story.startBossDirectly();
                 } else {
                     console.error('story.startBossDirectly function not found');
                 }
             };
-            
+
             titleBossModeBtn.ontouchstart = (e) => {
                 e.stopPropagation();
             };

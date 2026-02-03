@@ -9,7 +9,7 @@
     height: calc(var(--modal-img-height, 100%) * 0.15); /* 높이 (이미지 높이의 15%) */
     left: calc(var(--modal-img-width, 100%) * 0.145); /* 왼쪽 위치 (이미지 너비의 14.5%) */
     top: calc(var(--modal-img-height, 100%) * 0.27); /* 위쪽 위치 (이미지 높이의 29%) */
-        /* 폰트 크기 조정 - 브라우저 크기에 따라 동적으로 변함 (최대 32px) */
+    /* 폰트 크기 조정 - 브라우저 크기에 따라 동적으로 변함 (최대 32px) */
     /* JavaScript의 adjustSelectFontSize 함수가 동적으로 조정합니다 */
     /* CSS에서 고정값을 설정하려면 아래 주석을 해제하세요 */
     /* font-size: clamp(16px, 3vw, 32px); */ /* 반응형 폰트 크기 (최소 16px, 최대 32px) */

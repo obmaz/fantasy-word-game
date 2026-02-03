@@ -1910,7 +1910,8 @@ window.rawData_1 = [
         day: 11,
         word: 'cause',
         meaning: '원인; 일으키다',
-        koreanExplanation: '어떤 일이나 상태를 생기게 하는 근본이 되는 것, 또는 어떤 일을 생기게 하다.',
+        koreanExplanation:
+            '어떤 일이나 상태를 생기게 하는 근본이 되는 것, 또는 어떤 일을 생기게 하다.',
         englishExplanation:
             'the reason why something, especially something bad, happens; to make something happen, especially something bad',
     },
@@ -1932,7 +1933,8 @@ window.rawData_1 = [
         day: 11,
         word: 'blood',
         meaning: '피, 혈액',
-        koreanExplanation: '사람이나 동물의 몸속 혈관을 돌며 산소와 영양분을 공급하는 붉은색의 액체.',
+        koreanExplanation:
+            '사람이나 동물의 몸속 혈관을 돌며 산소와 영양분을 공급하는 붉은색의 액체.',
         englishExplanation:
             'the red liquid that is sent around the body by the heart, and carries oxygen and important substances to organs and tissue, and removes waste products',
     },
@@ -1955,7 +1957,8 @@ window.rawData_1 = [
         day: 11,
         word: 'guide',
         meaning: '안내하다; 안내자',
-        koreanExplanation: '잘 모르는 곳으로 이끌어 길을 보여주거나, 어떤 일을 소개하여 알려주는 사람 또는 행위.',
+        koreanExplanation:
+            '잘 모르는 곳으로 이끌어 길을 보여주거나, 어떤 일을 소개하여 알려주는 사람 또는 행위.',
         englishExplanation:
             'to show someone how to do something difficult; a person whose job is to show tourists around places',
     },
@@ -1994,7 +1997,8 @@ window.rawData_1 = [
         day: 11,
         word: 'stomach',
         meaning: '위, 배',
-        koreanExplanation: "음식을 소화시키는 신체 기관인 '위', 또는 가슴과 엉덩이 사이의 신체 부위인 '배'.",
+        koreanExplanation:
+            "음식을 소화시키는 신체 기관인 '위', 또는 가슴과 엉덩이 사이의 신체 부위인 '배'.",
         englishExplanation:
             'an organ in the body where food is digested, or the soft front part of your body just below the chest',
     },

@@ -107,13 +107,17 @@
 .title-btn-area .button-text {
     position: absolute;
     color: #fff; /* White text */
-    font-size: clamp(10px, calc(var(--title-container-height) * 0.035), 18px); /* Responsive font size */
+    font-size: clamp(
+        10px,
+        calc(var(--title-container-height) * 0.035),
+        18px
+    ); /* Responsive font size */
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Text shadow for readability */
     pointer-events: none; /* Make sure text doesn't block button clicks */
     white-space: nowrap; /* Prevent text from wrapping */
     text-align: center;
-    line-height: 1;    /* Reset line-height to prevent vertical offsets */
+    line-height: 1; /* Reset line-height to prevent vertical offsets */
     /* Center the text */
     top: 50%;
     left: calc(50% + 2vmin); /* Move slightly to the right */
@@ -133,8 +137,6 @@
     object-fit: contain;
     pointer-events: none; /* Image shouldn't interfere with button click */
 }
-
-
 
 /* Button positions - based on title.webp layout */
 /* All positions are % relative to title.webp image size */
@@ -268,8 +270,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
-
 
 .title-data-selector option {
     background: #1e1e1e;

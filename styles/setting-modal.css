@@ -57,7 +57,7 @@
     user-select: none;
 }
 
-#gold-adjuster-modal .setting-checkbox-label input[type="checkbox"] {
+#gold-adjuster-modal .setting-checkbox-label input[type='checkbox'] {
     width: 22px;
     height: 22px;
     min-width: 22px;
@@ -225,8 +225,6 @@
     flex: 1;
     max-width: calc((100% - 20px) / 3);
 }
-
-
 
 .print-radio {
     position: absolute;

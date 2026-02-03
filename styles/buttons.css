@@ -38,8 +38,6 @@
     transition: left 0.5s;
 }
 
-
-
 .btn-main:active {
     transform: translateY(-2px) scale(0.98);
 }
@@ -170,8 +168,6 @@ img[src*='exit_btn'] {
     -moz-user-select: none;
     -ms-user-select: none;
 }
-
-
 
 img[src*='exit_btn']:active {
     opacity: 0.8;

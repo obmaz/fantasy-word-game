@@ -173,9 +173,7 @@ const __decoyWordIndex = (function () {
 
     decoyWordGroups.forEach((group) => {
         if (!Array.isArray(group)) return;
-        const cleaned = group
-            .map((w) => (typeof w === 'string' ? w.trim() : ''))
-            .filter((w) => w);
+        const cleaned = group.map((w) => (typeof w === 'string' ? w.trim() : '')).filter((w) => w);
         if (cleaned.length < 2) return;
 
         cleaned.forEach((w) => {

@@ -144,8 +144,6 @@
     top: calc(var(--story-img-height, 100%) * 0.71); /* 위쪽 위치 (이미지 높이의 71%) */
 }
 
-
-
 /* 보스 모드 버튼 위치 (battle_mode_story_modal.webp의 "모험 시작" 버튼 영역) */
 #story-start-btn.boss-mode-btn {
     /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
@@ -213,8 +211,6 @@
     background: rgba(255, 213, 79, 0.6);
     border-radius: 4px;
 }
-
-
 
 /* 이야기 텍스트 내용 */
 .story-text-content {
@@ -300,8 +296,6 @@
     text-overflow: clip !important;
 }
 
-
-
 .modal-select:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -327,8 +321,6 @@
     pointer-events: auto !important;
     transition: all 0.2s ease;
 }
-
-
 
 /* 모험 지역 드롭박스 기본 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
 .modal-day-select {
@@ -402,7 +394,7 @@
     background: rgba(30, 30, 30, 0.7);
     border: 2px solid rgba(255, 213, 79, 0.4);
     color: var(--primary);
-    font-size: clamp(10px, 3.0vw, 11px);
+    font-size: clamp(10px, 3vw, 11px);
     font-weight: bold;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     white-space: nowrap;
@@ -413,8 +405,6 @@
     width: calc((var(--modal-img-width, 100%) * 0.8 - 20px) / 3);
     flex: 0 0 calc((var(--modal-img-width, 100%) * 0.8 - 20px) / 3);
 }
-
-
 
 .modal-radio {
     position: absolute;
