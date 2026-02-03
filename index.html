@@ -46,8 +46,11 @@
                             <span id="music-filename" class="music-filename"></span>
                         </div>
                     </div>
-                    <select id="music-select" class="music-select-hidden" title="음악 선택">
-                    </select>
+                    <select
+                        id="music-select"
+                        class="music-select-hidden"
+                        title="음악 선택"
+                    ></select>
                 </div>
 
                 <div class="char-wrapper" id="hero-wrapper">
@@ -72,7 +75,14 @@
                 <div id="dmg-txt" class="damage-txt"></div>
                 <!-- 나가기: 아레나 우하단 -->
                 <div class="practice-arena-exit-wrap">
-                    <button type="button" class="practice-nav-btn practice-nav-exit" id="battle-exit-btn" title="나가기">나가기</button>
+                    <button
+                        type="button"
+                        class="practice-nav-btn practice-nav-exit"
+                        id="battle-exit-btn"
+                        title="나가기"
+                    >
+                        나가기
+                    </button>
                 </div>
             </div>
 
@@ -482,15 +492,22 @@
                 <!-- 배틀 아레나 영역 (배틀 모드와 유사) -->
                 <div class="practice-memorization-arena">
                     <!-- 현재 재생 중인 음악 정보 -->
-                    <div class="music-info-overlay" id="practice-music-info-overlay" style="display: none">
+                    <div
+                        class="music-info-overlay"
+                        id="practice-music-info-overlay"
+                        style="display: none"
+                    >
                         <div class="music-info-content">
                             <span class="music-icon">🎵</span>
                             <div class="music-text-container">
                                 <span id="practice-music-filename" class="music-filename"></span>
                             </div>
                         </div>
-                        <select id="practice-music-select" class="music-select-hidden" title="음악 선택">
-                        </select>
+                        <select
+                            id="practice-music-select"
+                            class="music-select-hidden"
+                            title="음악 선택"
+                        ></select>
                     </div>
                     <!-- 상단: Day 정보 및 단어 번호 -->
                     <div class="practice-memorization-header">
@@ -499,7 +516,14 @@
                     </div>
                     <!-- 나가기: 아레나 우하단 -->
                     <div class="practice-arena-exit-wrap">
-                        <button type="button" class="practice-nav-btn practice-nav-exit" id="practice-exit-btn" title="나가기">나가기</button>
+                        <button
+                            type="button"
+                            class="practice-nav-btn practice-nav-exit"
+                            id="practice-exit-btn"
+                            title="나가기"
+                        >
+                            나가기
+                        </button>
                     </div>
                 </div>
 
@@ -520,7 +544,11 @@
                     </div>
 
                     <!-- 영문/한글 설명 (탭하여 전환) -->
-                    <div class="practice-explanation-section" id="practice-explanation-section" title="탭하면 한글/영문 설명으로 전환됩니다">
+                    <div
+                        class="practice-explanation-section"
+                        id="practice-explanation-section"
+                        title="탭하면 한글/영문 설명으로 전환됩니다"
+                    >
                         <div class="practice-explanation-text" id="practice-explanation-text">
                             Loading...
                         </div>
@@ -530,10 +558,28 @@
 
                 <!-- 초이스 칩 + 음성 아이콘 (한 줄) -->
                 <div id="practice-filter-chips" class="practice-memorized-row">
-                    <button type="button" class="practice-chip practice-chip-active" data-filter="all">전체보기</button>
-                    <button type="button" class="practice-chip" data-filter="memorized">외운단어</button>
-                    <button type="button" class="practice-chip" data-filter="not-memorized">못외운단어</button>
-                    <button type="button" class="practice-speak-btn" id="practice-speak-btn" title="음성 재생" aria-label="음성 재생">🗣️</button>
+                    <button
+                        type="button"
+                        class="practice-chip practice-chip-active"
+                        data-filter="all"
+                    >
+                        전체보기
+                    </button>
+                    <button type="button" class="practice-chip" data-filter="memorized">
+                        외운단어
+                    </button>
+                    <button type="button" class="practice-chip" data-filter="not-memorized">
+                        못외운단어
+                    </button>
+                    <button
+                        type="button"
+                        class="practice-speak-btn"
+                        id="practice-speak-btn"
+                        title="음성 재생"
+                        aria-label="음성 재생"
+                    >
+                        🗣️
+                    </button>
                 </div>
 
                 <!-- 하단: 네비게이션 버튼 (중앙: 외웠어요) -->
@@ -541,7 +587,12 @@
                     <button class="practice-nav-btn" id="practice-prev-btn" title="이전 단어">
                         ◀ 이전
                     </button>
-                    <button type="button" class="practice-nav-btn practice-memorized-btn" id="practice-memorized-btn" title="외웠어요">
+                    <button
+                        type="button"
+                        class="practice-nav-btn practice-memorized-btn"
+                        id="practice-memorized-btn"
+                        title="외웠어요"
+                    >
                         외웠어요
                     </button>
                     <button class="practice-nav-btn" id="practice-next-btn" title="다음 단어">
@@ -607,7 +658,16 @@
             <div class="card rpg-modal">
                 <div class="modal-header">
                     <h2 class="modal-title">상점</h2>
-                    <div style="font-size: 12px; color: var(--gold); margin-top: 4px; text-align: center;">보유 골드: <span id="shop-gold">0</span> G</div>
+                    <div
+                        style="
+                            font-size: 12px;
+                            color: var(--gold);
+                            margin-top: 4px;
+                            text-align: center;
+                        "
+                    >
+                        보유 골드: <span id="shop-gold">0</span> G
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div id="shop-container" style="text-align: left"></div>
@@ -742,7 +802,9 @@
                                 cursor: pointer;
                                 box-sizing: border-box;
                             "
-                        >X</button>
+                        >
+                            X
+                        </button>
                     </div>
                 </div>
             </div>
@@ -936,17 +998,37 @@
             </div>
         </div>
 
-        <!-- Load data files first (wrapped as JavaScript variables to avoid CORS) -->
-
+        <!-- 데이터 파일 먼저 로드 (CORS 문제 방지를 위해 JavaScript 변수로 래핑) -->
         <script src="data/game-data-1.js"></script>
         <script src="data/game-data-2.js"></script>
         <script src="data/game-data-3.js"></script>
-        <!-- decoy words set (유사 단어 집합) -->
+        <!-- 유사 단어 집합 (decoy words set) -->
         <script src="data/decoy-words-set.js"></script>
         <script src="data/items-data.js"></script>
-        <script src="scripts/data-loader.js"></script>
-        <script src="scripts/words.js"></script>
-        <script src="scripts/items.js"></script>
+
+        <!-- 데이터 로더 -->
+        <script src="scripts/data/game-data-loader.js"></script>
+        <script src="scripts/data/words-loader.js"></script>
+        <script src="scripts/data/items-loader.js"></script>
+
+        <!-- 유틸리티 함수 -->
+        <script src="scripts/utils/helpers.js"></script>
+
+        <!-- 핵심 시스템 모듈 -->
+        <script src="scripts/core/database.js"></script>
+        <script src="scripts/core/inventory.js"></script>
+        <script src="scripts/core/shop.js"></script>
+        <script src="scripts/core/statistics.js"></script>
+
+        <!-- UI 관리 -->
+        <script src="scripts/ui/modal-manager.js"></script>
+        <script src="scripts/ui/ui-manager.js"></script>
+
+        <!-- 기능 모듈 -->
+        <script src="scripts/features/story.js"></script>
+        <script src="scripts/features/admin-tools.js"></script>
+
+        <!-- 메인 애플리케이션 (나머지 게임 로직 포함) -->
         <script src="scripts/app.js" defer></script>
 
         <!-- Background Music -->
@@ -1246,14 +1328,16 @@
                     if (practiceMemorizationScreen) {
                         practiceMemorizationScreen.style.display = 'none';
                         practiceMemorizationScreen.classList.remove('closing');
-                        
+
                         // 음악 정지 및 오버레이 숨기기
                         const bgMusic = document.getElementById('background-music');
                         if (bgMusic && !bgMusic.paused) {
                             bgMusic.pause();
                             bgMusic.currentTime = 0;
                         }
-                        const musicInfoOverlay = document.getElementById('practice-music-info-overlay');
+                        const musicInfoOverlay = document.getElementById(
+                            'practice-music-info-overlay'
+                        );
                         if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
                     }
 
