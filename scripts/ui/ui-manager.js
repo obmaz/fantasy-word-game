@@ -193,11 +193,11 @@ const ui = {
             option.value = String(i);
             option.innerText = `background_music_${i}.mp3`;
 
-            // 음악 트랙이 잠금 해제되었는지 확인
-            const isUnlocked = db.settings.unlockedMusicTracks.includes(i);
-            if (!isUnlocked) {
-                option.classList.add('locked-music'); // CSS로 회색 처리
-            }
+            // 모든 음악이 기본적으로 해제됨
+            // const isUnlocked = db.settings.unlockedMusicTracks.includes(i);
+            // if (!isUnlocked) {
+            //     option.classList.add('locked-music');
+            // }
             if (i === currentMusicNum) {
                 option.selected = true;
             }

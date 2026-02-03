@@ -5,25 +5,7 @@
 /* Setting Modal 전용 스타일 */
 /* RPG Modal 공통 스타일은 modal-common.css에 정의되어 있습니다 */
 
-/* Setting Modal 타이틀 스타일 (인벤토리, 통계와 동일) */
-#gold-adjuster-modal .card.rpg-modal .modal-title,
-#password-modal .card.rpg-modal .modal-title,
-#gold-edit-modal .card.rpg-modal .modal-title,
-#print-day-select-modal .card.rpg-modal .modal-title {
-    margin: 0;
-    padding: 0;
-    line-height: 1.2;
-}
-
-/* Setting Modal header 스타일 (인벤토리, 통계와 동일) */
-#gold-adjuster-modal .card.rpg-modal .modal-header,
-#password-modal .card.rpg-modal .modal-header,
-#gold-edit-modal .card.rpg-modal .modal-header,
-#print-day-select-modal .card.rpg-modal .modal-header {
-    background: rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid rgba(255, 215, 130, 0.18);
-}
+/* Setting Modal header 스타일은 modal-common.css의 .card.rpg-modal 공통 스타일을 따름 */
 
 /* 설정 옵션 행 (음악 재생, 단어 읽기) — 다른 버튼과 비슷한 윤곽선, 폰트 키움, 좌측 정렬 */
 #gold-adjuster-modal .setting-option-row {
@@ -34,7 +16,9 @@
     border-radius: 14px;
     border: 3px solid rgba(231, 189, 105, 0.9);
     background: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
 }
 
@@ -70,42 +54,7 @@
     flex: 1;
 }
 
-/* Setting Menu 버튼 스타일 */
-#setting-modal .card.rpg-modal .btn-main {
-    height: 58px;
-    border-radius: 14px;
-    border: 3px solid rgba(231, 189, 105, 0.9);
-    font-weight: 900;
-    font-size: clamp(14px, 3.5vw, 16px);
-    letter-spacing: 0.5px;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    animation: none !important;
-    background-size: initial !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-#setting-modal .card.rpg-modal .btn-main.btn-blue {
-    background: linear-gradient(
-        45deg,
-        rgba(41, 121, 255, 0.95),
-        rgba(41, 121, 255, 0.85)
-    ) !important;
-    color: #fff !important;
-}
-
-#setting-modal
-    .card.rpg-modal
-    .btn-main:not(.btn-blue):not(.btn-boss-mode):not(.btn-shop):not(.btn-inv):not(.btn-danger) {
-    background: linear-gradient(
-        45deg,
-        rgba(255, 214, 120, 0.95),
-        rgba(214, 140, 45, 0.95)
-    ) !important;
-    color: rgba(20, 15, 10, 0.92) !important;
-}
+/* Setting Menu 버튼 스타일은 buttons.css의 .modal-btn-main 사용 */
 
 /* 설정메뉴 숫자패드 */
 #setting-modal .card.rpg-modal .num-btn {
@@ -255,7 +204,9 @@
     background: rgba(255, 193, 7, 0.25) !important;
     border-color: var(--gold) !important;
     color: var(--gold) !important;
-    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5), 0 4px 12px rgba(255, 213, 79, 0.4) !important;
+    box-shadow:
+        0 0 15px rgba(255, 193, 7, 0.5),
+        0 4px 12px rgba(255, 213, 79, 0.4) !important;
     transform: translateY(-2px) !important;
 }
 
@@ -264,6 +215,8 @@
     background: rgba(255, 193, 7, 0.25);
     border-color: var(--gold);
     color: var(--gold);
-    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5), 0 4px 12px rgba(255, 213, 79, 0.4);
+    box-shadow:
+        0 0 15px rgba(255, 193, 7, 0.5),
+        0 4px 12px rgba(255, 213, 79, 0.4);
     transform: translateY(-2px);
 }

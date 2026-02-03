@@ -1,9 +1,11 @@
 # Fantasy Word Game (킹왕짱 RPG)
 
 ## Overview
+
 The Fantasy Word Game is a mobile-friendly, word guessing RPG game that challenges players to match words in a fun and engaging fantasy-themed environment. This project includes a responsive design optimized for mobile devices with a 9:16 aspect ratio.
 
 ## Project Structure
+
 ```
 fantasy-word-game/
 ├── index.html                         # Main HTML document for the game
@@ -23,97 +25,86 @@ fantasy-word-game/
 │   ├── practice-mode-modal.css       # Practice mode modal styles
 │   ├── battle-mode-modal.css         # Battle mode modal styles
 │   └── battle-mode-story-modal.css   # Battle mode story modal styles
-├── backup/                            # Unused files (moved from project)
-│   ├── styles/
-│   │   └── boss-mode-story-modal.css # Boss story modal (no longer used)
-│   └── images/
-│       ├── title copy.webp
-│       └── factory_reset_btn.webp
 ├── scripts/
-│   ├── app.js                        # Main game logic and UI management
-│   ├── words.js                      # Word data and word-related functions
-│   ├── items.js                      # Item data and item-related functions
-│   └── data-loader.js                # Data loading and management
-├── data/
-│   ├── game-data-1.js                # Game data set 1 (능률 보카 중등 기본)
-│   ├── game-data-2.js                # Game data set 2 (워드 마스터 중등 고난도)
-│   ├── items-data.js                 # Item definitions and properties
-│   └── background_music.mp3          # Background music file
-├── images/
-│   ├── battle_mode/                  # Battle mode game images
-│   │   ├── background.webp           # Game battle background
-│   │   ├── hero.webp                 # Hero character image
-│   │   ├── monster_1.webp            # Monster sprite 1
-│   │   ├── monster_2.webp            # Monster sprite 2
-│   │   ├── monster_3.webp            # Monster sprite 3
-│   │   ├── battle_mode_story_modal.webp # Battle mode story modal background
-│   │   ├── battle-mode-modal.webp           # Battle mode modal background
-│   │   └── practice_mode_select_popup .webp # Practice mode settings popup
-│   ├── title/                        # Title screen images
-│   │   ├── title.webp                # Title screen background
-│   │   ├── title_header_1.webp       # Title header image 1
-│   │   ├── title_header_2.webp      # Title header image 2
-│   │   ├── title_header_3.webp      # Title header image 3
-│   │   ├── title_header_4.webp      # Title header image 4
-│   │   ├── practice_mode_btn.webp   # Practice mode button
-│   │   ├── battle_mode_btn.webp     # Battle mode button
-│   │   ├── boss_mode_btn.webp       # Boss mode button
-│   │   ├── shop_btn.webp            # Shop button
-│   │   ├── inventory_btn.webp        # Inventory button
-│   │   ├── statistics_btn.webp       # Statistics button
-│   │   ├── settings_btn.webp         # Settings button
-│   │   ├── exit_btn.webp            # Exit button
-│   │   └── apply_btn.webp           # Apply button
-│   └── backup/                       # Backup images (in images/backup/)
-│       └── battle_start_btn.webp
-├── .gitignore
-├── package.json
+│   ├── app.js                        # Main entry point (window.onload)
+│   ├── core/                         # Core systems
+│   │   ├── database.js               # Data storage (Gold, Stats, Settings)
+│   │   ├── inventory.js              # Inventory logic
+│   │   ├── settings.js               # Settings management
+│   │   ├── shop.js                   # Shop logic
+│   │   └── statistics.js             # Statistics logic
+│   ├── data/                         # Data loaders
+│   │   ├── game-data-loader.js
+│   │   ├── items-loader.js
+│   │   └── words-loader.js
+│   ├── features/                     # Feature modules
+│   │   ├── admin-tools.js            # Admin methods (secret)
+│   │   ├── audio-manager.js          # Audio playback
+│   │   └── story.js                  # Story logic
+│   ├── game/                         # Game loop modules
+│   │   ├── game-engine.js            # Battle mode engine
+│   │   └── practice-mode.js          # Practice mode logic
+│   ├── ui/                           # UI managers
+│   │   ├── layout-manager.js
+│   │   ├── menu-logic.js
+│   │   ├── modal-manager.js
+│   │   ├── setup-ui.js
+│   │   └── ui-manager.js
+│   └── utils/                        # Utilities
+│       └── helpers.js
+├── data/                             # Raw data files
+│   ├── game-data-1.js
+│   ├── game-data-2.js
+│   ├── items-data.js
+│   └── background_music.mp3
 └── README.md
 ```
 
 ## Getting Started
 
 ### Prerequisites
+
 - A modern web browser (Chrome, Firefox, Safari, etc.)
 - Basic understanding of HTML, CSS, and JavaScript
 
 ### Installation
+
 1. Clone the repository:
-   ```
-   git clone <repository-url>
-   ```
+    ```
+    git clone <repository-url>
+    ```
 2. Navigate to the project directory:
-   ```
-   cd fantasy-word-game
-   ```
+    ```
+    cd fantasy-word-game
+    ```
 
 ### Running the Game
+
 1. Open `index.html` in your web browser.
 2. The game will start with the title screen.
-3. Select a game data set from the dropdown (능률 보카 중등 기본 or 워드 마스터 중등 고난도).
+3. Select a game data set from the dropdown.
 4. Choose a game mode and enjoy the game!
 
 ## Features
 
 ### Multiple Game Modes
-- **Practice Mode (연습 모드)**: Practice with selected days and difficulty levels
-- **Battle Mode (배틀 모드)**: Face enemies from all days in random order with configurable question types (objective, mixed, subjective)
-- **Boss Mode (보스 모드 / 무한의 전장)**: Endless boss battles for high scores
+
+- **Practice Mode (연습 모드)**: Practice with selected days and difficulty levels.
+- **Battle Mode (배틀 모드)**: Face enemies from all days in random order.
+- **Boss Mode (보스 모드 / 무한의 전장)**: Endless boss battles for high scores.
 
 ### Gameplay Features
+
 - Word matching gameplay with Korean-English translations
-- Multiple question types:
-  - **Objective (객관식)**: Multiple choice questions
-  - **Subjective (주관식)**: Type the answer (boss battles)
-  - **Mixed (혼합형)**: Combination of both types
-- Boss battles requiring typed answers
-- Skill system (힌트/Hint, 필살기/Ultimate)
+- Multiple question types (Objective, Subjective, Mixed)
+- Skill system (Hint, Ultimate)
 - Gold and inventory management
 - Shop system to purchase items
 - Equipment system with durability
 - Statistics tracking
 
 ### UI Features
+
 - Responsive design optimized for mobile devices with consistent scaling across all screen sizes
 - Image-based UI with precise button mapping
 - Real-time gold and timer display
@@ -127,72 +118,77 @@ fantasy-word-game/
 ## How to Play
 
 ### Starting the Game
+
 1. **Select Game Data Set:**
-   - Choose from the dropdown on the title screen
-   - Available sets: "능률 보카 중등 기본" or "워드 마스터 중등 고난도"
+    - Choose from the dropdown on the title screen
+    - Available sets: "능률 보카 중등 기본" or "워드 마스터 중등 고난도"
 
 2. **Select Game Mode:**
-   - **Practice Mode**: Choose a specific day and difficulty level
-   - **Battle Mode**: Configure question type and difficulty
-   - **Boss Mode**: Start endless boss battles immediately
+    - **Practice Mode**: Choose a specific day and difficulty level
+    - **Battle Mode**: Configure question type and difficulty
+    - **Boss Mode**: Start endless boss battles immediately
 
 3. **Configure Adventure Settings (Practice/Battle Mode):**
-   - Select "모험 지역" (Adventure Area) - the day/story to play
-   - Select "난이도" (Difficulty) - number of monsters (5, 10, or 20)
-   - **Battle Mode only**: Select question type (객관식/혼합형/주관식)
-   - Click "시작하기" (Start) to begin
+    - Select "모험 지역" (Adventure Area) - the day/story to play
+    - Select "난이도" (Difficulty) - number of monsters (5, 10, or 20)
+    - **Battle Mode only**: Select question type (객관식/혼합형/주관식)
+    - Click "시작하기" (Start) to begin
 
 4. **Gameplay:**
-   - **Normal Monsters**: You will be given a word or meaning and must choose the correct translation from multiple options
-   - **Boss Monsters**: You will be given a meaning and must type the correct word in the input field
-   - Answer correctly to defeat monsters and earn gold
-   - Answer incorrectly to take damage (your durability decreases)
+    - **Normal Monsters**: You will be given a word or meaning and must choose the correct translation from multiple options
+    - **Boss Monsters**: You will be given a meaning and must type the correct word in the input field
+    - Answer correctly to defeat monsters and earn gold
+    - Answer incorrectly to take damage (your durability decreases)
 
 5. **Skills:**
-   - **힌트 (Hint)**: Get a hint for the current question
-   - **필살기 (Ultimate)**: Automatically answer the current question correctly
+    - **힌트 (Hint)**: Get a hint for the current question
+    - **필살기 (Ultimate)**: Automatically answer the current question correctly
 
 6. **Shop and Inventory:**
-   - Visit the shop to purchase items with gold
-   - Manage your inventory and equip items
-   - Items have durability that decreases with use
+    - Visit the shop to purchase items with gold
+    - Manage your inventory and equip items
+    - Items have durability that decreases with use
 
 7. **Statistics:**
-   - View your game statistics including solved problems, correct answers, and accuracy rate
+    - View your game statistics including solved problems, correct answers, and accuracy rate
 
 8. **Win Condition:**
-   - Defeat all monsters in the selected difficulty level
-   - Boss battles give higher rewards than normal monsters
+    - Defeat all monsters in the selected difficulty level
+    - Boss battles give higher rewards than normal monsters
 
 ## Game Modes
 
 ### Practice Mode (연습 모드)
+
 - Practice with specific days and difficulty levels
 - Choose any day from the available catalog
 - Configure difficulty (5, 10, or 20 monsters)
 - Perfect for focused learning on specific word sets
 
 ### Battle Mode (배틀 모드)
+
 - Face enemies from all days in random order
 - Test your knowledge across all learned words
 - Configurable question types:
-  - **Objective (객관식)**: Only multiple choice questions
-  - **Mixed (혼합형)**: Combination of multiple choice and typing (50% each, alternating)
-  - **Subjective (주관식)**: Only typing questions (boss battles)
+    - **Objective (객관식)**: Only multiple choice questions
+    - **Mixed (혼합형)**: Combination of multiple choice and typing (50% each, alternating)
+    - **Subjective (주관식)**: Only typing questions (boss battles)
 - More challenging as you don't know what's coming next
 
 ### Boss Mode (보스 모드 / 무한의 전장)
+
 - Endless boss battles
 - All questions are boss-type (require typing)
 - Compete for high scores
 - No limit on how many bosses you can defeat
 
 ## Boss Battles
+
 - **Practice Mode**: At least 20% of questions are boss battles, with a minimum of one boss battle per game
 - **Battle Mode**: Boss battle frequency depends on question type:
-  - Objective mode: No boss battles (all multiple choice)
-  - Mixed mode: 50% boss battles (alternating with multiple choice)
-  - Subjective mode: All questions are boss battles
+    - Objective mode: No boss battles (all multiple choice)
+    - Mixed mode: 50% boss battles (alternating with multiple choice)
+    - Subjective mode: All questions are boss battles
 - Boss battles require typing the answer instead of choosing from multiple options
 - Defeating a boss gives higher gold rewards than normal monsters
 - In Boss Mode, all questions are boss battles
@@ -200,18 +196,20 @@ fantasy-word-game/
 ## Technical Details
 
 ### CSS Architecture
+
 - **Modular CSS**: Styles are separated into multiple files for better organization
 - **Mode-specific styles**: Each game mode has its own CSS file for modal and screen styles
 - **Common styles**: Shared styles are in `modal-common.css`
 - **CSS Variables**: Global variables defined in `variables.css`
 - **Responsive Typography**: All font sizes use `clamp()` for consistent scaling across devices
-  - Base font: `clamp(16px, 4vw, 24px)` - scales proportionally with viewport width
-  - All UI elements use viewport-relative units (vw) for consistent aspect ratio
-  - Desktop displays show the same mobile layout scaled up proportionally
+    - Base font: `clamp(16px, 4vw, 24px)` - scales proportionally with viewport width
+    - All UI elements use viewport-relative units (vw) for consistent aspect ratio
+    - Desktop displays show the same mobile layout scaled up proportionally
 - **Backdrop Filters**: Blur effects applied to modals and screens for visual depth
 - **Z-index Management**: Proper layering system (title-screen: 100, modals: 200, result: 300)
 
 ### Image-Based UI
+
 - The game uses image-based UI elements with precise button mapping
 - Button positions are calculated relative to background images using CSS variables
 - Supports different layouts for different game modes
@@ -219,12 +217,14 @@ fantasy-word-game/
 - Dynamic button overlay synchronization based on image dimensions
 
 ### Data Management
+
 - **Multiple Data Sets**: Support for multiple game data sets (game-data-1.js, game-data-2.js)
 - **Dynamic Loading**: Data loader manages switching between data sets
 - **Decoy Words**: Multiple-choice distractors are dynamically generated
 - **Story Data**: Each day has unique story content (title, intro, win messages)
 
 ### Mobile Optimization
+
 - Optimized for mobile devices with touch controls
 - Vibration feedback on damage (mobile devices)
 - Responsive design using clamp() for consistent scaling across all screen sizes
@@ -234,6 +234,7 @@ fantasy-word-game/
 - Backdrop blur effects for enhanced visual depth
 
 ### Data Storage
+
 - Game progress is saved to localStorage
 - Gold, inventory, equipment, and statistics are persisted between sessions
 - Last selected day, difficulty, and question type are remembered
@@ -242,6 +243,7 @@ fantasy-word-game/
 ## File Organization
 
 ### Styles
+
 - `variables.css`: CSS variables and global styles with responsive font sizing
 - `animations.css`: Animation keyframes and transitions
 - `title-screen.css`: Title screen layout and styling
@@ -257,18 +259,22 @@ fantasy-word-game/
 - Mode-specific modal/screen CSS files for each game mode
 
 ### Scripts
+
 - `app.js`: Main game logic, UI management, and game flow
 - `words.js`: Word data processing and day catalog management
 - `items.js`: Item definitions and inventory management
 - `data-loader.js`: Data set loading and switching logic
 
 ### Data
+
 - `game-data-1.js`: First game data set (능률 보카 중등 기본)
 - `game-data-2.js`: Second game data set (워드 마스터 중등 고난도)
 - `items-data.js`: Item definitions, shop items, and equipment data
 
 ## Contributing
+
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.
 
 ## License
+
 This project is licensed under the ISC License.

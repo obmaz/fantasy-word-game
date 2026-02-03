@@ -828,7 +828,7 @@
                     </div>
                     <div style="text-align: center; width: 100%; margin-top: 20px">
                         <button
-                            class="btn-main"
+                            class="modal-btn-main"
                             onclick="secret.openGoldEditModal()"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
@@ -837,7 +837,7 @@
                     </div>
                     <div style="text-align: center; width: 100%; margin-top: 10px">
                         <button
-                            class="btn-main"
+                            class="modal-btn-main"
                             onclick="secret.openPrintDaySelect()"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
@@ -846,7 +846,7 @@
                     </div>
                     <div style="text-align: center; width: 100%; margin-top: 10px">
                         <button
-                            class="btn-main btn-danger"
+                            class="modal-btn-main btn-danger"
                             onclick="secret.resetStatistics()"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
@@ -933,7 +933,7 @@
                     <div style="margin: 20px 0">
                         <select
                             id="print-day-select"
-                            class="btn-main"
+                            class="modal-btn-main"
                             style="width: 100%; padding: 10px; font-size: 16px"
                         >
                             <option value="">Day 선택...</option>
@@ -972,7 +972,7 @@
                     </div>
                     <div style="text-align: center; width: 100%; margin-top: 20px">
                         <button
-                            class="btn-main"
+                            class="modal-btn-main"
                             onclick="secret.generatePrintHTML()"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
@@ -1019,16 +1019,26 @@
         <script src="scripts/core/inventory.js"></script>
         <script src="scripts/core/shop.js"></script>
         <script src="scripts/core/statistics.js"></script>
+        <script src="scripts/core/settings.js"></script>
 
         <!-- UI 관리 -->
+        <!-- UI 관리 -->
         <script src="scripts/ui/modal-manager.js"></script>
+        <script src="scripts/ui/layout-manager.js"></script>
+        <script src="scripts/ui/menu-logic.js"></script>
+        <script src="scripts/ui/setup-ui.js"></script>
         <script src="scripts/ui/ui-manager.js"></script>
 
         <!-- 기능 모듈 -->
         <script src="scripts/features/story.js"></script>
+        <script src="scripts/features/audio-manager.js"></script>
         <script src="scripts/features/admin-tools.js"></script>
 
-        <!-- 메인 애플리케이션 (나머지 게임 로직 포함) -->
+        <!-- 게임 로직 -->
+        <script src="scripts/game/game-engine.js"></script>
+        <script src="scripts/game/practice-mode.js"></script>
+
+        <!-- 메인 애플리케이션 -->
         <script src="scripts/app.js" defer></script>
 
         <!-- Background Music -->

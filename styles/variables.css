@@ -16,6 +16,16 @@
     --game-card-border: #d5d5d5;
     --game-text: #2a2a2a;
     --game-text-muted: #5a5a5a;
+
+    /* Modal Theme */
+    --modal-header-bg: rgba(0, 0, 0, 0.15);
+    --modal-border-gold: rgba(255, 215, 130, 0.18);
+    --modal-btn-border: rgba(231, 189, 105, 0.9);
+    --modal-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    --modal-inner-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    --modal-btn-gradient-start: rgba(255, 214, 120, 0.95);
+    --modal-btn-gradient-end: rgba(214, 140, 45, 0.95);
+    --modal-btn-text: rgba(20, 15, 10, 0.92);
 }
 
 * {

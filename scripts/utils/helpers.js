@@ -108,3 +108,18 @@ function resolveStoryData(day) {
             '',
     };
 }
+
+/** TTS 재생 시 사용할 음성: Google 계열(en-US) 우선, 없으면 en-US, 그다음 en-* */
+function getPreferredTTSVoice() {
+    const synth = window.speechSynthesis;
+    if (!synth || typeof synth.getVoices !== 'function') return null;
+    let voices = synth.getVoices();
+    if (!voices.length) return null;
+    const enVoices = voices.filter((v) => v.lang.startsWith('en'));
+    if (!enVoices.length) return voices[0] || null;
+    const google = enVoices.find((v) => /Google/i.test(v.name));
+    if (google) return google;
+    const enUS = enVoices.find((v) => v.lang === 'en-US');
+    if (enUS) return enUS;
+    return enVoices[0];
+}

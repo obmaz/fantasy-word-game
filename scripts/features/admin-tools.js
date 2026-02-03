@@ -16,7 +16,17 @@ const secret = {
                 '킹',
                 '<span id="secret-trigger" style="cursor:pointer;">킹</span>'
             );
-            document.getElementById('secret-trigger').addEventListener('click', secret.open);
+            // secret.open is still valid for the trigger, BUT the trigger should probably just open the password modal directly?
+            // Existing logic: open() shows setting-modal.
+            // If we want 'King' click to go to settings, we keep it.
+            // If 'King' click is exclusively for admin, we might want to change it.
+            // But for now, let's keep it pointing to secret.open (which opens settings) or settingsManager.open().
+            // Let's use settingsManager.open() if available, or fallback.
+
+            document.getElementById('secret-trigger').addEventListener('click', () => {
+                if (typeof settingsManager !== 'undefined') settingsManager.open();
+                else secret.open();
+            });
         }
 
         const passwordBox = document.getElementById('password-input-boxes');
@@ -28,60 +38,6 @@ const secret = {
                 box.id = `passbox-${i}`;
                 passwordBox.appendChild(box);
             }
-        }
-
-        // 설정: 음악 재생 / 단어 바로 읽기 체크박스
-        if (!db.settings) {
-            db.settings = {
-                musicPlay: true,
-                wordRead: true,
-                unlockedMusicTracks: [1, 2, 3], // Initially unlock tracks 1, 2, 3
-                musicUnlockThresholds: {
-                    // Thresholds based on number of unique perfect subjective days
-                    4: 1, // Unlock song 4 after 1 perfect subjective day
-                    5: 2,
-                    6: 3,
-                    7: 4,
-                    8: 5,
-                    9: 6,
-                    10: 7,
-                },
-            };
-        } else {
-            // Ensure new properties are added if they don't exist in existing settings
-            if (
-                !db.settings.unlockedMusicTracks ||
-                !Array.isArray(db.settings.unlockedMusicTracks)
-            ) {
-                db.settings.unlockedMusicTracks = [1, 2, 3];
-            }
-            if (!db.settings.musicUnlockThresholds) {
-                db.settings.musicUnlockThresholds = {
-                    4: 10,
-                    5: 20,
-                    6: 30,
-                    7: 40,
-                    8: 50,
-                    9: 60,
-                    10: 70,
-                };
-            }
-        }
-        const musicCheck = document.getElementById('setting-music-play');
-        const wordCheck = document.getElementById('setting-word-read');
-        if (musicCheck) {
-            musicCheck.checked = db.settings.musicPlay !== false;
-            musicCheck.addEventListener('change', () => {
-                db.settings.musicPlay = musicCheck.checked;
-                db.save();
-            });
-        }
-        if (wordCheck) {
-            wordCheck.checked = db.settings.wordRead !== false;
-            wordCheck.addEventListener('change', () => {
-                db.settings.wordRead = wordCheck.checked;
-                db.save();
-            });
         }
     },
 

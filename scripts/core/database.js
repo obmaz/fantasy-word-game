@@ -169,41 +169,11 @@ const db = {
     },
 
     /**
-     * 주관식 정답 수에 따라 새로운 음악 트랙을 잠금 해제합니다
+     * 음악 잠금 해제 기능 (더 이상 사용되지 않음 - 모든 음악 기본 해제)
      * @param {string} bookName - 현재 단어장 이름
      */
     checkAndUnlockMusic: (bookName) => {
-        if (
-            !db.settings ||
-            !db.settings.musicUnlockThresholds ||
-            !db.settings.unlockedMusicTracks
-        ) {
-            return; // 초기화되지 않은 설정 방어
-        }
-
-        const currentPerfectDaysCount =
-            db.stats.books[bookName]?.subjective?.perfectDays?.length || 0;
-        const thresholds = db.settings.musicUnlockThresholds;
-        let newlyUnlocked = false;
-
-        for (const musicNumStr in thresholds) {
-            const musicNum = parseInt(musicNumStr, 10);
-            const threshold = thresholds[musicNumStr];
-
-            if (
-                currentPerfectDaysCount >= threshold &&
-                !db.settings.unlockedMusicTracks.includes(musicNum)
-            ) {
-                db.settings.unlockedMusicTracks.push(musicNum);
-                newlyUnlocked = true;
-                console.log(`음악 트랙 ${musicNum} 잠금 해제!`);
-            }
-        }
-
-        if (newlyUnlocked) {
-            db.settings.unlockedMusicTracks.sort((a, b) => a - b);
-            db.save(); // 새로운 잠금 해제 트랙과 함께 설정 저장
-        }
+        // 모든 음악이 기본적으로 해제되므로 로직 제거됨
     },
 
     /**
@@ -245,7 +215,7 @@ const db = {
         if (isCorrect) {
             bookStats[questionType].correct++;
             if (questionType === 'subjective') {
-                db.checkAndUnlockMusic(bookName);
+                // db.checkAndUnlockMusic(bookName); // 음악 언락 시스템 제거
             }
         }
 
@@ -279,17 +249,4 @@ const db = {
             ui.updateSkills(); // 황금장갑이 skill bar에 표시되므로
         }
     },
-};
-
-// 음악 인덱스 (배틀/연습 모드별)
-let currentMusicIndices = {
-    practice: 1,
-    battle: 1,
-    max: 10, // 배경음악 트랙 10개 가정: background_music_1.mp3 ~ background_music_10.mp3
-};
-
-// 마지막 유효한 음악 선택
-let lastValidMusicSelection = {
-    'music-select': '1', // 기본값: 트랙 1
-    'practice-music-select': '1', // 기본값: 트랙 1
 };
