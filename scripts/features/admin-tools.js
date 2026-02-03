@@ -747,11 +747,23 @@ const secret = {
                 const questionText = isKoEn ? q.item.meaning : q.item.word;
                 const answerText = isKoEn ? q.item.word : q.item.meaning;
 
+                // 주관식 (문제지: 객관식과 동일한 높이 확보를 위해 보이지 않는 옵션 영역 추가)
                 questionsHTML += `
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
                             <div class="question-text">${questionText}</div>
+                            <!-- 높이 맞춤용 투명 블록 -->
+                            <div class="objective-options" style="visibility: hidden;">
+                                <div class="option-row">
+                                    <div class="option-item">① -</div>
+                                    <div class="option-item">② -</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">③ -</div>
+                                    <div class="option-item">④ -</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -761,6 +773,17 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${questionText}</div>
                             <div class="subjective-answer">정답: <strong>${answerText}</strong></div>
+                             <!-- 높이 맞춤용 투명 블록 (정답지에도 추가하여 줄맞춤 유지) -->
+                            <div class="objective-options" style="visibility: hidden;">
+                                <div class="option-row">
+                                    <div class="option-item">① -</div>
+                                    <div class="option-item">② -</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">③ -</div>
+                                    <div class="option-item">④ -</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -826,11 +849,23 @@ const secret = {
                 const questionText = isKoEn ? q.item.meaning : q.item.word;
                 const answerText = isKoEn ? q.item.word : q.item.meaning;
 
+                // 주관식 (문제지: 객관식과 동일한 높이 확보를 위해 보이지 않는 옵션 영역 추가)
                 questionsHTML += `
                     <div class="print-question">
                         <div class="question-number">${q.num}.</div>
                         <div class="question-content">
                             <div class="question-text">${questionText}</div>
+                            <!-- 높이 맞춤용 투명 블록 -->
+                            <div class="objective-options" style="visibility: hidden;">
+                                <div class="option-row">
+                                    <div class="option-item">① -</div>
+                                    <div class="option-item">② -</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">③ -</div>
+                                    <div class="option-item">④ -</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -840,6 +875,17 @@ const secret = {
                         <div class="question-content">
                             <div class="question-text">${questionText}</div>
                             <div class="subjective-answer">정답: <strong>${answerText}</strong></div>
+                            <!-- 높이 맞춤용 투명 블록 (정답지에도 추가하여 줄맞춤 유지) -->
+                            <div class="objective-options" style="visibility: hidden;">
+                                <div class="option-row">
+                                    <div class="option-item">① -</div>
+                                    <div class="option-item">② -</div>
+                                </div>
+                                <div class="option-row">
+                                    <div class="option-item">③ -</div>
+                                    <div class="option-item">④ -</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;

@@ -8,7 +8,7 @@
 /* Setting Modal header 스타일은 modal-common.css의 .card.rpg-modal 공통 스타일을 따름 */
 
 /* 설정 옵션 행 (음악 재생, 단어 읽기) — 다른 버튼과 비슷한 윤곽선, 폰트 키움, 좌측 정렬 */
-#gold-adjuster-modal .setting-option-row {
+.gold-adjuster-modal-card .setting-option-row {
     width: 80%;
     margin: 0 auto 10px;
     text-align: left;
@@ -22,12 +22,12 @@
     box-sizing: border-box;
 }
 
-#gold-adjuster-modal .setting-option-row:first-of-type {
+.gold-adjuster-modal-card .setting-option-row:first-of-type {
     margin-top: 0;
 }
 
 /* 버튼(.btn-main)과 동일한 폰트 크기 */
-#gold-adjuster-modal .setting-checkbox-label {
+.gold-adjuster-modal-card .setting-checkbox-label {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -41,7 +41,7 @@
     user-select: none;
 }
 
-#gold-adjuster-modal .setting-checkbox-label input[type='checkbox'] {
+.gold-adjuster-modal-card .setting-checkbox-label input[type='checkbox'] {
     width: 22px;
     height: 22px;
     min-width: 22px;
@@ -50,14 +50,14 @@
     cursor: pointer;
 }
 
-#gold-adjuster-modal .setting-checkbox-label span {
+.gold-adjuster-modal-card .setting-checkbox-label span {
     flex: 1;
 }
 
 /* Setting Menu 버튼 스타일은 buttons.css의 .modal-btn-main 사용 */
 
 /* 설정메뉴 숫자패드 */
-#setting-modal .card.rpg-modal .num-btn {
+.setting-modal-wrapper .card.rpg-modal .num-btn {
     width: 60px;
     height: 60px;
     padding: 0;
@@ -71,7 +71,7 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-#setting-modal .card.rpg-modal .num-btn:active {
+.setting-modal-wrapper .card.rpg-modal .num-btn:active {
     transform: translateY(1px);
 }
 

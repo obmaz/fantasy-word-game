@@ -63,7 +63,7 @@
 }
 
 /* 일반설정(Setting) 내 전체 초기화 버튼 강제 붉은색 */
-#setting-modal .btn-danger {
+.setting-modal-wrapper .btn-danger {
     background: linear-gradient(45deg, rgba(255, 82, 82, 0.98), rgba(183, 28, 28, 0.98)) !important;
     color: #fff !important;
     border-color: rgba(255, 210, 210, 0.28) !important;

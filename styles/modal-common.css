@@ -24,31 +24,16 @@
     overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
 }
 
-#result-modal {
+/* Result Modal Modifier */
+.screen-overlay--result {
     z-index: 300 !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(12px) !important;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
 }
 
-/* 모든 모달에 동일한 블러 효과 보장 */
-#practice-mode-modal,
-#battle-mode-modal,
-#battle-mode-story-modal,
-#boss-mode-story-modal,
-#shop-modal,
-#statistics-modal,
-#inventory-modal,
-#setting-modal {
-    backdrop-filter: blur(12px) !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-}
-
-/* boss-mode-story-modal과 battle-mode-story-modal에 추가 보장 */
-#boss-mode-story-modal.screen-overlay,
-#battle-mode-story-modal.screen-overlay {
-    backdrop-filter: blur(12px) !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-}
+/* Boss/Battle Story Modal Modifier for extra blur reinforcement if needed, 
+   though .screen-overlay should suffice. Leaving specific overrides if they differed, 
+   but they were identical. Removing redundant ID list. */
 
 .screen-overlay.closing {
     opacity: 0;
