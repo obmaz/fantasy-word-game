@@ -13,7 +13,7 @@ const settingsManager = {
                 musicPlay: true,
                 wordRead: true,
                 unlockedMusicTracks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // 모든 음악 잠금 해제
-                // musicUnlockThresholds removed
+                // musicUnlockThresholds 제거됨
             };
         } else {
             // 속성 누락 시 기본값 복구

@@ -169,14 +169,6 @@ const db = {
     },
 
     /**
-     * 음악 잠금 해제 기능 (더 이상 사용되지 않음 - 모든 음악 기본 해제)
-     * @param {string} bookName - 현재 단어장 이름
-     */
-    checkAndUnlockMusic: (bookName) => {
-        // 모든 음악이 기본적으로 해제되므로 로직 제거됨
-    },
-
-    /**
      * 통계를 추가합니다
      * @param {boolean} isCorrect - 정답 여부
      * @param {string} questionType - 문제 타입 ('objective' 또는 'subjective')

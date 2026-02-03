@@ -51,7 +51,7 @@ const ui = {
     updateVisuals: () => {
         document.getElementById('hero-img').src = 'images/battle_mode/hero.webp';
 
-        // weapon -> hand-1 (gameplay)
+        // 무기 -> hand-1 (게임플레이)
         const hand1Id = db.equipped['hand-1'] || db.equippedWeapon || 'basic';
         const wData =
             weapons.find((w) => w.id === hand1Id) ||
@@ -60,7 +60,7 @@ const ui = {
         const heroWeaponEl = document.getElementById('hero-weapon');
         if (heroWeaponEl) heroWeaponEl.innerText = wData.icon || '';
 
-        // effect -> hand-2 (visual)
+        // 이펙트 -> hand-2 (시각 효과)
         const hand2Id = db.equipped['hand-2'];
         const effData = weapons.find((w) => w.id === hand2Id);
         const heroEffEl = document.getElementById('hero-effect');

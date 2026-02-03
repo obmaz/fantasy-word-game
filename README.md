@@ -26,7 +26,7 @@ fantasy-word-game/
 │   ├── battle-mode-modal.css         # Battle mode modal styles
 │   └── battle-mode-story-modal.css   # Battle mode story modal styles
 ├── scripts/
-│   ├── app.js                        # Main entry point (window.onload)
+│   ├── init.js                       # Main entry point (window.onload)
 │   ├── core/                         # Core systems
 │   │   ├── database.js               # Data storage (Gold, Stats, Settings)
 │   │   ├── inventory.js              # Inventory logic
@@ -260,7 +260,7 @@ fantasy-word-game/
 
 ### Scripts
 
-- `app.js`: Main game logic, UI management, and game flow
+- `init.js`: Main game logic, UI management, and game flow
 - `words.js`: Word data processing and day catalog management
 - `items.js`: Item definitions and inventory management
 - `data-loader.js`: Data set loading and switching logic

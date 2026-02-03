@@ -17,13 +17,13 @@ console.log(
     'keys'
 );
 
-// canonical dayCatalog — single source-of-truth for day labels + story objects
+// 표준 dayCatalog — Day 레이블 및 스토리 객체를 위한 단일 진실 공급원 (Single Source of Truth)
 const dayCatalog = (function () {
     const c = {};
-    // Prefer explicit `stories` entries for label + story content
+    // 레이블과 스토리 내용을 위해 명시적인 `stories` 항목 선호
     if (typeof stories !== 'undefined' && stories && Object.keys(stories).length > 0) {
         Object.keys(stories).forEach((k) => {
-            // Handle numeric string keys (JavaScript object keys are always strings)
+            // 숫자 문자열 키 처리 (JavaScript 객체 키는 항상 문자열)
             if (!isNaN(Number(k))) {
                 const s = stories[k];
                 const label = s && s.title ? `Day ${k} (${s.title})` : `Day ${k}`;
@@ -32,11 +32,11 @@ const dayCatalog = (function () {
         });
     }
 
-    // NOTE: coverage from `rawData` is intentionally applied later by
-    // `dayCatalog.validateCoverage()` to avoid referencing `rawData` before
-    // it is initialized (prevents TDZ / runtime ReferenceError).
+    // 참고: `rawData`의 커버리지는 `dayCatalog.validateCoverage()`에 의해
+    // 나중에 의도적으로 적용됩니다. 초기화 전 `rawData` 참조를 방지하기 위함입니다.
+    // (TDZ / 런타임 ReferenceError 방지)
 
-    // ensure 'all' and 'boss' are present in the canonical catalog
+    // 표준 카탈로그에 'all'과 'boss'가 존재하는지 확인
     c.all = {
         label: stories && stories.all && stories.all.title ? stories.all.title : '배틀 모드',
         story: stories && stories.all ? stories.all : null,
@@ -52,16 +52,16 @@ const dayCatalog = (function () {
     return c;
 })();
 
-// derived views (do NOT redeclare existing globals)
+// 파생된 뷰 (기존 전역 변수를 다시 선언하지 않음)
 const derivedDayInfo = Object.fromEntries(
     Object.entries(dayCatalog)
         .filter(([k]) => !isNaN(Number(k)))
         .map(([k, v]) => [k, v.label])
 );
 const derivedStories = Object.fromEntries(Object.entries(dayCatalog).map(([k, v]) => [k, v.story]));
-// NOTE: `dayCatalog` is now the single source-of-truth. Expose legacy globals NON-DESTRUCTIVELY
-// so existing codepaths continue to work (do not overwrite if already present).
-// Legacy accessors (DEPRECATED): expose backward-compatible views but warn once and forward to `dayCatalog`.
+// 참고: `dayCatalog`가 이제 단일 진실 공급원입니다. 기존 전역 변수를 비파괴적으로 노출하여
+// 기존 코드 경로가 계속 작동하도록 합니다 (이미 존재하는 경우 덮어쓰지 않음).
+// 레거시 접근자 (DEPRECATED): 하위 호환 뷰를 노출하지만 경고를 한 번 표시하고 `dayCatalog`로 전달합니다.
 (function () {
     const WARN = (k) => () => {
         console.warn(
@@ -96,9 +96,9 @@ const derivedStories = Object.fromEntries(Object.entries(dayCatalog).map(([k, v]
     }
 })();
 
-// runtime validator: compares rawData days → dayCatalog and (optionally) auto-fills lightweight placeholders
-// - safe to call after scripts load (does not run automatically at define-time)
-// - adds non-destructive placeholders to avoid UI falling back to 'all'
+// 런타임 검증기: rawData days와 dayCatalog를 비교하고 (선택적으로) 경량 플레이스홀더를 자동 채움
+// - 스크립트 로드 후 호출 안전 (정의 시점에 자동 실행되지 않음)
+// - UI가 'all'로 대체되는 것을 방지하기 위해 비파괴적 플레이스홀더 추가
 if (typeof dayCatalog.validateCoverage === 'undefined') {
     dayCatalog.validateCoverage = function (opts = {}) {
         try {
@@ -121,7 +121,7 @@ if (typeof dayCatalog.validateCoverage === 'undefined') {
                     '[dayCatalog.validate] rawData contains days not present in dayCatalog:',
                     missing
                 );
-                // non-destructive auto-fill so UI shows a sensible label instead of falling back to 'all'
+                // 비파괴적 자동 채우기: UI가 'all'로 대체되는 대신 합리적인 레이블을 표시하도록 함
                 missing.forEach(function (d) {
                     if (!dayCatalog[d]) {
                         dayCatalog[d] = { label: `Day ${d}`, story: null };
@@ -134,7 +134,7 @@ if (typeof dayCatalog.validateCoverage === 'undefined') {
             });
             if (orphan.length)
                 console.info(
-                    '[dayCatalog.validate] dayCatalog contains days with no rawData (expected placeholders):',
+                    '[dayCatalog.validate] dayCatalog에 rawData가 없는 Day가 포함됨 (플레이스홀더 예상):',
                     orphan
                 );
         } catch (err) {
@@ -194,7 +194,7 @@ const __decoyWordIndex = (function () {
     return idx;
 })();
 
-// 전역 helper로 노출 (app.js에서 사용)
+// 전역 helper로 노출 (init.js에서 사용)
 if (typeof window !== 'undefined' && typeof window.getDecoyWordCandidates !== 'function') {
     window.getDecoyWordCandidates = function (word) {
         const k = __normDecoyKey(word);

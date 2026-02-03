@@ -109,7 +109,7 @@ const game = {
             game.bossTotalWaves = game.deck.length;
             game.list = [];
         } else if (mode === 'battle') {
-            // Battle Mode: Question type depends on user selection
+            // 배틀 모드: 사용자 선택에 따라 문제 타입 결정
             let shuffledPool = game.shuffle(pool);
             const questionType = game.battleQuestionType || 'mixed'; // default to 'mixed'
             console.log(
@@ -252,7 +252,7 @@ const game = {
         // Day 정보 업데이트 (게임 중에도 day 정보가 올바르게 표시되도록)
         ui.updateGameInfo(game.mode, game.currentDay);
 
-        // choose an appropriate monster sprite (day-specific > boss/normal > fallback)
+        // 적절한 몬스터 스프라이트 선택 (Day별 > 보스/일반 > 기본값)
         const upcoming = game.mode === 'boss' ? null : (game.list && game.list[game.idx]) || null;
         const isBossPreview = game.mode === 'boss' ? true : !!(upcoming && upcoming.isBoss);
         const sprite = pickMonsterSprite(upcoming || story.day, isBossPreview);
@@ -272,9 +272,9 @@ const game = {
                 game.subjectiveCorrect = 0;
             }
             game.subjectiveTotal++; // boss 모드에서는 모든 문제가 주관식
-            game.renderBoss(game.currentQ, true); // boss mode
+            game.renderBoss(game.currentQ, true); // 보스 모드
         } else if (game.mode === 'battle') {
-            // Battle Mode: Question type depends on user selection
+            // 배틀 모드: 사용자 선택에 따라 문제 타입 결정
             document.getElementById('wave-badge').innerText = `${game.idx + 1}/${game.list.length}`;
             game.currentQ = game.list[game.idx];
             game.currentAns = game.currentQ.word;
@@ -485,7 +485,7 @@ const game = {
         game.isProcessing = true;
         clearInterval(game.timer);
 
-        // Record Stats (문제 타입 포함)
+        // 통계 기록 (문제 타입 포함)
         db.addStats(isCorrect, questionType);
 
         // 이번 게임 객관식/주관식 정답 추적
@@ -506,7 +506,7 @@ const game = {
         if (isCorrect) {
             game.animAttack();
 
-            // Reward Logic
+            // 보상 로직
             let baseGain = 40;
             if (game.mode === 'boss') {
                 baseGain = 80;
@@ -514,18 +514,18 @@ const game = {
                 baseGain = game.list.length >= 20 ? 600 : game.list.length >= 10 ? 200 : 100;
             }
 
-            // Time Factor
+            // 시간 요소
             const timeRatio = game.timeLeft / game.maxTime;
             let gain = Math.floor(baseGain * (0.5 + timeRatio * 0.5));
 
-            // 1. Weapon Multiplier
+            // 1. 무기 배율
             const wData = weapons.find((w) => w.id === db.equippedWeapon);
             if (wData && wData.multiplier) {
                 gain = Math.floor(gain * wData.multiplier);
-                if (wData.multiplier > 1) game.animGoldAttack(); // Gold effect
+                if (wData.multiplier > 1) game.animGoldAttack(); // 골드 이펙트
             }
 
-            // 2. Glove Multiplier
+            // 2. 장갑 배율
             if (db.has('goldGlove')) {
                 gain = Math.floor(gain * 1.5);
                 db.useItem('goldGlove');
@@ -543,7 +543,7 @@ const game = {
                 game.nextLevel();
             }, 800);
         } else {
-            // Wrong Answer
+            // 오답
             if (game.mode === 'boss') {
                 // 게임 종료 처리 중이므로 더 이상 진행하지 않음
                 game.isProcessing = true;
@@ -573,7 +573,7 @@ const game = {
                 return;
             }
 
-            // Animations
+            // 애니메이션
             document.getElementById('monster-img').classList.add('mob-attack-anim');
             document.getElementById('hero-img').classList.add('hero-hit-anim');
             document.querySelector('.battle-arena').classList.add('screen-shake');
@@ -609,7 +609,7 @@ const game = {
                     : 'objective';
             game.showCorrectAnswer(game.currentAns, questionType);
 
-            // IMPORTANT: Ensure timeout triggers next level even if animation fails
+            // 중요: 애니메이션이 실패하더라도 타임아웃이 다음 레벨을 트리거하도록 보장
             setTimeout(() => {
                 game.idx++;
                 game.nextLevel();
@@ -617,7 +617,7 @@ const game = {
         }
     },
 
-    // Skills
+    // 스킬
     useHint: () => {
         if (game.isProcessing || game.mode === 'boss' || db.skills.hint <= 0) return;
         if (document.getElementById('options-box').style.display === 'none') return;
@@ -649,7 +649,7 @@ const game = {
         });
     },
 
-    // Visuals
+    // 시각 효과
     animAttack: () => {
         document.getElementById('hero-wrapper').classList.add('hero-active');
         const wId = db.equippedWeapon;
@@ -791,7 +791,7 @@ const game = {
             }
             if (distractors.length >= 3) break;
         }
-        // Ensure we have 3 distractors, even if we have to grab randomly
+        // 랜덤으로 가져와서라도 오답 보기가 3개가 되도록 보장
         while (distractors.length < 3) {
             // 현재 데이터셋의 rawData 사용
             const currentRawData =
