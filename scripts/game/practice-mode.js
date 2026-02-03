@@ -192,12 +192,7 @@ const practiceMemorization = {
         }
 
         const dayInfoEl = document.getElementById('practice-memorization-day-info');
-        const dayLabel =
-            day === 'all'
-                ? '전체'
-                : dayCatalog[day] && dayCatalog[day].label
-                  ? dayCatalog[day].label
-                  : `Day ${day}`;
+        const dayLabel = day === 'all' ? '전체' : `Day ${day}`;
         if (dayInfoEl) dayInfoEl.textContent = dayLabel;
 
         // 기본 필터: all, 인덱스 0

@@ -13,7 +13,8 @@ const settingsManager = {
                 musicPlay: true,
                 wordRead: true,
                 unlockedMusicTracks: [
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+                    23,
                 ], // 모든 음악 잠금 해제
                 // musicUnlockThresholds 제거됨
             };
@@ -22,10 +23,11 @@ const settingsManager = {
             if (
                 !db.settings.unlockedMusicTracks ||
                 !Array.isArray(db.settings.unlockedMusicTracks) ||
-                db.settings.unlockedMusicTracks.length < 18 // 기존 사용자 업데이트를 위해 확인
+                db.settings.unlockedMusicTracks.length < 23 // 기존 사용자 업데이트를 위해 확인
             ) {
                 db.settings.unlockedMusicTracks = [
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+                    23,
                 ];
             }
             if (db.settings.musicUnlockThresholds) {

@@ -1,4 +1,4 @@
-const currentMusicIndices = { battle: null, practice: null, max: 18 };
+const currentMusicIndices = { battle: null, practice: null, max: 23 };
 const lastValidMusicSelection = { 'music-select': '1', 'practice-music-select': '1' };
 
 /**
