@@ -123,3 +123,21 @@ function getPreferredTTSVoice() {
     if (enUS) return enUS;
     return enVoices[0];
 }
+
+/**
+ * Google Translate TTS API를 사용한 오디오 재생 (Fallback)
+ * @param {string} text - 재생할 텍스트
+ * @param {string} lang - 언어 코드 (기본: en)
+ */
+function playGoogleTTS(text, lang = 'en') {
+    if (!text) return;
+    try {
+        const audio = new Audio();
+        // Google TTS URL (unofficial but widely used for simple fallbacks)
+        // client=tw-ob is commonly used for this purpose.
+        audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`;
+        audio.play().catch((e) => console.warn('Google TTS playback failed:', e));
+    } catch (err) {
+        console.error('playGoogleTTS error:', err);
+    }
+}

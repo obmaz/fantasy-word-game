@@ -205,6 +205,21 @@ const practiceMemorization = {
         // 배경음악 (Practice 모드용)
         playMusic('practice');
 
+        // [FIX] 음악 아이콘 상태 동기화 (설정값 반영)
+        // playMusic 내에서 음악을 켜거나 끄지만, 아이콘 텍스트는 여기서 확실히 동기화
+        const musicToggleBtn = document.getElementById('practice-music-toggle-btn');
+        if (musicToggleBtn) {
+            // db.settings.musicPlay가 true이면 'pause'(멈춤 가능), false이면 'play_arrow'(재생 가능)
+            // 하지만 현재 버튼 디자인은 상태를 보여주는 것:
+            // 음악이 켜져있음 -> 누르면 꺼짐 -> 아이콘은 "일시정지(⏸️)" 표시 (현재 재생중임을 의미)
+            // 음악이 꺼져있음 -> 누르면 켜짐 -> 아이콘은 "재생(▶️)" 표시 (현재 정지됨을 의미)
+            if (db.settings.musicPlay) {
+                musicToggleBtn.textContent = '⏸️';
+            } else {
+                musicToggleBtn.textContent = '▶️';
+            }
+        }
+
         // TTS 자동 재생 여부? (일단 수동)
     },
 
@@ -223,16 +238,37 @@ const practiceMemorization = {
         const word = practiceMemorization.words[practiceMemorization.currentIndex];
         if (!word || !word.word) return;
 
-        const utterance = new SpeechSynthesisUtterance(word.word);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.8; // 약간 천천히
-
-        // 설정된 TTS voice 사용
+        // [FIX] Android/Mobile TTS 개선
+        // 1. window.speechSynthesis 시도
+        const synth = window.speechSynthesis;
         const preferredVoice = getPreferredTTSVoice();
-        if (preferredVoice) utterance.voice = preferredVoice;
 
-        window.speechSynthesis.cancel(); // 기존 음성 중단
-        window.speechSynthesis.speak(utterance);
+        // Android 등에서 getVoices가 비동기로 로드되거나 아예 안 되는 경우 대비
+        // 만약 preferredVoice가 없고, 모바일 환경 같다면 바로 Google TTS Fallback 사용 고려
+        // 하지만 일단 시도하고 에러/무응답 시 처리하기는 복잡하므로,
+        // preferredVoice가 'Google ...'이 아니거나, 모바일에서 소리가 안 나는 이슈를 해결하기 위해
+        // Google TTS URL 방식을 우선 혹은 fallback으로 사용.
+
+        // 여기서는 "구글 음성이면 좋겠어"라는 요청을 반영하여,
+        // preferredVoice가 Google 계열이면 Web Speech API 사용,
+        // 아니면(혹은 모바일 확실성을 위해) Google TTS URL 사용을 전략적으로 섞음.
+
+        const isAndroid = /Android/i.test(navigator.userAgent);
+
+        if (synth && !isAndroid) {
+            // PC 등 일반 환경: Web Speech API 우선
+            const utterance = new SpeechSynthesisUtterance(word.word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            if (preferredVoice) utterance.voice = preferredVoice;
+
+            synth.cancel();
+            synth.speak(utterance);
+        } else {
+            // Android 또는 Web Speech API 취약 환경 -> Google TTS URL Fallback
+            // (Android Chrome에서도 Web Speech API가 동작하지만, "구글 음성"을 확실히 원하므로 API 호출이 낫다)
+            playGoogleTTS(word.word, 'en');
+        }
     },
 
     prev: () => {
