@@ -33,6 +33,11 @@ function _playMusic(musicNum, mode, forcePlay = false) {
     // 노래가 재생되거나 변경될 때마다 음악 선택 옵션 렌더링
     ui.renderMusicSelectOptions(selectId, musicNum);
 
+    if (musicInfoOverlay && musicFilenameEl) {
+        musicFilenameEl.innerText = filename;
+        musicInfoOverlay.style.display = 'block';
+    }
+
     // [FIX] 설정에 따라 자동 재생 여부 결정
     // forcePlay가 true이면(예: 이전 곡이 끝나서 넘어옴) 무조건 재생
     if (forcePlay || (db.settings && db.settings.musicPlay)) {
