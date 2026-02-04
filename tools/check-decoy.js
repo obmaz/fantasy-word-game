@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const gameDataPath = path.join(__dirname, '../data/game-data-1.js');
+const gameDataPath = path.join(__dirname, '../data/game-data-3.js');
 const decoyPath = path.join(__dirname, '../data/decoy-words-set.js');
 
 const gameDataContent = fs.readFileSync(gameDataPath, 'utf8');

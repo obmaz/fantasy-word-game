@@ -223,373 +223,373 @@
         ['theory', 'theater', 'therapy', 'theory'],
         ['tip', 'tap', 'top', 'type'],
         ['capable', 'valuable', 'stable', 'suitable'],
-        ['display', 'misplay', 'replay', 'delay'], // 형태 유사/라임
-        ['wing', 'ring', 'king', 'swing'], // 라임
-        ['pure', 'poor', 'cure', 'sure'], // 발음 유사/라임
-        ['sharp', 'shark', 'harp', 'shape'], // 철자/발음 유사
-        ['at first', 'at last', 'at least', 'at best'], // 전치사구 변형
-        ['put on', 'put in', 'put off', 'hold on'], // 이어동사 변형
-        ['search', 'perch', 'march', 'church'], // 라임
-        ['at last', 'at least', 'at first', 'at best'], // 전치사구 변형
-        ['piece', 'peace', 'pace', 'price'], // 동음이의어/철자 유사
-        ['oven', 'even', 'open', 'often'], // 철자/발음 유사
-        ['fix', 'mix', 'six', 'fox'], // 라임/철자 유사
-        ['useful', 'youthful', 'use', 'usual'], // 발음 유사
-        ['neighbor', 'labor', 'favor', 'nature'], // 발음 유사
-        ['war', 'raw', 'wear', 'warm'], // 철자/발음 유사
-        ['bury', 'berry', 'very', 'hurry'], // 동음이의어/라임
-        ['grow up', 'blow up', 'show up', 'throw up'], // 이어동사 라임
-        ['copy', 'coffee', 'puppy', 'happy'], // 발음 유사(한국어 화자 기준)
-        ['contest', 'context', 'content', 'concert'], // 철자/발음 혼동
-        ['borrow', 'sorrow', 'hollow', 'follow'], // 라임
-        ['be in trouble', 'be in touch', 'be in time', 'be in tune'], // 구문 변형
-        ['leader', 'reader', 'ladder', 'liter'], // 발음 유사/혼동
-        ['prize', 'price', 'pride', 'prise'], // 발음 유사
-        ['sleepy', 'sleeping', 'slippery', 'sweepy'], // 형태/발음 유사
-        ['lift', 'gift', 'left', 'list'], // 라임/철자 유사
-        ['root', 'route', 'roof', 'boot'], // 발음 유사/라임
-        ['wonder', 'wander', 'under', 'thunder'], // 철자 혼동/라임
-        ['mix', 'fix', 'miss', 'max'], // 라임/철자 유사
-        ['coach', 'couch', 'catch', 'poach'], // 발음 혼동/라임
-        ['cartoon', 'carton', 'canton', 'cocoon'], // 철자/발음 유사
-        ['view', 'few', 'new', 'due'], // 라임
-        ['nickname', 'name', 'pick name', 'big name'], // 포함 단어 활용
-        ['dig', 'big', 'pig', 'dog'], // 라임/철자 유사
-        ['find out', 'bind out', 'hide out', 'find in'], // 라임/구문 변형
-        ['total', 'turtle', 'title', 'metal'], // 발음 유사
-        ['think up', 'drink up', 'link up', 'pick up'], // 라임
-        ['among', 'along', 'amount', 'alone'], // 철자/발음 유사
-        ['harmony', 'money', 'honey', 'balcony'], // 라임
-        ['shout', 'shoot', 'shut', 'scout'], // 철자/발음 유사
-        ['smart', 'start', 'smell', 'small'], // 철자/라임
-        ['hang', 'bang', 'sang', 'hand'], // 라임/철자 유사
-        ['bored', 'board', 'bold', 'bird'], // 동음이의어/발음 유사
-        ['care', 'car', 'dare', 'cure'], // 철자/라임
-        ['hero', 'zero', 'hear', 'here'], // 라임/발음 유사
-        ['planet', 'plant', 'plane', 'plate'], // 철자 유사
-        ['teenager', 'manager', 'villager', 'stranger'], // 접미사 라임
-        ['uniform', 'form', 'unicorn', 'inform'], // 형태 유사
-        ['beauty', 'duty', 'booty', 'beast'], // 라임/철자 유사
-        ['because of', 'in case of', 'become of', 'consist of'], // 구문 변형
-        ['female', 'male', 'email', 'tamale'], // 포함 단어/라임
-        ['without', 'with', 'about', 'workout'], // 포함 단어/라임
-        ['miss', 'kiss', 'mess', 'hiss'], // 라임/철자 유사
-        ['sunlight', 'moonlight', 'starlight', 'searchlight'], // 복합어 패턴
-        ['language', 'luggage', 'bandage', 'sausage'], // 발음/철자 유사
-        ['dive', 'drive', 'hive', 'live'], // 철자/라임
-        ['alarm', 'arm', 'farm', 'harm'], // 포함 단어/라임
-        ['calm down', 'come down', 'cool down', 'sit down'], // 이어동사 유사
-        ['chance', 'change', 'dance', 'glance'], // 철자/라임
-        ['nobody', 'somebody', 'anybody', 'no one'], // 의미/형태 대립
-        ['before long', 'before noon', 'so long', 'too long'], // 구문 변형
-        ['taste', 'test', 'toast', 'paste'], // 발음/철자 유사
-        ['take care', 'take share', 'take air', 'take dare'], // 라임
-        ['regularly', 'singular', 'popular', 'secular'], // 어미 라임
-        ['silent', 'island', 'violent', 'talent'], // 철자/발음 유사
-        ['rub', 'rob', 'tub', 'pub'], // 철자/라임
-        ['neat', 'meat', 'heat', 'seat'], // 라임
-        ['weigh', 'way', 'weight', 'whey'], // 동음/철자
-        ['be different from', 'be difficult for', 'be distant from', 'be indifferent to'], // 구문 유사
-        ['fill in', 'fill out', 'fall in', 'fit in'], // 이어동사 변형
-        ['take out', 'take off', 'make out', 'fade out'], // 이어동사 변형
-        ['guide', 'glide', 'guard', 'pride'], // 철자/발음 유사
-        ['during', 'boring', 'curing', 'luring'], // 라임
-        ['mistake', 'miss take', 'steak', 'lake'], // 발음 유사
-        ['tire', 'fire', 'wire', 'tear'], // 라임
-        ['flour', 'floor', 'flower', 'sour'], // 동음/라임
-        ['lawyer', 'liar', 'lower', 'layer'], // 발음 유사
-        ['ache', 'lake', 'bake', 'cake'], // 라임
-        ['prepare', 'repair', 'compare', 'spare'], // 라임/철자
-        ['soldier', 'shoulder', 'folder', 'holder'], // 발음/라임
-        ['quite', 'quiet', 'quit', 'white'], // 철자 혼동
-        ['patient', 'patent', 'parent', 'ancient'], // 철자/발음 유사
-        ['spicy', 'spy', 'icy', 'space'], // 포함 단어/철자
-        ['get out of', 'run out of', 'go out of', 'get rid of'], // 구문 변형
-        ['elderly', 'early', 'orderly', 'dearly'], // 발음/철자
-        ['wild', 'mild', 'wide', 'wind'], // 철자/라임
-        ['especially', 'specially', 'essentially', 'officially'], // 부사 라임
-        ['make noise', 'make voice', 'make choice', 'make poise'], // 라임
-        ['online', 'outline', 'inline', 'offline'], // 형태 유사
-        ['help out', 'hold out', 'hang out', 'hear out'], // 이어동사 변형
-        ['lost', 'last', 'cost', 'host'], // 라임
-        ['blind', 'blond', 'bind', 'mind'], // 철자/라임
-        ['culture', 'future', 'nature', 'vulture'], // 라임
-        ['suck', 'luck', 'duck', 'sock'], // 라임/철자
-        ['item', 'stem', 'system', 'term'], // 포함/발음
-        ['pick up', 'pack up', 'kick up', 'stick up'], // 라임
-        ['hand in hand', 'arm in arm', 'face to face', 'back to back'], // 숙어 패턴
-        ['designer', 'design', 'signer', 'liner'], // 형태 유사
-        ['flow', 'slow', 'blow', 'low'], // 라임
-        ['tasty', 'testy', 'hasty', 'nasty'], // 라임
-        ['soap', 'soup', 'soak', 'soft'], // 발음/철자 혼동
-        ['rail', 'rain', 'tail', 'nail'], // 철자/라임
-        ['someday', 'sunday', 'monday', 'some way'], // 발음 유사
-        ['secret', 'sacred', 'cigarette', 'regret'], // 발음/라임
-        ['couple', 'double', 'bubble', 'trouble'], // 라임
-        ['engineer', 'engine', 'pioneer', 'volunteer'], // 접미사 라임
-        ['lady', 'ready', 'lazy', 'baby'], // 라임/철자
-        ['rainy', 'brainy', 'train', 'drain'], // 라임/포함
-        ['site', 'sight', 'cite', 'bite'], // 동음/라임
-        ['funny', 'bunny', 'sunny', 'money'], // 라임
-        ['history', 'story', 'mystery', 'factory'], // 포함/라임
-        ['stomach', 'match', 'much', 'touch'], // 발음 유사
-        ['exciting', 'exiting', 'reciting', 'inviting'], // 철자 혼동/라임
-        ['area', 'era', 'idea', 'korea'], // 발음/라임
-        ['dial', 'deal', 'dual', 'trial'], // 철자/라임
-        ['look up', 'look at', 'look for', 'cook up'], // 이어동사 변형
-        ['subway', 'highway', 'runway', 'way'], // 형태 유사
-        ['dangerous', 'generous', 'danger', 'angel'], // 철자/발음
-        ['bookstore', 'book', 'store', 'restore'], // 포함/형태
-        ['happen', 'happy', 'open', 'deepen'], // 철자/라임
-        ['hometown', 'downtown', 'home', 'town'], // 형태 유사
-        ['program', 'grammar', 'kilogram', 'diagram'], // 철자/라임
-        ['search for', 'reach for', 'march for', 'search in'], // 라임
-        ['a few', 'a little', 'a lot', 'a view'], // 구문/라임
-        ['dish', 'fish', 'dash', 'wish'], // 라임/철자
-        ['swallow', 'hollow', 'follow', 'shallow'], // 라임
-        ['success', 'access', 'process', 'excess'], // 철자/라임
-        ['waste', 'waist', 'taste', 'paste'], // 동음/라임
-        ['grade', 'trade', 'blade', 'shade'], // 라임
-        ['pop', 'top', 'hop', 'cop'], // 라임
-        ['not at all', 'not at home', 'not a bit', 'not a lot'], // 구문 변형
-        ['turn off', 'turn on', 'burn off', 'run off'], // 이어동사 변형
-        ['invite', 'invent', 'invest', 'inside'], // 철자 혼동
-        ['space', 'pace', 'spice', 'place'], // 포함/철자
-        ['market', 'mark', 'target', 'jacket'], // 포함/라임
-        ['be full of', 'be fond of', 'be free of', 'be full up'], // 구문 변형
-        ['wait for', 'wait on', 'ask for', 'pay for'], // 구문 변형
-        ['diary', 'dairy', 'dial', 'daily'], // 철자 혼동
-        ['list', 'least', 'last', 'mist'], // 철자/라임
-        ['ocean', 'motion', 'lotion', 'option'], // 발음/라임
-        ['pressure', 'treasure', 'measure', 'pleasure'], // 라임
-        ['energy', 'enemy', 'allergy', 'synergy'], // 발음/라임
-        ['introduce', 'produce', 'reduce', 'induce'], // 어근/라임
-        ['realize', 'real', 'size', 'resize'], // 포함/형태
-        ['challenge', 'change', 'range', 'orange'], // 철자/라임
-        ['shop', 'ship', 'shape', 'chop'], // 철자/발음
-        ['shake hands', 'take hands', 'shake heads', 'shake bands'], // 구문 변형
-        ['scared', 'sacred', 'scored', 'scarred'], // 철자 혼동
-        ['balance', 'ambulance', 'glance', 'dance'], // 발음/라임
-        ['lose', 'loose', 'lost', 'rose'], // 철자/라임
-        ['judge', 'fudge', 'bridge', 'edge'], // 라임
-        ['peace', 'piece', 'pace', 'peas'], // 동음/철자
-        ['huge', 'hug', 'page', 'cage'], // 철자/라임
-        ['be covered with', 'be crowded with', 'be filled with', 'be covered in'], // 구문 변형
-        ['write down', 'sit down', 'calm down', 'write on'], // 이어동사 변형
-        ['customer', 'costume', 'custom', 'consumer'], // 철자/의미 혼동
-        ['adult', 'add', 'result', 'insult'], // 발음/라임
-        ['interview', 'review', 'preview', 'view'], // 어근/라임
-        ['village', 'villa', 'age', 'pill'], // 포함/철자
-        ['excuse', 'refuse', 'confuse', 'use'], // 라임
-        ['husband', 'band', 'hand', 'sand'], // 포함 단어/라임
-        ['stand', 'sand', 'band', 'land'], // 라임
-        ['careful', 'fearful', 'tearful', 'care'], // 라임/어근
-        ['field', 'yield', 'shield', 'filled'], // 라임/발음 유사
-        ['half', 'calf', 'laugh', 'safe'], // 라임/철자
-        ['be good at', 'be bad at', 'be good to', 'be poor at'], // 반의어/구문 변형
-        ['look for', 'look at', 'cook for', 'book for'], // 구문 변형/라임
-        ['promise', 'miss', 'premise', 'compromise'], // 포함/철자 유사
-        ['spread', 'bread', 'read', 'speed'], // 라임/철자
-        ['suddenly', 'sudden', 'sadly', 'sunny'], // 형태 유사
-        ['focus', 'locus', 'hocus', 'force'], // 라임/철자 유사
-        ['whole', 'hole', 'whale', 'while'], // 동음/철자 유사
-        ['hunter', 'hunt', 'haunt', 'winter'], // 어근/라임
-        ['label', 'table', 'cable', 'level'], // 라임/철자
-        ['a lot of', 'a bit of', 'a pot of', 'a lot off'], // 구문 변형/라임
-        ['pay for', 'play for', 'pray for', 'say for'], // 라임
-        ['audience', 'audio', 'dance', 'absence'], // 어근/철자 유사
-        ['sense', 'fence', 'tense', 'dense'], // 라임
-        ['exercise', 'size', 'excite', 'wise'], // 포함/형태 유사
-        ['army', 'arm', 'harm', 'alarm'], // 포함/라임
-        ['ride', 'hide', 'wide', 'side'], // 라임
-        ['art', 'part', 'cart', 'start'], // 라임
-        ['turn on', 'turn off', 'burn on', 'put on'], // 이어동사 변형
-        ['come back', 'go back', 'come black', 'come pack'], // 구문 변형/라임
-        ['party', 'part', 'park', 'pity'], // 형태/발음 유사
-        ['buy', 'by', 'bye', 'guy'], // 동음/라임
-        ['beat', 'bit', 'bat', 'bet'], // 모음 변화
-        ['advise', 'advice', 'device', 'revise'], // 품사 혼동/라임
-        ['place', 'palace', 'pace', 'plate'], // 철자/발음 유사
-        ['date', 'gate', 'late', 'mate'], // 라임
-        ['hurt', 'heart', 'hut', 'hunt'], // 발음/철자 유사
-        ['decide', 'side', 'beside', 'divide'], // 어근/라임
-        ['park', 'dark', 'bark', 'spark'], // 라임
-        ['cross', 'across', 'boss', 'loss'], // 형태/라임
-        ['music', 'muse', 'sick', 'magic'], // 어근/철자 유사
-        ['throw away', 'blow away', 'go away', 'run away'], // 구문 변형
-        ['chief', 'chef', 'thief', 'brief'], // 철자 혼동/라임
-        ['humorous', 'humor', 'rumor', 'numerous'], // 어근/라임
-        ['unique', 'antique', 'technique', 'unit'], // 라임/어근
-        ['completely', 'complete', 'compete', 'delete'], // 어근/라임
-        ['pose', 'rose', 'nose', 'hose'], // 라임
-        ['stupid', 'study', 'cupid', 'rapid'], // 형태/라임
-        ['race', 'face', 'pace', 'rice'], // 라임/철자
-        ['look through', 'look though', 'cook through', 'go through'], // 철자 혼동/구문
-        ['modern', 'model', 'mode', 'modest'], // 형태 유사
-        ['electricity', 'electric', 'city', 'elastic'], // 어근/철자 유사
-        ['striking', 'strike', 'string', 'hiking'], // 어근/라임
-        ['include', 'conclude', 'exclude', 'cloud'], // 어근/포함
-        ['price', 'prize', 'rice', 'ice'], // 발음/포함
-        ['forest', 'rest', 'best', 'frost'], // 포함/라임
-        ['bother', 'brother', 'mother', 'border'], // 철자/발음 유사
-        ['on time', 'in time', 'on top', 'one time'], // 구문 변형
-        ['give up', 'give in', 'live up', 'get up'], // 이어동사 변형
-        ['depend on', 'spend on', 'depend in', 'defend on'], // 라임/구문
-        ['private', 'pirate', 'pride', 'pivot'], // 철자/발음 유사
-        ['disappear', 'appear', 'pear', 'spear'], // 어근/포함
-        ['foreigner', 'foreign', 'rain', 'reign'], // 어근/포함
-        ['colorful', 'color', 'careful', 'wonderful'], // 어근/접미사
-        ['author', 'other', 'auto', 'arthur'], // 발음 유사
-        ['helpful', 'help', 'hopeful', 'health'], // 어근/형태 유사
-        ['officer', 'office', 'offer', 'coffee'], // 어근/라임
-        ['be crowded with', 'be covered with', 'be clouded with', 'be crowned with'], // 철자 유사/라임
-        ['at least', 'at last', 'at best', 'at list'], // 구문 변형
-        ['abroad', 'broad', 'board', 'aboard'], // 포함/철자 혼동
-        ['structure', 'strict', 'picture', 'lecture'], // 발음/라임
-        ['aggressive', 'agree', 'progress', 'massive'], // 어근/라임
-        ['calm', 'palm', 'balm', 'come'], // 라임/발음 유사
-        ['set up', 'get up', 'sit up', 'set off'], // 이어동사 변형
-        ['take part in', 'take part of', 'play part in', 'take art in'], // 구문 변형
-        ['make sure', 'make pure', 'take sure', 'make sore'], // 라임
-        ['speech', 'peach', 'speed', 'speak'], // 포함/발음 유사
-        ['duty', 'beauty', 'dirty', 'due'], // 라임/어근
-        ['southern', 'south', 'sudden', 'other'], // 어근/발음 유사
-        ['church', 'lurch', 'search', 'birch'], // 라임
-        ['contact', 'tact', 'contract', 'compact'], // 포함/철자 유사
-        ['wide', 'wild', 'side', 'tide'], // 철자/라임
-        ['appear', 'pear', 'spear', 'fear'], // 포함/라임
-        ['carry out', 'carry on', 'cry out', 'carry bout'], // 이어동사 변형
-        ['lose weight', 'lose wait', 'use weight', 'lose way'], // 동음/구문
-        ['pace', 'face', 'race', 'space'], // 라임
-        ['cloth', 'clothes', 'close', 'both'], // 발음/철자 혼동
-        ['rate', 'late', 'date', 'gate'], // 라임
-        ['gorgeous', 'george', 'courage', 'urge'], // 발음/철자 유사
-        ['relax', 'tax', 'wax', 'fax'], // 라임
-        ['against', 'again', 'gain', 'guest'], // 포함/철자 유사
-        ['unfair', 'fair', 'affair', 'hair'], // 어근/라임
-        ['prove', 'move', 'love', 'proof'], // 라임/품사 변화
-        ['footprint', 'foot', 'print', 'point'], // 어근 분리
-        ['loudly', 'loud', 'cloud', 'proudly'], // 어근/라임
-        ['seafood', 'sea', 'food', 'see food'], // 어근 분리/동음
-        ['stop by', 'drop by', 'stop buy', 'step by'], // 구문/동음
-        ['be over', 'be cover', 'be ever', 'go over'], // 철자/구문
-        ['major', 'mayor', 'maker', 'jar'], // 발음/철자 유사
-        ['observe', 'serve', 'reserve', 'deserve'], // 어근/라임
-        ['character', 'actor', 'tractor', 'factor'], // 라임/철자 유사
-        ['method', 'metal', 'meter', 'methyl'], // 발음/철자 유사
-        ['offer', 'off', 'coffee', 'suffer'], // 포함/라임
-        ['recently', 'recent', 'decently', 'gently'], // 어근/라임
-        ['limit', 'rim', 'bit', 'emit'], // 포함/라임
-        ['system', 'stem', 'sister', 'item'], // 철자/형태 유사
-        ['make sense', 'make fence', 'make tense', 'take sense'], // 라임
-        ['staff', 'stuff', 'stiff', 'stay'], // 모음 변화/철자
-        ['suggest', 'guest', 'digest', 'congest']['relate'], // 포함/라임
-        ['relate', 'late', 'rate', 'debate'], // 라임/포함
-        ['used to', 'use to', 'used two', 'useful'], // 발음 혼동/형태
-        ['loss', 'lost', 'boss', 'toss'], // 철자/라임
-        ['occur', 'cure', 'recur', 'incur'], // 포함/라임
-        ['policy', 'police', 'polish', 'polite'], // 철자/발음 유사
-        ['physical', 'physics', 'physician', 'musical'], // 어근/라임
-        ['discuss', 'cuss', 'disgust', 'disk'], // 포함/발음 유사
-        ['standard', 'stand', 'hard', 'sand'], // 포함/라임
-        ['remain', 'main', 'rain', 'retain'], // 포함/라임
-        ['figure out', 'find out', 'figure in', 'dig out'], // 구문/철자 유사
-        ['focus on', 'focus in', 'count on', 'go on'], // 구문 변형
-        ['survive', 'revive', 'alive', 'service'], // 라임/철자 유사
-        ['ancient', 'accent', 'agent', 'patient'], // 발음/철자 유사
-        ['benefit', 'fit', 'beneath', 'profit'], // 포함/라임
-        ['concern', 'concert', 'corn', 'certain'], // 철자/발음 유사
-        ['term', 'turn', 'team', 'germ'], // 발음/라임
-        ['result in', 'result from', 'consult in', 'insult'], // 반의어/라임
-        ['run out of', 'run out', 'get out of', 'run into'], // 구문 변형
-        ['industry', 'dust', 'dusty', 'industrial'], // 포함/형태
-        ['prefer', 'refer', 'defer', 'infer'], // 라임/어근
-        ['perform', 'form', 'reform', 'perfume'], // 어근/철자 유사
-        ['encourage', 'courage', 'discourage', 'engage'], // 어근/반의어
-        ['pay attention', 'pay mention', 'call attention', 'pay pension'], // 발음/구문
-        ['apart', 'part', 'depart', 'a part'], // 포함/라임
-        ['poetry', 'poet', 'pottery', 'poultry'], // 어근/철자 혼동
-        ['weekday', 'weekend', 'weak day', 'weekly'], // 형태/발음 혼동
-        ['fear', 'ear', 'hear', 'tear'], // 포함/라임
-        ['recent', 'resent', 'decent', 'scent'], // 발음/라임
-        ['injury', 'jury', 'injure', 'fury'], // 포함/라임
-        ['haircut', 'hair', 'cut', 'shortcut'], // 포함/형태
-        ['fill out', 'fill in', 'fall out', 'chill out'], // 반의어/라임
-        ['more than', 'more then', 'less than', 'better than'], // 발음/반의어
-        ['cancer', 'cancel', 'dancer', 'answer'], // 철자/라임
-        ['fold', 'hold', 'cold', 'told'], // 라임
-        ['downtown', 'down', 'town', 'uptown'], // 어근 분리/반의어
-        ['crime', 'cream', 'prime', 'climb'], // 발음/라임
-        ['surface', 'face', 'surplus', 'ace'], // 포함/형태
-        ['entrance', 'enter', 'entry', 'trance'], // 어근/라임
-        ['respect', 'inspect', 'aspect', 'suspect'], // 어근/라임
-        ['universe', 'verse', 'university', 'reverse'], // 포함/형태
-        ['safety', 'safe', 'save', 'safely'], // 어근/품사
-        ['asleep', 'sleep', 'sheep', 'steep'], // 어근/라임
-        ['wavy', 'wave', 'way', 'navy'], // 어근/라임
-        ['edge', 'age', 'hedge', 'wedge'], // 라임
-        ['dust', 'dusk', 'just', 'must'], // 발음/라임
-        ['obvious', 'previous', 'envious', 'various'], // 접미사 라임
-        ['fabric', 'brick', 'public', 'factory'], // 포함/형태
-        ['sink', 'think', 'link', 'pink'], // 발음/라임
-        ['slip', 'sleep', 'slap', 'lip'], // 장단음/라임
-        ['career', 'carrier', 'care', 'car'], // 발음/포함
-        ['relative', 'relate', 'relation', 'creative'], // 어근/라임
-        ['percentage', 'percent', 'age', 'advantage'], // 어근/라임
-        ['reply', 'play', 'rely', 'apply'], // 포함/라임
-        ['awful', 'awe', 'full', 'lawful'], // 어근/라임
-        ['overcome', 'come over', 'become', 'welcome'], // 구문/형태
-        ['furniture', 'future', 'nature', 'fur'], // 철자/포함
-        ['parade', 'paradise', 'grade', 'trade'], // 형태/라임
-        ['harm', 'farm', 'arm', 'warm'], // 라임
-        ['gesture', 'guest', 'guess', 'vesture'], // 발음/라임
-        ['locker', 'lock', 'rocker', 'looker'], // 어근/라임
-        ['remember', 'member', 'ember', 'december'], // 포함/라임
-        ['curiosity', 'curious', 'city', 'cure'], // 어근/포함
-        ['athlete', 'athletic', 'let', 'feat'], // 어근/라임
-        ['such', 'much', 'touch', 'search'], // 라임/철자
-        ['electric', 'trick', 'election', 'elastic'], // 포함/철자 유사
-        ['booth', 'boot', 'both', 'tooth'], // 포함/라임
-        ['fault', 'salt', 'vault', 'default'], // 라임
-        ['difference', 'differ', 'reference', 'defense'], // 어근/라임
-        ['link', 'sink', 'pink', 'ink'], // 라임/포함
-        ['media', 'medal', 'idea', 'medium'], // 철자/발음
-        ['bold', 'bald', 'old', 'cold'], // 발음/라임
-        ['diet', 'die', 'quiet', 'duet'], // 포함/라임
-        ['explore', 'explode', 'implore', 'ignore'], // 형태/라임
-        ['represent', 'present', 'resent', 'president'], // 포함/형태
-        ['gap', 'cap', 'map', 'lap'], // 라임
-        ['necessary', 'necessity', 'essay', 'access'], // 어근/발음
-        ['nervous', 'nerve', 'never', 'various'], // 어근/철자
-        ['young', 'tongue', 'lung', 'your'], // 라임/철자
-        ['ease', 'easy', 'east', 'case'], // 어근/라임
-        ['average', 'age', 'rage', 'coverage'], // 포함/라임
-        ['relationship', 'relation', 'relaetionship', 'ralationship'], // 어근/포함
-        ['pollute', 'polite', 'dilute', 'salute'], // 철자/라임
-        ['smoke', 'snake', 'spoke', 'coke'], // 철자/라임
-        ['period', 'peer', 'perish', 'pyramid'], // 발음/형태
-        ['virus', 'iris', 'minus', 'various'], // 라임/형태
-        ['require', 'inquire', 'acquire', 'wire'], // 라임/포함
-        ['adapt', 'adopt', 'adept', 'depth'], // 모음 변화/라임
-        ['volunteer', 'voluntary', 'steer', 'tear'], // 어근/라임
-        ['fame', 'game', 'name', 'same'], // 라임
-        ['object', 'subject', 'project', 'reject'], // 라임
-        ['former', 'farmer', 'form', 'formal'], // 철자/어근
-        ['biology', 'bio', 'logy', 'geology'], // 어근 분리
-        ['botany', 'boat', 'any', 'button'], // 발음/철자
-        ['organ', 'orphan', 'organize', 'origin'], // 철자/어근
-        ['nerve', 'serve', 'curve', 'never'], // 라임/철자
-        ['skeleton', 'ton', 'skill', 'sketch'], // 포함/발음
-        ['muscle', 'mussel', 'bustle', 'uncle'], // 동음/라임
-        ['genetic', 'gene', 'generic', 'gentle'], // 어근/형태
-        ['blame', 'flame', 'lame', 'claim'], // 라임
-        ['scold', 'cold', 'sold', 'hold'], // 포함/라임
-        ['compete', 'complete', 'compute', 'pet'], // 철자/포함
-        ['positive', 'position', 'possible', 'post'], // 어근/포함
-        ['negative', 'native', 'negate', 'relative'], // 철자/라임
-        ['issue', 'tissue', 'sue', 'miss you'], // 포함/라임
-        ['react', 'act', 're-act', 'fact'], // 포함/라임
-        ['respond', 'pond', 'correspond', 'despond'], // 포함/라임
+        ['display', 'misplay', 'replay', 'delay'],
+        ['wing', 'ring', 'king', 'swing'],
+        ['pure', 'poor', 'cure', 'sure'],
+        ['sharp', 'shark', 'harp', 'shape'],
+        ['at first', 'at last', 'at least', 'at best'],
+        ['put on', 'put in', 'put off', 'hold on'],
+        ['search', 'perch', 'march', 'church'],
+        ['at last', 'at least', 'at first', 'at best'],
+        ['piece', 'peace', 'pace', 'price'],
+        ['oven', 'even', 'open', 'often'],
+        ['fix', 'mix', 'six', 'fox'],
+        ['useful', 'youthful', 'use', 'usual'],
+        ['neighbor', 'labor', 'favor', 'nature'],
+        ['war', 'raw', 'wear', 'warm'],
+        ['bury', 'berry', 'very', 'hurry'],
+        ['grow up', 'blow up', 'show up', 'throw up'],
+        ['copy', 'coffee', 'puppy', 'happy'],
+        ['contest', 'context', 'content', 'concert'],
+        ['borrow', 'sorrow', 'hollow', 'follow'],
+        ['be in trouble', 'be in touch', 'be in time', 'be in tune'],
+        ['leader', 'reader', 'ladder', 'liter'],
+        ['prize', 'price', 'pride', 'prise'],
+        ['sleepy', 'sleeping', 'slippery', 'sweepy'],
+        ['lift', 'gift', 'left', 'list'],
+        ['root', 'route', 'roof', 'boot'],
+        ['wonder', 'wander', 'under', 'thunder'],
+        ['mix', 'fix', 'miss', 'max'],
+        ['coach', 'couch', 'catch', 'poach'],
+        ['cartoon', 'carton', 'canton', 'cocoon'],
+        ['view', 'few', 'new', 'due'],
+        ['nickname', 'name', 'pick name', 'big name'],
+        ['dig', 'big', 'pig', 'dog'],
+        ['find out', 'bind out', 'hide out', 'find in'],
+        ['total', 'turtle', 'title', 'metal'],
+        ['think up', 'drink up', 'link up', 'pick up'],
+        ['among', 'along', 'amount', 'alone'],
+        ['harmony', 'money', 'honey', 'balcony'],
+        ['shout', 'shoot', 'shut', 'scout'],
+        ['smart', 'start', 'smell', 'small'],
+        ['hang', 'bang', 'sang', 'hand'],
+        ['bored', 'board', 'bold', 'bird'],
+        ['care', 'car', 'dare', 'cure'],
+        ['hero', 'zero', 'hear', 'here'],
+        ['planet', 'plant', 'plane', 'plate'],
+        ['teenager', 'manager', 'villager', 'stranger'],
+        ['uniform', 'form', 'unicorn', 'inform'],
+        ['beauty', 'duty', 'booty', 'beast'],
+        ['because of', 'in case of', 'become of', 'consist of'],
+        ['female', 'male', 'email', 'tamale'],
+        ['without', 'with', 'about', 'workout'],
+        ['miss', 'kiss', 'mess', 'hiss'],
+        ['sunlight', 'moonlight', 'starlight', 'searchlight'],
+        ['language', 'luggage', 'bandage', 'sausage'],
+        ['dive', 'drive', 'hive', 'live'],
+        ['alarm', 'arm', 'farm', 'harm'],
+        ['calm down', 'come down', 'cool down', 'sit down'],
+        ['chance', 'change', 'dance', 'glance'],
+        ['nobody', 'somebody', 'anybody', 'no one'],
+        ['before long', 'before noon', 'so long', 'too long'],
+        ['taste', 'test', 'toast', 'paste'],
+        ['take care', 'take share', 'take air', 'take dare'],
+        ['regularly', 'singular', 'popular', 'secular'],
+        ['silent', 'island', 'violent', 'talent'],
+        ['rub', 'rob', 'tub', 'pub'],
+        ['neat', 'meat', 'heat', 'seat'],
+        ['weigh', 'way', 'weight', 'whey'],
+        ['be different from', 'be difficult for', 'be distant from', 'be indifferent to'],
+        ['fill in', 'fill out', 'fall in', 'fit in'],
+        ['take out', 'take off', 'make out', 'fade out'],
+        ['guide', 'glide', 'guard', 'pride'],
+        ['during', 'boring', 'curing', 'luring'],
+        ['mistake', 'miss take', 'steak', 'lake'],
+        ['tire', 'fire', 'wire', 'tear'],
+        ['flour', 'floor', 'flower', 'sour'],
+        ['lawyer', 'liar', 'lower', 'layer'],
+        ['ache', 'lake', 'bake', 'cake'],
+        ['prepare', 'repair', 'compare', 'spare'],
+        ['soldier', 'shoulder', 'folder', 'holder'],
+        ['quite', 'quiet', 'quit', 'white'],
+        ['patient', 'patent', 'parent', 'ancient'],
+        ['spicy', 'spy', 'icy', 'space'],
+        ['get out of', 'run out of', 'go out of', 'get rid of'],
+        ['elderly', 'early', 'orderly', 'dearly'],
+        ['wild', 'mild', 'wide', 'wind'],
+        ['especially', 'specially', 'essentially', 'officially'],
+        ['make noise', 'make voice', 'make choice', 'make poise'],
+        ['online', 'outline', 'inline', 'offline'],
+        ['help out', 'hold out', 'hang out', 'hear out'],
+        ['lost', 'last', 'cost', 'host'],
+        ['blind', 'blond', 'bind', 'mind'],
+        ['culture', 'future', 'nature', 'vulture'],
+        ['suck', 'luck', 'duck', 'sock'],
+        ['item', 'stem', 'system', 'term'],
+        ['pick up', 'pack up', 'kick up', 'stick up'],
+        ['hand in hand', 'arm in arm', 'face to face', 'back to back'],
+        ['designer', 'design', 'signer', 'liner'],
+        ['flow', 'slow', 'blow', 'low'],
+        ['tasty', 'testy', 'hasty', 'nasty'],
+        ['soap', 'soup', 'soak', 'soft'],
+        ['rail', 'rain', 'tail', 'nail'],
+        ['someday', 'sunday', 'monday', 'some way'],
+        ['secret', 'sacred', 'cigarette', 'regret'],
+        ['couple', 'double', 'bubble', 'trouble'],
+        ['engineer', 'engine', 'pioneer', 'volunteer'],
+        ['lady', 'ready', 'lazy', 'baby'],
+        ['rainy', 'brainy', 'train', 'drain'],
+        ['site', 'sight', 'cite', 'bite'],
+        ['funny', 'bunny', 'sunny', 'money'],
+        ['history', 'story', 'mystery', 'factory'],
+        ['stomach', 'match', 'much', 'touch'],
+        ['exciting', 'exiting', 'reciting', 'inviting'],
+        ['area', 'era', 'idea', 'korea'],
+        ['dial', 'deal', 'dual', 'trial'],
+        ['look up', 'look at', 'look for', 'cook up'],
+        ['subway', 'highway', 'runway', 'way'],
+        ['dangerous', 'generous', 'danger', 'angel'],
+        ['bookstore', 'book', 'store', 'restore'],
+        ['happen', 'happy', 'open', 'deepen'],
+        ['hometown', 'downtown', 'home', 'town'],
+        ['program', 'grammar', 'kilogram', 'diagram'],
+        ['search for', 'reach for', 'march for', 'search in'],
+        ['a few', 'a little', 'a lot', 'a view'],
+        ['dish', 'fish', 'dash', 'wish'],
+        ['swallow', 'hollow', 'follow', 'shallow'],
+        ['success', 'access', 'process', 'excess'],
+        ['waste', 'waist', 'taste', 'paste'],
+        ['grade', 'trade', 'blade', 'shade'],
+        ['pop', 'top', 'hop', 'cop'],
+        ['turn off', 'turn on', 'burn off', 'run off'],
+        ['invite', 'invent', 'invest', 'inside'],
+        ['space', 'pace', 'spice', 'place'],
+        ['market', 'mark', 'target', 'jacket'],
+        ['be full of', 'be fond of', 'be free of', 'be full up'],
+        ['wait for', 'wait on', 'ask for', 'pay for'],
+        ['diary', 'dairy', 'dial', 'daily'],
+        ['list', 'least', 'last', 'mist'],
+        ['ocean', 'motion', 'lotion', 'option'],
+        ['pressure', 'treasure', 'measure', 'pleasure'],
+        ['energy', 'enemy', 'allergy', 'synergy'],
+        ['introduce', 'produce', 'reduce', 'induce'],
+        ['realize', 'real', 'size', 'resize'],
+        ['challenge', 'change', 'range', 'orange'],
+        ['shop', 'ship', 'shape', 'chop'],
+        ['shake hands', 'take hands', 'shake heads', 'shake bands'],
+        ['scared', 'sacred', 'scored', 'scarred'],
+        ['balance', 'ambulance', 'glance', 'dance'],
+        ['lose', 'loose', 'lost', 'rose'],
+        ['judge', 'fudge', 'bridge', 'edge'],
+        ['peace', 'piece', 'pace', 'peas'],
+        ['huge', 'hug', 'page', 'cage'],
+        ['be covered with', 'be crowded with', 'be filled with', 'be covered in'],
+        ['write down', 'sit down', 'calm down', 'write on'],
+        ['customer', 'costume', 'custom', 'consumer'],
+        ['adult', 'add', 'result', 'insult'],
+        ['interview', 'review', 'preview', 'view'],
+        ['village', 'villa', 'age', 'pill'],
+        ['excuse', 'refuse', 'confuse', 'use'],
+        ['husband', 'band', 'hand', 'sand'],
+        ['stand', 'sand', 'band', 'land'],
+        ['careful', 'fearful', 'tearful', 'care'],
+        ['field', 'yield', 'shield', 'filled'],
+        ['half', 'calf', 'laugh', 'safe'],
+        ['be good at', 'be bad at', 'be good to', 'be poor at'],
+        ['look for', 'look at', 'cook for', 'book for'],
+        ['promise', 'miss', 'premise', 'compromise'],
+        ['spread', 'bread', 'read', 'speed'],
+        ['suddenly', 'sudden', 'sadly', 'sunny'],
+        ['focus', 'locus', 'hocus', 'force'],
+        ['whole', 'hole', 'whale', 'while'],
+        ['hunter', 'hunt', 'haunt', 'winter'],
+        ['label', 'table', 'cable', 'level'],
+        ['a lot of', 'a bit of', 'a pot of', 'a lot off'],
+        ['pay for', 'play for', 'pray for', 'say for'],
+        ['audience', 'audio', 'dance', 'absence'],
+        ['sense', 'fence', 'tense', 'dense'],
+        ['exercise', 'size', 'excite', 'wise'],
+        ['army', 'arm', 'harm', 'alarm'],
+        ['ride', 'hide', 'wide', 'side'],
+        ['art', 'part', 'cart', 'start'],
+        ['turn on', 'turn off', 'burn on', 'put on'],
+        ['come back', 'go back', 'come black', 'come pack'],
+        ['party', 'part', 'park', 'pity'],
+        ['buy', 'by', 'bye', 'guy'],
+        ['beat', 'bit', 'bat', 'bet'],
+        ['advise', 'advice', 'device', 'revise'],
+        ['place', 'palace', 'pace', 'plate'],
+        ['date', 'gate', 'late', 'mate'],
+        ['hurt', 'heart', 'hut', 'hunt'],
+        ['decide', 'side', 'beside', 'divide'],
+        ['park', 'dark', 'bark', 'spark'],
+        ['cross', 'across', 'boss', 'loss'],
+        ['music', 'muse', 'sick', 'magic'],
+        ['throw away', 'blow away', 'go away', 'run away'],
+        ['chief', 'chef', 'thief', 'brief'],
+        ['humorous', 'humor', 'rumor', 'numerous'],
+        ['unique', 'antique', 'technique', 'unit'],
+        ['completely', 'complete', 'compete', 'delete'],
+        ['pose', 'rose', 'nose', 'hose'],
+        ['stupid', 'study', 'cupid', 'rapid'],
+        ['race', 'face', 'pace', 'rice'],
+        ['look through', 'look though', 'cook through', 'go through'],
+        ['modern', 'model', 'mode', 'modest'],
+        ['electricity', 'electric', 'city', 'elastic'],
+        ['striking', 'strike', 'string', 'hiking'],
+        ['include', 'conclude', 'exclude', 'cloud'],
+        ['price', 'prize', 'rice', 'ice'],
+        ['forest', 'rest', 'best', 'frost'],
+        ['bother', 'brother', 'mother', 'border'],
+        ['on time', 'in time', 'on top', 'one time'],
+        ['give up', 'give in', 'live up', 'get up'],
+        ['depend on', 'spend on', 'depend in', 'defend on'],
+        ['private', 'pirate', 'pride', 'pivot'],
+        ['disappear', 'appear', 'pear', 'spear'],
+        ['foreigner', 'foreign', 'rain', 'reign'],
+        ['colorful', 'color', 'careful', 'wonderful'],
+        ['author', 'other', 'auto', 'arthur'],
+        ['helpful', 'help', 'hopeful', 'health'],
+        ['officer', 'office', 'offer', 'coffee'],
+        ['be crowded with', 'be covered with', 'be clouded with', 'be crowned with'],
+        ['at least', 'at last', 'at best', 'at list'],
+        ['abroad', 'broad', 'board', 'aboard'],
+        ['structure', 'strict', 'picture', 'lecture'],
+        ['aggressive', 'agree', 'progress', 'massive'],
+        ['calm', 'palm', 'balm', 'come'],
+        ['set up', 'get up', 'sit up', 'set off'],
+        ['take part in', 'take part of', 'play part in', 'take art in'],
+        ['make sure', 'make pure', 'take sure', 'make sore'],
+        ['speech', 'peach', 'speed', 'speak'],
+        ['duty', 'beauty', 'dirty', 'due'],
+        ['southern', 'south', 'sudden', 'other'],
+        ['church', 'lurch', 'search', 'birch'],
+        ['contact', 'tact', 'contract', 'compact'],
+        ['wide', 'wild', 'side', 'tide'],
+        ['appear', 'pear', 'spear', 'fear'],
+        ['carry out', 'carry on', 'cry out', 'carry bout'],
+        ['lose weight', 'lose wait', 'use weight', 'lose way'],
+        ['pace', 'face', 'race', 'space'],
+        ['cloth', 'clothes', 'close', 'both'],
+        ['rate', 'late', 'date', 'gate'],
+        ['gorgeous', 'george', 'courage', 'urge'],
+        ['relax', 'tax', 'wax', 'fax'],
+        ['against', 'again', 'gain', 'guest'],
+        ['unfair', 'fair', 'affair', 'hair'],
+        ['prove', 'move', 'love', 'proof'],
+        ['footprint', 'foot', 'print', 'point'],
+        ['loudly', 'loud', 'cloud', 'proudly'],
+        ['seafood', 'sea', 'food', 'see food'],
+        ['stop by', 'drop by', 'stop buy', 'step by'],
+        ['be over', 'be cover', 'be ever', 'go over'],
+        ['major', 'mayor', 'maker', 'jar'],
+        ['observe', 'serve', 'reserve', 'deserve'],
+        ['character', 'actor', 'tractor', 'factor'],
+        ['method', 'metal', 'meter', 'methyl'],
+        ['offer', 'off', 'coffee', 'suffer'],
+        ['recently', 'recent', 'decently', 'gently'],
+        ['limit', 'rim', 'bit', 'emit'],
+        ['system', 'stem', 'sister', 'item'],
+        ['make sense', 'make fence', 'make tense', 'take sense'],
+        ['staff', 'stuff', 'stiff', 'stay'],
+        ['suggest', 'guest', 'digest', 'congest'],
+        ['relate'],
+        ['relate', 'late', 'rate', 'debate'],
+        ['used to', 'use to', 'used two', 'useful'],
+        ['loss', 'lost', 'boss', 'toss'],
+        ['occur', 'cure', 'recur', 'incur'],
+        ['policy', 'police', 'polish', 'polite'],
+        ['physical', 'physics', 'physician', 'musical'],
+        ['discuss', 'cuss', 'disgust', 'disk'],
+        ['standard', 'stand', 'hard', 'sand'],
+        ['remain', 'main', 'rain', 'retain'],
+        ['figure out', 'find out', 'figure in', 'dig out'],
+        ['focus on', 'focus in', 'count on', 'go on'],
+        ['survive', 'revive', 'alive', 'service'],
+        ['ancient', 'accent', 'agent', 'patient'],
+        ['benefit', 'fit', 'beneath', 'profit'],
+        ['concern', 'concert', 'corn', 'certain'],
+        ['term', 'turn', 'team', 'germ'],
+        ['result in', 'result from', 'consult in', 'insult'],
+        ['run out of', 'run out', 'get out of', 'run into'],
+        ['industry', 'dust', 'dusty', 'industrial'],
+        ['prefer', 'refer', 'defer', 'infer'],
+        ['perform', 'form', 'reform', 'perfume'],
+        ['encourage', 'courage', 'discourage', 'engage'],
+        ['pay attention', 'pay mention', 'call attention', 'pay pension'],
+        ['apart', 'part', 'depart', 'a part'],
+        ['poetry', 'poet', 'pottery', 'poultry'],
+        ['weekday', 'weekend', 'weak day', 'weekly'],
+        ['fear', 'ear', 'hear', 'tear'],
+        ['recent', 'resent', 'decent', 'scent'],
+        ['injury', 'jury', 'injure', 'fury'],
+        ['haircut', 'hair', 'cut', 'shortcut'],
+        ['fill out', 'fill in', 'fall out', 'chill out'],
+        ['more than', 'more then', 'less than', 'better than'],
+        ['cancer', 'cancel', 'dancer', 'answer'],
+        ['fold', 'hold', 'cold', 'told'],
+        ['downtown', 'down', 'town', 'uptown'],
+        ['crime', 'cream', 'prime', 'climb'],
+        ['surface', 'face', 'surplus', 'ace'],
+        ['entrance', 'enter', 'entry', 'trance'],
+        ['respect', 'inspect', 'aspect', 'suspect'],
+        ['universe', 'verse', 'university', 'reverse'],
+        ['safety', 'safe', 'save', 'safely'],
+        ['asleep', 'sleep', 'sheep', 'steep'],
+        ['wavy', 'wave', 'way', 'navy'],
+        ['edge', 'age', 'hedge', 'wedge'],
+        ['dust', 'dusk', 'just', 'must'],
+        ['obvious', 'previous', 'envious', 'various'],
+        ['fabric', 'brick', 'public', 'factory'],
+        ['sink', 'think', 'link', 'pink'],
+        ['slip', 'sleep', 'slap', 'lip'],
+        ['career', 'carrier', 'care', 'car'],
+        ['relative', 'relate', 'relation', 'creative'],
+        ['percentage', 'percent', 'age', 'advantage'],
+        ['reply', 'play', 'rely', 'apply'],
+        ['awful', 'awe', 'full', 'lawful'],
+        ['overcome', 'come over', 'become', 'welcome'],
+        ['furniture', 'future', 'nature', 'fur'],
+        ['parade', 'paradise', 'grade', 'trade'],
+        ['harm', 'farm', 'arm', 'warm'],
+        ['gesture', 'guest', 'guess', 'vesture'],
+        ['locker', 'lock', 'rocker', 'looker'],
+        ['remember', 'member', 'ember', 'december'],
+        ['curiosity', 'curious', 'city', 'cure'],
+        ['athlete', 'athletic', 'let', 'feat'],
+        ['such', 'much', 'touch', 'search'],
+        ['electric', 'trick', 'election', 'elastic'],
+        ['booth', 'boot', 'both', 'tooth'],
+        ['fault', 'salt', 'vault', 'default'],
+        ['difference', 'differ', 'reference', 'defense'],
+        ['link', 'sink', 'pink', 'ink'],
+        ['media', 'medal', 'idea', 'medium'],
+        ['bold', 'bald', 'old', 'cold'],
+        ['diet', 'die', 'quiet', 'duet'],
+        ['explore', 'explode', 'implore', 'ignore'],
+        ['represent', 'present', 'resent', 'president'],
+        ['gap', 'cap', 'map', 'lap'],
+        ['necessary', 'necessity', 'essay', 'access'],
+        ['nervous', 'nerve', 'never', 'various'],
+        ['young', 'tongue', 'lung', 'your'],
+        ['ease', 'easy', 'east', 'case'],
+        ['average', 'age', 'rage', 'coverage'],
+        ['relationship', 'relation', 'relaetionship', 'ralationship'],
+        ['pollute', 'polite', 'dilute', 'salute'],
+        ['smoke', 'snake', 'spoke', 'coke'],
+        ['period', 'peer', 'perish', 'pyramid'],
+        ['virus', 'iris', 'minus', 'various'],
+        ['require', 'inquire', 'acquire', 'wire'],
+        ['adapt', 'adopt', 'adept', 'depth'],
+        ['volunteer', 'voluntary', 'steer', 'tear'],
+        ['fame', 'game', 'name', 'same'],
+        ['object', 'subject', 'project', 'reject'],
+        ['former', 'farmer', 'form', 'formal'],
+        ['biology', 'bio', 'logy', 'geology'],
+        ['botany', 'boat', 'any', 'button'],
+        ['organ', 'orphan', 'organize', 'origin'],
+        ['nerve', 'serve', 'curve', 'never'],
+        ['skeleton', 'ton', 'skill', 'sketch'],
+        ['muscle', 'mussel', 'bustle', 'uncle'],
+        ['genetic', 'gene', 'generic', 'gentle'],
+        ['blame', 'flame', 'lame', 'claim'],
+        ['scold', 'cold', 'sold', 'hold'],
+        ['compete', 'complete', 'compute', 'pet'],
+        ['positive', 'position', 'possible', 'post'],
+        ['negative', 'native', 'negate', 'relative'],
+        ['issue', 'tissue', 'sue', 'miss you'],
+        ['react', 'act', 're-act', 'fact'],
+        ['respond', 'pond', 'correspond', 'despond'],
         ['satisfy', 'ratify', 'notify', 'simplify'],
         ['develop', 'envelope', 'devil', 'level'],
         ['repair', 'pair', 'despair', 'prepare'],
@@ -1427,5 +1427,80 @@
         ['pursue', 'puse', 'pursu', 'purseu'],
         ['fulfill', 'fullfill', 'fulfil', 'fulfeel'],
         ['funeral', 'funerel', 'funaral', 'fuenral'],
+        ['succcess'],
+        ['not ~ at all'],
+        ['be about to-v'],
+        ['characteristic'],
+        ['thoughtful'],
+        ['considerate'],
+        ['devote'],
+        ['honesty'],
+        ['graceful'],
+        ['willing'],
+        ['cautious'],
+        ['energetic'],
+        ['withstand'],
+        ['keen'],
+        ['hostile'],
+        ['disappointed'],
+        ['pleasant'],
+        ['fascinate'],
+        ['amazed'],
+        ['frustrate'],
+        ['amuse'],
+        ['marvel'],
+        ['irritate'],
+        ['explain'],
+        ['regard'],
+        ['remind'],
+        ['intend'],
+        ['hesitate'],
+        ['recall'],
+        ['misunderstand'],
+        ['tidy'],
+        ['architecture'],
+        ['request'],
+        ['spot'],
+        ['sheet'],
+        ['sort'],
+        ['variety'],
+        ['stir'],
+        ['slice'],
+        ['ingredient'],
+        ['spinach'],
+        ['rare'],
+        ['starve'],
+        ['trend'],
+        ['refund'],
+        ['fashionable'],
+        ['stitch'],
+        ['loan'],
+        ['insurance'],
+        ['employ'],
+        ['confirm'],
+        ['promote'],
+        ['obtain'],
+        ['license'],
+        ['attach'],
+        ['qualify'],
+        ['undertake'],
+        ['task'],
+        ['colleague'],
+        ['unusual'],
+        ['precious'],
+        ['appropriate'],
+        ['delicate'],
+        ['ridiculous'],
+        ['faint'],
+        ['haste'],
+        ['monotonous'],
+        ['quarter'],
+        ['considerable'],
+        ['continuous'],
+        ['diminish'],
+        ['backward'],
+        ['afterward'],
+        ['prior'],
+        ['category'],
     ];
 })();

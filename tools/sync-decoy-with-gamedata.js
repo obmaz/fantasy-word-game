@@ -1,6 +1,6 @@
 /**
- * 1) game-data-1, game-data-2의 word 중 decoyWordsSet에 없으면 새 그룹으로 추가
- * 2) decoyWordsSet 그룹 중 game-data-1·game-data-2 둘 다에 없는 단어만 있는 그룹은 제거
+ * 1) game-data-1, 2, 3의 word 중 decoyWordsSet에 없으면 새 그룹으로 추가
+ * 2) decoyWordsSet 그룹 중 game-data-1·2·3 모두에 없는 단어만 있는 그룹은 제거
  * 실행: node tools/sync-decoy-with-gamedata.js
  */
 const fs = require('fs');
@@ -9,10 +9,13 @@ const path = require('path');
 const dataDir = path.join(__dirname, '../data');
 const gameData1Path = path.join(dataDir, 'game-data-1.js');
 const gameData2Path = path.join(dataDir, 'game-data-2.js');
+const gameData3Path = path.join(dataDir, 'game-data-3.js');
 const decoyPath = path.join(dataDir, 'decoy-words-set.js');
 
 function norm(w) {
-    return String(w || '').trim().toLowerCase();
+    return String(w || '')
+        .trim()
+        .toLowerCase();
 }
 
 // game-data-1, game-data-2에서 word 추출
@@ -27,9 +30,19 @@ function extractWords(filePath) {
 
 const words1 = extractWords(gameData1Path);
 const words2 = extractWords(gameData2Path);
-const gameDataWords = new Set([...words1, ...words2]);
+const words3 = extractWords(gameData3Path);
+const gameDataWords = new Set([...words1, ...words2, ...words3]);
 const gameDataWordsNorm = new Set([...gameDataWords].map(norm));
-console.error('game-data-1 words:', words1.size, '| game-data-2 words:', words2.size, '| union:', gameDataWords.size);
+console.error(
+    'game-data-1 words:',
+    words1.size,
+    '| game-data-2 words:',
+    words2.size,
+    '| game-data-3 words:',
+    words3.size,
+    '| union:',
+    gameDataWords.size
+);
 
 // decoy 그룹 파싱
 const decoyContent = fs.readFileSync(decoyPath, 'utf8');
@@ -71,18 +84,27 @@ const notInDecoy = [...gameDataWords].filter((w) => !decoyWordSet.has(norm(w)));
 const newGroups = notInDecoy.map((w) => [w]);
 console.error('New single-word groups (game-data only, not in decoy):', newGroups.length);
 
-// 2) 그룹 전체가 game-data-1·game-data-2 둘 다에 없으면 제거
+// 2) 그룹 전체가 game-data-1·2·3 모두에 없으면 제거
 const keptGroups = existingGroups.filter((group) => {
     const hasAnyInGameData = group.some((w) => gameDataWordsNorm.has(norm(w)));
     if (!hasAnyInGameData) return false;
     return true;
 });
-console.error('Removed groups (only words not in game-data):', existingGroups.length - keptGroups.length);
+console.error(
+    'Removed groups (only words not in game-data):',
+    existingGroups.length - keptGroups.length
+);
 
 const allGroups = [...keptGroups, ...newGroups];
 
 function formatGroup(arr) {
-    return '        [' + arr.map((w) => "'" + String(w).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'").join(', ') + ']';
+    return (
+        '        [' +
+        arr
+            .map((w) => "'" + String(w).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'")
+            .join(', ') +
+        ']'
+    );
 }
 
 const out = `// 유사 단어 집합(decoyWordsSet) 수동 관리 파일
@@ -104,4 +126,11 @@ ${allGroups.map(formatGroup).join(',\n')}
 `;
 
 fs.writeFileSync(decoyPath, out, 'utf8');
-console.error('Done. Total groups:', allGroups.length, '| Kept:', keptGroups.length, '| Added:', newGroups.length);
+console.error(
+    'Done. Total groups:',
+    allGroups.length,
+    '| Kept:',
+    keptGroups.length,
+    '| Added:',
+    newGroups.length
+);
