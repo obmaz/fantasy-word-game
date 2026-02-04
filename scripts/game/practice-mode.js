@@ -231,7 +231,6 @@ const practiceMemorization = {
         const preferredVoice = getPreferredTTSVoice();
         if (preferredVoice) utterance.voice = preferredVoice;
 
-        window.speechSynthesis.click(); // 일부 브라우저 활성화용
         window.speechSynthesis.cancel(); // 기존 음성 중단
         window.speechSynthesis.speak(utterance);
     },
