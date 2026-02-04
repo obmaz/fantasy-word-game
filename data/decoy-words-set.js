@@ -564,7 +564,7 @@
         ['young', 'tongue', 'lung', 'your'], // 라임/철자
         ['ease', 'easy', 'east', 'case'], // 어근/라임
         ['average', 'age', 'rage', 'coverage'], // 포함/라임
-        ['relationship', 'relation', 'ship', 'shape'], // 어근/포함
+        ['relationship', 'relation', 'relaetionship', 'ralationship'], // 어근/포함
         ['pollute', 'polite', 'dilute', 'salute'], // 철자/라임
         ['smoke', 'snake', 'spoke', 'coke'], // 철자/라임
         ['period', 'peer', 'perish', 'pyramid'], // 발음/형태
@@ -684,7 +684,7 @@
         ['whenever', 'when', 'ever', 'never'],
         ['graduate', 'grade', 'gradual', 'ate'],
         ['background', 'ground', 'back', 'round'],
-        ['personality', 'person', 'personal', 'city'],
+        ['personality', 'person', 'personal', 'persenality'],
         ['decorate', 'rate', 'crate', 'date'],
         ['rhythm', 'rhyme', 'them', 'him'],
         ['in case of', 'in face of', 'in place of', 'in case off'],
@@ -764,7 +764,7 @@
         ['supporter', 'support', 'port', 'porter'],
         ['niece', 'nice', 'piece', 'peace'],
         ['engage', 'cage', 'page', 'gauge'],
-        ['anniversary', 'verse', 'very', 'ary'],
+        ['anniversary', 'anniversery', 'anneversary', 'annivarsery'],
         ['lifetime', 'life', 'time', 'lime'],
         ['parental', 'parent', 'rent', 'rental'],
         ['breed', 'bread', 'bleed', 'greed'],
@@ -1222,7 +1222,7 @@
         ['monarchy', 'arch', 'mon', 'march'],
         ['anarchy', 'arch', 'an', 'archy'],
         ['socialize', 'social', 'size', 'realize'],
-        ['individualism', 'individual', 'ism', 'dualism'],
+        ['individualism', 'individual', 'individaul', 'indibidual'],
         ['patriotism', 'patriot', 'ism', 'riot'],
         ['comply with', 'comply which', 'supply with', 'imply with'],
         ['conform to', 'confirm to', 'conform too', 'form to'],
@@ -1275,7 +1275,7 @@
         ['substitution', 'stitution', 'sub', 'institution'],
         ['interchange', 'change', 'inter', 'charge'],
         ['reverse', 'verse', 'universe', 'reserve'],
-        ['adaptation', 'adapt', 'station', 'adoption'],
+        ['adaptation', 'adapt', 'adopt', 'adoption'],
         ['sacred', 'red', 'scare', 'acre'],
         ['ethics', 'thick', 'ethnic', 'sick'],
         ['worship', 'ship', 'war', 'worth'],
@@ -1422,5 +1422,10 @@
         ['result from', 'result form', 'result in', 'result for'],
         ['bring about', 'ring about', 'bring out', 'bring a boat'],
         ['get used to', 'get use to', 'get used two', 'used to'],
+        ['occasion', 'occosion', 'occosian', 'ocasion'],
+        ['quarrel', 'quarral', 'querrel', 'quarel'],
+        ['pursue', 'puse', 'pursu', 'purseu'],
+        ['fulfill', 'fullfill', 'fulfil', 'fulfeel'],
+        ['funeral', 'funerel', 'funaral', 'fuenral'],
     ];
 })();
