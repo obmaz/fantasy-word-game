@@ -243,30 +243,27 @@ const practiceMemorization = {
         const synth = window.speechSynthesis;
         const preferredVoice = getPreferredTTSVoice();
 
-        // Android 등에서 getVoices가 비동기로 로드되거나 아예 안 되는 경우 대비
-        // 만약 preferredVoice가 없고, 모바일 환경 같다면 바로 Google TTS Fallback 사용 고려
-        // 하지만 일단 시도하고 에러/무응답 시 처리하기는 복잡하므로,
-        // preferredVoice가 'Google ...'이 아니거나, 모바일에서 소리가 안 나는 이슈를 해결하기 위해
-        // Google TTS URL 방식을 우선 혹은 fallback으로 사용.
-
-        // 여기서는 "구글 음성이면 좋겠어"라는 요청을 반영하여,
-        // preferredVoice가 Google 계열이면 Web Speech API 사용,
-        // 아니면(혹은 모바일 확실성을 위해) Google TTS URL 사용을 전략적으로 섞음.
-
+        // Android 여부 확인
         const isAndroid = /Android/i.test(navigator.userAgent);
 
-        if (synth && !isAndroid) {
-            // PC 등 일반 환경: Web Speech API 우선
+        // 우선 Web Speech API를 시도합니다.
+        // Android에서도 이제는 Web Speech API가 잘 지원되므로 우선 사용합니다.
+        if (synth) {
             const utterance = new SpeechSynthesisUtterance(word.word);
             utterance.lang = 'en-US';
             utterance.rate = 0.8;
             if (preferredVoice) utterance.voice = preferredVoice;
 
+            // 에러 핸들링 추가
+            utterance.onerror = (e) => {
+                console.warn('SpeechSynthesis error, falling back to Google TTS URL:', e);
+                playGoogleTTS(word.word, 'en');
+            };
+
             synth.cancel();
             synth.speak(utterance);
         } else {
-            // Android 또는 Web Speech API 취약 환경 -> Google TTS URL Fallback
-            // (Android Chrome에서도 Web Speech API가 동작하지만, "구글 음성"을 확실히 원하므로 API 호출이 낫다)
+            // Web Speech API가 없는 경우 Fallback
             playGoogleTTS(word.word, 'en');
         }
     },

@@ -6,8 +6,9 @@ const lastValidMusicSelection = { 'music-select': '1', 'practice-music-select': 
  * 내부 헬퍼 함수입니다.
  * @param {number} musicNum 음악 트랙 번호 (1부터 시작)
  * @param {string} mode 'battle' | 'practice'
+ * @param {boolean} forcePlay 강제 재생 여부 (기본 false)
  */
-function _playMusic(musicNum, mode) {
+function _playMusic(musicNum, mode, forcePlay = false) {
     const bgMusic = document.getElementById('background-music');
     const overlayId = mode === 'practice' ? 'practice-music-info-overlay' : 'music-info-overlay';
     const filenameId = mode === 'practice' ? 'practice-music-filename' : 'music-filename';
@@ -16,8 +17,8 @@ function _playMusic(musicNum, mode) {
     const musicFilenameEl = document.getElementById(filenameId);
     const musicSelectEl = document.getElementById(selectId);
 
-    if (!bgMusic || !db.settings || !db.settings.musicPlay) {
-        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
+    // [FIX] 설정이 꺼져있어도 UI는 나와야 하므로 여기서 리턴하지 않음
+    if (!bgMusic || !db.settings) {
         return;
     }
 
@@ -32,16 +33,18 @@ function _playMusic(musicNum, mode) {
     // 노래가 재생되거나 변경될 때마다 음악 선택 옵션 렌더링
     ui.renderMusicSelectOptions(selectId, musicNum);
 
-    if (musicInfoOverlay && musicFilenameEl) {
-        musicFilenameEl.innerText = filename;
-        musicInfoOverlay.style.display = 'block';
+    // [FIX] 설정에 따라 자동 재생 여부 결정
+    // forcePlay가 true이면(예: 이전 곡이 끝나서 넘어옴) 무조건 재생
+    if (forcePlay || (db.settings && db.settings.musicPlay)) {
+        bgMusic.play().catch((err) => {
+            console.log('Background music play failed:', err);
+            // 재생 실패해도 UI는 유지 (사용자가 수동으로 켤 수 있도록)
+        });
+        updateMusicToggleButtons(true);
+    } else {
+        updateMusicToggleButtons(false);
     }
-
-    bgMusic.play().catch((err) => {
-        console.log('Background music play failed:', err);
-        // 자동 재생 실패 시, 음악이 재생되지 않으므로 오버레이 숨김
-        if (musicInfoOverlay) musicInfoOverlay.style.display = 'none';
-    });
+    // else: 설정이 꺼져있으면 정지 상태로 시작 (UI는 표시됨)
 
     // 다음 음악을 순서대로 재생하도록 onended 이벤트 리스너 설정
     bgMusic.onended = () => {
@@ -72,7 +75,7 @@ function playMusic(mode) {
         currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1;
     }
 
-    _playMusic(currentMusicIndices[mode], mode);
+    _playMusic(currentMusicIndices[mode], mode, false);
 }
 
 /**
@@ -105,7 +108,8 @@ function playNextMusic(mode) {
         currentMusicIndices[mode] = nextMusicNumCandidate;
     }
 
-    _playMusic(currentMusicIndices[mode], mode);
+    // [FIX] 곡이 끝나서 다음 곡으로 넘어가는 경우이므로 forcePlay=true
+    _playMusic(currentMusicIndices[mode], mode, true);
 }
 
 // 음악 직접 선택 이벤트 리스너
@@ -148,12 +152,10 @@ function setupMusicSelectListeners() {
                         musicFilenameEl.innerText = filename;
                     }
                     // 플레이 (자동 재생 방지 예외 처리)
-                    if (db.settings && db.settings.musicPlay) {
-                        bgMusic.play().catch((err) => console.log('Music play failed:', err));
-                        updateMusicToggleButtons(true);
-                    } else {
-                        updateMusicToggleButtons(false);
-                    }
+                    // [FIX] 여기서도 db.settings.musicPlay를 쓰거나, 아니면 사용자가 직접 바꿨으니 무조건 재생?
+                    // 보통 직접 곡을 바꾸면 재생을 의도한 것이므로 재생 시도 + 버튼 상태 업데이트
+                    bgMusic.play().catch((err) => console.log('Music play failed:', err));
+                    updateMusicToggleButtons(true);
 
                     // 모드 감지 (ID에 따라)
                     const mode = id === 'practice-music-select' ? 'practice' : 'battle';
@@ -191,17 +193,16 @@ function toggleMusic() {
     const bgMusic = document.getElementById('background-music');
     if (!bgMusic) return;
 
+    // [FIX] 설정값(db.settings.musicPlay)을 덮어쓰지 않고,
+    // 현재 세션의 재생 상태만 토글함.
     if (bgMusic.paused) {
         bgMusic.play().catch((err) => console.log('Music resume failed:', err));
-        db.settings.musicPlay = true; // 설정 동기화
         updateMusicToggleButtons(true);
     } else {
         bgMusic.pause();
-        db.settings.musicPlay = false; // 일시정지 시 설정도 off로 간주 (또는 별도 상태 관리)
-        // 여기서는 사용자가 껐으므로 musicPlay를 false로 하여 다른 로직(자동 재생 등)에서도 묵음 처리되도록 함이 자연스러움
         updateMusicToggleButtons(false);
     }
-    db.save(); // 설정 저장
+    // db.save(); // 제거: 영구 저장 안 함
 }
 
 /**
