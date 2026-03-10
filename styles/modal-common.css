@@ -1,0 +1,580 @@
+/* ============================================
+   MODAL & STORY SCREEN COMMON STYLES
+   ============================================ */
+
+/* Overlays & Cards */
+.screen-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px);
+    transition:
+        opacity 0.4s ease-out,
+        visibility 0.4s ease-out;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
+}
+
+/* Result Modal Modifier */
+.screen-overlay--result {
+    z-index: 300 !important;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+}
+
+/* Boss/Battle Story Modal Modifier for extra blur reinforcement if needed, 
+   though .screen-overlay should suffice. Leaving specific overrides if they differed, 
+   but they were identical. Removing redundant ID list. */
+
+.screen-overlay.closing {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.modal-container-wrapper,
+.story-container-wrapper {
+    transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.4s ease-out;
+    transform: scale(1);
+    opacity: 1;
+}
+
+.screen-overlay.closing .modal-container-wrapper,
+.screen-overlay.closing .story-container-wrapper,
+.screen-overlay.closing .card {
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+}
+
+.card {
+    transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.4s ease-out;
+    background: rgba(20, 20, 30, 0.95);
+    padding: 25px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    text-align: center;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(255, 213, 79, 0.2),
+        inset 0 0 30px rgba(255, 213, 79, 0.05);
+    max-height: 85vh;
+    overflow-y: auto;
+    animation:
+        fadeIn 0.5s ease-out,
+        cardGlow 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 모험 시작 스토리 모달(story-modal) 공통 스타일 */
+.story-container-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent; /* 투명하게 하여 backdrop-filter가 작동하도록 */
+    pointer-events: none; /* 클릭 이벤트는 자식 요소로 전달 */
+}
+
+.story-container-wrapper > * {
+    pointer-events: auto; /* 자식 요소는 클릭 가능 */
+}
+
+.story-background {
+    width: min(
+        var(--title-container-width, 95vw),
+        calc(var(--title-container-height, 95vh) * var(--story-aspect-ratio, 1.5))
+    );
+    max-width: var(--title-container-width, 95vw);
+    max-height: var(--title-container-height, 95vh);
+    height: auto;
+    object-fit: contain;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.story-buttons-overlay {
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--story-img-width, 0);
+    height: var(--story-img-height, 0);
+    left: var(--story-img-left, 0);
+    top: var(--story-img-top, 0);
+    position: absolute;
+    pointer-events: none;
+}
+
+.story-btn-area {
+    position: absolute;
+    z-index: 25;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto !important;
+    pointer-events: auto;
+    transition: all 0.2s ease;
+    /* 기본 위치와 크기 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+    width: calc(var(--story-img-width, 100%) * 0.7); /* 너비 (이미지 너비의 70%) */
+    height: calc(var(--story-img-height, 100%) * 0.15); /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--story-img-width, 100%) * 0.15); /* 왼쪽 위치 (이미지 너비의 15%) */
+    top: calc(var(--story-img-height, 100%) * 0.71); /* 위쪽 위치 (이미지 높이의 71%) */
+}
+
+/* 보스 모드 버튼 위치 (battle_mode_story_modal.webp의 "모험 시작" 버튼 영역) */
+#story-start-btn.boss-mode-btn {
+    /* CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--story-img-width, 100%) * 0.7); /* 너비 (이미지 너비의 70%) */
+    height: calc(var(--story-img-height, 100%) * 0.15); /* 높이 (이미지 높이의 15%) */
+    left: calc(var(--story-img-width, 100%) * 0.15); /* 왼쪽 위치 (이미지 너비의 15%, 중앙 정렬) */
+    top: calc(var(--story-img-height, 100%) * 0.71); /* 위쪽 위치 (이미지 높이의 71%) */
+}
+
+/* Day 정보 표시 영역 (상단) */
+.story-day-info {
+    position: absolute;
+    z-index: 15;
+    /* 이미지 크기에 상대적으로 위치 설정 */
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.1);
+    left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.5);
+    transform: translateX(-50%);
+    width: calc(var(--story-img-width, 100vw) * 0.75);
+    max-width: calc(var(--story-img-width, 100vw) * 0.75);
+    text-align: center;
+    color: var(--gold);
+    /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
+    font-size: clamp(10px, calc(var(--story-img-width, 100vw) * 0.055), 50px);
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+/* 이야기 텍스트 컨테이너 (중앙 사각형 영역) */
+.story-text-container {
+    position: absolute;
+    z-index: 20;
+    /* 이미지 크기에 상대적으로 위치 설정 */
+    top: calc(var(--story-img-top, 0px) + var(--story-img-height, 100vh) * 0.225);
+    left: calc(var(--story-img-left, 0px) + var(--story-img-width, 100vw) * 0.513);
+    transform: translateX(-50%);
+    width: calc(var(--story-img-width, 100vw) * 0.737);
+    max-width: calc(var(--story-img-width, 100vw) * 0.737);
+    height: calc(var(--story-img-height, 100vh) * 0.3685);
+    max-height: calc(var(--story-img-height, 100vh) * 0.3685);
+    background: rgba(20, 20, 30, 0.85);
+    border: 2px solid rgba(255, 213, 79, 0.5);
+    border-radius: 12px;
+    /* 이미지 크기에 상대적인 패딩 */
+    padding: clamp(8px, calc(var(--story-img-width, 100vw) * 0.015), 20px);
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    pointer-events: auto; /* 스크롤을 위해 auto로 변경 */
+}
+
+/* 스크롤바 스타일 */
+.story-text-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.story-text-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.story-text-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 213, 79, 0.6);
+    border-radius: 4px;
+}
+
+/* 이야기 텍스트 내용 */
+.story-text-content {
+    color: #ddd;
+    /* 이미지 크기에 상대적인 폰트 크기 (더 크게) */
+    font-size: clamp(18px, calc(var(--story-img-width, 100vw) * 0.03), 32px);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+/* 모험 설정 모달 공통 스타일 */
+.modal-container-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible !important; /* 드롭다운이 잘리지 않도록 */
+}
+
+.modal-background {
+    /* 모바일 기준 크기로 고정 (화면 크기와 무관하게 동일한 크기 유지) */
+    width: min(
+        var(--title-container-width, 356px),
+        calc(var(--title-container-height, 633px) * var(--modal-aspect-ratio, 1.5))
+    );
+    max-width: var(--title-container-width, 356px);
+    max-height: var(--title-container-height, 633px);
+    height: auto;
+    object-fit: contain;
+    display: block;
+    position: relative;
+    z-index: 1; /* 배경 이미지는 뒤에 */
+}
+
+.modal-buttons-overlay {
+    position: absolute;
+    pointer-events: none;
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지에 맞춰 설정 */
+    width: var(--modal-img-width, 0);
+    height: var(--modal-img-height, 0);
+    left: var(--modal-img-left, 0);
+    top: var(--modal-img-top, 0);
+    z-index: 2; /* 버튼과 드롭다운은 이미지 위에 */
+    overflow: visible !important; /* 드롭다운 옵션이 잘리지 않도록 */
+}
+
+.modal-select {
+    position: absolute;
+    z-index: 10;
+    background: transparent !important;
+    border: none !important;
+    color: #ffd54f;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: clamp(14px, 2.5vw, 22px); /* Unify and set responsive font size */
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 0;
+    backdrop-filter: none;
+    box-shadow: none !important;
+    outline: none !important;
+    /* 텍스트가 잘리지 않도록 설정 */
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    box-sizing: border-box;
+    line-height: 1.2;
+}
+
+/* 드롭다운 옵션들이 잘 보이도록 설정 */
+.modal-select option {
+    background: rgba(20, 20, 30, 0.95) !important;
+    color: #ffd54f !important;
+    padding: 10px 15px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+.modal-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #888 !important;
+}
+
+.modal-select option {
+    background: #1e1e1e;
+    color: #ffd54f;
+    padding: 10px;
+    font-size: 15px;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+.modal-btn-area {
+    position: absolute;
+    z-index: 10;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto !important;
+    transition: all 0.2s ease;
+}
+
+/* 모험 지역 드롭박스 기본 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+.modal-day-select {
+    position: absolute;
+    /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--modal-img-width, 100%) * 0.65); /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--modal-img-height, 100%) * 0.095); /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--modal-img-width, 100%) * 0.145); /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--modal-img-height, 100%) * 0.36); /* 위쪽 위치 (이미지 높이의 36%) */
+}
+
+/* 난이도 드롭박스 기본 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+.modal-count-select {
+    position: absolute;
+    /* 아래 값들을 조정하여 드롭박스 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--modal-img-width, 100%) * 0.65); /* 너비 (이미지 너비의 65%) */
+    height: calc(var(--modal-img-height, 100%) * 0.095); /* 높이 (이미지 높이의 9.5%) */
+    left: calc(var(--modal-img-width, 100%) * 0.145); /* 왼쪽 위치 (이미지 너비의 12.5%) */
+    top: calc(var(--modal-img-height, 100%) * 0.53); /* 위쪽 위치 (이미지 높이의 54%) */
+}
+
+/* 시작하기 버튼 기본 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+#modal-start-btn {
+    position: absolute;
+    /* 아래 값들을 조정하여 버튼 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--modal-img-width, 100%) * 0.37); /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--modal-img-height, 100%) * 0.115); /* 높이 (이미지 높이의 11.5%) */
+    left: calc(var(--modal-img-width, 100%) * 0.0955); /* 왼쪽 위치 (이미지 너비의 9.55%) */
+    top: calc(var(--modal-img-height, 100%) * 0.83); /* 위쪽 위치 (이미지 높이의 82%) */
+}
+
+/* 취소 버튼 기본 위치 (CSS 변수를 사용하여 이미지 크기에 상대적으로 설정) */
+#modal-cancel-btn {
+    position: absolute;
+    /* 아래 값들을 조정하여 버튼 위치와 크기를 지정할 수 있습니다 */
+    width: calc(var(--modal-img-width, 100%) * 0.37); /* 너비 (이미지 너비의 37%) */
+    height: calc(var(--modal-img-height, 100%) * 0.115); /* 높이 (이미지 높이의 11.5%) */
+    left: calc(var(--modal-img-width, 100%) * 0.53); /* 왼쪽 위치 (이미지 너비의 53%) */
+    top: calc(var(--modal-img-height, 100%) * 0.83); /* 위쪽 위치 (이미지 높이의 82%) */
+}
+
+/* 문제 타입 라디오 버튼 그룹 (Choice Chip 스타일) */
+.modal-radio-group {
+    position: absolute;
+    z-index: 10;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    /* 크기와 위치는 CSS 변수를 사용하여 이미지 크기에 상대적으로 설정 */
+    width: calc(var(--modal-img-width, 100%) * 0.8); /* 너비 (이미지 너비의 80%) */
+    left: calc(var(--modal-img-width, 100%) * 0.1); /* 왼쪽 위치 (이미지 너비의 10%) */
+    top: calc(var(--modal-img-height, 100%) * 0.7); /* 위쪽 위치 (이미지 높이의 70%) */
+    justify-content: space-between;
+}
+
+.modal-radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    padding: clamp(5px, 0.7vh, 8px) clamp(12px, 1.5vw, 18px);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background: rgba(30, 30, 30, 0.7);
+    border: 2px solid rgba(255, 213, 79, 0.4);
+    color: var(--primary);
+    font-size: clamp(10px, 3vw, 11px);
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 크기는 CSS 변수를 사용하여 그룹 크기에 상대적으로 설정 (3개 칩, gap 10px씩 2개 = 20px) */
+    width: calc((var(--modal-img-width, 100%) * 0.8 - 20px) / 3);
+    flex: 0 0 calc((var(--modal-img-width, 100%) * 0.8 - 20px) / 3);
+}
+
+.modal-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.modal-radio-text {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-shadow: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.modal-radio:checked + .modal-radio-text {
+    color: var(--gold);
+}
+
+/* 선택된 라디오 버튼의 라벨 스타일 */
+.modal-radio-label.checked {
+    background: rgba(255, 193, 7, 0.25) !important;
+    border-color: var(--gold) !important;
+    color: var(--gold) !important;
+    box-shadow:
+        0 0 15px rgba(255, 193, 7, 0.5),
+        0 4px 12px rgba(255, 213, 79, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* :has() 지원 브라우저를 위한 추가 스타일 */
+.modal-radio-label:has(.modal-radio:checked) {
+    background: rgba(255, 193, 7, 0.25);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow:
+        0 0 15px rgba(255, 193, 7, 0.5),
+        0 4px 12px rgba(255, 213, 79, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Story Styles */
+.story-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #ddd;
+    margin: 20px 0;
+    white-space: pre-line;
+    text-align: left;
+    padding: 15px;
+    background: #111;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+.story-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+/* ============================================
+   RPG Modal 공통 스타일
+   ============================================
+   설정, 상점, 인벤토리, 통계 모달에서 공통으로 사용되는 스타일
+   ============================================ */
+
+/* RPG Modal 기본 스타일 */
+.card.rpg-modal {
+    border-radius: 18px;
+    background:
+        radial-gradient(120% 120% at 50% 0%, rgba(255, 215, 130, 0.06) 0%, rgba(0, 0, 0, 0) 55%),
+        radial-gradient(140% 120% at 50% 110%, rgba(255, 120, 50, 0.08) 0%, rgba(0, 0, 0, 0) 55%),
+        linear-gradient(180deg, rgba(22, 24, 33, 0.98) 0%, rgba(12, 13, 18, 0.98) 100%);
+    box-shadow:
+        0 18px 55px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    border: none;
+    animation: none;
+    /* 타이틀 컨테이너 크기를 기준으로 설정 (battle-mode-story-modal, boss-mode-story-modal과 동일) */
+    width: 81%;
+    max-width: min(81%, var(--title-container-width, 95vw));
+    max-height: min(var(--title-container-height, 95vh), 85vh);
+    box-sizing: border-box;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* RPG Modal 외곽 테두리 */
+.card.rpg-modal::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 14px;
+    border: 3px solid rgba(231, 189, 105, 0.95);
+    box-shadow:
+        0 0 0 2px rgba(70, 48, 16, 0.85),
+        inset 0 0 18px rgba(255, 208, 120, 0.1);
+    pointer-events: none;
+}
+
+/* RPG Modal 내부 테두리 */
+.card.rpg-modal::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 228, 165, 0.22);
+    pointer-events: none;
+}
+
+/* RPG Modal 타이틀 공통 스타일 */
+.card.rpg-modal .modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--gold, #ffd700);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+/* RPG Modal Header Common Style */
+.card.rpg-modal .modal-header {
+    background: var(--modal-header-bg);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--modal-border-gold);
+}
+
+/* RPG Modal Footer Common Style */
+.card.rpg-modal .modal-footer {
+    border-top: 1px solid var(--modal-border-gold);
+}
+
+/* ============================================
+   Modal Layout 공통 스타일
+   ============================================
+   모달의 header, body, footer 레이아웃
+   ============================================ */
+
+.modal-header {
+    position: sticky;
+    top: 0;
+    background: #1e1e1e;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 10px;
+    z-index: 5;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-grow: 1;
+}
+
+.modal-footer {
+    flex-shrink: 0;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}
+
+/* Style for locked music options in select dropdowns */
+option.locked-music {
+    color: #888 !important;
+    background-color: #333 !important;
+    font-style: italic;
+}
