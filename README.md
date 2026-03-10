@@ -53,10 +53,12 @@ fantasy-word-game/
 │   └── utils/                        # 유틸리티
 │       └── helpers.js
 ├── data/                             # 원본 데이터 파일
+│   ├── background_music_*.mp3
+│   ├── decoy-words-set.js
 │   ├── game-data-1.js
 │   ├── game-data-2.js
-│   ├── items-data.js
-│   └── background_music.mp3
+│   ├── game-data-3.js
+│   └── items-data.js
 └── README.md
 ```
 
@@ -267,9 +269,12 @@ fantasy-word-game/
 
 ### Data
 
-- `game-data-1.js`: 게임 첫 번째 데이터 팩 (능률 보카 중등 기본)
-- `game-data-2.js`: 게임 두 번째 데이터 팩 (워드 마스터 중등 고난도)
+- `game-data-1.js`: 게임 첫 번째 단어 세트 (능률 보카 중등 기본)
+- `game-data-2.js`: 게임 두 번째 단어 세트 (워드 마스터 중등 고난도)
+- `game-data-3.js`: 게임 세 번째 단어 세트 (추가 단어장)
 - `items-data.js`: 아이템 설정, 상점 장착 아이템 기초정보 데이터베이스
+- `decoy-words-set.js`: 객관식 보기에 사용되는 오답(decoy) 단어 풀
+- `background_music_*.mp3`: 게임 배경 음악 파일들
 
 ## 기여하기
 
