@@ -5,6 +5,9 @@
  * 게임 환경, 이벤트 리스너 및 UI 컴포넌트를 초기화합니다.
  */
 window.onload = () => {
+    // 최초 로드 시 뷰포트 높이를 고정 (모바일 주소창 대응)
+    initAppHeight();
+
     // 모든 데이터 로드 후 dayCatalog 커버리지 검증
     if (typeof dayCatalog !== 'undefined' && typeof dayCatalog.validateCoverage === 'function') {
         dayCatalog.validateCoverage();
@@ -16,8 +19,6 @@ window.onload = () => {
     setupMusicSelectListeners();
     if (typeof inventory !== 'undefined') inventory.render();
     initSelections();
-
-    // ... (rest of code)
 
     // 버튼 오버레이를 이미지 크기에 동기화 (초기 동기화)
     const titleImg = document.querySelector('.title-background');
@@ -40,12 +41,18 @@ window.onload = () => {
         loadRandomTitleHeader();
     }, 100);
 
-    // 창 크기 조절 시 동기화
+    // 창 크기 조절 시 동기화 (높이 변화는 무시 — 모바일 주소창 대응)
+    let lastWidth = window.innerWidth;
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            syncTitleButtonOverlay();
+            const newWidth = window.innerWidth;
+            // 너비가 변했을 때만 레이아웃 재계산 (높이만 변하면 무시)
+            if (Math.abs(newWidth - lastWidth) > 1) {
+                lastWidth = newWidth;
+                syncTitleButtonOverlay();
+            }
         }, 100);
     });
 
@@ -129,16 +136,19 @@ window.onload = () => {
             const btnImage = titleBattleModeBtn.querySelector('.btn-image');
             if (btnImage) btnImage.style.pointerEvents = 'none';
 
-            titleBattleModeBtn.onclick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (typeof openBattleModeModal === 'function') {
-                    openBattleModeModal();
-                } else {
-                    console.error('openBattleModeModal function not found');
-                }
-            };
-            titleBattleModeBtn.ontouchstart = (e) => e.stopPropagation();
+            titleBattleModeBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof openBattleModeModal === 'function') {
+                        openBattleModeModal();
+                    } else {
+                        console.error('openBattleModeModal function not found');
+                    }
+                },
+                { capture: true }
+            );
         } catch (e) {
             console.error('Error setting up battle mode button:', e);
         }
@@ -155,16 +165,19 @@ window.onload = () => {
             const btnImage = titleBossModeBtn.querySelector('.btn-image');
             if (btnImage) btnImage.style.pointerEvents = 'none';
 
-            titleBossModeBtn.onclick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (typeof story !== 'undefined' && typeof story.startBossDirectly === 'function') {
-                    story.startBossDirectly();
-                } else {
-                    console.error('story.startBossDirectly function not found');
-                }
-            };
-            titleBossModeBtn.ontouchstart = (e) => e.stopPropagation();
+            titleBossModeBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof story !== 'undefined' && typeof story.startBossDirectly === 'function') {
+                        story.startBossDirectly();
+                    } else {
+                        console.error('story.startBossDirectly function not found');
+                    }
+                },
+                { capture: true }
+            );
         } catch (e) {
             console.error('Error setting up boss mode button:', e);
         }
@@ -174,71 +187,83 @@ window.onload = () => {
 
     // 상점 버튼
     if (titleShopBtn) {
-        titleShopBtn.onclick = null;
-        titleShopBtn.addEventListener(
-            'click',
-            (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (typeof shop !== 'undefined' && typeof shop.open === 'function') {
-                    shop.open();
-                }
-            },
-            { capture: true }
-        );
+        try {
+            titleShopBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof shop !== 'undefined' && typeof shop.open === 'function') {
+                        shop.open();
+                    }
+                },
+                { capture: true }
+            );
+        } catch (e) {
+            console.error('Error setting up shop button:', e);
+        }
     }
 
     // 인벤토리 버튼
     if (titleInventoryBtn) {
-        titleInventoryBtn.onclick = null;
-        titleInventoryBtn.addEventListener(
-            'click',
-            (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (typeof inventory !== 'undefined' && typeof inventory.open === 'function') {
-                    inventory.open();
-                }
-            },
-            { capture: true }
-        );
+        try {
+            titleInventoryBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof inventory !== 'undefined' && typeof inventory.open === 'function') {
+                        inventory.open();
+                    }
+                },
+                { capture: true }
+            );
+        } catch (e) {
+            console.error('Error setting up inventory button:', e);
+        }
     }
 
     // 통계 버튼
     if (titleStatisticsBtn) {
-        titleStatisticsBtn.onclick = null;
-        titleStatisticsBtn.addEventListener(
-            'click',
-            (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (typeof statistics !== 'undefined' && typeof statistics.open === 'function') {
-                    statistics.open();
-                }
-            },
-            { capture: true }
-        );
+        try {
+            titleStatisticsBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof statistics !== 'undefined' && typeof statistics.open === 'function') {
+                        statistics.open();
+                    }
+                },
+                { capture: true }
+            );
+        } catch (e) {
+            console.error('Error setting up statistics button:', e);
+        }
     }
 
     // 설정 버튼
     if (titleSettingBtn) {
-        titleSettingBtn.onclick = null;
-        titleSettingBtn.addEventListener(
-            'click',
-            (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (
-                    typeof settingsManager !== 'undefined' &&
-                    typeof settingsManager.open === 'function'
-                ) {
-                    settingsManager.open();
-                } else if (typeof secret !== 'undefined' && typeof secret.open === 'function') {
-                    secret.open();
-                }
-            },
-            { capture: true }
-        );
+        try {
+            titleSettingBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (
+                        typeof settingsManager !== 'undefined' &&
+                        typeof settingsManager.open === 'function'
+                    ) {
+                        settingsManager.open();
+                    } else if (typeof secret !== 'undefined' && typeof secret.open === 'function') {
+                        secret.open();
+                    }
+                },
+                { capture: true }
+            );
+        } catch (e) {
+            console.error('Error setting up setting button:', e);
+        }
     }
 
     // 연습 모드 모달 버튼

@@ -206,9 +206,6 @@ const db = {
         bookStats[questionType].solved++;
         if (isCorrect) {
             bookStats[questionType].correct++;
-            if (questionType === 'subjective') {
-                // db.checkAndUnlockMusic(bookName); // 음악 언락 시스템 제거
-            }
         }
 
         // 기존 전역 통계도 유지 (호환성)

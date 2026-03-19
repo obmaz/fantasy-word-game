@@ -1,3 +1,34 @@
+// ============================================
+// 뷰포트 높이 고정 (모바일 주소창 대응)
+// ============================================
+// 모바일 브라우저에서 주소창이 나타나거나 사라질 때 100vh 값이 변하여
+// 화면이 동적으로 커지거나 작아지는 문제를 방지합니다.
+// 페이지 최초 로드 시 높이를 한 번 측정하여 --app-height CSS 변수에 고정합니다.
+
+let _lockedAppHeight = 0;
+
+/**
+ * 앱 높이를 측정하고 CSS 변수로 설정합니다.
+ * 최초 1회만 실행되며, 이후에는 고정된 값을 사용합니다.
+ */
+function initAppHeight() {
+    if (_lockedAppHeight > 0) return; // 이미 고정됨
+
+    // window.innerHeight는 현재 보이는 뷰포트 높이 (주소창 포함/미포함에 따라 다름)
+    // 최초 로드 시의 값을 기준으로 고정합니다.
+    _lockedAppHeight = window.innerHeight;
+    document.documentElement.style.setProperty('--app-height', _lockedAppHeight + 'px');
+    console.log('[layout] App height locked:', _lockedAppHeight + 'px');
+}
+
+/**
+ * 고정된 앱 높이를 반환합니다.
+ * initAppHeight()가 호출되지 않았으면 window.innerHeight를 반환합니다.
+ */
+function getLockedAppHeight() {
+    return _lockedAppHeight > 0 ? _lockedAppHeight : window.innerHeight;
+}
+
 // 랜덤 타이틀 헤더 로딩
 function loadRandomTitleHeader() {
     const titleHeaderImg = document.getElementById('title-header-img');
@@ -36,7 +67,7 @@ function syncTitleButtonOverlay() {
     const naturalW = titleImg.naturalWidth || 0;
     const naturalH = titleImg.naturalHeight || 0;
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const vh = getLockedAppHeight(); // 고정된 높이 사용
 
     if (naturalW > 0 && naturalH > 0) {
         // 이미지 비율을 유지하면서 화면에 맞는 크기 계산
@@ -88,7 +119,7 @@ function syncGameScreenSizeToTitle() {
     if (!naturalW || !naturalH) return;
 
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const vh = getLockedAppHeight(); // 고정된 높이 사용
     const scale = Math.min(vw / naturalW, vh / naturalH);
 
     const w = Math.floor(naturalW * scale);

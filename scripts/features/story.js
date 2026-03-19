@@ -169,9 +169,6 @@ const story = {
             textEl.innerText = introText;
         }
 
-        // 해결된 day 값 저장
-        const resolvedAtIntro = story.mode === 'boss' ? 'boss' : daySel;
-
         // "모험시작" 버튼에 이벤트 연결
         if (storyStartBtn) {
             // 기존 이벤트 리스너 완전히 제거

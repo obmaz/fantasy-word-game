@@ -176,9 +176,6 @@ const statistics = {
             });
         }
 
-        html += '</div>';
-        html += '</div>';
-
         // 보스 모드 최고 wave 기록
         const bossModeStats = bookStats.bossMode || { bestWave: 0, bestWaveDate: null };
         const bestWave = bossModeStats.bestWave || 0;

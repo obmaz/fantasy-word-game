@@ -56,7 +56,7 @@ const secret = {
             const titleWidth = computedStyle.getPropertyValue('--title-container-width');
             const titleHeight = computedStyle.getPropertyValue('--title-container-height');
             const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-            const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            const vh = typeof getLockedAppHeight === 'function' ? getLockedAppHeight() : Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
             let containerWidth = parseFloat(titleWidth) || 0.95 * vw;
             let containerHeight = parseFloat(titleHeight) || 0.95 * vh;
@@ -245,6 +245,8 @@ const secret = {
                     correct: 0,
                     objective: { solved: 0, correct: 0 },
                     subjective: { solved: 0, correct: 0, perfectDays: [] },
+                    bossMode: { bestWave: 0, bestWaveDate: null },
+                    books: {},
                 };
                 db.save();
 
@@ -347,7 +349,14 @@ const secret = {
                 db.owned = ['basic'];
                 db.equippedWeapon = 'basic';
                 db.durability = {};
-                db.stats = { solved: 0, correct: 0 };
+                db.stats = {
+                    solved: 0,
+                    correct: 0,
+                    objective: { solved: 0, correct: 0 },
+                    subjective: { solved: 0, correct: 0, perfectDays: [] },
+                    bossMode: { bestWave: 0, bestWaveDate: null },
+                    books: {},
+                };
                 db.inventory = [];
                 db.equipped = {};
                 db.inventoryCapacity = 3;
@@ -605,7 +614,6 @@ const secret = {
             words.forEach((item) => markWordAsUsed(item));
 
             const leftHalf = Math.floor(words.length / 2);
-            const rightHalf = words.length - leftHalf;
 
             // 좌측: words의 절반
             const leftWords = words.slice(0, leftHalf);

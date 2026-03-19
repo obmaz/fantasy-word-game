@@ -13,7 +13,7 @@
     width: 100%;
     height: 100%;
     max-width: 100vw;
-    max-height: 100vh;
+    max-height: var(--app-height, 100vh);
     background: var(--game-bg);
     z-index: 250; /* screen-overlay(z-index: 200) 위에 표시 */
 }
@@ -46,7 +46,7 @@
     background-size: cover;
     overflow: hidden;
     max-width: 100vw;
-    min-height: 33vh;
+    min-height: 28vh;
 }
 
 .char-wrapper {

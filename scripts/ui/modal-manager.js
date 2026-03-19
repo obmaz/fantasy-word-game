@@ -160,7 +160,7 @@ function syncModalButtonOverlay(modalId) {
 
     const titleImg = document.querySelector('.title-background');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const vh = getLockedAppHeight();
 
     const mobileBaseWidth = 375;
     const mobileBaseHeight = 667;
@@ -258,7 +258,7 @@ function syncStoryButtonOverlay(storyScreenId) {
 
     const titleContainer = document.querySelector('.title-container-wrapper');
     const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const vh = getLockedAppHeight();
     let titleWidth = vw;
     let titleHeight = vh;
 

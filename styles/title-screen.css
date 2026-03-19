@@ -12,9 +12,9 @@
     align-items: center;
     justify-content: center;
     width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    min-height: 100vh;
+    height: var(--app-height, 100vh);
+    max-height: var(--app-height, 100vh);
+    min-height: var(--app-height, 100vh);
     z-index: 100; /* 팝업(z-index: 200) 뒤에 위치하여 블러 효과가 보이도록 */
 }
 
@@ -22,7 +22,7 @@
     position: relative;
     /* 크기는 타이틀 이미지 렌더링 크기에 맞춰 동적으로 설정됨 */
     width: var(--title-container-width, 100vw);
-    height: var(--title-container-height, 100vh);
+    height: var(--title-container-height, var(--app-height, 100vh));
     display: flex;
     align-items: center;
     justify-content: center;

@@ -284,19 +284,6 @@ const practiceMemorization = {
         // practice-mode-modal 만 닫기
         // (참고: 기존 코드에서는 closeScreenOverlay 사용하거나 직접 style 조작)
         // 여기서는 game.exit() 처럼 화면 닫기 및 음악 정지 등 처리
-        const otherScreens = [
-            'battle-mode-game',
-            'shop-modal',
-            'inventory-modal',
-            'statistics-modal',
-            'setting-modal',
-            'battle-mode-story-modal',
-            'boss-mode-story-modal',
-            'result-modal',
-            'practice-mode-modal',
-            'battle-mode-modal',
-        ];
-
         // 배경음악 정지 (practice 모드용)
         const bgMusic = document.getElementById('background-music');
         if (bgMusic && !bgMusic.paused) {

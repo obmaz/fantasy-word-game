@@ -243,11 +243,6 @@ const game = {
             return;
         }
 
-        // Battle 모드 종료 조건 체크
-        if (game.mode === 'battle' && game.idx >= game.list.length) {
-            story.showEnding(true);
-            return;
-        }
 
         // Day 정보 업데이트 (게임 중에도 day 정보가 올바르게 표시되도록)
         ui.updateGameInfo(game.mode, game.currentDay);
@@ -602,11 +597,7 @@ const game = {
                 document.getElementById('boss-input').style.borderColor = '#D32F2F';
             }
 
-            // 오답일 때 정답 표시 (문제 타입에 따라 다르게 처리)
-            const questionType =
-                document.getElementById('boss-box').style.display === 'flex'
-                    ? 'subjective'
-                    : 'objective';
+            // 오답일 때 정답 표시 (파라미터로 전달된 문제 타입 사용)
             game.showCorrectAnswer(game.currentAns, questionType);
 
             // 중요: 애니메이션이 실패하더라도 타임아웃이 다음 레벨을 트리거하도록 보장
@@ -793,9 +784,6 @@ const game = {
         }
         // 랜덤으로 가져와서라도 오답 보기가 3개가 되도록 보장
         while (distractors.length < 3) {
-            // 현재 데이터셋의 rawData 사용
-            const currentRawData =
-                typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
             const emergencyDistractor = game.shuffle([...currentRawData])[0];
             if (
                 emergencyDistractor &&
@@ -853,14 +841,7 @@ const game = {
             battleModeModal.style.pointerEvents = 'none';
             battleModeModal.classList.remove('closing');
         }
-        if (battleModeModal) {
-            battleModeModal.style.display = 'none';
-            battleModeModal.style.visibility = 'hidden';
-            battleModeModal.style.opacity = '0';
-            battleModeModal.style.zIndex = '100';
-            battleModeModal.style.pointerEvents = 'none';
-            battleModeModal.classList.remove('closing');
-        }
+
 
         // title-screen이 뒤에 있도록 보장 (backdrop-filter가 작동하도록)
         const startScreen = document.getElementById('title-screen');

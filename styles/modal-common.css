@@ -87,7 +87,7 @@
 .story-container-wrapper {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: var(--app-height, 100vh);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -222,7 +222,7 @@
 .modal-container-wrapper {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: var(--app-height, 100vh);
     display: flex;
     align-items: center;
     justify-content: center;

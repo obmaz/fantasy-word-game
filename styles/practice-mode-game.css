@@ -13,7 +13,7 @@
     width: 100%;
     height: 100%;
     max-width: 100vw;
-    max-height: 100vh;
+    max-height: var(--app-height, 100vh);
     display: flex;
     flex-direction: column;
     background: var(--game-bg);
@@ -41,7 +41,7 @@
     background-size: cover;
     overflow: hidden;
     max-width: 100vw;
-    min-height: 33vh;
+    min-height: 28vh;
 }
 
 /* 헤더 영역 (배틀 모드의 info-badge 스타일) */
@@ -405,7 +405,7 @@
 /* 모바일 반응형 */
 @media (max-width: 768px) {
     .practice-memorization-arena {
-        min-height: 30vh;
+        min-height: 25vh;
         padding: 15px 20px;
     }
 
