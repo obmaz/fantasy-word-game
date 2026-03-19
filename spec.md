@@ -17,11 +17,22 @@
   - `Level 3 (Modal)`: 서브 팝업 창 (전투 준비 단계, 상점, 가방, 시스템 팝업 등).
   - `Level 4 (Overlay)`: 뮤직 오버레이, 재화 정보 창, 최상위 핫키 메뉴.
 
-### 1.2 에셋(Asset) 디렉토리 구조 맵핑
-- **오디오 (`data/`)**: 배경음악 `background_music_1.mp3` ~ `23.mp3`
-- **타이틀 (`images/title/`)**: `title.webp`, `title_header_{1~4}.webp`, `practice/battle/boss/shop/inventory/statistics/settings` 전용 버튼 이미지 에셋. 공통 아이콘 `apply_btn.webp`, `exit_btn.webp`.
-- **연습 모드 (`images/practice_mode/`)**: `background.webp`, `practice_mode_select_popup.webp`.
-- **배틀 모드 (`images/battle_mode/`)**: 메인 전투 배경 `background.webp`, 스토리용 `battle_mode_story_modal.webp`, 플레이어 베이스 `hero.webp`, 몬스터 `monster_{1~3}.webp`.
+### 1.2 에셋(Asset) 디렉토리 구조 맵핑 (파일별 사용 용도 상세)
+- **오디오 (`data/`)**
+  - `background_music_1.mp3` ~ `23.mp3`: 각 스테이지나 테마별로 재생되는 글로벌 배경음악 루프 파일로, 음악 선택 UI 또는 스테이지 진입 시 연속 재생됩니다.
+- **타이틀 (`images/title/`)**
+  - `title.webp`: 타이틀 화면의 메인 배경 이미지로, 화면에 꽉 차게 렌더링됩니다.
+  - `title_header_{1~4}.webp`: 타이틀 상단 로고 이미지 4종으로, 앱 구동 대문 진입 시 무작위로 1개가 선택되어 표시됩니다.
+  - `practice/battle/boss/shop/inventory/statistics/settings` 전용 버튼 이미지: 타이틀 메뉴에서 각각의 모드 및 팝업을 호출하는 개별 아이콘 버튼 스킨 이미지로 사용됩니다.
+  - `apply_btn.webp`, `exit_btn.webp`: 설정 적용 완료, 모달 뒤로가기/닫기 등 전반적인 시스템에서 공통으로 쓰이는 UI 아이콘 에셋입니다.
+- **연습 모드 (`images/practice_mode/`)**
+  - `background.webp`: 연습 모드 인게임 진입 시 뒤에 깔리는 바탕 배경 뷰입니다.
+  - `practice_mode_select_popup.webp`: 연습장 진입을 위한 지역 선택, 난이도 조작 등 준비 조작 창의 배경 모달 스킨으로 사용됩니다.
+- **배틀 모드 (`images/battle_mode/`)**
+  - `background.webp`: 메인 전투 화면 뒤에 배치되는 고정 전장 배경 이미지입니다.
+  - `battle_mode_story_modal.webp`: 스토리 진행이나 특별 이벤트 조우 시 나타나는 텍스트 알림 팝업의 배경 기판으로 쓰입니다.
+  - `hero.webp`: 게임 내에서 플레이어의 기본 스탠딩 베이스 모델이 되는 영웅 이미지 파일입니다. 인벤토리에서 장착한 아이템(무기, 장갑 등)이 이 이미지 위에 추가 레이어로 중첩되어 조합 및 합성 렌더링 용도로 사용됩니다.
+  - `monster_{1~3}.webp`: 웨이브나 스테이지 진행도에 따라 교체되며 출현하는 적 몬스터 이미지 파일들입니다. 몬스터가 플레이어의 공격을 받아 피격당하면 해당 이미지 위로 플로팅 데미지, 이펙트가 오버레이되는 식의 타겟 마네킹 용도로 사용됩니다.
 
 ---
 
@@ -50,8 +61,8 @@
 
 - **UI 레이아웃 및 앵커 좌표**:
   - 상단 로고: `left: 50%`, `top: 13%`, 로고 4개 중 접속 시 1개를 무작위 렌더링.
-  - 스테이터스 UI: 골드 UI는 `top: 3%`, 좌측에서 마진 분산 조절. 단어장 교체용 콤보 박스는 `right: 3%`에 `width: 50vw`로 위치하여 긴 제목이 축약 처리됨. 
-  - 메인 시작 버튼 그룹 (`width: 67%`, 화면 가로 정 중앙): `연습장`(`top: 47%`), `배틀모드`(`top: 59%`), `보스모드`(`top: 71%`).
+  - 스테이터스 UI: 골드 UI는 `top: 3%`, 좌측에서 마진 분산 조절. 우상단 단어장 교체용 콤보 박스에는 고를 때 현재 선택된 단어북의 이름이 나타나야 하며, `right: 3%`에 `width: 50vw`로 위치하여 긴 제목이 축약 처리됨. 
+  - 메인 시작 버튼 그룹 (`width: 67%`, 화면 가로 정 중앙): 버튼은 다른 레이아웃 없이 이미지(`practice_btn.webp`, `battle_btn.webp`, `boss_btn.webp` 등)로만 구성됩니다. `연습모드`(`top: 47%`), `배틀모드`(`top: 59%`), `보스모드`(`top: 71%`) 순서로 세로 배치되며, 각 버튼 이미지 위에 해당 모드 글자가 직접 오버레이되어 텍스트로 표현되어야 합니다.
   - 시스템 관리 아이콘 하단 바: 높이 `top: 83%` 선에 가로 일렬 나열, 차례대로 설정(`20%`), 상점(`40%`), 인벤토리(`60%`), 통계(`80%`).
 - **기능 로직**: 
   - 상단의 [데이터셋 선택 드롭박스] 값 변경 시 SPA에서 사용할 `game-data` 전역 데이터 상태 값이 즉시 교체 렌더링.
