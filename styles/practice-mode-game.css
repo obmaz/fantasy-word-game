@@ -71,6 +71,7 @@
     pointer-events: auto; /* Enable clicks */
     cursor: pointer;
     border: 1px solid rgba(255, 213, 79, 0.3);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     max-width: 150px;
     overflow: hidden;
@@ -86,6 +87,7 @@
     cursor: pointer;
     z-index: 5;
     -webkit-appearance: menulist-button;
+    appearance: menulist-button;
 }
 
 .music-info-content {
@@ -266,6 +268,7 @@
 .practice-explanation-section {
     text-align: left;
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }

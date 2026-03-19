@@ -8,6 +8,7 @@
 
 /* Battle Mode Story Modal 배경 블러 효과 */
 #battle-mode-story-modal {
+    -webkit-backdrop-filter: blur(12px) !important;
     backdrop-filter: blur(12px) !important;
     background: rgba(0, 0, 0, 0.6) !important;
 }

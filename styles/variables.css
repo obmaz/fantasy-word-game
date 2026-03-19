@@ -68,6 +68,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    -webkit-user-select: none;
     user-select: none;
     position: relative;
 }
@@ -88,13 +89,16 @@ body {
 .card::-webkit-scrollbar,
 body::-webkit-scrollbar,
 html::-webkit-scrollbar {
+    display: none;
     width: 0px;
     background: transparent;
 }
 
-.card {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+.card,
+body,
+html {
+    scrollbar-width: none; /* Firefox 64+ */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
 /* Ensure no horizontal overflow */

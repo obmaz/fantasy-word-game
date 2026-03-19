@@ -16,6 +16,7 @@
     max-height: var(--app-height, 100vh);
     background: var(--game-bg);
     z-index: 250; /* screen-overlay(z-index: 200) 위에 표시 */
+    overflow: hidden;
 }
 
 /* Top Bar (only for game screen) */
@@ -29,6 +30,7 @@
     background: rgba(0, 0, 0, 0.5);
     border-bottom: 1px solid #333;
     z-index: 10;
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     gap: 15px;
 }
@@ -139,6 +141,7 @@
     font-size: clamp(14px, 3cqmin, 20px);
     font-weight: bold;
     line-height: clamp(14px, 3cqmin, 20px);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     z-index: 15;
@@ -174,6 +177,7 @@
     pointer-events: auto; /* Enable clicks */
     cursor: pointer;
     border: 1px solid rgba(255, 213, 79, 0.3);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     max-width: 150px;
     overflow: hidden;
@@ -189,6 +193,7 @@
     cursor: pointer;
     z-index: 5;
     -webkit-appearance: menulist-button; /* Ensure it triggers dropdown */
+    appearance: menulist-button;
 }
 
 .music-info-content {
@@ -220,6 +225,7 @@
     border-radius: 4px;
     border: 1px solid var(--game-card-border);
     overflow: hidden;
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
@@ -253,12 +259,24 @@
 /* Quiz Area — 밝은 톤 */
 .quiz-area {
     flex: 1;
+    min-height: 0; /* flex 자식이 overflow 계산을 정확히 하도록 */
     background: var(--game-bg);
     padding: 15px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* 게임 화면 내 스크롤바 숨김 (보스/주관식 모드 포함) */
+#battle-mode-game,
+.quiz-area {
+    scrollbar-width: none; /* Firefox 64+ */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+#battle-mode-game::-webkit-scrollbar,
+.quiz-area::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/WebKit */
 }
 .question-box {
     background: var(--game-card);

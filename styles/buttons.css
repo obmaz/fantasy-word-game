@@ -202,10 +202,10 @@
 /* exit_btn 이미지 스타일 */
 img[src*='exit_btn'] {
     cursor: pointer;
-    user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    user-select: none;
 }
 
 img[src*='exit_btn']:active {
@@ -302,6 +302,7 @@ select option:checked {
     display: flex; /* Centering emoji */
     align-items: center;
     justify-content: center;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     padding: 0;
     line-height: 1;

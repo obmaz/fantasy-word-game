@@ -38,6 +38,7 @@
     font-weight: 900;
     color: rgba(245, 245, 255, 0.95);
     letter-spacing: 0.5px;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -146,6 +147,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
     width: 100%;
     justify-content: center;
@@ -157,6 +159,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
     padding: clamp(5px, 0.7vh, 8px) clamp(12px, 1.5vw, 18px);
     border-radius: 20px;
