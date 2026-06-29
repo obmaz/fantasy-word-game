@@ -1,2 +1,5 @@
-/.DS_Store
-images/.DS_Store
+# macOS
+.DS_Store
+
+# 오래된 백업 에셋 (리포에서 제외, 작업 트리에는 유지)
+backup/

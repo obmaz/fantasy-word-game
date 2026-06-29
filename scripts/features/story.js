@@ -31,7 +31,7 @@ const story = {
      */
     startIntro: (mode, dayArg) => {
         const daySel = dayArg || document.getElementById('day-select').value;
-        console.log('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
+        dlog('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
         db.save();
         story.day = mode === 'boss' ? 'boss' : daySel;
@@ -45,7 +45,7 @@ const story = {
         // DEBUG: verify where title is coming from
         const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
         const optNode = document.querySelector(`#day-select option[value="${story.day}"]`);
-        console.log(
+        dlog(
             '[story.startIntro] dbg -> day=',
             story.day,
             'hasEntry=',
@@ -53,7 +53,7 @@ const story = {
             'optText=',
             optNode && optNode.textContent
         );
-        console.log('[story.startIntro] dbg -> data.title=', data.title);
+        dlog('[story.startIntro] dbg -> data.title=', data.title);
 
         const titleElId = `${storyScreenPrefix}-title`;
         const titleEls = document.querySelectorAll(`#${titleElId}`);
@@ -63,10 +63,7 @@ const story = {
                 titleEls.length
             );
         const titleEl = document.getElementById(titleElId);
-        console.log(
-            `[story.startIntro] current #${titleElId} before=`,
-            titleEl && titleEl.innerText
-        );
+        dlog(`[story.startIntro] current #${titleElId} before=`, titleEl && titleEl.innerText);
 
         // ============================================================
         // 스토리 관리자
@@ -184,13 +181,13 @@ const story = {
                     (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Story start button clicked');
+                        dlog('Story start button clicked');
                         if (game.isProcessing) {
-                            console.log('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
+                            dlog('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
                             return;
                         }
                         const resolvedAtIntro = story.mode === 'boss' ? 'boss' : daySel;
-                        console.log(
+                        dlog(
                             '[story-btn] introResolvedDay=',
                             resolvedAtIntro,
                             'story.mode=',

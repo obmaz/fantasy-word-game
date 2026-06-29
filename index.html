@@ -1026,6 +1026,9 @@
             </div>
         </div>
 
+        <!-- 디버그 로깅 유틸 (가장 먼저 로드 — 이후 스크립트의 dlog 호출 대비) -->
+        <script src="scripts/utils/debug.js"></script>
+
         <!-- 데이터 파일 먼저 로드 (CORS 문제 방지를 위해 JavaScript 변수로 래핑) -->
         <script src="data/game-data-1.js"></script>
         <script src="data/game-data-2.js"></script>
@@ -1040,6 +1043,7 @@
         <script src="scripts/data/items-loader.js"></script>
 
         <!-- 유틸리티 함수 -->
+        <script src="scripts/ui/notify.js"></script>
         <script src="scripts/utils/helpers.js"></script>
 
         <!-- 핵심 시스템 모듈 -->

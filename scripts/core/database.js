@@ -86,26 +86,40 @@ const db = {
         };
     })(),
 
+    // 필드별 localStorage 직렬화 함수 (save에서 선택적으로 호출)
+    _writers: {
+        gold: () => localStorage.setItem('v7_gold', db.gold),
+        owned: () => localStorage.setItem('v7_owned', JSON.stringify(db.owned)),
+        equip: () => localStorage.setItem('v7_equip', db.equippedWeapon),
+        dura: () => localStorage.setItem('v7_dura', JSON.stringify(db.durability)),
+        stats: () => localStorage.setItem('v7_stats', JSON.stringify(db.stats)),
+        inventory: () => localStorage.setItem('v7_inventory', JSON.stringify(db.inventory)),
+        equipped: () => localStorage.setItem('v7_equipped', JSON.stringify(db.equipped)),
+        capacity: () => localStorage.setItem('v7_inventory_capacity', db.inventoryCapacity),
+        skills: () => localStorage.setItem('v7_skills', JSON.stringify(db.skills)),
+        lastDay: () => localStorage.setItem('v7_last_day', db.lastSelectedDay),
+        memorized: () => {
+            if (db.practiceMemorized !== undefined) {
+                localStorage.setItem('v7_practice_memorized', JSON.stringify(db.practiceMemorized));
+            }
+        },
+        settings: () => {
+            if (db.settings !== undefined) {
+                localStorage.setItem('v7_settings', JSON.stringify(db.settings));
+            }
+        },
+    },
+
     /**
-     * 모든 데이터를 localStorage에 저장합니다
+     * 데이터를 localStorage에 저장합니다.
+     * @param {...string} fields - 저장할 필드명(_writers 키). 생략 시 전체 저장.
+     *   핫패스(골드/통계 가산 등)에서는 변경된 키만 넘겨 불필요한 직렬화를 줄입니다.
      */
-    save: () => {
-        localStorage.setItem('v7_gold', db.gold);
-        localStorage.setItem('v7_owned', JSON.stringify(db.owned));
-        localStorage.setItem('v7_equip', db.equippedWeapon);
-        localStorage.setItem('v7_dura', JSON.stringify(db.durability));
-        localStorage.setItem('v7_stats', JSON.stringify(db.stats));
-        localStorage.setItem('v7_inventory', JSON.stringify(db.inventory));
-        localStorage.setItem('v7_equipped', JSON.stringify(db.equipped));
-        localStorage.setItem('v7_inventory_capacity', db.inventoryCapacity);
-        localStorage.setItem('v7_skills', JSON.stringify(db.skills));
-        localStorage.setItem('v7_last_day', db.lastSelectedDay);
-        if (db.practiceMemorized !== undefined) {
-            localStorage.setItem('v7_practice_memorized', JSON.stringify(db.practiceMemorized));
-        }
-        if (db.settings !== undefined) {
-            localStorage.setItem('v7_settings', JSON.stringify(db.settings));
-        }
+    save: (...fields) => {
+        const keys = fields.length ? fields : Object.keys(db._writers);
+        keys.forEach((k) => {
+            if (db._writers[k]) db._writers[k]();
+        });
         ui.updateGold();
     },
 
@@ -118,7 +132,7 @@ const db = {
         // 호출자가 음수/양수를 전달할 수 있음; 정수로 강제하고 0 이상으로 제한
         const delta = Number(n) || 0;
         db.gold = Math.max(0, Math.floor(db.gold) + Math.floor(delta));
-        db.save();
+        db.save('gold');
         return db.gold;
     },
 
@@ -219,7 +233,7 @@ const db = {
             db.stats[questionType].correct++;
         }
 
-        db.save();
+        db.save('stats');
     },
 
     /**
@@ -232,9 +246,12 @@ const db = {
             if (db.durability[id] <= 0) {
                 delete db.durability[id];
                 db.owned = db.owned.filter((x) => x !== id);
-                alert(`[${id === 'goldGlove' ? '황금 장갑' : '아이템'}]이 파괴되었습니다!`);
+                showToast(
+                    `[${id === 'goldGlove' ? '황금 장갑' : '아이템'}]이 파괴되었습니다!`,
+                    'warn'
+                );
             }
-            db.save();
+            db.save('dura', 'owned');
             ui.updateSkills(); // 황금장갑이 skill bar에 표시되므로
         }
     },

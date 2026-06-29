@@ -168,7 +168,7 @@ const practiceMemorization = {
         }
 
         if (!pool || pool.length === 0) {
-            alert('단어 데이터가 없습니다.');
+            showToast('단어 데이터가 없습니다.', 'error');
             return;
         }
 

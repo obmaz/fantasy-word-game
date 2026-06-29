@@ -10,7 +10,7 @@
  * game-data-loader.js가 먼저 로드되어 window.storiesData를 설정해야 함
  */
 const stories = typeof window !== 'undefined' && window.storiesData ? window.storiesData : {};
-console.log(
+dlog(
     '[words.js] stories loaded:',
     typeof stories,
     stories ? Object.keys(stories).length : 0,
@@ -48,7 +48,7 @@ const dayCatalog = (function () {
                 : '무한의 전장 (Boss Mode)',
         story: stories && stories.boss ? stories.boss : null,
     };
-    console.log('[words.js] dayCatalog created:', Object.keys(c).length, 'entries');
+    dlog('[words.js] dayCatalog created:', Object.keys(c).length, 'entries');
     return c;
 })();
 
@@ -145,7 +145,7 @@ if (typeof dayCatalog.validateCoverage === 'undefined') {
 
 // data-loader.js가 먼저 로드되어 window.rawDataData를 설정해야 함 (rawData_1 또는 rawData_2에서 로드됨)
 const rawData = typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : [];
-console.log('[words.js] rawData loaded:', rawData ? rawData.length : 0, 'items');
+dlog('[words.js] rawData loaded:', rawData ? rawData.length : 0, 'items');
 
 // ============================================================
 // 유사 단어 그룹 기반 decoy (추천 방식)

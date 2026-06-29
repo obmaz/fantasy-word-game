@@ -61,9 +61,7 @@
         window.currentGameDataName = window[nameKey] || `game_data_${dataSetId}`;
         window.currentGameDataSetId = dataSetId;
 
-        console.log(
-            `[data-loader] Loaded data set: ${window.currentGameDataName} (ID: ${dataSetId})`
-        );
+        dlog(`[data-loader] Loaded data set: ${window.currentGameDataName} (ID: ${dataSetId})`);
         return true;
     }
 
@@ -116,7 +114,7 @@
             if (typeof Storage !== 'undefined') {
                 localStorage.setItem('selectedGameDataSet', dataSetId);
             }
-            console.log(
+            dlog(
                 `[data-loader] Initialized with data set: ${window.currentGameDataName} (ID: ${dataSetId})`
             );
         } else {
@@ -140,15 +138,20 @@
             // 현재 선택된 값으로 설정
             updateSelectorUI();
 
-            selector.addEventListener('change', function (e) {
+            selector.addEventListener('change', async function (e) {
                 const newDataSetId = e.target.value;
                 if (changeDataSet(newDataSetId)) {
                     // 페이지 새로고침 필요 (데이터가 이미 로드된 후 변경되므로)
-                    if (
-                        confirm(
-                            '게임 데이터를 변경하려면 페이지를 새로고침해야 합니다. 새로고침하시겠습니까?'
-                        )
-                    ) {
+                    // 비차단 커스텀 확인 모달 사용 (없으면 기본 confirm으로 폴백)
+                    const confirmFn =
+                        typeof showConfirm === 'function'
+                            ? showConfirm
+                            : (msg) => Promise.resolve(window.confirm(msg));
+                    const ok = await confirmFn(
+                        '게임 데이터를 변경하려면 페이지를 새로고침해야 합니다. 새로고침할까요?',
+                        { okText: '새로고침', cancelText: '취소' }
+                    );
+                    if (ok) {
                         location.reload();
                     } else {
                         // 취소 시 이전 값으로 복원

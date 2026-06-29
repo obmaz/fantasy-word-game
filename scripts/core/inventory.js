@@ -289,7 +289,7 @@ const inventory = {
 
             // 잘못된 대상 슬롯 거부 (무기는 손에만)
             if (!['hand-1', 'hand-2'].includes(slot)) {
-                alert('무기는 손 슬롯에만 장착할 수 있습니다.');
+                showToast('무기는 손 슬롯에만 장착할 수 있습니다.', 'error');
                 return;
             }
 
@@ -366,7 +366,7 @@ const inventory = {
         const isWeapon = !!weapons.find((w) => w.id === itemId);
 
         if (!silent && !isWeapon && db.inventory.length >= db.inventoryCapacity) {
-            alert('인벤토리가 가득 찼습니다.');
+            showToast('인벤토리가 가득 찼습니다.', 'error');
             return;
         }
 

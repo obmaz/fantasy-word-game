@@ -52,6 +52,54 @@ const game = {
         history.pushState(null, '', window.location.href);
     },
 
+    // 현재 활성 데이터셋의 단어 배열 반환
+    _getRawData: () =>
+        typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData,
+
+    // day에 맞는 문제 풀 구성 (all/boss는 전체, 숫자 day는 엄격 일치)
+    _buildPool: (day, rawDataSource) => {
+        const source = rawDataSource || game._getRawData();
+        if (day === 'all' || day === 'boss') return source;
+        const dayNum = Number(day);
+        return source.filter((i) => Number(i.day) === dayNum);
+    },
+
+    // 두 배열을 번갈아(zip) 합쳐 같은 타입이 연속되지 않게 배치
+    _interleave: (a, b) => {
+        const result = [];
+        const max = Math.max(a.length, b.length);
+        for (let i = 0; i < max; i++) {
+            if (i < a.length) result.push(a[i]);
+            if (i < b.length) result.push(b[i]);
+        }
+        return result;
+    },
+
+    // 배틀 모드 문제 리스트: 객관식 / 주관식 / 혼합(번갈아)
+    _buildBattleList: (pool, count, questionType) => {
+        const shuffled = game.shuffle(pool);
+        if (questionType === 'objective') {
+            return shuffled.slice(0, count).map((q) => ({ ...q, isBoss: false }));
+        }
+        if (questionType === 'subjective') {
+            return shuffled.slice(0, count).map((q) => ({ ...q, isBoss: true }));
+        }
+        // 혼합형: 절반은 주관식, 절반은 객관식을 번갈아 배치(결정적 인터리브로 연속 방지)
+        const bossCount = Math.floor(count / 2);
+        const subjective = shuffled.slice(0, bossCount).map((q) => ({ ...q, isBoss: true }));
+        const objective = shuffled.slice(bossCount, count).map((q) => ({ ...q, isBoss: false }));
+        return game._interleave(game.shuffle(objective), game.shuffle(subjective));
+    },
+
+    // 연습/기타 모드 문제 리스트: 약 20%를 주관식으로 섞어 배치
+    _buildPracticeList: (pool, count) => {
+        const shuffled = game.shuffle(pool);
+        const bossCount = Math.max(1, Math.floor(count * 0.2));
+        const subjective = shuffled.slice(0, bossCount).map((q) => ({ ...q, isBoss: true }));
+        const objective = shuffled.slice(bossCount, count).map((q) => ({ ...q, isBoss: false }));
+        return game.shuffle([...subjective, ...objective]);
+    },
+
     init: (mode, day) => {
         game.mode = mode;
         game.currentDay = day;
@@ -60,32 +108,20 @@ const game = {
         closeScreenOverlay('battle-mode-story-modal', true);
         closeScreenOverlay('boss-mode-story-modal', true);
 
-        let pool;
         // 현재 데이터셋의 rawData 사용 (게임 데이터 변경 시 최신 데이터 반영)
-        const currentRawData =
-            typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
-        // day 값을 정규화하고 날짜 간 데이터 누출을 방지하기 위해 숫자 값을 엄격하게 일치시킴
-        if (day === 'all' || day === 'boss') {
-            pool = currentRawData;
-        } else {
-            const dayNum = Number(day);
-            pool = currentRawData.filter((i) => Number(i.day) === dayNum);
-        }
+        const currentRawData = game._getRawData();
+        // day에 맞는 문제 풀 구성 (숫자 day는 엄격 일치로 날짜 간 누출 방지)
+        const pool = game._buildPool(day, currentRawData);
 
         const countSelect = document.getElementById('count-select');
         const countValue = mode === 'boss' ? 0 : countSelect ? countSelect.value : '10';
-
-        let count;
-        if (countValue === 'all') {
-            count = pool.length;
-        } else {
-            count = parseInt(countValue) || 10;
-        }
-        console.log('[game.init] mode=', mode, 'day=', day, 'poolSize=', pool && pool.length);
+        const count = countValue === 'all' ? pool.length : parseInt(countValue) || 10;
+        dlog('[game.init] mode=', mode, 'day=', day, 'poolSize=', pool && pool.length);
 
         if (pool.length < 4) {
-            alert('데이터 부족');
-            location.reload();
+            // 토스트는 비차단이므로 사용자가 메시지를 본 뒤 새로고침되도록 약간 지연
+            showToast('문제 데이터가 부족합니다.', 'error');
+            setTimeout(() => location.reload(), 1500);
             return;
         }
 
@@ -101,108 +137,28 @@ const game = {
         game.sessionCorrectObjective = 0;
         game.sessionWrongWords = [];
 
+        // 모드별 문제 리스트 구성
         if (mode === 'boss') {
-            // 현재 데이터셋의 rawData 사용
-            const currentRawData =
-                typeof window !== 'undefined' && window.rawDataData ? window.rawDataData : rawData;
-            game.deck = game.shuffle([...currentRawData]);
+            // 보스 모드: 전체 데이터셋을 덱으로 사용
+            game.deck = game.shuffle(currentRawData);
             game.bossTotalWaves = game.deck.length;
             game.list = [];
         } else if (mode === 'battle') {
-            // 배틀 모드: 사용자 선택에 따라 문제 타입 결정
-            let shuffledPool = game.shuffle(pool);
-            const questionType = game.battleQuestionType || 'mixed'; // default to 'mixed'
-            console.log(
-                '[game.init] battle mode - questionType:',
-                questionType,
-                'battleQuestionType:',
-                game.battleQuestionType
-            );
-
-            if (questionType === 'objective') {
-                // 객관식만: 모든 문제를 객관식으로
-                console.log('[game.init] 객관식만 모드 - 모든 문제를 객관식으로 설정');
-                game.list = shuffledPool.slice(0, count).map((q) => ({ ...q, isBoss: false }));
-            } else if (questionType === 'subjective') {
-                // 주관식만: 모든 문제를 주관식으로
-                console.log('[game.init] 주관식만 모드 - 모든 문제를 주관식으로 설정');
-                game.list = shuffledPool.slice(0, count).map((q) => ({ ...q, isBoss: true }));
-            } else {
-                // 혼합형: 객관식과 주관식이 번갈아 나오도록
-                console.log('[game.init] 혼합형 모드 - 객관식과 주관식 번갈아 표시');
-                const bossCount = Math.floor(count / 2); // 50%
-                const normalCount = count - bossCount; // 나머지
-
-                // 주관식과 객관식 문제를 각각 준비
-                const bossQuestions = shuffledPool
-                    .slice(0, bossCount)
-                    .map((q) => ({ ...q, isBoss: true }));
-                const normalQuestions = shuffledPool
-                    .slice(bossCount, bossCount + normalCount)
-                    .map((q) => ({ ...q, isBoss: false }));
-
-                // 각각 섞기
-                const shuffledBoss = game.shuffle([...bossQuestions]);
-                const shuffledNormal = game.shuffle([...normalQuestions]);
-
-                // 번갈아 배치 (같은 타입이 연속으로 나오지 않도록)
-                game.list = [];
-                const maxLen = Math.max(shuffledBoss.length, shuffledNormal.length);
-                for (let i = 0; i < maxLen; i++) {
-                    // 객관식과 주관식을 번갈아 추가
-                    if (i < shuffledNormal.length) {
-                        game.list.push(shuffledNormal[i]);
-                    }
-                    if (i < shuffledBoss.length) {
-                        game.list.push(shuffledBoss[i]);
-                    }
-                }
-
-                // 마지막으로 한 번 더 섞되, 같은 타입이 연속되지 않도록 보장
-                let attempts = 0;
-                while (attempts < 10) {
-                    game.list = game.shuffle([...game.list]);
-                    // 같은 타입이 연속으로 나오는지 확인
-                    let hasConsecutive = false;
-                    for (let i = 1; i < game.list.length; i++) {
-                        if (game.list[i].isBoss === game.list[i - 1].isBoss) {
-                            hasConsecutive = true;
-                            break;
-                        }
-                    }
-                    if (!hasConsecutive) break;
-                    attempts++;
-                }
-            }
-
-            // 디버깅: 생성된 문제 타입 확인
-            const bossCount = game.list.filter((q) => q.isBoss).length;
-            const normalCount = game.list.filter((q) => !q.isBoss).length;
-            console.log(
-                '[game.init] 생성된 문제 - 주관식:',
-                bossCount,
-                '객관식:',
-                normalCount,
-                '총:',
-                game.list.length
-            );
+            game.list = game._buildBattleList(pool, count, game.battleQuestionType || 'mixed');
         } else {
-            let shuffledPool = game.shuffle(pool);
-            const bossCount = Math.max(1, Math.floor(count * 0.2));
-            const normalCount = count - bossCount;
-
-            const bossQuestions = shuffledPool
-                .slice(0, bossCount)
-                .map((q) => ({ ...q, isBoss: true }));
-            const normalQuestions = shuffledPool
-                .slice(bossCount, count)
-                .map((q) => ({ ...q, isBoss: false }));
-
-            game.list = game.shuffle([...bossQuestions, ...normalQuestions]);
+            game.list = game._buildPracticeList(pool, count);
         }
 
         // 주관식 문제 총 개수 계산
         game.subjectiveTotal = game.list.filter((q) => q.isBoss).length;
+        dlog(
+            '[game.init] 생성된 문제 - 주관식:',
+            game.subjectiveTotal,
+            '객관식:',
+            game.list.length - game.subjectiveTotal,
+            '총:',
+            game.list.length
+        );
 
         // 애니메이션 완료 후 게임 화면 표시
         setTimeout(() => {
@@ -242,7 +198,6 @@ const game = {
             story.showEnding(true);
             return;
         }
-
 
         // Day 정보 업데이트 (게임 중에도 day 정보가 올바르게 표시되도록)
         ui.updateGameInfo(game.mode, game.currentDay);
@@ -321,7 +276,7 @@ const game = {
 
     // More methods to be added...
     renderNormal: (data) => {
-        console.log('[game.renderNormal] day=', data && data.day, 'word=', data && data.word);
+        dlog('[game.renderNormal] day=', data && data.day, 'word=', data && data.word);
         if (!data || !data.word || !data.meaning) {
             game.idx++;
             game.nextLevel();
@@ -367,7 +322,7 @@ const game = {
     },
 
     renderBoss: (data, isBoss) => {
-        console.log(
+        dlog(
             '[game.renderBoss] day=',
             data && data.day,
             'word=',
@@ -432,7 +387,7 @@ const game = {
             input.disabled = false; // 입력 활성화
             input.focus();
             input.style.borderColor = 'var(--primary)';
-            input.onkeypress = (e) => {
+            input.onkeydown = (e) => {
                 if (e.key === 'Enter' && !game.isProcessing) {
                     game.checkBossAnswer();
                 }
@@ -554,7 +509,7 @@ const game = {
                 if (bossInput) {
                     bossInput.style.borderColor = '#FF5252';
                     bossInput.disabled = true; // 입력 비활성화
-                    bossInput.onkeypress = null; // 키 이벤트 제거
+                    bossInput.onkeydown = null; // 키 이벤트 제거
                 }
 
                 // 오답일 때 정답 표시
@@ -733,10 +688,9 @@ const game = {
                 game.timer = null;
                 // 게임 오버 처리 중이 아니면 handleAnswer 호출 (현재 문제 타입 전달)
                 if (!game.isProcessing) {
+                    // DOM(boss-box) 조회 대신 현재 문제 상태로 타입 판단
                     const questionType =
-                        document.getElementById('boss-box').style.display === 'flex'
-                            ? 'subjective'
-                            : 'objective';
+                        game.currentQ && game.currentQ.isBoss ? 'subjective' : 'objective';
                     game.handleAnswer(false, null, questionType);
                 }
             }
@@ -783,7 +737,11 @@ const game = {
             if (distractors.length >= 3) break;
         }
         // 랜덤으로 가져와서라도 오답 보기가 3개가 되도록 보장
-        while (distractors.length < 3) {
+        // 데이터셋의 고유 값이 3개 미만일 수 있으므로 시도 횟수를 제한해 무한 루프를 방지
+        let attempts = 0;
+        const maxAttempts = currentRawData.length * 2 + 10;
+        while (distractors.length < 3 && attempts < maxAttempts) {
+            attempts++;
             const emergencyDistractor = game.shuffle([...currentRawData])[0];
             if (
                 emergencyDistractor &&
@@ -797,9 +755,18 @@ const game = {
                 }
             }
         }
+        // 고유 값이 부족하면 채워진 만큼만 반환 (호출부가 빈/부족한 보기를 처리)
         return distractors.slice(0, 3);
     },
-    shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
+    // Fisher–Yates 셔플: 균등 분포 보장 + 원본 배열을 변형하지 않도록 사본 반환
+    shuffle: (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    },
 
     end: (win) => {
         // story-modal이 확실히 닫혀있는지 확인
@@ -841,7 +808,6 @@ const game = {
             battleModeModal.style.pointerEvents = 'none';
             battleModeModal.classList.remove('closing');
         }
-
 
         // title-screen이 뒤에 있도록 보장 (backdrop-filter가 작동하도록)
         const startScreen = document.getElementById('title-screen');

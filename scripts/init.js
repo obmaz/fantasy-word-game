@@ -64,7 +64,7 @@ window.onload = () => {
         if (startBattleBtn) {
             startBattleBtn.addEventListener('click', () => {
                 const selectedDay = document.getElementById('day-select').value;
-                console.log('[start-battle] selectedDay=', selectedDay);
+                dlog('[start-battle] selectedDay=', selectedDay);
                 story.startIntro('battle', selectedDay);
             });
         }
@@ -91,35 +91,23 @@ window.onload = () => {
     const titleStatisticsBtn = document.getElementById('title-statistics-btn');
     const titleSettingBtn = document.getElementById('title-setting-btn');
 
-    // 연습 버튼
+    // 연습 버튼 (스타일은 .title-btn-area / .btn-image CSS가 담당 → JS 인라인 스타일 불필요)
+    // window.onload는 1회만 실행되므로 cloneNode로 리스너를 떼어낼 필요 없이 직접 등록
     if (titlePracticeBtn) {
         try {
-            titlePracticeBtn.onclick = null;
-            const newBtn = titlePracticeBtn.cloneNode(true);
-            titlePracticeBtn.parentNode.replaceChild(newBtn, titlePracticeBtn);
-            const freshPracticeBtn = document.getElementById('title-practice-btn');
-
-            if (freshPracticeBtn) {
-                freshPracticeBtn.style.pointerEvents = 'auto';
-                freshPracticeBtn.style.zIndex = '25';
-                freshPracticeBtn.style.cursor = 'pointer';
-                const btnImage = freshPracticeBtn.querySelector('.btn-image');
-                if (btnImage) btnImage.style.pointerEvents = 'none';
-
-                freshPracticeBtn.addEventListener(
-                    'click',
-                    (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (typeof openPracticeModal === 'function') {
-                            openPracticeModal();
-                        } else {
-                            console.error('openPracticeModal function not found');
-                        }
-                    },
-                    { capture: true }
-                );
-            }
+            titlePracticeBtn.addEventListener(
+                'click',
+                (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof openPracticeModal === 'function') {
+                        openPracticeModal();
+                    } else {
+                        console.error('openPracticeModal function not found');
+                    }
+                },
+                { capture: true }
+            );
         } catch (e) {
             console.error('Error setting up practice button:', e);
         }
@@ -130,12 +118,6 @@ window.onload = () => {
     // 배틀 모드 버튼
     if (titleBattleModeBtn) {
         try {
-            titleBattleModeBtn.style.pointerEvents = 'auto';
-            titleBattleModeBtn.style.zIndex = '25';
-            titleBattleModeBtn.style.cursor = 'pointer';
-            const btnImage = titleBattleModeBtn.querySelector('.btn-image');
-            if (btnImage) btnImage.style.pointerEvents = 'none';
-
             titleBattleModeBtn.addEventListener(
                 'click',
                 (e) => {
@@ -159,18 +141,15 @@ window.onload = () => {
     // 보스 모드 버튼
     if (titleBossModeBtn) {
         try {
-            titleBossModeBtn.style.pointerEvents = 'auto';
-            titleBossModeBtn.style.zIndex = '25';
-            titleBossModeBtn.style.cursor = 'pointer';
-            const btnImage = titleBossModeBtn.querySelector('.btn-image');
-            if (btnImage) btnImage.style.pointerEvents = 'none';
-
             titleBossModeBtn.addEventListener(
                 'click',
                 (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (typeof story !== 'undefined' && typeof story.startBossDirectly === 'function') {
+                    if (
+                        typeof story !== 'undefined' &&
+                        typeof story.startBossDirectly === 'function'
+                    ) {
                         story.startBossDirectly();
                     } else {
                         console.error('story.startBossDirectly function not found');
@@ -231,7 +210,10 @@ window.onload = () => {
                 (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (typeof statistics !== 'undefined' && typeof statistics.open === 'function') {
+                    if (
+                        typeof statistics !== 'undefined' &&
+                        typeof statistics.open === 'function'
+                    ) {
                         statistics.open();
                     }
                 },

@@ -67,6 +67,14 @@ const shop = {
             .forEach((i) => (html += shop.createItemHtml(i, 'item')));
 
         container.innerHTML = html;
+
+        // 구매 버튼은 이벤트 위임으로 처리 (onclick 문자열에 데이터를 직접 보간하지 않음)
+        // render()가 여러 번 호출되어도 핸들러가 중복되지 않도록 onclick에 재할당
+        container.onclick = (e) => {
+            const btn = e.target.closest('.buy-btn');
+            if (!btn || !container.contains(btn)) return;
+            shop.buy(btn.dataset.id, Number(btn.dataset.cost), btn.dataset.type);
+        };
     },
 
     /**
@@ -76,7 +84,7 @@ const shop = {
      * @returns {string} HTML 문자열
      */
     createItemHtml: (item, type) => {
-        let btn = `<button class="buy-btn" onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">${item.cost} G</button>`;
+        let btn = `<button class="buy-btn" data-id="${item.id}" data-cost="${item.cost}" data-type="${type}">${item.cost} G</button>`;
 
         if (type === 'skill') {
             return `<div class="shop-item shop-item-skill"><div style="font-size:15px;"><b>${
@@ -97,7 +105,7 @@ const shop = {
      */
     buy: (id, cost, type) => {
         if (db.gold < cost) {
-            alert('골드가 부족합니다.');
+            showToast('골드가 부족합니다.', 'error');
             return;
         }
 
@@ -114,7 +122,7 @@ const shop = {
             );
             const currentSize = db.inventory.length + unequippedOwned.length;
             if (currentSize >= db.inventoryCapacity) {
-                alert('인벤토리가 가득 찼습니다.');
+                showToast('인벤토리가 가득 찼습니다.', 'error');
                 return;
             }
         }
@@ -128,7 +136,8 @@ const shop = {
             db.inventoryCapacity++;
         } else if (type === 'skill') {
             const skill = relics.find((r) => r.id === id);
-            db.skills[id] += skill.uses;
+            // hint/ultimate 외의 새 스킬은 db.skills에 키가 없어 undefined += n → NaN 이 되므로 가드
+            db.skills[id] = (db.skills[id] || 0) + skill.uses;
         } else {
             // 무기 및 기타 유물
             db.owned.push(id);

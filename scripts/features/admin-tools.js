@@ -56,7 +56,10 @@ const secret = {
             const titleWidth = computedStyle.getPropertyValue('--title-container-width');
             const titleHeight = computedStyle.getPropertyValue('--title-container-height');
             const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-            const vh = typeof getLockedAppHeight === 'function' ? getLockedAppHeight() : Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+            const vh =
+                typeof getLockedAppHeight === 'function'
+                    ? getLockedAppHeight()
+                    : Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
             let containerWidth = parseFloat(titleWidth) || 0.95 * vw;
             let containerHeight = parseFloat(titleHeight) || 0.95 * vh;
@@ -213,7 +216,7 @@ const secret = {
                     statistics.render();
                 }
 
-                alert('골드가 초기화되었습니다.');
+                showToast('골드가 초기화되었습니다.', 'success');
                 secret.pendingAction = null;
                 secret.previousModal = null;
                 secret.close();
@@ -255,7 +258,7 @@ const secret = {
                     statistics.render();
                 }
 
-                alert('통계가 초기화되었습니다.');
+                showToast('통계가 초기화되었습니다.', 'success');
                 secret.pendingAction = null;
                 secret.previousModal = null;
                 secret.close();
@@ -324,7 +327,7 @@ const secret = {
                 statistics.render();
             }
 
-            alert('골드가 수정되었습니다.');
+            showToast('골드가 수정되었습니다.', 'success');
             secret.pendingAction = null;
             secret.previousModal = null;
             secret.closeGoldEditModal();
@@ -370,7 +373,7 @@ const secret = {
                 ui.updateDurability();
                 inventory.render();
 
-                alert('모든 데이터가 초기화되었습니다.');
+                showToast('모든 데이터가 초기화되었습니다.', 'success');
                 secret.previousModal = null;
                 secret.close();
                 location.reload();
@@ -435,7 +438,7 @@ const secret = {
         const selectedDay = daySelect ? daySelect.value : '';
 
         if (!selectedDay) {
-            alert('Day를 선택해주세요.');
+            showToast('Day를 선택해주세요.', 'warn');
             return;
         }
 
@@ -452,7 +455,7 @@ const secret = {
         const dayWords = currentRawData.filter((i) => Number(i.day) === dayNum);
 
         if (dayWords.length === 0) {
-            alert('선택한 Day에 단어가 없습니다.');
+            showToast('선택한 Day에 단어가 없습니다.', 'warn');
             return;
         }
 
@@ -1096,14 +1099,14 @@ const secret = {
         // HTML 파일로 다운로드
         const blob = new Blob([printHTML], { type: 'text/html;charset=utf-8' });
         const url = URL.createObjectURL(blob);
-        
+
         const a = document.createElement('a');
         a.href = url;
         a.download = `word_test_day_${selectedDay}.html`;
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
-        
+
         setTimeout(() => {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
