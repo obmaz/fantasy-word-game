@@ -48,9 +48,11 @@ fantasy-word-game/
 │   │   ├── layout-manager.js
 │   │   ├── menu-logic.js
 │   │   ├── modal-manager.js
+│   │   ├── notify.js                 # 비차단 토스트/확인 모달
 │   │   ├── setup-ui.js
 │   │   └── ui-manager.js
 │   └── utils/                        # 유틸리티
+│       ├── debug.js                  # DEBUG 플래그 기반 로깅 (dlog)
 │       └── helpers.js
 ├── data/                             # 원본 데이터 파일
 │   ├── background_music_*.mp3
@@ -115,6 +117,7 @@ fantasy-word-game/
 - 올바른 히스토리 관리를 통한 뒤로 가기 버튼 내비게이션 지원
 - 다양한 게임 데이터 세트 지원
 - 모달 및 화면에 대한 백드롭 블러 효과 적용
+- 게임 흐름을 막지 않는 토스트 알림과 커스텀 확인 모달 (네이티브 `alert`/`confirm` 대체)
 - 모바일과 데스크톱 모두에서 동일한 비율로 일관된 글꼴 크기를 유지하기 위한 clamp() 사용
 
 ## 플레이 방법
@@ -208,7 +211,7 @@ fantasy-word-game/
     - 모든 UI 요소는 뷰포트 상대 단위(vw)를 사용하여 화면 비율을 일관되게 유지합니다.
     - 데스크톱 디스플레이에서도 모바일 레이아웃과 동일하게 배율로 확장되어 표시됩니다.
 - **백드롭 필터**: 모달과 화면에 블러 효과를 적용해 시각적인 깊이감을 나타냈습니다.
-- **Z-index 관리**: 적절한 레이어링 시스템 (타이틀 100, 모달 200, 결과 화면 300)을 사용합니다.
+- **Z-index 관리**: 적절한 레이어링 시스템 (타이틀 100, 모달 200, 결과 화면 300, 토스트/확인 알림 99999~100000)을 사용합니다.
 
 ### 이미지 기반 UI
 
@@ -241,10 +244,22 @@ fantasy-word-game/
 - 여러 세션에 걸쳐 골드, 인벤토리, 장비, 통계가 지속적으로 유지됩니다.
 - 마지막으로 선택한 Day, 난이도, 문제 유형 정보가 기록됩니다.
 - 로드할 때 이전의 선택된 데이터 세트가 그대로 복구됩니다.
+- 정답/통계 가산 같은 빈번한 저장은 변경된 키만 직렬화하여 불필요한 쓰기를 줄입니다.
+
+### 개발 및 디버깅
+
+- **디버그 로그**: 평소에는 콘솔이 깨끗하게 유지됩니다. 자세한 로그가 필요하면 브라우저 콘솔에서 `DEBUG = true`를 입력하세요. (`scripts/utils/debug.js`의 `dlog`가 `window.DEBUG`가 `true`일 때만 출력)
+- **모듈 구조**: 빌드 도구 없이 `<script>`로 로드되며, 내부 헬퍼는 IIFE로 캡슐화하고 공개 API만 `window`에 노출합니다.
+- **코드 포맷**: Prettier를 사용합니다.
+    ```bash
+    npm run format        # 전체 포맷 적용
+    npm run format:check  # 포맷 검사만
+    ```
+- **저장소 제외**: 오래된 백업 에셋(`backup/`)과 `.DS_Store`는 `.gitignore`로 제외되어 있습니다(작업 트리에는 유지).
 
 ## 파일 구성
 
-### Styles 
+### Styles
 
 - `variables.css`: 반응형 글꼴 크기 지정 및 전역 스타일, CSS 변수
 - `animations.css`: 애니메이션 프레임 및 트랜지션 정의
@@ -262,10 +277,13 @@ fantasy-word-game/
 
 ### Scripts
 
-- `init.js`: 주 게임 로직, UI 생성, 게임 진행 관리
-- `words.js`: 단어 데이터 처리 및 Day 목록 생성 관리
-- `items.js`: 아이템 설정 및 인벤토리 동기화 관리
-- `data-loader.js`: 데이터 세트 로딩 관리 및 변경 지원
+- `init.js`: 진입점(`window.onload`) — 이벤트 리스너 등록 및 초기화
+- `core/`: 데이터 저장소(`database`), 상점(`shop`), 인벤토리(`inventory`), 설정(`settings`), 통계(`statistics`)
+- `data/`: 단어/아이템/데이터셋 로더 (`words-loader`, `items-loader`, `game-data-loader`)
+- `features/`: 관리자 도구(`admin-tools`), 오디오(`audio-manager`), 스토리(`story`)
+- `game/`: 배틀 엔진(`game-engine`), 연습 모드(`practice-mode`)
+- `ui/`: 레이아웃·메뉴·모달 관리, 비차단 알림(`notify`), UI 매니저(`ui-manager`)
+- `utils/`: 공통 헬퍼(`helpers`), 디버그 로깅(`debug`)
 
 ### Data
 
