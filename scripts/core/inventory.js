@@ -62,12 +62,11 @@ const inventory = {
         document.getElementById('inv-max-cap').innerText = db.inventoryCapacity;
 
         // 인벤토리 슬롯 초기화
+        // (해제 클릭은 index.html의 data-action="inventory-unequip"이 위임 처리하므로
+        //  여기서는 표시 내용만 갱신한다)
         ['head', 'hand-1', 'hand-2', 'foot-1', 'foot-2', 'weapon'].forEach((slot) => {
             const equipSlot = document.getElementById(`inv-${slot}`);
-            if (equipSlot) {
-                equipSlot.innerHTML = '';
-                equipSlot.onclick = null;
-            }
+            if (equipSlot) equipSlot.innerHTML = '';
         });
 
         // 장착된 아이템을 인벤토리 UI에 렌더링 (손/머리/발 슬롯을 차지하는 무기 포함)
@@ -78,7 +77,6 @@ const inventory = {
                 const equipSlot = document.getElementById(`inv-${slot}`);
                 if (equipSlot) {
                     equipSlot.innerHTML = `<div class="inv-item">${item.icon}</div>`;
-                    equipSlot.onclick = () => inventory.unequip(slot);
                 }
             }
         }
@@ -324,7 +322,7 @@ const inventory = {
             db.inventory = db.inventory.filter((i) => i !== id);
         }
 
-        db.save();
+        db.save('owned', 'equip', 'dura', 'inventory', 'equipped');
         inventory.render();
         shop.render();
     },
@@ -349,7 +347,7 @@ const inventory = {
             }
             db.equippedWeapon = 'basic';
         }
-        db.save();
+        db.save('owned', 'equip', 'dura', 'inventory', 'equipped');
         inventory.render();
     },
 
@@ -387,7 +385,7 @@ const inventory = {
 
         if (silent) return;
 
-        db.save();
+        db.save('owned', 'equip', 'dura', 'inventory', 'equipped');
         inventory.render();
     },
 };

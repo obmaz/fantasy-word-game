@@ -8,31 +8,12 @@
 const settingsManager = {
     init: () => {
         // 1. 설정 데이터 검증 및 초기화
+        // 참고: 음악 트랙 잠금(unlockedMusicTracks / musicUnlockThresholds)은 제거되었습니다.
+        // 해금 조건이 구현된 적이 없어 항상 전 트랙이 열린 상태였고,
+        // database.js의 settings 로더가 두 필드(musicPlay/wordRead)만 복원하므로
+        // 저장되지도 않는 죽은 상태였습니다. 모든 트랙은 항상 재생 가능합니다.
         if (!db.settings) {
-            db.settings = {
-                musicPlay: true,
-                wordRead: true,
-                unlockedMusicTracks: [
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-                    23,
-                ], // 모든 음악 잠금 해제
-                // musicUnlockThresholds 제거됨
-            };
-        } else {
-            // 속성 누락 시 기본값 복구
-            if (
-                !db.settings.unlockedMusicTracks ||
-                !Array.isArray(db.settings.unlockedMusicTracks) ||
-                db.settings.unlockedMusicTracks.length < 23 // 기존 사용자 업데이트를 위해 확인
-            ) {
-                db.settings.unlockedMusicTracks = [
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-                    23,
-                ];
-            }
-            if (db.settings.musicUnlockThresholds) {
-                delete db.settings.musicUnlockThresholds;
-            }
+            db.settings = { musicPlay: true, wordRead: true };
         }
 
         // 2. UI 이벤트 리스너 설정
@@ -43,7 +24,7 @@ const settingsManager = {
             musicCheck.checked = db.settings.musicPlay !== false;
             musicCheck.addEventListener('change', () => {
                 db.settings.musicPlay = musicCheck.checked;
-                db.save();
+                db.save('settings');
                 // 오디오 매니저가 있다면 상태 업데이트가 필요할 수 있음
                 // (현재 playMusic 함수는 호출 시 db.settings를 확인하므로 즉시 반영됨)
                 if (!db.settings.musicPlay) {
@@ -59,7 +40,7 @@ const settingsManager = {
             wordCheck.checked = db.settings.wordRead !== false;
             wordCheck.addEventListener('change', () => {
                 db.settings.wordRead = wordCheck.checked;
-                db.save();
+                db.save('settings');
             });
         }
     },

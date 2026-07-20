@@ -1,3 +1,16 @@
+/** 선택된 문제 유형 라디오의 레이블에만 .checked 클래스를 남긴다 */
+function syncQuestionTypeLabels(questionTypeGroup) {
+    questionTypeGroup
+        .querySelectorAll('.modal-radio-label')
+        .forEach((label) => label.classList.remove('checked'));
+    const checkedRadio = questionTypeGroup.querySelector(
+        'input[name="battle-question-type"]:checked'
+    );
+    if (checkedRadio) {
+        checkedRadio.closest('.modal-radio-label')?.classList.add('checked');
+    }
+}
+
 // 연습 모드 선택 모달 열기
 function openPracticeModal() {
     const modal = document.getElementById('practice-mode-modal');
@@ -99,28 +112,18 @@ function openBattleModeModal() {
             if (mixedRadio) mixedRadio.checked = true;
         }
 
-        // 모든 라디오 레이블의 checked 클래스 업데이트
-        const allRadios = questionTypeGroup.querySelectorAll('input[name="battle-question-type"]');
-        const allLabels = questionTypeGroup.querySelectorAll('.modal-radio-label');
-        allLabels.forEach((label) => label.classList.remove('checked'));
-        allRadios.forEach((radio) => {
-            if (radio.checked) {
-                radio.closest('.modal-radio-label')?.classList.add('checked');
-            }
-        });
+        // 선택된 라디오의 레이블에 checked 클래스 반영
+        syncQuestionTypeLabels(questionTypeGroup);
 
-        // 라디오 버튼 변경 이벤트 리스너 추가
-        allRadios.forEach((radio) => {
-            radio.addEventListener('change', () => {
-                allLabels.forEach((label) => label.classList.remove('checked'));
-                const checkedRadio = questionTypeGroup.querySelector(
-                    'input[name="battle-question-type"]:checked'
-                );
-                if (checkedRadio) {
-                    checkedRadio.closest('.modal-radio-label')?.classList.add('checked');
-                }
+        // 변경 리스너는 그룹에 1회만 위임 등록한다.
+        // (모달을 열 때마다 라디오마다 addEventListener 하면 핸들러가 무한 누적됨)
+        if (!questionTypeGroup.dataset.changeBound) {
+            questionTypeGroup.addEventListener('change', (e) => {
+                if (e.target.name !== 'battle-question-type') return;
+                syncQuestionTypeLabels(questionTypeGroup);
             });
-        });
+            questionTypeGroup.dataset.changeBound = 'true';
+        }
     }
 
     // title-screen의 z-index와 display 조정하여 backdrop-filter가 작동하도록 함

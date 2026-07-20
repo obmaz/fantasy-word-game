@@ -29,7 +29,6 @@
             <div class="battle-arena">
                 <div class="info-badge" id="wave-badge">Wave: 1</div>
                 <div class="info-badge" id="game-info-badge">배틀 모드 - Day 1</div>
-                <div class="durability-badge" id="durability-badge">🥊 30/30</div>
                 <!-- 배경 위에 골드와 시간 표시 -->
                 <div class="overlay-gold">💰 <span id="overlay-gold">0</span> G</div>
                 <div class="overlay-timer">
@@ -119,7 +118,7 @@
                         placeholder="정답 입력"
                         autocomplete="off"
                     />
-                    <button class="boss-submit" onclick="game.checkBossAnswer()">공격하기</button>
+                    <button class="boss-submit" data-action="boss-submit">공격하기</button>
                 </div>
             </div>
         </div>
@@ -240,9 +239,6 @@
 
             <!-- Hidden UI elements (kept for functionality but not displayed) -->
             <div style="display: none">
-                <div class="stats-box" id="stat-solved">0</div>
-                <div class="stat-item" id="stat-correct">0</div>
-                <div class="stat-item" id="stat-rate">0%</div>
                 <div id="equipped-summary" class="equipped-summary"></div>
                 <select id="day-select"></select>
                 <select id="count-select">
@@ -259,10 +255,10 @@
             <button class="btn-main btn-boss-mode" id="boss-mode-btn" style="display: none">
                 🔥 보스 모드 (무한)
             </button>
-            <button class="btn-main btn-shop" onclick="shop.open()" style="display: none">
+            <button class="btn-main btn-shop" data-action="shop-open" style="display: none">
                 상점 🛒
             </button>
-            <button class="btn-main btn-inv" onclick="inventory.open()" style="display: none">
+            <button class="btn-main btn-inv" data-action="inventory-open" style="display: none">
                 인벤토리 🎒
             </button>
         </div>
@@ -277,7 +273,7 @@
                     <div id="detail-header">
                         <div id="detail-icon"></div>
                         <div id="detail-name"></div>
-                        <button id="detail-close" onclick="inventory.hideDetails()">X</button>
+                        <button id="detail-close" data-action="inventory-hide-details">X</button>
                     </div>
                     <div id="detail-desc"></div>
                     <div id="detail-actions"></div>
@@ -296,7 +292,8 @@
                                 role="button"
                                 tabindex="0"
                                 aria-label="머리 슬롯"
-                                onclick="inventory.unequip('head')"
+                                data-action="inventory-unequip"
+                                data-slot="head"
                             ></div>
                         </div>
 
@@ -307,7 +304,8 @@
                                 role="button"
                                 tabindex="0"
                                 aria-label="왼손 슬롯"
-                                onclick="inventory.unequip('hand-2')"
+                                data-action="inventory-unequip"
+                                data-slot="hand-2"
                             ></div>
                             <div class="inv-torso">
                                 <div
@@ -316,7 +314,8 @@
                                     role="button"
                                     tabindex="0"
                                     aria-label="무기 슬롯"
-                                    onclick="inventory.unequip('weapon')"
+                                    data-action="inventory-unequip"
+                                    data-slot="weapon"
                                 ></div>
                             </div>
                             <div
@@ -325,7 +324,8 @@
                                 role="button"
                                 tabindex="0"
                                 aria-label="오른손 슬롯"
-                                onclick="inventory.unequip('hand-1')"
+                                data-action="inventory-unequip"
+                                data-slot="hand-1"
                             ></div>
                         </div>
 
@@ -336,7 +336,8 @@
                                 role="button"
                                 tabindex="0"
                                 aria-label="왼발 슬롯"
-                                onclick="inventory.unequip('foot-1')"
+                                data-action="inventory-unequip"
+                                data-slot="foot-1"
                             ></div>
                             <div
                                 class="inv-slot"
@@ -344,7 +345,8 @@
                                 role="button"
                                 tabindex="0"
                                 aria-label="오른발 슬롯"
-                                onclick="inventory.unequip('foot-2')"
+                                data-action="inventory-unequip"
+                                data-slot="foot-2"
                             ></div>
                         </div>
                     </div>
@@ -363,7 +365,7 @@
                     id="inv-close-btn"
                     src="images/title/exit_btn.webp"
                     alt="나가기"
-                    onclick="inventory.close()"
+                    data-action="inventory-close"
                     aria-label="인벤토리 닫기"
                     style="
                         width: 80%;
@@ -696,7 +698,7 @@
                     <img
                         src="images/title/exit_btn.webp"
                         alt="나가기"
-                        onclick="shop.close()"
+                        data-action="shop-close"
                         style="
                             width: 80%;
                             height: auto;
@@ -726,7 +728,7 @@
                     <img
                         src="images/title/exit_btn.webp"
                         alt="나가기"
-                        onclick="statistics.close()"
+                        data-action="statistics-close"
                         style="
                             width: 80%;
                             height: auto;
@@ -761,7 +763,7 @@
                 </div>
 
                 <div class="result-modal-actions">
-                    <button class="result-btn result-btn-gold" onclick="closeResultScreen()">
+                    <button class="result-btn result-btn-gold" data-action="result-close">
                         마을로 귀환
                     </button>
                 </div>
@@ -793,31 +795,31 @@
                             margin: 0 auto;
                         "
                     >
-                        <button class="num-btn" onclick="secret.enter(1)">1</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="1">1</button>
 
-                        <button class="num-btn" onclick="secret.enter(2)">2</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="2">2</button>
 
-                        <button class="num-btn" onclick="secret.enter(3)">3</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="3">3</button>
 
-                        <button class="num-btn" onclick="secret.enter(4)">4</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="4">4</button>
 
-                        <button class="num-btn" onclick="secret.enter(5)">5</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="5">5</button>
 
-                        <button class="num-btn" onclick="secret.enter(6)">6</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="6">6</button>
 
-                        <button class="num-btn" onclick="secret.enter(7)">7</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="7">7</button>
 
-                        <button class="num-btn" onclick="secret.enter(8)">8</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="8">8</button>
 
-                        <button class="num-btn" onclick="secret.enter(9)">9</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="9">9</button>
 
-                        <button class="num-btn" onclick="secret.del()">⌫</button>
+                        <button class="num-btn" data-action="secret-del">⌫</button>
 
-                        <button class="num-btn" onclick="secret.enter(0)">0</button>
+                        <button class="num-btn" data-action="secret-enter" data-digit="0">0</button>
 
                         <button
                             class="num-btn"
-                            onclick="secret.close()"
+                            data-action="secret-close"
                             style="
                                 width: 60px;
                                 height: 60px;
@@ -857,7 +859,7 @@
                     <div style="text-align: center; width: 100%; margin-top: 20px">
                         <button
                             class="modal-btn-main"
-                            onclick="secret.openGoldEditModal()"
+                            data-action="secret-gold-edit-open"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
                             골드 수정
@@ -866,7 +868,7 @@
                     <div style="text-align: center; width: 100%; margin-top: 10px">
                         <button
                             class="modal-btn-main"
-                            onclick="secret.openPrintDaySelect()"
+                            data-action="secret-print-open"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
                             문제 출력
@@ -875,7 +877,7 @@
                     <div style="text-align: center; width: 100%; margin-top: 10px">
                         <button
                             class="modal-btn-main btn-danger"
-                            onclick="secret.resetStatistics()"
+                            data-action="secret-reset-statistics"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
                             통계 초기화
@@ -886,7 +888,7 @@
                     <img
                         src="images/title/exit_btn.webp"
                         alt="나가기"
-                        onclick="secret.close()"
+                        data-action="secret-close"
                         style="
                             width: 80%;
                             height: auto;
@@ -924,7 +926,7 @@
                         <img
                             src="images/title/apply_btn.webp"
                             alt="적용"
-                            onclick="secret.applyGoldEdit()"
+                            data-action="secret-gold-edit-apply"
                             style="
                                 width: 80%;
                                 height: auto;
@@ -939,7 +941,7 @@
                         <img
                             src="images/title/exit_btn.webp"
                             alt="나가기"
-                            onclick="secret.closeGoldEditModal()"
+                            data-action="secret-gold-edit-close"
                             style="
                                 width: 80%;
                                 height: auto;
@@ -1001,7 +1003,7 @@
                     <div style="text-align: center; width: 100%; margin-top: 20px">
                         <button
                             class="modal-btn-main"
-                            onclick="secret.generatePrintHTML()"
+                            data-action="secret-print-generate"
                             style="width: 80%; margin: 0 auto; display: block"
                         >
                             인쇄용 HTML 생성
@@ -1011,7 +1013,7 @@
                         <img
                             src="images/title/exit_btn.webp"
                             alt="나가기"
-                            onclick="secret.closePrintDaySelect()"
+                            data-action="secret-print-close"
                             style="
                                 width: 80%;
                                 height: auto;

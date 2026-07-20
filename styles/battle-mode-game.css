@@ -124,11 +124,6 @@
     font-size: clamp(14px, 3cqmin, 20px);
     min-height: auto;
 }
-.durability-badge {
-    /* 황금장갑은 이제 skill bar에 표시되므로 숨김 */
-    display: none !important;
-}
-
 .overlay-gold {
     position: absolute;
     top: calc(clamp(4px, 1.2cqmin, 12px) * 2 + clamp(12px, 2.8cqmin, 18px) + 20px);
@@ -355,7 +350,9 @@
     background: linear-gradient(135deg, rgba(255, 193, 7, 0.85) 0%, rgba(255, 152, 0, 0.75) 100%);
     border-color: rgba(255, 193, 7, 0.7);
     cursor: default;
-    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4), 0 0 12px rgba(255, 193, 7, 0.2);
+    box-shadow:
+        0 2px 8px rgba(255, 193, 7, 0.4),
+        0 0 12px rgba(255, 193, 7, 0.2);
 }
 
 .skill-btn.disabled {
@@ -422,7 +419,9 @@
     width: 0;
     height: 8px;
     background: #00e5ff;
-    box-shadow: 0 0 20px #00e5ff, 0 0 40px #fff;
+    box-shadow:
+        0 0 20px #00e5ff,
+        0 0 40px #fff;
     transform: rotate(-30deg);
 }
 .slash-lightning {
@@ -430,7 +429,9 @@
     width: 5px;
     height: 0;
     background: #fff;
-    box-shadow: 0 0 15px #ffd600, 0 0 30px #ffeb3b;
+    box-shadow:
+        0 0 15px #ffd600,
+        0 0 30px #ffeb3b;
     transform: rotate(15deg);
 }
 .slash-void-bg {
@@ -446,7 +447,9 @@
     height: 20px;
     background: #000;
     border-radius: 50%;
-    box-shadow: 0 0 50px #9c27b0, 0 0 100px #673ab7;
+    box-shadow:
+        0 0 50px #9c27b0,
+        0 0 100px #673ab7;
     transform: scale(0);
 }
 .slash-gold {

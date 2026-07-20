@@ -1,8 +1,14 @@
-// IIFE 캡슐화: _playMusic, lastValidMusicSelection은 내부 전용으로 숨기고
+// IIFE 캡슐화: _playMusic은 내부 전용으로 숨기고
 // 다른 모듈(ui-manager)/init이 참조하는 심볼만 window에 노출합니다.
 (function () {
-    const currentMusicIndices = { battle: null, practice: null, max: 23 };
-    const lastValidMusicSelection = { 'music-select': '1', 'practice-music-select': '1' };
+    /**
+     * 사용 가능한 배경음악 트랙 수 (data/background_music_{1..N}.mp3).
+     * 파일을 추가/삭제하면 이 상수만 바꾸면 됩니다 — 드롭다운 렌더링(ui-manager)과
+     * 랜덤/다음 곡 선택이 모두 이 값 하나를 참조합니다.
+     */
+    const MUSIC_TRACK_COUNT = 20;
+
+    const currentMusicIndices = { battle: null, practice: null, max: MUSIC_TRACK_COUNT };
 
     /**
      * 특정 배경 음악 트랙을 재생하고 종료 이벤트 리스너를 설정합니다.
@@ -68,20 +74,12 @@
      */
     function playMusic(mode) {
         if (!currentMusicIndices[mode]) {
-            // 랜덤 선택: 잠금 해제된 트랙 중에서 선택
-            if (db.settings.unlockedMusicTracks && db.settings.unlockedMusicTracks.length > 0) {
-                const unlocked = db.settings.unlockedMusicTracks;
-                currentMusicIndices[mode] = unlocked[Math.floor(Math.random() * unlocked.length)];
-            } else {
-                // 잠금 해제 정보가 없으면 1~max 중 랜덤
-                currentMusicIndices[mode] = Math.floor(Math.random() * currentMusicIndices.max) + 1;
-            }
+            currentMusicIndices[mode] = Math.floor(Math.random() * MUSIC_TRACK_COUNT) + 1;
         }
 
-        // 현재 트랙이 잠금 해제되었는지 확인. 그렇지 않으면 첫 번째 잠금 해제된 트랙 찾기.
-        if (!db.settings.unlockedMusicTracks.includes(currentMusicIndices[mode])) {
-            // 첫 번째 잠금 해제된 트랙을 찾거나, 없으면 1로 대체
-            currentMusicIndices[mode] = db.settings.unlockedMusicTracks[0] || 1;
+        // 범위를 벗어난 값(트랙 수가 줄어든 경우 등)은 1번으로 보정
+        if (currentMusicIndices[mode] < 1 || currentMusicIndices[mode] > MUSIC_TRACK_COUNT) {
+            currentMusicIndices[mode] = 1;
         }
 
         _playMusic(currentMusicIndices[mode], mode, false);
@@ -92,32 +90,11 @@
      * @param {string} mode 'battle' | 'practice'
      */
     function playNextMusic(mode) {
-        let nextMusicNumCandidate = currentMusicIndices[mode];
-        let originalMusicNum = currentMusicIndices[mode];
-        let foundNextUnlocked = false;
+        // 1..MUSIC_TRACK_COUNT 를 순환
+        const current = currentMusicIndices[mode] || 0;
+        currentMusicIndices[mode] = (current % MUSIC_TRACK_COUNT) + 1;
 
-        // 잠금 해제된 다음 음악 번호를 찾기 위해 모든 가능한 음악 번호 반복
-        for (let i = 0; i < currentMusicIndices.max; i++) {
-            nextMusicNumCandidate++;
-            if (nextMusicNumCandidate > currentMusicIndices.max) {
-                nextMusicNumCandidate = 1; // 처음으로 루프 백
-            }
-
-            if (db.settings.unlockedMusicTracks.includes(nextMusicNumCandidate)) {
-                foundNextUnlocked = true;
-                break;
-            }
-
-            if (nextMusicNumCandidate === originalMusicNum) {
-                break;
-            }
-        }
-
-        if (foundNextUnlocked) {
-            currentMusicIndices[mode] = nextMusicNumCandidate;
-        }
-
-        // [FIX] 곡이 끝나서 다음 곡으로 넘어가는 경우이므로 forcePlay=true
+        // 곡이 끝나서 다음 곡으로 넘어가는 경우이므로 forcePlay=true
         _playMusic(currentMusicIndices[mode], mode, true);
     }
 
@@ -127,23 +104,11 @@
         selects.forEach((id) => {
             const el = document.getElementById(id);
             if (el) {
-                // Initialize lastValidMusicSelection for this dropdown based on current selected value
-                lastValidMusicSelection[id] = el.value;
-
                 el.addEventListener('change', (e) => {
                     const musicNum = parseInt(e.target.value, 10);
                     const bgMusic = document.getElementById('background-music');
 
-                    // Check if the selected music is unlocked
-                    if (!db.settings.unlockedMusicTracks.includes(musicNum)) {
-                        showToast('서로 다른 Day의 주관식을 다 맞으면 하나씩 풀립니다.', 'info');
-                        // Revert to the last valid selection
-                        e.target.value = lastValidMusicSelection[id];
-                        return; // Prevent further action
-                    }
-
-                    // If unlocked, update last valid selection and proceed
-                    lastValidMusicSelection[id] = String(musicNum);
+                    if (!(musicNum >= 1 && musicNum <= MUSIC_TRACK_COUNT)) return;
 
                     const filename = `background_music_${musicNum}.mp3`;
 
@@ -227,7 +192,8 @@
         });
     }
 
-    // 공개 API 노출 (_playMusic, lastValidMusicSelection은 내부 전용)
+    // 공개 API 노출 (_playMusic은 내부 전용)
+    window.MUSIC_TRACK_COUNT = MUSIC_TRACK_COUNT;
     window.currentMusicIndices = currentMusicIndices;
     window.playMusic = playMusic;
     window.playNextMusic = playNextMusic;

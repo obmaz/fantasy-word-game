@@ -9,17 +9,11 @@ const practiceMemorization = {
     /** 설명 영역: false = 영문(englishExplanation), true = 한글(koreanExplanation) */
     showKoreanExplanation: false,
 
-    getBookName: () => {
-        return typeof window !== 'undefined' && window.currentGameDataName
-            ? window.currentGameDataName
-            : '기본 단어장';
-    },
-
     /** 현재 단어장의 외운 단어 키 Set (word|meaning) */
     getMemorizedSet: () => {
-        const bookName = practiceMemorization.getBookName();
-        if (!db.practiceMemorized || !db.practiceMemorized[bookName]) return new Set();
-        return new Set(db.practiceMemorized[bookName]);
+        const bookKey = db.getBookKey();
+        if (!db.practiceMemorized || !db.practiceMemorized[bookKey]) return new Set();
+        return new Set(db.practiceMemorized[bookKey]);
     },
 
     /** fullPool을 currentFilter에 맞게 필터링하여 words 설정 */
@@ -76,13 +70,13 @@ const practiceMemorization = {
             return;
 
         const word = practiceMemorization.words[practiceMemorization.currentIndex];
-        const bookName = practiceMemorization.getBookName();
+        const bookKey = db.getBookKey();
         const key = `${word.word}|${word.meaning}`;
 
         if (!db.practiceMemorized) db.practiceMemorized = {};
-        if (!db.practiceMemorized[bookName]) db.practiceMemorized[bookName] = [];
+        if (!db.practiceMemorized[bookKey]) db.practiceMemorized[bookKey] = [];
 
-        const arr = db.practiceMemorized[bookName];
+        const arr = db.practiceMemorized[bookKey];
         const idx = arr.indexOf(key);
 
         if (idx === -1) {
@@ -94,7 +88,7 @@ const practiceMemorization = {
             arr.splice(idx, 1);
             game.showFloatText('외움 취소', 'red');
         }
-        db.save();
+        db.save('memorized');
 
         // 현재 필터가 all이면 그냥 버튼 상태만 갱신
         // memorized나 not-memorized면 리스트에서 사라져야 하므로 applyFilter 재호출

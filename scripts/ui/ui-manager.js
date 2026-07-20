@@ -46,6 +46,16 @@ const ui = {
     },
 
     /**
+     * 스토리 모달의 제목을 설정합니다
+     * @param {string} title - 표시할 제목
+     * @param {string} screenPrefix - 'battle-mode' | 'boss-mode'
+     */
+    setStoryTitle: (title, screenPrefix) => {
+        const el = document.getElementById(`${screenPrefix}-title`);
+        if (el) el.innerText = title;
+    },
+
+    /**
      * 히어로 비주얼을 업데이트합니다 (무기, 이펙트 등)
      */
     updateVisuals: () => {
@@ -87,28 +97,6 @@ const ui = {
                 }
             `;
         }
-    },
-
-    /**
-     * 내구도 배지를 업데이트합니다 (현재 사용 안 함)
-     */
-    updateDurability: () => {
-        // 황금장갑은 이제 skill bar에 표시되므로 이 배지는 숨김
-        const el = document.getElementById('durability-badge');
-        if (el) {
-            el.style.display = 'none';
-        }
-    },
-
-    /**
-     * 메인 통계를 업데이트합니다
-     */
-    updateMainStats: () => {
-        document.getElementById('stat-solved').innerText = db.stats.solved;
-        document.getElementById('stat-correct').innerText = db.stats.correct;
-        const rate =
-            db.stats.solved > 0 ? Math.round((db.stats.correct / db.stats.solved) * 100) : 0;
-        document.getElementById('stat-rate').innerText = rate + '%';
     },
 
     /**
@@ -188,7 +176,10 @@ const ui = {
 
         selectEl.innerHTML = ''; // 기존 옵션 제거
 
-        for (let i = 1; i <= currentMusicIndices.max; i++) {
+        // 실제 존재하는 파일 수(audio-manager의 MUSIC_TRACK_COUNT)만 노출해야
+        // 없는 트랙을 골라 404 → 무음이 되는 일을 막을 수 있음
+        const trackCount = window.MUSIC_TRACK_COUNT || currentMusicIndices.max;
+        for (let i = 1; i <= trackCount; i++) {
             const option = document.createElement('option');
             option.value = String(i);
             option.innerText = `background_music_${i}.mp3`;

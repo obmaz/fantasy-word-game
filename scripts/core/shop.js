@@ -147,7 +147,7 @@ const shop = {
             }
         }
 
-        db.save();
+        db.save('gold', 'owned', 'dura', 'inventory', 'capacity', 'skills');
         shop.render();
         inventory.render(); // 인벤토리 화면도 업데이트
     },

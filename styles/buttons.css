@@ -146,6 +146,24 @@
     pointer-events: none;
 }
 
+/* 정답 공개: 오답을 골랐을 때 어떤 보기가 정답이었는지 강조 */
+.option-btn.option-btn-correct {
+    background: #4caf50;
+    color: #ffffff;
+    border: 3px solid #2e7d32;
+    font-weight: bold;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.5);
+}
+
+/* 사용자가 실제로 누른 보기의 피드백 */
+.option-btn.option-btn-picked-correct {
+    background: #66bb6a;
+}
+.option-btn.option-btn-picked-wrong {
+    background: #d32f2f;
+}
+
 /* Boss Mode UI */
 .boss-ui {
     width: 100%;
@@ -165,6 +183,13 @@
     font-family: monospace;
     color: var(--success);
 }
+
+/* 오답 후 정답 전체를 공개할 때 */
+.boss-hint.boss-hint-revealed {
+    color: #4caf50;
+    font-weight: bold;
+}
+
 .boss-input {
     padding: 12px;
     font-size: clamp(16px, 5.5cqmin, 34px);
@@ -174,6 +199,13 @@
     color: white;
     border-radius: 8px;
     outline: none;
+}
+
+.boss-input.boss-input-correct {
+    border-color: #66bb6a;
+}
+.boss-input.boss-input-wrong {
+    border-color: #d32f2f;
 }
 
 .boss-submit {

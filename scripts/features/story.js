@@ -15,7 +15,7 @@ const story = {
         story.mode = 'boss';
         story.day = 'boss';
         db.lastSelectedDay = 'boss';
-        db.save();
+        db.save('lastDay');
         const startScreen = document.getElementById('title-screen');
         if (startScreen) {
             startScreen.style.zIndex = '100';
@@ -33,7 +33,7 @@ const story = {
         const daySel = dayArg || document.getElementById('day-select').value;
         dlog('[story.startIntro] mode=', mode, 'dayArg=', dayArg, 'resolvedDay=', daySel);
         db.lastSelectedDay = daySel;
-        db.save();
+        db.save('lastDay');
         story.day = mode === 'boss' ? 'boss' : daySel;
         story.mode = mode;
         const data = resolveStoryData(story.day);
@@ -42,42 +42,14 @@ const story = {
         const storyScreenId = mode === 'boss' ? 'boss-mode-story-modal' : 'battle-mode-story-modal';
         const storyScreenPrefix = mode === 'boss' ? 'boss-mode' : 'battle-mode';
 
-        // DEBUG: verify where title is coming from
-        const hasEntry = !!(dayCatalog && dayCatalog[story.day] && dayCatalog[story.day].story);
-        const optNode = document.querySelector(`#day-select option[value="${story.day}"]`);
-        dlog(
-            '[story.startIntro] dbg -> day=',
-            story.day,
-            'hasEntry=',
-            hasEntry,
-            'optText=',
-            optNode && optNode.textContent
-        );
-        dlog('[story.startIntro] dbg -> data.title=', data.title);
+        dlog('[story.startIntro] day=', story.day, 'title=', data.title);
 
-        const titleElId = `${storyScreenPrefix}-title`;
-        const titleEls = document.querySelectorAll(`#${titleElId}`);
-        if (titleEls.length > 1)
-            console.warn(
-                `[story.startIntro] multiple #${titleElId} elements found:`,
-                titleEls.length
-            );
-        const titleEl = document.getElementById(titleElId);
-        dlog(`[story.startIntro] current #${titleElId} before=`, titleEl && titleEl.innerText);
-
-        // ============================================================
-        // 스토리 관리자
-        // ============================================================
+        // 스토리 모달 제목은 짧게 표시한다 (dayCatalog의 "Day 5 (부제)" 형태가 아니라 "Day 5")
         let displayTitle;
-        if (story.day === 'all') {
-            displayTitle = '전체';
-        } else if (story.day === 'boss') {
-            displayTitle = '보스 모드';
-        } else if (!isNaN(Number(story.day))) {
-            displayTitle = `Day ${story.day}`;
-        } else {
-            displayTitle = story.day;
-        }
+        if (story.day === 'all') displayTitle = '전체';
+        else if (story.day === 'boss') displayTitle = '보스 모드';
+        else if (!isNaN(Number(story.day))) displayTitle = `Day ${story.day}`;
+        else displayTitle = story.day;
 
         // title-screen을 닫지 않고 z-index와 display를 조정
         const startScreen = document.getElementById('title-screen');
@@ -86,26 +58,9 @@ const story = {
             startScreen.style.display = 'flex';
         }
 
-        // 다른 story-modal 닫기
-        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
-        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
-        if (battleModeStoryScreen && storyScreenId !== 'battle-mode-story-modal') {
-            battleModeStoryScreen.style.display = 'none';
-        }
-        if (bossStoryScreen && storyScreenId !== 'boss-mode-story-modal') {
-            bossStoryScreen.style.display = 'none';
-        }
-
-        // story-modal 스타일 초기화
-        const storyScreen = document.getElementById(storyScreenId);
-        if (storyScreen) {
-            storyScreen.style.visibility = '';
-            storyScreen.style.opacity = '';
-            storyScreen.style.zIndex = '';
-            storyScreen.style.pointerEvents = '';
-            storyScreen.classList.remove('closing');
-        }
-
+        // 두 스토리 모달 모두 초기 상태로 되돌린 뒤(이전 실행이 남긴 인라인 스타일 제거)
+        // 이번에 쓸 것만 연다
+        resetScreenOverlays(['battle-mode-story-modal', 'boss-mode-story-modal']);
         openScreenOverlay(storyScreenId, true);
 
         // 히스토리 상태 추가 (백버튼 처리용)
@@ -145,13 +100,7 @@ const story = {
         }
 
         // 타이틀 설정
-        if (window.ui && typeof window.ui.setStoryTitle === 'function') {
-            window.ui.setStoryTitle(displayTitle, storyScreenPrefix);
-        } else {
-            const te = document.getElementById(titleElId);
-            if (te) te.innerText = displayTitle;
-            console.warn(`[story.startIntro] fallback title write used for ${titleElId}`);
-        }
+        ui.setStoryTitle(displayTitle, storyScreenPrefix);
 
         // Day 정보 표시
         const dayInfoEl = document.getElementById(`${storyScreenPrefix}-day-info`);
@@ -166,50 +115,47 @@ const story = {
             textEl.innerText = introText;
         }
 
-        // "모험시작" 버튼에 이벤트 연결
+        // "모험시작" 버튼에 이벤트 연결 (버튼당 1회만)
         if (storyStartBtn) {
-            // 기존 이벤트 리스너 완전히 제거
-            storyStartBtn.onclick = null;
-            const newBtn = storyStartBtn.cloneNode(true);
-            storyStartBtn.parentNode.replaceChild(newBtn, storyStartBtn);
-            const freshBtn = document.getElementById(`${storyScreenPrefix}-start-btn`);
-
-            // 새 이벤트 리스너 추가
-            if (freshBtn) {
-                freshBtn.addEventListener(
-                    'click',
-                    (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        dlog('Story start button clicked');
-                        if (game.isProcessing) {
-                            dlog('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
-                            return;
-                        }
-                        const resolvedAtIntro = story.mode === 'boss' ? 'boss' : daySel;
-                        dlog(
-                            '[story-btn] introResolvedDay=',
-                            resolvedAtIntro,
-                            'story.mode=',
-                            story.mode
-                        );
-
-                        // Practice 모드는 암기 모드로 시작
-                        if (story.mode === 'practice') {
-                            practiceMemorization.start(resolvedAtIntro);
-                        } else {
-                            game.init(story.mode, resolvedAtIntro);
-                        }
-                    },
-                    { capture: true }
-                );
-                freshBtn.style.pointerEvents = 'auto';
-                freshBtn.style.cursor = 'pointer';
-                freshBtn.style.zIndex = '25';
-            }
+            story._bindStartButton(storyStartBtn);
         } else {
             console.warn(`${storyScreenPrefix}-start-btn not found`);
         }
+    },
+
+    /**
+     * "모험시작" 버튼 클릭 핸들러.
+     * story.mode/story.day를 읽으므로 클로저가 필요 없고, 따라서 버튼당 한 번만 바인딩하면 됩니다.
+     */
+    _onStartClick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dlog('Story start button clicked');
+
+        if (game.isProcessing) {
+            dlog('[startGame] 게임 오버 처리 중이므로 시작하지 않음');
+            return;
+        }
+
+        // startIntro가 story.day를 이미 확정해 둠 (boss면 'boss')
+        dlog('[story-btn] day=', story.day, 'mode=', story.mode);
+        // 연습 모드는 스토리 모달을 거치지 않고 practiceMemorization.start()로
+        // 직접 진입하므로 여기 도달하는 mode는 'battle' 또는 'boss'뿐이다.
+        game.init(story.mode, story.day);
+    },
+
+    /**
+     * 시작 버튼에 리스너를 1회만 붙입니다.
+     *
+     * 이전에는 리스너 중복을 막으려고 cloneNode로 노드를 통째 교체했지만,
+     * 핸들러가 클로저를 쓰지 않게 바꾼 지금은 플래그 하나로 충분합니다.
+     * (노드 교체는 다른 곳에서 잡아둔 참조를 무효화하는 부작용도 있었습니다.)
+     * @param {HTMLElement} btn
+     */
+    _bindStartButton: (btn) => {
+        if (btn.dataset.startBound) return;
+        btn.addEventListener('click', story._onStartClick, { capture: true });
+        btn.dataset.startBound = 'true';
     },
 
     /**
@@ -234,47 +180,7 @@ const story = {
 
         document.getElementById('battle-mode-game').style.display = 'none';
 
-        // story-modal을 확실히 닫기
-        const battleModeStoryScreen = document.getElementById('battle-mode-story-modal');
-        const bossStoryScreen = document.getElementById('boss-mode-story-modal');
-        if (battleModeStoryScreen) {
-            battleModeStoryScreen.style.display = 'none';
-            battleModeStoryScreen.style.visibility = 'hidden';
-            battleModeStoryScreen.style.opacity = '0';
-            battleModeStoryScreen.style.zIndex = '100';
-            battleModeStoryScreen.style.pointerEvents = 'none';
-            battleModeStoryScreen.classList.remove('closing');
-        }
-        if (bossStoryScreen) {
-            bossStoryScreen.style.display = 'none';
-            bossStoryScreen.style.visibility = 'hidden';
-            bossStoryScreen.style.opacity = '0';
-            bossStoryScreen.style.zIndex = '100';
-            bossStoryScreen.style.pointerEvents = 'none';
-            bossStoryScreen.classList.remove('closing');
-        }
-
-        // practice-mode-modal과 battle-mode-modal 닫기
-        const practiceModeModal = document.getElementById('practice-mode-modal');
-        const battleModeModal = document.getElementById('battle-mode-modal');
-        if (practiceModeModal) {
-            practiceModeModal.style.display = 'none';
-            practiceModeModal.style.visibility = 'hidden';
-            practiceModeModal.style.opacity = '0';
-            practiceModeModal.style.zIndex = '100';
-            practiceModeModal.style.pointerEvents = 'none';
-            practiceModeModal.classList.remove('closing');
-        }
-        if (battleModeModal) {
-            battleModeModal.style.display = 'none';
-            battleModeModal.style.visibility = 'hidden';
-            battleModeModal.style.opacity = '0';
-            battleModeModal.style.zIndex = '100';
-            battleModeModal.style.pointerEvents = 'none';
-            battleModeModal.classList.remove('closing');
-        }
-
-        // 결과 화면으로 이동
+        // 결과 화면으로 이동 (스토리/모드 선택 오버레이 정리는 game.end가 담당)
         game.end(win);
     },
 };

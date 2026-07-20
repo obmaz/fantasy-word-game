@@ -1,6 +1,9 @@
 /**
  * 통계 시스템
  * 게임 통계 UI 렌더링 및 관리
+ *
+ * 통계 데이터의 구조/저장은 database.js가 소유합니다.
+ * 이 모듈은 db.getBookStats()가 준 값을 표시만 합니다.
  */
 
 const statistics = {
@@ -24,169 +27,108 @@ const statistics = {
     },
 
     /**
+     * "해결 / 정답률 / 정답 / 오답" 2줄 블록을 만듭니다
+     * @param {number} solved - 푼 문제 수
+     * @param {number} correct - 맞힌 문제 수
+     * @returns {string} HTML 문자열
+     */
+    _statBlock: (solved, correct) => {
+        const rate = solved > 0 ? Math.round((correct / solved) * 100) : 0;
+        const wrong = solved - correct;
+        return `<div class="statistics-item">
+            <div class="statistics-stat-group">
+                <div class="statistics-stat-row">
+                    <b>해결: </b><span class="statistics-value">${solved}개</span>
+                    <b class="statistics-label">정답률: </b><span class="statistics-value">${rate}%</span>
+                </div>
+                <div class="statistics-stat-row">
+                    <b>정답: </b><span class="statistics-value statistics-value-correct">${correct}개</span>
+                    <b class="statistics-label">오답: </b><span class="statistics-value statistics-value-wrong">${wrong}개</span>
+                </div>
+            </div>
+        </div>`;
+    },
+
+    /**
+     * 현재 단어장 이름을 모달 헤더에 표시합니다
+     * (통계의 저장 키는 데이터셋 ID지만, 표시는 사람이 읽는 이름으로 합니다)
+     */
+    _renderBookInfo: () => {
+        const modalHeader = document.querySelector('#statistics-modal .modal-header');
+        if (!modalHeader) return;
+
+        const existing = modalHeader.querySelector('.statistics-book-info');
+        if (existing) existing.remove();
+
+        const bookInfo = document.createElement('div');
+        bookInfo.className = 'statistics-book-info';
+        bookInfo.textContent = `📚 ${window.currentGameDataName || '기본 단어장'}`;
+        modalHeader.appendChild(bookInfo);
+    },
+
+    /**
      * 통계 UI를 렌더링합니다
      */
     render: () => {
         const container = document.getElementById('statistics-container');
         container.innerHTML = '';
 
-        // 현재 단어장 정보를 타이틀 영역에 표시
-        const currentBookName =
-            typeof window !== 'undefined' && window.currentGameDataName
-                ? window.currentGameDataName
-                : '기본 단어장';
-        const modalHeader = document.querySelector('#statistics-modal .modal-header');
-        if (modalHeader) {
-            const existingBookInfo = modalHeader.querySelector('.statistics-book-info');
-            if (existingBookInfo) {
-                existingBookInfo.remove();
-            }
-            const bookInfo = document.createElement('div');
-            bookInfo.className = 'statistics-book-info';
-            bookInfo.style.cssText =
-                'font-size: 12px; color: var(--primary); margin-top: 4px; text-align: center;';
-            bookInfo.textContent = `📚 ${currentBookName}`;
-            modalHeader.appendChild(bookInfo);
-        }
+        statistics._renderBookInfo();
 
-        // 단어장별 통계 가져오기
-        if (!db.stats.books) {
-            db.stats.books = {};
-        }
-        const bookStats = db.stats.books[currentBookName] || {
-            solved: 0,
-            correct: 0,
-            objective: { solved: 0, correct: 0 },
-            subjective: { solved: 0, correct: 0, perfectDays: [] },
-            bossMode: { bestWave: 0, bestWaveDate: null },
-        };
-
-        // 통계 데이터 계산
-        const solved = bookStats.solved || 0;
-        const correct = bookStats.correct || 0;
-        const rate = solved > 0 ? Math.round((correct / solved) * 100) : 0;
-        const wrong = solved - correct;
-
-        // 객관식/주관식 통계
-        const objectiveStats = bookStats.objective || { solved: 0, correct: 0 };
-        const subjectiveStats = bookStats.subjective || { solved: 0, correct: 0 };
-        const objectiveSolved = objectiveStats.solved || 0;
-        const objectiveCorrect = objectiveStats.correct || 0;
-        const objectiveRate =
-            objectiveSolved > 0 ? Math.round((objectiveCorrect / objectiveSolved) * 100) : 0;
-        const subjectiveSolved = subjectiveStats.solved || 0;
-        const subjectiveCorrect = subjectiveStats.correct || 0;
-        const subjectiveRate =
-            subjectiveSolved > 0 ? Math.round((subjectiveCorrect / subjectiveSolved) * 100) : 0;
-
-        // 보유 아이템 수
-        const ownedItems = db.owned.length;
-        const inventoryItems = db.inventory.length;
-        const totalItems = ownedItems + inventoryItems;
-
-        // 장착한 장비 목록
-        const equippedItems = [];
-        if (db.equipped['head']) {
-            const item = items.find((i) => i.id === db.equipped['head']);
-            if (item) equippedItems.push({ slot: '머리', name: item.name, icon: item.icon });
-        }
-        if (db.equipped['hand-1']) {
-            const item =
-                weapons.find((w) => w.id === db.equipped['hand-1']) ||
-                items.find((i) => i.id === db.equipped['hand-1']);
-            if (item) equippedItems.push({ slot: '오른손', name: item.name, icon: item.icon });
-        }
-        if (db.equipped['hand-2']) {
-            const item =
-                weapons.find((w) => w.id === db.equipped['hand-2']) ||
-                items.find((i) => i.id === db.equipped['hand-2']);
-            if (item) equippedItems.push({ slot: '왼손', name: item.name, icon: item.icon });
-        }
-        if (db.equipped['foot-1'] || db.equipped['foot-2']) {
-            const item = items.find(
-                (i) => i.id === db.equipped['foot-1'] || i.id === db.equipped['foot-2']
-            );
-            if (item) equippedItems.push({ slot: '발', name: item.name, icon: item.icon });
-        }
+        // 현재 활성 데이터셋의 통계 (없으면 database.js가 만들어 반환)
+        const bookStats = db.getBookStats();
+        const objective = bookStats.objective;
+        const subjective = bookStats.subjective;
 
         let html = '';
 
         // 게임 통계
-        html += '<div class="statistics-section" style="margin-top:20px;">📊 게임 통계</div>';
-        html += `<div class="statistics-item">
-            <div style="text-align:right; width:100%;">
-                <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${solved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${rate}%</span></div>
-                <div style="font-size:15px;"><b>정답: </b><span style="color:#4CAF50; font-weight:bold;">${correct}개</span> <b style="margin-left:12px;">오답: </b><span style="color:#FF5252; font-weight:bold;">${wrong}개</span></div>
-            </div>
-        </div>`;
+        html += '<div class="statistics-section statistics-section-major">📊 게임 통계</div>';
+        html += statistics._statBlock(bookStats.solved || 0, bookStats.correct || 0);
 
         // 객관식 통계
-        const objectiveWrong = objectiveSolved - objectiveCorrect;
-        html +=
-            '<div class="statistics-section" style="margin-top:20px; margin-bottom:8px;">📋 객관식</div>';
-        html += `<div class="statistics-item">
-            <div style="text-align:right; width:100%;">
-                <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${objectiveSolved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${objectiveRate}%</span></div>
-                <div style="font-size:15px;"><b>정답: </b><span style="color:#4CAF50; font-weight:bold;">${objectiveCorrect}개</span> <b style="margin-left:12px;">오답: </b><span style="color:#FF5252; font-weight:bold;">${objectiveWrong}개</span></div>
-            </div>
-        </div>`;
+        html += '<div class="statistics-section">📋 객관식</div>';
+        html += statistics._statBlock(objective.solved || 0, objective.correct || 0);
 
         // 주관식 통계
-        const subjectiveWrong = subjectiveSolved - subjectiveCorrect;
-        html +=
-            '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✍️ 주관식</div>';
-        html += `<div class="statistics-item">
-            <div style="text-align:right; width:100%;">
-                <div style="font-size:15px; margin-bottom:4px;"><b>해결: </b><span style="color:var(--primary); font-weight:bold;">${subjectiveSolved}개</span> <b style="margin-left:12px;">정답률: </b><span style="color:var(--primary); font-weight:bold;">${subjectiveRate}%</span></div>
-                <div style="font-size:15px;"><b>정답: </b><span style="color:#4CAF50; font-weight:bold;">${subjectiveCorrect}개</span> <b style="margin-left:12px;">오답: </b><span style="color:#FF5252; font-weight:bold;">${subjectiveWrong}개</span></div>
-            </div>
-        </div>`;
+        html += '<div class="statistics-section">✍️ 주관식</div>';
+        html += statistics._statBlock(subjective.solved || 0, subjective.correct || 0);
 
-        // 주관식을 전부 맞춘 날 표시
-        const perfectDays = subjectiveStats.perfectDays || [];
-
+        // 주관식을 전부 맞춘 날
+        html += '<div class="statistics-section">✨ 주관식 전부 맞춘 날</div>';
+        const perfectDays = [...(subjective.perfectDays || [])].sort((a, b) =>
+            a.date.localeCompare(b.date)
+        );
         if (perfectDays.length === 0) {
-            html +=
-                '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
             html += `<div class="statistics-item">
-                <div style="text-align:right; width:100%;">
-                    <div style="font-size:15px;"><span style="color:var(--primary); font-weight:bold;">없음</span></div>
+                <div class="statistics-stat-group">
+                    <div class="statistics-stat-row"><span class="statistics-value">없음</span></div>
                 </div>
             </div>`;
         } else {
-            // 날짜순으로 정렬 (최신이 마지막)
-            const sortedPerfectDays = [...perfectDays].sort((a, b) => a.date.localeCompare(b.date));
-
-            html +=
-                '<div class="statistics-section" style="margin-top:15px; margin-bottom:8px;">✨ 주관식 전부 맞춘 날</div>';
-            sortedPerfectDays.forEach((perfect, index) => {
-                const perfectDate = perfect.displayDate || perfect.date;
-                const perfectDayLabel = perfect.dayLabel || '';
-
+            perfectDays.forEach((perfect) => {
+                const label = perfect.dayLabel || '';
                 html += `<div class="statistics-item">
-                    <div style="text-align:right; width:100%;">
-                        <div style="font-size:15px; margin-bottom:4px;"><span style="color:var(--primary); font-weight:bold;">${perfectDate}</span></div>
-                        ${
-                            perfectDayLabel
-                                ? `<div style="font-size:15px;"><b>${perfectDayLabel}</b></div>`
-                                : ''
-                        }
+                    <div class="statistics-stat-group">
+                        <div class="statistics-stat-row"><span class="statistics-value">${perfect.displayDate || perfect.date}</span></div>
+                        ${label ? `<div class="statistics-stat-row"><b>${label}</b></div>` : ''}
                     </div>
                 </div>`;
             });
         }
 
         // 보스 모드 최고 wave 기록
-        const bossModeStats = bookStats.bossMode || { bestWave: 0, bestWaveDate: null };
-        const bestWave = bossModeStats.bestWave || 0;
-        const bestWaveDate = bossModeStats.bestWaveDate
-            ? bossModeStats.bestWaveDate.displayDate
+        const bossMode = bookStats.bossMode;
+        const bestWaveDate = bossMode.bestWaveDate
+            ? bossMode.bestWaveDate.displayDate
             : '기록 없음';
-
-        html += '<div class="statistics-section" style="margin-top:20px;">👑 보스 모드 기록</div>';
+        html += '<div class="statistics-section statistics-section-major">👑 보스 모드 기록</div>';
         html += `<div class="statistics-item">
-            <div style="text-align:right; width:100%;">
-                <div style="font-size:15px;"><b>Wave: </b><span style="color:#E040FB; font-weight:bold;">${bestWave}</span> <b style="margin-left:12px;">날짜: </b><span style="color:var(--primary); font-weight:bold;">${bestWaveDate}</span></div>
+            <div class="statistics-stat-group">
+                <div class="statistics-stat-row">
+                    <b>Wave: </b><span class="statistics-value statistics-value-wave">${bossMode.bestWave || 0}</span>
+                    <b class="statistics-label">날짜: </b><span class="statistics-value">${bestWaveDate}</span>
+                </div>
             </div>
         </div>`;
 

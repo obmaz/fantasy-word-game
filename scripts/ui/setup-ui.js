@@ -45,7 +45,7 @@ function initSelections() {
         } else {
             daySelect.value = 'all';
             db.lastSelectedDay = 'all';
-            db.save();
+            db.save('lastDay');
         }
     }
 

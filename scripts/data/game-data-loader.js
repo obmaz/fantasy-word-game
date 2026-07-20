@@ -140,23 +140,38 @@
 
             selector.addEventListener('change', async function (e) {
                 const newDataSetId = e.target.value;
+
+                // 선택한 데이터셋이 실제로 존재하는지만 먼저 확인한다.
+                // 중요: 확인(confirm) 전에 changeDataSet()을 호출하면 안 된다.
+                //   - 전역(window.rawDataData/storiesData)이 즉시 교체되는데
+                //     words-loader.js의 rawData/dayCatalog는 로드 시점 값으로 고정되어 있어
+                //     "취소"를 눌러도 Day 목록과 실제 문제 풀이 어긋난 상태가 남는다.
+                //   - currentDataSetId도 이미 새 값이라 updateSelectorUI()가 복원에 실패한다.
+                // 따라서 적용은 새로고침에 동의한 뒤에만 수행한다.
+                if (!availableDataSets.find((ds) => ds.id === newDataSetId)) {
+                    console.error(`[data-loader] Data set ${newDataSetId} not found`);
+                    updateSelectorUI(); // 이전 선택으로 복원
+                    return;
+                }
+
+                // 비차단 커스텀 확인 모달 사용 (없으면 기본 confirm으로 폴백)
+                const confirmFn =
+                    typeof showConfirm === 'function'
+                        ? showConfirm
+                        : (msg) => Promise.resolve(window.confirm(msg));
+                const ok = await confirmFn(
+                    '게임 데이터를 변경하려면 페이지를 새로고침해야 합니다. 새로고침할까요?',
+                    { okText: '새로고침', cancelText: '취소' }
+                );
+
+                if (!ok) {
+                    // 취소: 전역 데이터를 건드리지 않았으므로 드롭박스만 이전 값으로 되돌리면 됨
+                    updateSelectorUI();
+                    return;
+                }
+
                 if (changeDataSet(newDataSetId)) {
-                    // 페이지 새로고침 필요 (데이터가 이미 로드된 후 변경되므로)
-                    // 비차단 커스텀 확인 모달 사용 (없으면 기본 confirm으로 폴백)
-                    const confirmFn =
-                        typeof showConfirm === 'function'
-                            ? showConfirm
-                            : (msg) => Promise.resolve(window.confirm(msg));
-                    const ok = await confirmFn(
-                        '게임 데이터를 변경하려면 페이지를 새로고침해야 합니다. 새로고침할까요?',
-                        { okText: '새로고침', cancelText: '취소' }
-                    );
-                    if (ok) {
-                        location.reload();
-                    } else {
-                        // 취소 시 이전 값으로 복원
-                        updateSelectorUI();
-                    }
+                    location.reload();
                 } else {
                     // 로드 실패 시 이전 값으로 복원
                     updateSelectorUI();

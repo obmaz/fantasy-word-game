@@ -200,8 +200,13 @@ const secret = {
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
 
         // 비밀번호 확인 후 실행할 함수
-        secret.pendingAction = () => {
-            if (confirm('정말 골드를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+        // spec §2.3: 네이티브 confirm()은 메인 스레드를 막으므로 showConfirm(비차단)을 사용
+        secret.pendingAction = async () => {
+            const ok = await showConfirm(
+                '정말 골드를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+                { okText: '초기화', cancelText: '취소' }
+            );
+            if (ok) {
                 db.gold = 0;
                 db.save();
 
@@ -241,19 +246,15 @@ const secret = {
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
 
         // 비밀번호 확인 후 실행할 함수
-        secret.pendingAction = () => {
-            if (confirm('정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-                db.stats = {
-                    solved: 0,
-                    correct: 0,
-                    objective: { solved: 0, correct: 0 },
-                    subjective: { solved: 0, correct: 0, perfectDays: [] },
-                    bossMode: { bestWave: 0, bestWaveDate: null },
-                    books: {},
-                };
-                db.save();
+        secret.pendingAction = async () => {
+            const ok = await showConfirm(
+                '정말 통계를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+                { okText: '초기화', cancelText: '취소' }
+            );
+            if (ok) {
+                db.stats = { books: {} };
+                db.save('stats');
 
-                ui.updateMainStats();
                 if (typeof statistics !== 'undefined' && typeof statistics.render === 'function') {
                     statistics.render();
                 }
@@ -346,20 +347,17 @@ const secret = {
         history.pushState({ screen: 'password-modal' }, '', window.location.href);
 
         // 비밀번호 확인 후 실행할 함수
-        secret.pendingAction = () => {
-            if (confirm('정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+        secret.pendingAction = async () => {
+            const ok = await showConfirm(
+                '정말 모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+                { okText: '초기화', cancelText: '취소' }
+            );
+            if (ok) {
                 db.gold = 0;
                 db.owned = ['basic'];
                 db.equippedWeapon = 'basic';
                 db.durability = {};
-                db.stats = {
-                    solved: 0,
-                    correct: 0,
-                    objective: { solved: 0, correct: 0 },
-                    subjective: { solved: 0, correct: 0, perfectDays: [] },
-                    bossMode: { bestWave: 0, bestWaveDate: null },
-                    books: {},
-                };
+                db.stats = { books: {} };
                 db.inventory = [];
                 db.equipped = {};
                 db.inventoryCapacity = 3;
@@ -368,9 +366,7 @@ const secret = {
                 db.save();
 
                 ui.updateGold();
-                ui.updateMainStats();
                 ui.updateVisuals();
-                ui.updateDurability();
                 inventory.render();
 
                 showToast('모든 데이터가 초기화되었습니다.', 'success');
@@ -459,8 +455,9 @@ const secret = {
             return;
         }
 
-        // 단어를 섞기
-        const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
+        // 단어를 섞기 — game.shuffle(Fisher–Yates, 사본 반환)을 재사용한다.
+        // sort(() => Math.random() - 0.5)는 균등 분포가 아니라 정답 보기 위치가 치우친다.
+        const shuffle = (arr) => game.shuffle(arr);
 
         // 문제 생성 로직 함수들 (admin-tools 내부 헬퍼)
         const buildObjectiveOptions = (correctValue, key, primaryPool, count = 4) => {

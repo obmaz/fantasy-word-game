@@ -1,171 +1,250 @@
 # 📋 코드 리뷰: 킹왕짱 RPG (Fantasy Word Game)
 
-> 리뷰 일자: 2026-06-29 · 브랜치: `main` · 방식: 소스 직접 정독 (scripts/ 전반)
+> 리뷰 일자: 2026-07-20 · 브랜치: `main` · 방식: 소스 직접 정독 (`scripts/`, `index.html`, `styles/`)
+> 범위: 보안 항목 제외 (요청)
+> **상태: 지적 항목 전건 반영 완료** — 아래는 "무엇을 왜 고쳤는지"의 기록입니다.
 
 ## 한눈에 보기
 
-판타지 RPG 외피를 입힌 영단어 학습 게임. 순수 Vanilla JS/CSS + localStorage 구조이며,
-연습/배틀/보스 모드와 단어장별 통계, 아이템/장비/상점 경제 시스템을 갖췄습니다.
-기능적으로는 완성도 있게 동작하지만, **무작위성·전역 상태·렌더링 방식**에서
-교정해야 할 실제 결함이 보입니다. 아래는 "동작은 하지만 틀린/위험한" 항목 위주입니다.
+이전 리뷰(2026-06-29)의 핵심 결함(편향 셔플, 원본 배열 파괴, 무한 루프, 스킬 `NaN`)은
+이미 해결된 상태였고, 이번 리뷰는 그 이후 남았거나 새로 드러난 문제를 다뤘습니다.
+
+가장 값어치 있던 항목은 **B1(보상이 이전 문제의 잔여 시간으로 계산됨)**과
+**B2(존재하지 않는 음악 파일 3개)** 였습니다. 둘 다 사용자가 체감하는 실제 오작동이면서
+수정 비용은 몇 줄에 불과했습니다.
+
+구조 측면에서는 **통계 영속화 책임이 게임 엔진에 흩어져 있던 것**이 가장 컸고,
+이를 `database.js`로 되돌리면서 같은 초기화 블록 4중 복제와 레거시 이중 기록을 함께 정리했습니다.
+
+검증 수단이 전무하던 상태에서 **테스트 16개**(순수 로직 13 + 로드 스모크 3)를 추가했습니다.
 
 ---
 
-## 🐞 실제 버그 / 정확성 문제 (우선순위 높음)
+## 🐞 버그 (수정 완료)
 
-### B1. 편향된 셔플 알고리즘
+### B1. 시간 제한 없는 문제의 보상이 "이전 문제의 잔여 시간"으로 계산됨 ⭐
+
+주관식과 보스 모드는 타이머를 시작하지 않는데(`nextLevel`) 보상 계산은 `game.timeLeft`를 그대로 읽었습니다.
+
+- **보스 모드**: `timeLeft`가 초기값 `0`에서 갱신되지 않아 `timeRatio = 0` →
+  **보상이 항상 `floor(80 × 0.5) = 40G`로 고정**(설계상 최대 80G).
+- **배틀 혼합형 주관식**: 직전 객관식이 남긴 시간을 그대로 사용 → 같은 난이도인데 보상이 널뜀.
+  직전 문제가 타임아웃이었거나 첫 문제가 주관식이면 50%.
+
+**수정** — `game-engine.js` `handleAnswer`: 시간 제한 유무를 판정해 배율을 분리.
+
 ```js
-// game-engine.js:802
-shuffle: (arr) => arr.sort(() => Math.random() - 0.5),
-```
-`sort(() => Math.random() - 0.5)`는 균등 분포를 만들지 못하는 잘 알려진 안티패턴입니다.
-엔진/브라우저에 따라 특정 위치가 통계적으로 더 자주 나오며, **퀴즈 게임에서는 정답 보기 위치나
-문제 출현 순서가 치우칠 수 있습니다.** Fisher–Yates로 교체하세요.
-```js
-shuffle: (arr) => {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-},
+const isTimed = game.mode !== 'boss' && !(game.currentQ && game.currentQ.isBoss);
+const timeRatio = isTimed ? game.timeLeft / game.maxTime : 1;
 ```
 
-### B2. `shuffle`가 원본 배열을 파괴 (전역 데이터 오염)
-`Array.prototype.sort`는 제자리(in-place) 정렬입니다. 그런데 `game.init`에서 `day === 'all'`일 때
-`pool = currentRawData;` (복사 아님) 로 둔 뒤 `game.shuffle(pool)`을 호출합니다(L69, L113, L190).
-즉 **원본 단어 데이터(`window.rawDataData`)의 순서가 매 판마다 영구적으로 뒤섞입니다.**
-지금은 순서가 결과에 영향을 안 줘서 표면화되지 않을 뿐, 잠재적 버그입니다.
-`game.shuffle([...pool])`처럼 항상 사본을 셔플하거나, Fisher–Yates를 새 배열에 적용하세요.
+### B2. 음악 트랙 상한(23)이 실제 파일 수(20)와 불일치 ⭐
 
-### B3. `getDistractors`의 무한 루프 가능성
-```js
-// game-engine.js:786
-while (distractors.length < 3) {
-    const emergencyDistractor = game.shuffle([...currentRawData])[0];
-    ...
-}
-```
-`rawData`에서 정답과 **다른 고유 값이 3개 미만**이면 이 루프는 절대 3개를 채우지 못하고 무한 반복 →
-탭이 멈춥니다. `init`의 `pool.length < 4` 가드(L86)는 "행 개수"만 보고 "고유 단어/뜻 개수"는 보지 않으므로
-완전한 방어가 아닙니다. 시도 횟수 상한을 두고, 부족하면 있는 만큼만 반환하도록 바꾸세요.
+`data/`에는 `background_music_1~20.mp3`만 존재하는데 `max: 23`,
+`settings.js`의 해금 목록도 `[1..23]`이었습니다. 21~23을 고르면 **404 → 무음**이고,
+로드 실패로 `onended`가 발생하지 않아 다음 곡으로 넘어가지도 않았습니다.
 
-### B4. 정의되지 않은 스킬 구매 시 `NaN`
-```js
-// shop.js:131
-db.skills[id] += skill.uses;
-```
-`db.skills` 기본값은 `{ hint: 0, ultimate: 0 }`(database.js:70)뿐입니다.
-`hint`/`ultimate` 외의 새 스킬 id를 추가해 구매하면 `undefined += n → NaN`이 되어
-저장·표시가 깨집니다. `db.skills[id] = (db.skills[id] || 0) + skill.uses;`로 가드하세요.
+**수정** — `audio-manager.js`에 `MUSIC_TRACK_COUNT = 20` 단일 상수를 두고,
+`currentMusicIndices.max`와 `ui.renderMusicSelectOptions`가 모두 이 값을 참조하도록 통일.
+파일을 추가/삭제하면 이제 상수 한 줄만 고치면 됩니다.
 
-### B5. `onclick` 문자열에 데이터 직접 삽입
-```js
-// shop.js:79
-`<button ... onclick="shop.buy('${item.id}', ${item.cost}, '${type}')">`
-```
-`item.id`에 작은따옴표가 들어가면 핸들러 문자열이 깨지고, 전역 `shop`에 의존하는 구조라
-캡슐화도 불가능합니다. `addEventListener` + `dataset`(`data-id`)로 바인딩하세요.
-같은 맥락에서 `shop`/`inventory`의 `innerHTML` 템플릿(이름·설명 직접 보간)도 데이터에 `<`,`>`가
-섞이면 마크업이 깨집니다 — 외부/사용자 데이터를 받게 되면 XSS 경로가 됩니다.
+### B3. 데이터셋 변경을 "취소"해도 되돌아가지 않음
+
+`changeDataSet()`이 확인을 받기 **전에** 전역(`rawDataData`/`storiesData`)과 `localStorage`를
+교체해버려서, 취소해도 드롭박스가 복원되지 않고 `dayCatalog`(로드 시점 고정)와
+실제 문제 풀이 어긋난 상태가 남았습니다.
+
+**수정** — `game-data-loader.js`: 순서를 뒤집어 **존재 확인 → 사용자 확인 → 그다음 적용**.
+취소 시에는 전역을 건드린 적이 없으므로 드롭박스만 되돌리면 됩니다.
+
+### B4. `unlockedMusicTracks`가 저장되지 않아 잠금 시스템이 죽어 있었음
+
+`settings.js`가 런타임에 해금 목록을 붙였지만 `database.js`의 settings 로더가
+`musicPlay`/`wordRead`만 복원해 매번 버려졌습니다. 해금 조건이 구현된 적도 없어
+안내 토스트는 도달 불가 코드였습니다.
+
+**수정** — 잠금 개념을 **제거**했습니다(어중간한 상태가 가장 나쁨).
+`playMusic`/`playNextMusic`/`setupMusicSelectListeners`가 크게 단순해졌고,
+`lastValidMusicSelection` 롤백 상태도 함께 사라졌습니다.
+
+### B5. 한 글자 단어에서 빈 입력이 정답 (주석 + 가드)
+
+`answerWithoutFirst = answer.slice(1)`이 1글자 단어에서 `''`이 되어 무입력이 정답 처리됩니다.
+현재 데이터셋에는 한 글자 단어가 없으므로 **규칙과 전제를 주석으로 명시**하고,
+길이 가드(`answerWithoutFirst.length > 0`)를 함께 넣었습니다.
+여러 단어 구문에서 힌트는 각 단어 첫 글자를 보여주지만 생략 허용은 맨 앞 1글자뿐이라는
+비대칭도 같은 주석에 적어 두었습니다. (spec.md §5.2.1에도 규칙으로 기록)
+
+### B6. `admin-tools.js`에 편향 셔플 잔존
+
+문제지 출력 경로만 `sort(() => Math.random() - 0.5)`가 남아 정답 보기 위치가 치우쳤습니다.
+인쇄물은 학습자가 패턴을 학습해버릴 수 있어 게임 화면보다 영향이 큽니다.
+**수정** — `game.shuffle`(Fisher–Yates, 사본 반환) 재사용.
+
+### B7. 배틀 모달 라디오 `change` 리스너 누적
+
+`openBattleModeModal()`이 열릴 때마다 라디오마다 `addEventListener` → N번 열면 핸들러 N개.
+**수정** — 그룹에 위임 리스너 1개 + `dataset.changeBound` 플래그, 레이블 동기화는
+`syncQuestionTypeLabels()` 헬퍼로 분리.
 
 ---
 
-## 🏗️ 구조 / 설계 문제
+## 📐 명세 위반 / 문서-코드 불일치 (수정 완료)
 
-### S1. 전역 네임스페이스 + 로드 순서 결합 (가장 근본적)
-`db`, `game`, `ui`, `shop`, `inventory`, `secret`, `statistics`, `story`, `weapons` … 거의 모든 모듈이
-전역 `const`로 노출되고, `index.html`이 `<script>` 26개를 **순서대로** 로드해야만 동작합니다.
-한 모듈이 다른 모듈을 직접 전역 이름으로 참조하므로(`ui.updateGold()`, `inventory.unequip()` …)
-순서가 어긋나면 조용히 깨집니다. 일관성도 없습니다 — `game-data-loader.js`만 IIFE를 씁니다.
-**권장**: `<script type="module">` + `import`/`export`로 전환(로드 순서·전역 오염 동시 해결),
-당장 어렵다면 단일 `window.App` 네임스페이스로 묶기.
+| #   | 항목                        | 조치                                                                                                                                                                   |
+| --- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1  | native `confirm()` 3곳      | `showConfirm()`(비차단)으로 교체. `pendingAction`을 `async`로 전환 (spec §2.3 준수)                                                                                    |
+| S2  | `ui.setStoryTitle` 미존재   | `ui-manager.js`에 실제로 구현. 매번 찍히던 `console.warn` 폴백 경로 제거                                                                                               |
+| S3  | 보스 무한 큐 미구현         | 코드가 아니라 **명세를 현실에 맞춤** — 보스는 덱 소진 시 승리로 종료 (무한 재병합은 원래 없던 기능)                                                                    |
+| S4  | 인라인 `onclick` 34곳       | 전부 `data-action` 속성으로 바꾸고 `init.js`의 `ACTION_HANDLERS` 표 + 문서 레벨 위임 리스너 1개로 처리. 인자는 `data-slot`/`data-digit`으로 전달. HTML의 `onclick` 0개 |
+| S5  | 도달 불가 코드              | `_buildPracticeList`, `nextLevel`의 3번째 분기, `story.mode === 'practice'` 제거 (연습 모드는 `practiceMemorization.start()`가 담당)                                   |
+| S6  | 무의미해진 음수 골드 클램프 | `db.addGold`가 이미 `Math.max(0, ...)`로 막고 있어 제거                                                                                                                |
 
-### S2. `game.init` 과적재 (게임 엔진 1,087줄)
-`init` 한 함수가 풀 구성 → 카운트 결정 → 모드별 분기(boss/battle/practice) → 객관·주관 비율 배분 →
-"연속 같은 타입 방지" 재셔플 루프 → `setTimeout`으로 화면 전환 → UI 갱신까지 모두 처리합니다.
-특히 혼합형은 **번갈아 interleave 한 결과를 다시 `shuffle`로 풀어버린 뒤**(L149-164) 연속 여부를
-최대 10회 재시도로 검사하는 우회 로직이라 의도가 모호합니다.
-**권장**: `buildPool(day) / pickCount() / assignTypes(pool, type) / interleaveNoRepeat(a, b)`로 분리.
-interleave를 하려면 셔플 후 재배치가 아니라 "두 큐를 지퍼처럼 합치는" 결정적 방식이 더 단순합니다.
+---
 
-### S3. `cloneNode`로 리스너 떼어내기 + JS 인라인 스타일
-```js
-// init.js:97
-titlePracticeBtn.onclick = null;
-const newBtn = titlePracticeBtn.cloneNode(true);
-titlePracticeBtn.parentNode.replaceChild(newBtn, titlePracticeBtn);
-freshPracticeBtn.style.zIndex = '25';  // 스타일을 JS로 강제
+## 🏗️ 구조 (수정 완료)
+
+### A1. `game.end()` 280줄 → 렌더링만 담당
+
+통계 **쓰기 로직이 게임 엔진에 있던 것**이 가장 큰 문제였습니다.
+동일한 `books[key]` 초기화 블록이 4곳(`database.js`, `game-engine.js` ×2, `statistics.js`)에 복제돼
+필드 하나 추가하려면 네 군데를 고쳐야 했습니다.
+
+**수정** — 통계 구조의 소유권을 `database.js`로 되돌렸습니다.
+
+| 새 API                            | 역할                                                                         |
+| --------------------------------- | ---------------------------------------------------------------------------- |
+| `db.getBookStats(key?)`           | 단어장 통계 조회(없으면 생성) + 누락 하위 필드 보강. 구조를 아는 유일한 지점 |
+| `db.recordBossWave(wave)`         | 보스 최고 기록 갱신(더 높을 때만)                                            |
+| `db.recordPerfectDay(day, label)` | 주관식 퍼펙트 Day 기록(같은 Day는 최신 날짜로 갱신)                          |
+| `db.getBookKey()`                 | 현재 데이터셋의 저장 키                                                      |
+
+`game.end`는 `_resultRow` / `_renderResultRecord` / `_renderResultWrongWords` /
+`_saveSessionRecords` / `dayLabel`로 쪼개져 각자 한 가지만 합니다.
+
+### A2. 레거시 전역 통계 이중 기록 제거
+
+`addStats`와 `game.end`가 `books[]`와 최상위 `stats.*`에 매번 두 번 썼지만
+읽는 곳은 `books`뿐이었습니다(최상위를 읽던 `ui.updateMainStats`는 `display:none` 요소에
+그리는 죽은 UI였습니다).
+
+**수정** — 최상위 누적 필드는 로드 시 1번 단어장으로 이관 후 삭제.
+`ui.updateMainStats`와 숨겨진 `#stat-solved/correct/rate` 마크업도 함께 제거.
+
+### A3. 통계 키를 이름 → 데이터셋 ID로 전환
+
+`db.stats.books`와 `db.practiceMemorized`가 **표시 이름**을 키로 써서,
+`gameDataName_N`을 한 글자만 고쳐도 누적 통계와 암기 기록이 통째로 유실됐습니다.
+
+**수정** — 키를 `book-1`, `book-2` …(데이터셋 ID)로 바꾸고,
+`migrateBookKeys()`가 기존 이름 키를 1회 자동 이관합니다.
+이름 → ID 매핑은 로드된 `gameDataName_N`에서 찾고, 실패하면 1번으로 봅니다.
+같은 키로 합쳐질 땐 수치는 합산, 최고 기록은 큰 쪽, 암기 목록은 중복 제거 병합.
+**이 마이그레이션은 테스트로 검증됩니다.**
+
+### A4. 모달 강제 숨김 코드 3중 복제 제거
+
+5개 프로퍼티 × 4개 모달을 반복 설정하던 ~100줄이 세 곳에 있었습니다.
+
+**수정** — `modal-manager.js`에 `resetScreenOverlay(id, {behind})` /
+`resetScreenOverlays(ids)` / `GAME_ENTRY_OVERLAYS` 상수를 추가하고
+`game.end`, `story.showEnding`, `closeResultScreen`, `story.startIntro`가 모두 이걸 씁니다.
+(`showEnding`의 중복 호출은 `game.end`에 위임)
+
+### A5. `cloneNode` 리스너 제거 패턴 삭제
+
+핸들러가 클로저(`daySel`)를 쓰지 않도록 `story._onStartClick`으로 분리하니
+노드 교체가 필요 없어졌습니다. `dataset.startBound` 플래그로 1회만 바인딩합니다.
+JS로 박던 `pointerEvents`/`cursor`/`zIndex`는 이미 `.story-btn-area` CSS에 동일하게 있어 제거.
+
+### A6. HTML 문자열 안의 인라인 스타일 → CSS 클래스
+
+`statistics.render`와 `game.end`가 `style="font-size:15px; ..."`를 8회 이상 반복 보간했습니다.
+**수정** — `statistics-modal.css` / `result-modal.css` / `buttons.css`에 클래스를 만들고
+JS는 클래스만 붙입니다(`.statistics-stat-row`, `.result-stat-value`, `.option-btn-correct`,
+`.boss-hint-revealed` 등). `statistics.js`는 195줄 → 137줄.
+
+---
+
+## ⚠️ 사소한 항목 (수정 완료)
+
+| #   | 항목                         | 조치                                                                                                               |
+| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| M1  | 오답 후 힌트 스타일 잔존     | 인라인 스타일 → `.boss-hint-revealed` 클래스, `renderBoss`가 다음 문제에서 제거                                    |
+| M2  | 보기 3개 미만 허용           | `renderNormal`이 개수를 검증해 부족하면 **주관식으로 대체 출제**(`isBoss`를 올려 타이머·채점 타입까지 일관되게)    |
+| M3  | `updateDurability` 빈 함수   | 함수 + `#durability-badge` 마크업 + `display:none !important` CSS + 호출부 2곳 모두 제거                           |
+| M4  | `db.save()` 전체 저장        | 변경 필드만 저장하도록 범위 지정 (`save('settings')`, `save('lastDay')`, `save('skills')`, `save('memorized')` 등) |
+| M5  | 테스트 0개                   | **테스트 16개 추가** (아래 참조)                                                                                   |
+| M6  | `resolveStoryData` 중복 분기 | 같은 조건을 3번 검사하던 것을 1번으로 정리                                                                         |
+
+---
+
+## ✅ 추가된 테스트 (`npm test`)
+
+의존성 없이 `node:test` + `node:vm`만 사용합니다 (`node_modules` 불필요).
+브라우저용 전역 스크립트를 vm 샌드박스에서 실행해 꺼내오는 로더(`tests/helpers/load-module.js`)를 두었습니다.
+
+**`tests/game-engine.test.js` — 순수 로직 13개**
+
+- `shuffle`: 원본 불변 / 사본 반환 / 빈·단일 배열 / **분포 편향 검사**(4000회 돌려 각 위치 등장 비율이 기대값 ±20% 이내 — 편향 셔플로 되돌아가면 실패)
+- `_buildPool`: Day 간 누출 없음, 문자열/숫자 day 동일 취급
+- `_interleave`: 번갈아 배치, 길이가 달라도 원소 보존
+- `_buildBattleList`: 유형별 채우기, **혼합형에서 같은 유형이 연속되지 않음**, 원본 불변
+- `getDistractors`: 정답 미포함·중복 없는 3개, **고유 값 부족 시 무한 루프 없이 종료**, decoy 그룹 우선 사용
+- `dayLabel`: all/boss/카탈로그 라벨/기본 형식
+
+**`tests/smoke-load.test.js` — 로드 스모크 3개**
+
+- **index.html의 `<script>` 순서를 그대로 읽어** 최소 DOM 스텁 위에서 전부 실행.
+  빌드 도구 없이 로드 순서에 의존하는 구조라, "순서가 어긋나 조용히 깨지는" 회귀를 잡습니다.
+  핵심 전역 15개(`db`, `game`, `ui`, `resetScreenOverlays`, `showToast` …)의 존재도 확인.
+- 이름 키 → ID 키 마이그레이션 검증 (수치 보존 포함)
+- 레거시 최상위 누적 통계 → 1번 단어장 이관 후 제거 검증
+
 ```
-리스너 중복을 막으려 노드를 통째로 교체하는 것은 초기화가 한 번만 보장되지 않는다는 신호입니다.
-또 `pointerEvents`/`zIndex`/`cursor`를 JS로 박는데 이는 CSS의 책임입니다. 같은 패턴이
-`handleAnswer`/`showCorrectAnswer`에서도 버튼 색·테두리·transform을 인라인으로 설정합니다.
-**권장**: 초기화 1회 보장(또는 `AbortController`), 상태는 CSS 클래스 토글(`.is-correct` 등)로.
-
-### S4. 한 글자 단위 micro-save
-`db.addGold`/`subGold`/`addStats` 등이 호출될 때마다 `db.save()`가 **localStorage 13개 키 전체를
-JSON 직렬화**합니다. 정답 한 번에 골드 가산→save, 통계 가산→save로 중복 저장도 발생합니다.
-치명적이진 않지만, 변경분만 저장하거나 프레임 끝에 한 번 flush 하는 편이 깔끔합니다.
+ℹ tests 16   ℹ pass 16   ℹ fail 0
+```
 
 ---
 
-## ⚠️ UX / 플랫폼 문제
+## 📄 함께 갱신한 문서
 
-| # | 항목 | 위치 | 설명 |
-|---|------|------|------|
-| U1 | `alert()` 14곳 | game-engine, shop, database, inventory | 메인 스레드 차단 → 애니메이션·흐름 끊김. 일부는 `location.reload()`로 진행 손실 |
-| U2 | `confirm()`으로 강제 새로고침 | game-data-loader:148 | 데이터셋 변경마다 전체 리로드 — 모달/토스트 기반 전환 권장 |
-| U3 | `onkeypress` (deprecated) | game-engine:435 | `keydown`으로 교체 |
-| U4 | 매 프레임 `getElementById` | startTimer / render 계열 | 타이머 100ms마다 DOM 재조회 — 참조 캐싱 권장 |
-| U5 | 첫 글자 생략 정답 처리 | game-engine:472 | 주관식에서 첫 글자 힌트를 빼고 입력해도 정답 — 의도된 동작이면 OK, 아니면 난이도 누수 |
+`spec.md`가 코드보다 앞서거나 뒤처진 곳을 맞췄습니다.
 
----
-
-## 🔧 위생(housekeeping) 항목
-
-| 항목 | 위치 | 설명 |
-|------|------|------|
-| 잘못된 `"main"` | package.json:5 | `update-explanations-advanced.js` 미존재 |
-| 테스트 없음 | 전체 | `"test"`가 `exit 1` 스텁 |
-| 디버그 로그 방치 | 다수(~26회) | `console.log('[game.init] …')` 등 — `DEBUG` 플래그화 |
-| 빈 스텁 호출 | modal-manager.js:90 | `adjustSelectFontSize()`가 본문 없음(주석으로 인정) |
-| `backup/`, `.DS_Store` 추적 | 루트/`data/` | `.gitignore`로 제외 |
-| 주석 언어 혼용 | 전체 | 한/영 혼재 — 통일 |
-| 빌드 파이프라인 부재 | index.html | `<script>` 26 + `<link>` 15 개별 로드, minify/번들 없음 |
+- 음악 트랙 수 23 → 20 + `MUSIC_TRACK_COUNT` 단일 진실 공급원 명시
+- 트랙 잠금/해금 서술 삭제 (기능 자체가 없음)
+- 보스 모드 "무한 재병합 큐" → 실제 동작(덱 소진 시 승리)으로 정정
+- **신규**: 단어장 기록의 키 정책(데이터셋 ID) / 통계 구조의 소유권(`database.js`)
+- **신규**: `data-action` + 위임 리스너 규약, `resetScreenOverlay` 사용 규약
+- **신규**: 보상의 시간 배율 규칙(시간 제한 없는 문항은 배율 미적용)
+- **신규**: 주관식 정답 판정 규칙과 "한 글자 단어 금지" 전제
+- 오답 보기가 3개 미만일 때 주관식으로 대체 출제한다는 규칙 추가
 
 ---
 
-## ✅ 잘한 점 (유지할 것)
+## 🔭 남겨둔 것 (다음 후보)
 
-- **방어적 코딩**: `typeof x !== 'undefined'` 가드와 `try/catch`로 모듈 누락 시에도 부분 동작.
-- **접근성 시도**: 인벤토리 슬롯에 `tabindex` + `Enter/Space` 키 핸들러, 닫기 버튼 `focus`/`scrollIntoView`.
-- **모바일 대응**: `--app-height`로 주소창 높이 변동 흡수, 너비 변화만 레이아웃 재계산.
-- **decoy 시스템**: `getDecoyWordCandidates`로 "그럴듯한 오답"을 우선 사용해 객관식 변별력 확보(좋은 설계).
-- **데이터 마이그레이션**: `v7_*` 키 버전관리 + 전역→단어장별 통계 자동 이관.
-- **다중 단어장 로더**: `gameDataName_N` 규칙으로 데이터셋을 동적 탐지하는 확장형 구조.
+의도적으로 손대지 않은 항목입니다. 판단이 필요하거나 이번 범위 밖입니다.
+
+- **`#story-start-btn.boss-mode-btn` CSS 규칙이 매칭되지 않음** — 실제 버튼 id는
+  `battle-mode-start-btn` / `boss-mode-start-btn`입니다. 값이 `.story-btn-area`와 동일해
+  증상은 없지만 죽은 규칙입니다.
+- **`secret.applyGold` / `resetGold` / `resetStats`가 UI에서 호출되지 않음** —
+  버튼이 없어 도달 불가입니다. 버튼을 되살릴지 함수를 지울지 결정이 필요합니다.
+- **ES Module 전환 / 번들러 도입** — 전역 + `<script>` 순서 의존이라는 근본 구조는 그대로입니다.
+  다만 스모크 테스트가 로드 순서를 지켜주므로 급하지는 않습니다.
+- **`equipped-summary`** — `display:none` 컨테이너 안에 렌더링됩니다.
+  살릴 UI인지 확인 후 정리 대상입니다.
 
 ---
 
 ## 📊 평가 요약
 
-| 항목 | 점수 | 비고 |
-|------|------|------|
-| 정확성 | ⭐⭐ | 셔플 편향(B1), 원본 파괴(B2), 무한루프 가능(B3), NaN(B4) |
-| 구조 | ⭐⭐⭐ | 폴더 분리 양호하나 전역 결합·대형 함수 |
-| UX | ⭐⭐⭐ | `alert`/`confirm`/강제 reload |
-| 성능 | ⭐⭐⭐ | 번들 없음, 과도한 save/DOM 재조회 (체감은 양호) |
-| 문서/주석 | ⭐⭐⭐⭐ | `spec.md`와 JSDoc 충실 |
-
----
-
-## 🚀 권장 처리 순서
-
-1. **버그 먼저**: B1(Fisher–Yates) → B2(사본 셔플) → B3(루프 상한) → B4(`|| 0` 가드). 코드량 대비 효과 큼.
-2. **이벤트/스타일 정리**: `onclick` 문자열·`cloneNode`·JS 인라인 스타일 → `addEventListener` + CSS 클래스.
-3. **알림 교체**: `alert`/`confirm` → 기존 `modal-manager` 기반 비차단 UI 재사용.
-4. **모듈화**: ES Module 전환으로 전역 결합·로드 순서 문제 해소, 이어서 `game.init` 함수 분해.
-5. **빌드/위생**: Vite·esbuild 도입, `package.json` 수정, `backup//.DS_Store` 정리, 로그 플래그화.
-
-> **결론**: 학습용 게임으로서 기능 설계(decoy 보기, 단어장 통계, 다중 데이터셋)는 인상적입니다.
-> 다만 무작위성 관련 4개 버그는 **결과의 공정성에 직접 영향**을 주므로 우선 고칠 가치가 있고,
-> 그다음은 전역 상태/이벤트 관리 정리가 장기 유지보수의 핵심입니다.
+| 항목      | 이전     | 현재       | 비고                                                            |
+| --------- | -------- | ---------- | --------------------------------------------------------------- |
+| 정확성    | ⭐⭐⭐   | ⭐⭐⭐⭐⭐ | 보상 계산·음악 파일·데이터셋 전환 버그 해소, 회귀 테스트로 고정 |
+| 구조      | ⭐⭐⭐   | ⭐⭐⭐⭐   | 통계 소유권 회수, 중복 4곳→1곳. 전역/스크립트 순서 의존은 잔존  |
+| UX        | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 네이티브 `confirm` 전량 제거, 비차단 UI로 통일                  |
+| 성능      | ⭐⭐⭐   | ⭐⭐⭐⭐   | 선택 저장 전면 적용. 번들 없음(정적 호스팅이라 수용 가능)       |
+| 테스트    | ☆        | ⭐⭐⭐     | 0개 → 16개. 순수 로직 + 로드 스모크 + 마이그레이션              |
+| 문서/주석 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | spec-코드 불일치 6건 해소, 규약 4건 신규 문서화                 |

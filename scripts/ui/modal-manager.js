@@ -73,6 +73,57 @@
     }
 
     /**
+     * 게임 진입 흐름에서 쓰이는 오버레이들 (스토리 모달 + 모드 선택 모달).
+     * 게임 종료/결과 화면 전환 시 한꺼번에 정리해야 하는 대상입니다.
+     */
+    const GAME_ENTRY_OVERLAYS = [
+        'battle-mode-story-modal',
+        'boss-mode-story-modal',
+        'practice-mode-modal',
+        'battle-mode-modal',
+    ];
+
+    /**
+     * 오버레이를 애니메이션 없이 즉시 숨기고, 열고 닫는 동안 쌓인 인라인 스타일을 정리합니다.
+     *
+     * `showEnding` / `game.end` / `closeResultScreen`이 각각 같은 5개 프로퍼티를
+     * 모달마다 반복 설정하던 것을 한곳으로 모은 함수입니다.
+     *
+     * @param {string} elementId - 대상 요소 ID
+     * @param {{behind?: boolean}} [options] - behind=true면 뒤쪽 레이어로 밀고 클릭을 막습니다
+     *   (결과 모달이 위로 올라오는 동안 잔상이 보이지 않도록).
+     *   false/생략이면 인라인 스타일을 지워 CSS 기본값으로 되돌립니다.
+     */
+    function resetScreenOverlay(elementId, options = {}) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        element.classList.remove('closing');
+        element.style.display = 'none';
+
+        if (options.behind) {
+            element.style.visibility = 'hidden';
+            element.style.opacity = '0';
+            element.style.zIndex = '100';
+            element.style.pointerEvents = 'none';
+        } else {
+            element.style.visibility = '';
+            element.style.opacity = '';
+            element.style.zIndex = '';
+            element.style.pointerEvents = '';
+        }
+    }
+
+    /**
+     * 여러 오버레이를 한 번에 정리합니다.
+     * @param {string[]} [elementIds=GAME_ENTRY_OVERLAYS]
+     * @param {{behind?: boolean}} [options]
+     */
+    function resetScreenOverlays(elementIds = GAME_ENTRY_OVERLAYS, options = {}) {
+        elementIds.forEach((id) => resetScreenOverlay(id, options));
+    }
+
+    /**
      * 연습/배틀 모드 선택 모달을 닫습니다
      * @param {boolean} animated - 애니메이션 여부
      */
@@ -266,8 +317,11 @@
     }
 
     // 공개 API 노출
+    window.GAME_ENTRY_OVERLAYS = GAME_ENTRY_OVERLAYS;
     window.openScreenOverlay = openScreenOverlay;
     window.closeScreenOverlay = closeScreenOverlay;
+    window.resetScreenOverlay = resetScreenOverlay;
+    window.resetScreenOverlays = resetScreenOverlays;
     window.closePracticeModal = closePracticeModal;
     window.syncModalButtonOverlay = syncModalButtonOverlay;
     window.syncStoryButtonOverlay = syncStoryButtonOverlay;

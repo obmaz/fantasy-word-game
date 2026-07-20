@@ -333,7 +333,9 @@
     background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
-    text-shadow: 0 0 20px rgba(255, 213, 79, 0.6), 0 0 40px rgba(224, 64, 251, 0.4);
+    text-shadow:
+        0 0 20px rgba(255, 213, 79, 0.6),
+        0 0 40px rgba(224, 64, 251, 0.4);
     margin: 0 0 10px 0;
     animation: titleShine 3s ease-in-out infinite;
     position: relative;
@@ -368,7 +370,9 @@
     margin-top: 20px;
     margin-bottom: 20px;
     border: 1px solid rgba(255, 213, 79, 0.2);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 213, 79, 0.05);
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 213, 79, 0.05);
     position: relative;
     overflow: hidden;
 }

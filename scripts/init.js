@@ -1,6 +1,59 @@
 // 메인 애플리케이션 진입점
 
 /**
+ * data-action 속성 → 핸들러 매핑.
+ *
+ * index.html의 인라인 `onclick="secret.enter(1)"` 같은 문자열을 대체합니다.
+ * 인라인 핸들러는 전역 이름에 하드코딩으로 묶이고, 값 보간 시 따옴표가 깨질 수 있으며,
+ * 마크업과 동작이 분리되지 않습니다(spec §1.3).
+ *
+ * 각 핸들러는 클릭된 요소를 인자로 받으므로 data-* 속성으로 값을 전달할 수 있습니다.
+ */
+const ACTION_HANDLERS = {
+    'boss-submit': () => game.checkBossAnswer(),
+
+    'shop-open': () => shop.open(),
+    'shop-close': () => shop.close(),
+
+    'inventory-open': () => inventory.open(),
+    'inventory-close': () => inventory.close(),
+    'inventory-hide-details': () => inventory.hideDetails(),
+    'inventory-unequip': (el) => inventory.unequip(el.dataset.slot),
+
+    'statistics-close': () => statistics.close(),
+    'result-close': () => closeResultScreen(),
+
+    'secret-enter': (el) => secret.enter(Number(el.dataset.digit)),
+    'secret-del': () => secret.del(),
+    'secret-close': () => secret.close(),
+    'secret-reset-statistics': () => secret.resetStatistics(),
+    'secret-gold-edit-open': () => secret.openGoldEditModal(),
+    'secret-gold-edit-close': () => secret.closeGoldEditModal(),
+    'secret-gold-edit-apply': () => secret.applyGoldEdit(),
+    'secret-print-open': () => secret.openPrintDaySelect(),
+    'secret-print-close': () => secret.closePrintDaySelect(),
+    'secret-print-generate': () => secret.generatePrintHTML(),
+};
+
+/**
+ * data-action을 가진 요소의 클릭을 문서 레벨에서 한 번만 위임 처리합니다.
+ * 동적으로 추가되는 요소도 별도 바인딩 없이 동작합니다.
+ */
+function setupActionDelegation() {
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('[data-action]');
+        if (!el) return;
+
+        const handler = ACTION_HANDLERS[el.dataset.action];
+        if (!handler) {
+            console.warn('[action] 알 수 없는 data-action:', el.dataset.action);
+            return;
+        }
+        handler(el);
+    });
+}
+
+/**
  * 윈도우 로드 이벤트 핸들러
  * 게임 환경, 이벤트 리스너 및 UI 컴포넌트를 초기화합니다.
  */
@@ -12,6 +65,9 @@ window.onload = () => {
     if (typeof dayCatalog !== 'undefined' && typeof dayCatalog.validateCoverage === 'function') {
         dayCatalog.validateCoverage();
     }
+
+    // data-action 위임 리스너 (인라인 onclick 대체)
+    setupActionDelegation();
 
     // 핵심 시스템 초기화
     if (typeof secret !== 'undefined') secret.init();
@@ -392,32 +448,8 @@ window.onload = () => {
     window.closeResultScreen = function () {
         closeScreenOverlay('result-modal', true);
 
-        // 스토리 화면 초기화
-        ['battle-mode-story-modal', 'boss-mode-story-modal'].forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.style.display = 'none';
-                el.classList.remove('closing');
-                // Reset styles
-                el.style.visibility = '';
-                el.style.opacity = '';
-                el.style.zIndex = '';
-                el.style.pointerEvents = '';
-            }
-        });
-
-        // 모달 화면 초기화
-        ['practice-mode-modal', 'battle-mode-modal'].forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.style.display = 'none';
-                el.classList.remove('closing');
-                el.style.visibility = '';
-                el.style.opacity = '';
-                el.style.zIndex = '';
-                el.style.pointerEvents = '';
-            }
-        });
+        // 스토리/모드 선택 오버레이의 인라인 스타일을 CSS 기본값으로 되돌림
+        resetScreenOverlays(GAME_ENTRY_OVERLAYS);
 
         const gameScreen = document.getElementById('battle-mode-game');
         if (gameScreen) gameScreen.style.display = 'none';

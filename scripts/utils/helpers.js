@@ -80,37 +80,26 @@
      * @returns {Object} 스토리 데이터 객체
      */
     function resolveStoryData(day) {
-        // dayCatalog에서 우선 검색
-        if (typeof dayCatalog !== 'undefined' && dayCatalog[day] && dayCatalog[day].story)
-            return dayCatalog[day].story;
-        if (day === 'boss')
-            return (dayCatalog && dayCatalog['boss'] && dayCatalog['boss'].story) || null;
-        const s =
-            dayCatalog && dayCatalog[day] && dayCatalog[day].story ? dayCatalog[day].story : null;
-        if (s) return s;
+        const catalog = typeof dayCatalog !== 'undefined' ? dayCatalog : null;
 
-        // 없으면 <option> 텍스트에서 제목 추출
+        // dayCatalog에 항목이 있으면 그대로 사용 ('boss'/'all'도 동일 경로로 처리됨)
+        const entry = catalog && catalog[day];
+        if (entry && entry.story) return entry.story;
+
+        // 없으면 <option> 텍스트에서 제목 추출해 최소 형태를 합성
         const opt = document.querySelector(`#day-select option[value="${day}"]`);
+        const allStory = (catalog && catalog['all'] && catalog['all'].story) || null;
         const optText = opt
             ? opt.textContent
             : day === 'all'
-              ? dayCatalog && dayCatalog['all'] && dayCatalog['all'].label
+              ? catalog && catalog['all'] && catalog['all'].label
               : `Day ${day}`;
+
         return {
             title: optText,
             intro: `선택한 지역 — ${optText}`,
-            win:
-                (dayCatalog &&
-                    dayCatalog['all'] &&
-                    dayCatalog['all'].story &&
-                    dayCatalog['all'].story.win) ||
-                '',
-            lose:
-                (dayCatalog &&
-                    dayCatalog['all'] &&
-                    dayCatalog['all'].story &&
-                    dayCatalog['all'].story.lose) ||
-                '',
+            win: (allStory && allStory.win) || '',
+            lose: (allStory && allStory.lose) || '',
         };
     }
 
